@@ -3,6 +3,7 @@ using UnityEditor;
 using UnityEngine;
 using NaughtyAttributes.Editor;
 using System.Reflection;
+using SVEN.Content;
 
 namespace SVEN
 {
