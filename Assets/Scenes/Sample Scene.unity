@@ -238,7 +238,7 @@ GameObject:
   - component: {fileID: 137352180}
   - component: {fileID: 137352181}
   m_Layer: 0
-  m_Name: SVEN
+  m_Name: Graph SVEN
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -257,7 +257,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 226562235}
+  m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &137352181
 MonoBehaviour:
@@ -271,6 +271,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 76a72fd24b5005245b017b6a62ecd99e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  graphName: sven
   baseUri: http://www.sven.fr/ontology#
   dataEndpoint: http://localhost:9999/blazegraph/namespace/test/sparql
   prefixes:
@@ -284,38 +285,6 @@ MonoBehaviour:
     <Uri>k__BackingField: http://www.w3.org/2001/XMLSchema#
   - <Name>k__BackingField: sven
     <Uri>k__BackingField: http://www.sven.fr/ontology#
---- !u!1 &226562234
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 226562235}
-  m_Layer: 0
-  m_Name: Graph
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &226562235
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 226562234}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children:
-  - {fileID: 137352180}
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &536405114
 GameObject:
   m_ObjectHideFlags: 0
@@ -389,8 +358,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   componentsToSemantize:
-  - {fileID: 536405120}
   - {fileID: 536405116}
+  - {fileID: 536405119}
 --- !u!1 &1801497865
 GameObject:
   m_ObjectHideFlags: 0
@@ -733,4 +702,4 @@ SceneRoots:
   - {fileID: 536405116}
   - {fileID: 1908792983}
   - {fileID: 99221826}
-  - {fileID: 226562235}
+  - {fileID: 137352180}

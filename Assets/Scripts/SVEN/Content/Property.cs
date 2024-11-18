@@ -1,7 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Reflection;
-using RDF;
 using UnityEngine;
 using VDS.RDF;
 using VDS.RDF.Parsing;
@@ -14,36 +12,19 @@ namespace SVEN.Content
     public class Property : Resource
     {
         /// <summary>
-        /// Unique identifier for the resource.
-        /// </summary>
-        //private readonly string resourceID = Guid.NewGuid().ToString();
-        /// <summary>
-        /// Gets the resource identifier for the property.
-        /// </summary>
-        /// <returns>Resource identifier.</returns>
-        /*public string ResourceID()
-        {
-            return resourceID;
-        }*/
-
-        /// <summary>
-        /// Gets the resource for the property.
-        /// </summary>
-        /// <returns>Resource.</returns>
-        /*public string Resource()
-        {
-            return ResourceID();
-        }*/
-
-        /// <summary>
         /// The graph to semantize the property.
         /// </summary>
         private IGraph graph;
 
         /// <summary>
+        /// The parent component of the property.
+        /// </summary>
+        private Component parentComponent;
+
+        /// <summary>
         /// The parent node of the property.
         /// </summary>
-        private IUriNode parentNode;
+        private IUriNode ParentNode => graph.CreateUriNode("sven:" + parentComponent.GetUUID());
 
         /// <summary>
         /// The name of the property to observe.
@@ -89,11 +70,16 @@ namespace SVEN.Content
             };
         }
 
-        public void InitializeSemantization(IGraph graph, IUriNode parentNode)
+        /// <summary>
+        /// Initializes the semantization of the property.
+        /// </summary>
+        /// <param name="graph">The graph output to semantize the property.</param>
+        /// <param name="parentNode">The parent node of the property.</param>
+        public void SemanticObserve(IGraph graph, Component parentComponent)
         {
-            if (graph == null || parentNode == null)
+            if (graph == null || parentComponent == null)
             {
-                Debug.LogWarning("You are trying to initialize the semantization of a property without a graph or parent node.");
+                Debug.LogWarning("You are trying to initialize the semantization of a property without a graph node or parent component.");
                 return;
             }
             if (this.graph != null)
@@ -101,9 +87,8 @@ namespace SVEN.Content
                 Debug.LogWarning("You are trying to initialize the semantization of a property that has already been initialized.");
                 return;
             }
-            Debug.Log("Initializing semantization of property " + name);
             this.graph = graph;
-            this.parentNode = parentNode;
+            this.parentComponent = parentComponent;
         }
 
         /// <summary>
@@ -112,23 +97,26 @@ namespace SVEN.Content
         public void CheckForChanges()
         {
             object currentValue = observedProperty.Getter();
-            //UnityEngine.Debug.Log("Current value: " + currentValue + " Last value: " + observedProperty.LastValue);
-            if (!Equals(currentValue, LastValue))
+            if (!Equals(currentValue, observedProperty.LastValue))
             {
                 observedProperty.LastValue = currentValue;
                 if (graph != null) Semantize();
             }
         }
 
+        /// <summary>
+        /// Semantizes the property.
+        /// </summary>
         public void Semantize()
         {
-            Debug.Log("Semantizing property " + name);
+            if (Settings.Debug)
+                Debug.Log("Semantizing property (" + parentComponent.name + ")." + parentComponent.GetType().Name + "." + Name + " with value " + observedProperty.LastValue);
             DestroyUUID();
             IUriNode propertyNode = graph.CreateUriNode("sven:" + GetUUID());
 
-            graph.Assert(new Triple(parentNode, graph.CreateUriNode("sven:" + name), propertyNode));
+            graph.Assert(new Triple(ParentNode, graph.CreateUriNode("sven:" + name), propertyNode));
             graph.Assert(new Triple(propertyNode, graph.CreateUriNode("rdf:type"), graph.CreateUriNode("sven:Property")));
-            Dictionary<string, object> values = LastValue.GetSemantizableValues();
+            Dictionary<string, object> values = observedProperty.LastValue.GetSemantizableValues();
             foreach (KeyValuePair<string, object> value in values)
             {
                 string stringValue = value.Value.ToString();
@@ -137,27 +125,5 @@ namespace SVEN.Content
                 graph.Assert(new Triple(propertyNode, graph.CreateUriNode("sven:" + value.Key), graph.CreateLiteralNode(stringValue, new Uri(XmlSchemaDataType))));
             }
         }
-
-        public void Test(/*IGraph graph*/)
-        {
-            Dictionary<string, object> values = LastValue.GetSemantizableValues();
-
-            foreach (KeyValuePair<string, object> value in values)
-            {
-                Debug.Log(value.Key + " : " + value.Value);
-            }
-
-            //graph.CreateUriNode("sven:" + this.GetUUID());
-            /*PropertyInfo field = this.GetType().GetProperty("LastValue");
-            object value = field.GetValue(this);
-            Type valueType = value.GetType();
-            Debug.Log(field.Name + " : " + value + " | " + field.PropertyType + " | " + valueType);*/
-            //graph.Assert(new Triple(newPropertyNode, graph.CreateUriNode("sven:value"), graph.CreateLiteralNode(property.LastValue.ToString())));
-        }
-
-        /// <summary>
-        /// Gets the last known value of the observed property.
-        /// </summary>
-        public object LastValue => observedProperty.LastValue;
     }
 }

@@ -11,6 +11,12 @@ namespace RDF
     public class GraphManager : MonoBehaviour
     {
         /// <summary>
+        /// Name of the graph.
+        /// </summary>
+        [SerializeField, DisableIf("IsStarted")]
+        private string graphName = "default";
+
+        /// <summary>
         /// Base URI for the graph.
         /// </summary>
         [SerializeField, DisableIf("IsStarted")]
@@ -91,7 +97,7 @@ namespace RDF
         {
             try
             {
-                return Instances[graphName];
+                return Instances[graphName.ToLower()];
             }
             catch (KeyNotFoundException e)
             {
@@ -105,17 +111,24 @@ namespace RDF
         /// </summary>
         private void Awake()
         {
-            string graphName = gameObject.name.ToLower();
-            if (Instances.ContainsKey(graphName))
+            if (Instances.ContainsKey(graphName.ToLower()))
             {
                 Debug.LogWarning($"GraphManager instance already exists for the GameObject {gameObject.name}.");
                 Destroy(gameObject);
                 return;
             }
-            else Instances.Add(graphName, this);
+            else Instances.Add(graphName.ToLower(), this);
+
+            graph = NewGraph();
         }
 
         #endregion
+
+        [Button("Print Graph")]
+        private void PrintGraph()
+        {
+            Push();
+        }
 
         /// <summary>
         /// Graph to store the RDF data.
@@ -132,14 +145,6 @@ namespace RDF
             foreach (var prefix in prefixes)
                 graph.NamespaceMap.AddNamespace(prefix.Name, UriFactory.Create(prefix.Uri));
             return graph;
-        }
-
-        /// <summary>
-        /// Start is called before the first frame update.
-        /// </summary>
-        private void Start()
-        {
-            graph = NewGraph();
         }
 
         public void Merge(IGraph graph)

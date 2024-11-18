@@ -7,6 +7,9 @@ using VDS.RDF.Parsing;
 
 namespace SVEN.Content
 {
+    /// <summary>
+    /// Semantization extensions for Unity components.
+    /// </summary>
     public static class SemantizationExtensions
     {
         #region UUID
@@ -59,6 +62,9 @@ namespace SVEN.Content
 
         #region Observers
 
+        /// <summary>
+        /// List of properties to ignore when semantizing.
+        /// </summary>
         private static readonly List<string> ignoredProperties = new()
         {
             "destroyCancellationToken",
@@ -71,6 +77,11 @@ namespace SVEN.Content
             "name"
         };
 
+        /// <summary>
+        /// Get all the properties of the component.
+        /// </summary>
+        /// <param name="component">Component to get the properties.</param>
+        /// <returns>List of all properties that can be observed and semantized without the ignored properties.</returns>
         private static List<Property> GetAllProperties(this Component component)
         {
             List<Property> properties = new();
@@ -78,44 +89,100 @@ namespace SVEN.Content
             {
                 if (field.DeclaringType == typeof(Component)) continue;
                 if (ignoredProperties.Contains(field.Name)) continue;
+                // does not support arrays
+                if (field.PropertyType.IsArray) continue;
                 properties.Add(new Property(field.Name, () => field.GetValue(component)));
             }
             return properties;
         }
 
+        /// <summary>
+        /// Get properties of the component.
+        /// </summary>
+        /// <param name="component">Component to get the properties.</param>
+        /// <returns>List of properties that can be observed and semantized.</returns>
+        private static List<Property> GetProperties(this Component component)
+        {
+            var method = typeof(SemantizationExtensions).GetMethod("GetProperties", new[] { component.GetType() });
+            if (method != null)
+            {
+                return (List<Property>)method.Invoke(null, new object[] { component });
+            }
+            else
+            {
+                return GetAllProperties(component);
+            }
+        }
+
+        /// <summary>
+        /// Get properties of the Transform component.
+        /// </summary>
+        /// <param name="transform">Transform component to get the properties.</param>
+        /// <returns>List of properties that can be observed and semantized. (position, rotation, scale)</returns>
         public static List<Property> GetProperties(this Transform transform)
         {
-            Vector3 position = transform.position;
-            Vector3 rotation = transform.eulerAngles;
-            Vector3 scale = transform.localScale;
-
             List<Property> observers = new()
             {
-                new Property("position", () => position),
-                new Property("rotation", () => rotation),
-                new Property("scale", () => scale),
+                new Property("position", () => transform.position),
+                new Property("rotation", () => transform.rotation),
+                new Property("scale", () => transform.localScale),
             };
 
             return observers;
         }
 
-        /*public static List<Property> GetObservers(this Renderer meshRenderer)
-        {
-            return meshRenderer.GetAllProperties();
-        }*/
-
-        public static List<Property> GetProperties(this Atom atom)
+        /// <summary>
+        /// Get properties of the Atom component.
+        /// </summary>
+        /// <param name="atom">Atom component to get the properties.</param>
+        /// <returns>List of properties that can be observed and semantized. (all)</returns>
+        /*public static List<Property> GetProperties(this Atom atom)
         {
             return atom.GetAllProperties();
-        }
+        }*/
 
         #endregion
 
         #region Semantize
 
-        public static void Semantize(this Component component, IGraph graph)
+        /// <summary>
+        /// Semantize the component and observe his properties.
+        /// </summary>
+        /// <param name="component">Component to semantize.</param>
+        /// <param name="graph">Graph output to semantize the component.</param>
+        /// <returns>List of properties that have been semantized.</returns>
+        public static List<Property> SemanticObserve(this Component component, IGraph graph)
         {
+            if (!component.gameObject.TryGetComponent(out SemantizationCore semantizationCore))
+            {
+                Debug.LogError("SemantizationCore not found in the GameObject. Aborting semantization of the component " + component.GetType().Name + " in the GameObject " + component.gameObject.name);
+                throw new NullReferenceException();
+            }
+            IUriNode gameObjectNode = graph.CreateUriNode("sven:" + semantizationCore.GetUUID());
+            IUriNode componentNode = graph.CreateUriNode("sven:" + component.GetUUID());
 
+            graph.Assert(new Triple(gameObjectNode, graph.CreateUriNode("sven:component"), componentNode));
+            graph.Assert(new Triple(componentNode, graph.CreateUriNode("rdf:type"), graph.CreateUriNode(component.GetRdfType())));
+
+            List<Property> properties = component.GetProperties();
+            foreach (Property property in properties)
+            {
+                property.SemanticObserve(graph, component);
+                if (Settings.Debug)
+                    Debug.Log("Observing property (" + semantizationCore.name + ")." + component.GetType().Name + "." + property.Name);
+            }
+
+            return properties;
+        }
+
+        /// <summary>
+        /// Get the RDF type of the component.
+        /// </summary>
+        /// <param name="component">Component to get the RDF type.</param>
+        /// <returns>RDF type of the component.</returns>
+        public static string GetRdfType(this Component component)
+        {
+            return "sven:" + component.GetType().Name;
         }
 
         #endregion
@@ -144,6 +211,7 @@ namespace SVEN.Content
         /// </summary>
         private static Dictionary<Type, List<string>> SupportedNestedTypes { get; } = new()
         {
+            { typeof(Quaternion), new List<string> { "x", "y", "z", "w" } },
             { typeof(Vector3), new List<string> { "x", "y", "z" } },
             { typeof(Vector2), new List<string> { "x", "y" } },
             { typeof(Color), new List<string> { "r", "g", "b", "a" } },

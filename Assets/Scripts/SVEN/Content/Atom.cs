@@ -2,16 +2,13 @@ using UnityEngine;
 
 namespace SVEN.Content
 {
-    // Juste pour tester
+    /// <summary>
+    /// Example of a simple atom that have some properties semantizable.
+    /// </summary>
     public class Atom : MonoBehaviour
     {
-        [SerializeField]
-        private string atomType = "Carbon";
-        public string AtomType
-        {
-            get => atomType;
-            set => atomType = value;
-        }
+        [field: SerializeField]
+        public string AtomType { get; set; } = "Carbon";
 
     }
 }

@@ -1,11 +1,8 @@
 using System.Collections.Generic;
-using System.Linq;
-using NaughtyAttributes;
 using RDF;
 using SVEN.Content;
 using UnityEngine;
 using VDS.RDF;
-using VDS.RDF.Parsing;
 
 namespace SVEN
 {
@@ -16,16 +13,10 @@ namespace SVEN
     public class SemantizationCore : MonoBehaviour
     {
         /// <summary>
-        /// Bevahiours to semantize by using extensions methods.
+        /// Components to semantize at initialization. WARNING: Do not use this list for algorithmic purposes (it's just for the Unity Editor).
         /// </summary>
         [HideInInspector]
         public List<Component> componentsToSemantize = new();
-
-        /// <summary>
-        /// Properties of the GameObject.
-        /// </summary>
-        /// <returns></returns>
-        private readonly List<Property> gameObjectProperties = new();
 
         /// <summary>
         /// Properties of the each Component to semantize.
@@ -33,69 +24,36 @@ namespace SVEN
         private readonly Dictionary<Component, List<Property>> componentsProperties = new();
 
         /// <summary>
-        /// Dictionary to store the URI nodes depending on the UUID.
+        /// The graph output, where the GameObject is semantized.
         /// </summary>
-        //private Dictionary<string, IUriNode> uriNodes = new();
+        private IGraph graph;
 
         /// <summary>
         /// Start is called before the first frame update.
         /// </summary>
         private void Start()
         {
-            gameObjectProperties.Add(new Property("name", () => gameObject.name));
-            gameObjectProperties.Add(new Property("active", () => gameObject.activeSelf));
-            gameObjectProperties.Add(new Property("tag", () => gameObject.tag));
-            gameObjectProperties.Add(new Property("layer", () => LayerMask.LayerToName(gameObject.layer)));
-
+            componentsToSemantize.RemoveAll(component => component == null);
             Initialize();
-
-            // SEMANTIZE GameObject
-            // GRAPH sven:$Environment.resource()$ {
-            //      resourceID a sven:GameObject .
-            //      resourceID rdfs:label gameobject.name .
-            //      resourceID sven:$foreach gameObjectObservers.Key$ $foreach gameObjectObservers.Value.ResourceID$ .
-            //      resourceID sven:component $foreach components.resource()$
-            // }
-
-            // SEMANTIZE Component
-            // GRAPH sven:(Environment.resourceID) {
-            //      resourceID a sven:GameObject .
-            //      resourceID rdfs:label gameobject.name .
-            // }
         }
 
+        /// <summary>
+        /// Initializes the semantization of the GameObject, his components and setup the properties observers.
+        /// </summary>
         private void Initialize()
         {
             try
             {
                 GraphManager graphManager = GraphManager.Get("sven");
-                IGraph graph = graphManager.graph;//NewGraph();
+                graph = graphManager.graph; //NewGraph();
 
                 // Semantize the GameObject attached to his properties and components
-                IUriNode gameObjectNode = this.Semantize(graph);
+                componentsProperties.Add(this, SemanticObserve(graph));
 
-                // foreach component, print all variables
+                // foreach component in the GameObject, semantize the component and his properties
                 foreach (Component component in componentsToSemantize)
-                {
-                    IUriNode componentNode = graph.CreateUriNode("sven:" + component.GetUUID());
-                    graph.Assert(new Triple(gameObjectNode, graph.CreateUriNode("sven:component"), componentNode));
+                    componentsProperties.Add(component, component.SemanticObserve(graph));
 
-                    List<Property> properties = (List<Property>)typeof(SemantizationExtensions)
-                                                        .GetMethod("GetProperties", new[] { component.GetType() })
-                                                        .Invoke(null, new object[] { component });
-                    componentsProperties.Add(component, properties);
-                    foreach (Property property in properties)
-                    {
-                        property.InitializeSemantization(graph, componentNode);
-                        //Debug.Log(Environment.Resource() + " " + this.Resource() + " " + component.Resource() + " " + property.Resource() + " " + property.Name + " " + property.LastValue);
-
-                        // Debug.Log(Environment.Current.GetUUID() + " " + this.GetUUID() + " " + component.GetUUID() + " " + property.GetUUID() + " " + property.Name + " " + property.LastValue));
-
-                    }
-                }
-
-                //graphManager.Merge(graph);
-                graphManager.Push();
             }
             catch (System.Exception e)
             {
@@ -103,26 +61,92 @@ namespace SVEN
             }
         }
 
-        [Button("Print Graph")]
-        private void PrintGraph()
+        /// <summary>
+        /// Adds a component to the semantization process on the fly. WARNING: When adding components, it will be semantized until his end of life.
+        /// </summary>
+        /// <param name="component">The component to add to the semantization process.</param>
+        public void AddSemanticComponent(Component component)
         {
-            GraphManager.Get("sven").Push();
+            if (componentsToSemantize.Contains(component))
+            {
+                Debug.LogWarning("Component " + component.GetType().Name + " is already being semantized.");
+                return;
+            }
+
+            componentsToSemantize.Add(component);
+            List<Property> properties = component.SemanticObserve(graph);
+            componentsProperties.Add(component, properties);
         }
 
-        public IUriNode Semantize(IGraph graph)
+        /// <summary>
+        /// Overrides the default SemanticObserve method to focus on the GameObject semantization.
+        /// </summary>
+        /// <param name="graph">The graph output to semantize the GameObject.</param>
+        public List<Property> SemanticObserve(IGraph graph)
         {
+            List<Property> properties = new()
+            {
+                new Property("name", () => gameObject.name),
+                new Property("active", () => gameObject.activeSelf),
+                new Property("tag", () => gameObject.tag),
+                new Property("layer", () => LayerMask.LayerToName(gameObject.layer))
+            };
+
             IUriNode gameObjectNode = graph.CreateUriNode("sven:" + this.GetUUID());
 
             graph.Assert(new Triple(gameObjectNode, graph.CreateUriNode("rdf:type"), graph.CreateUriNode("sven:GameObject")));
-            graph.Assert(new Triple(gameObjectNode, graph.CreateUriNode("rdfs:label"), graph.CreateLiteralNode(this.name)));
-            foreach (Property property in this.gameObjectProperties)
+            graph.Assert(new Triple(gameObjectNode, graph.CreateUriNode("rdfs:label"), graph.CreateLiteralNode(name)));
+            foreach (Property property in properties)
             {
-                IUriNode propertyNode = graph.CreateUriNode("sven:" + property.GetUUID());
-                graph.Assert(new Triple(gameObjectNode, graph.CreateUriNode("sven:" + property.Name), propertyNode));
-
-                property.InitializeSemantization(graph, gameObjectNode);
+                property.SemanticObserve(graph, this);
+                if (Settings.Debug)
+                    Debug.Log("Observing property (" + name + ")." + GetType().Name + "." + property.Name);
             }
-            return gameObjectNode;
+
+
+            return properties;
+        }
+
+        #region Properties Observers
+
+        /// <summary>
+        /// Checks if the observed properties have changed and invokes the callbacks if they have.
+        /// </summary>
+        private void CheckForChanges()
+        {
+            List<Component> toRemove = new();
+            foreach (KeyValuePair<Component, List<Property>> componentProperties in componentsProperties)
+            {
+                try
+                {
+                    foreach (Property property in componentProperties.Value)
+                        property.CheckForChanges();
+                }
+                catch
+                {
+                    Debug.LogWarning("Component " + componentProperties.Key.GetType().Name + " has been destroyed. Removing from semantization.");
+                    toRemove.Add(componentProperties.Key);
+                }
+            }
+
+            foreach (Component component in toRemove)
+                componentsProperties.Remove(component);
+        }
+
+        /// <summary>
+        /// OnEnable is called when the object becomes enabled and active.
+        /// </summary>
+        private void OnEnable()
+        {
+            CheckForChanges();
+        }
+
+        /// <summary>
+        /// OnDisable is called when the behaviour becomes disabled or inactive.
+        /// </summary>
+        private void OnDisable()
+        {
+            CheckForChanges();
         }
 
         /// <summary>
@@ -130,11 +154,7 @@ namespace SVEN
         /// </summary>
         private void Update()
         {
-            foreach (Property property in gameObjectProperties)
-                property.CheckForChanges();
-            foreach (KeyValuePair<Component, List<Property>> componentProperties in componentsProperties)
-                foreach (Property property in componentProperties.Value)
-                    property.CheckForChanges();
+            CheckForChanges();
         }
 
         /// <summary>
@@ -142,11 +162,6 @@ namespace SVEN
         /// </summary>
         private void OnDestroy()
         {
-            this.DestroyUUID();
-
-            foreach (Property property in gameObjectProperties)
-                property.DestroyUUID();
-
             foreach (KeyValuePair<Component, List<Property>> componentProperties in componentsProperties)
             {
                 componentProperties.Key.DestroyUUID();
@@ -155,7 +170,9 @@ namespace SVEN
                     property.DestroyUUID();
             }
 
-            //todo : semantize the end of life of the gameObject
+            // TODO : semantize the end of life of the gameObject
         }
+
+        #endregion
     }
 }

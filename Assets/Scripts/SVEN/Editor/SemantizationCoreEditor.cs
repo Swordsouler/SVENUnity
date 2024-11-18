@@ -5,7 +5,7 @@ using NaughtyAttributes.Editor;
 using System.Reflection;
 using SVEN.Content;
 
-namespace SVEN
+namespace SVEN.Editor
 {
     /// <summary>
     /// Custom editor for the SemantizationCore component.
@@ -36,6 +36,9 @@ namespace SVEN
                 // Get all components of the GameObject
                 Component[] allComponents = core.GetComponents<Component>();
 
+                // Disable GUI if the editor is in play mode
+                EditorGUI.BeginDisabledGroup(EditorApplication.isPlaying);
+
                 // Display checkboxes for each component
                 foreach (Component component in allComponents)
                 {
@@ -44,23 +47,31 @@ namespace SVEN
 
                     // Check if the component has the Semantize method
                     MethodInfo semantizeMethod = typeof(SemantizationExtensions).GetMethod("GetProperties", new[] { component.GetType() });
-                    if (semantizeMethod == null) continue;
+                    bool hasGetProperties = semantizeMethod != null;
 
                     // Check if the component is in the componentsToSemantize list
                     bool isSemantized = core.componentsToSemantize.Contains(component);
-                    // Display a checkbox for the component
-                    bool newIsSemantized = EditorGUILayout.Toggle(component.GetType().Name, isSemantized);
+
+                    // Display a checkbox for the component with "(ALL)" and a tooltip if it doesn't have GetProperties
+                    string label = component.GetType().Name + (hasGetProperties ? "" : " (ALL)");
+                    GUIContent content = new(label, "The component will be fully semantized, which may cause performance issues. To fix this, declare a GetProperties function for this component in SemantizationExtensions.");
+                    bool newIsSemantized = EditorGUILayout.Toggle(content, isSemantized);
 
                     // Update the componentsToSemantize list based on the checkbox state
                     if (newIsSemantized && !isSemantized)
                     {
                         core.componentsToSemantize.Add(component);
+                        core.componentsToSemantize.RemoveAll(c => c == null);
                     }
                     else if (!newIsSemantized && isSemantized)
                     {
                         core.componentsToSemantize.Remove(component);
+                        core.componentsToSemantize.RemoveAll(c => c == null);
                     }
                 }
+
+                // Re-enable GUI
+                EditorGUI.EndDisabledGroup();
             }
 
             // Apply changes
