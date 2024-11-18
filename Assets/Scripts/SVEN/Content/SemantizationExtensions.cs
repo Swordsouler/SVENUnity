@@ -131,6 +131,16 @@ namespace SVEN.Content
             return observers;
         }
 
+        /*public static List<Property> GetProperties(this MeshRenderer meshRenderer)
+        {
+            List<Property> observers = new()
+            {
+                new Property("isVisible", () => meshRenderer.isVisible),
+            };
+
+            return observers;
+        }*/
+
         /// <summary>
         /// Get properties of the Atom component.
         /// </summary>
@@ -211,7 +221,9 @@ namespace SVEN.Content
         /// </summary>
         private static Dictionary<Type, List<string>> SupportedNestedTypes { get; } = new()
         {
+            { typeof(Matrix4x4), new List<string> { "m00", "m01", "m02", "m03", "m10", "m11", "m12", "m13", "m20", "m21", "m22", "m23", "m30", "m31", "m32", "m33" } },
             { typeof(Quaternion), new List<string> { "x", "y", "z", "w" } },
+            { typeof(Vector4), new List<string> { "x", "y", "z", "w" } },
             { typeof(Vector3), new List<string> { "x", "y", "z" } },
             { typeof(Vector2), new List<string> { "x", "y" } },
             { typeof(Color), new List<string> { "r", "g", "b", "a" } },

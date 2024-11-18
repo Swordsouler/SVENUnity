@@ -66,7 +66,7 @@ namespace SVEN.Content
             observedProperty = new ObservedProperty
             {
                 Getter = getter,
-                LastValue = getter()
+                LastValue = null
             };
         }
 
