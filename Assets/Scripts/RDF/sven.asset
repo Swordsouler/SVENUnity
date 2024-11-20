@@ -1,0 +1,31 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5753dbc7f17b9fc4199c636b8bb36de4, type: 3}
+  m_Name: sven
+  m_EditorClassIdentifier: 
+  <Name>k__BackingField: sven
+  <BaseUri>k__BackingField: http://www.sven.fr#
+  <Endpoint>k__BackingField: http://localhost:9999/blazegraph/namespace/default/sparql
+  <Namespaces>k__BackingField:
+  - <Name>k__BackingField: rdf
+    <Uri>k__BackingField: http://www.w3.org/1999/02/22-rdf-syntax-ns#
+  - <Name>k__BackingField: rdfs
+    <Uri>k__BackingField: http://www.w3.org/2000/01/rdf-schema#
+  - <Name>k__BackingField: owl
+    <Uri>k__BackingField: http://www.w3.org/2002/07/owl#
+  - <Name>k__BackingField: xsd
+    <Uri>k__BackingField: http://www.w3.org/2001/XMLSchema#
+  - <Name>k__BackingField: sven
+    <Uri>k__BackingField: http://www.sven.fr/ontology#
+  - <Name>k__BackingField: time
+    <Uri>k__BackingField: http://www.w3.org/2006/time#
+  <InstantPerSecond>k__BackingField: 30

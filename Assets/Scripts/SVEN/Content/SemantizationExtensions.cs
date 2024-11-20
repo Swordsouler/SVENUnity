@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Reflection;
+using RDF;
 using UnityEngine;
 using VDS.RDF;
 using VDS.RDF.Parsing;
@@ -159,15 +160,18 @@ namespace SVEN.Content
         /// Semantize the component and observe his properties.
         /// </summary>
         /// <param name="component">Component to semantize.</param>
-        /// <param name="graph">Graph output to semantize the component.</param>
+        /// <param name="graphBuffer">Graph buffer to semantize the component.</param>
         /// <returns>List of properties that have been semantized.</returns>
-        public static List<Property> SemanticObserve(this Component component, IGraph graph)
+        public static List<Property> SemanticObserve(this Component component, GraphBuffer graphBuffer)
         {
             if (!component.gameObject.TryGetComponent(out SemantizationCore semantizationCore))
             {
                 Debug.LogError("SemantizationCore not found in the GameObject. Aborting semantization of the component " + component.GetType().Name + " in the GameObject " + component.gameObject.name);
                 throw new NullReferenceException();
             }
+
+            IGraph graph = graphBuffer.Graph;
+
             IUriNode gameObjectNode = graph.CreateUriNode("sven:" + semantizationCore.GetUUID());
             IUriNode componentNode = graph.CreateUriNode("sven:" + component.GetUUID());
 
@@ -177,7 +181,7 @@ namespace SVEN.Content
             List<Property> properties = component.GetProperties();
             foreach (Property property in properties)
             {
-                property.SemanticObserve(graph, component);
+                property.SemanticObserve(graphBuffer, component);
                 if (Settings.Debug)
                     Debug.Log("Observing property (" + semantizationCore.name + ")." + component.GetType().Name + "." + property.Name);
             }

@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using OWLTime;
+using RDF;
 using UnityEngine;
 using VDS.RDF;
 using VDS.RDF.Parsing;
@@ -12,9 +14,9 @@ namespace SVEN.Content
     public class Property : Resource
     {
         /// <summary>
-        /// The graph to semantize the property.
+        /// The graph buffer to semantize the property.
         /// </summary>
-        private IGraph graph;
+        private GraphBuffer graphBuffer;
 
         /// <summary>
         /// The parent component of the property.
@@ -24,7 +26,7 @@ namespace SVEN.Content
         /// <summary>
         /// The parent node of the property.
         /// </summary>
-        private IUriNode ParentNode => graph.CreateUriNode("sven:" + parentComponent.GetUUID());
+        private IUriNode ParentNode => graphBuffer.Graph.CreateUriNode("sven:" + parentComponent.GetUUID());
 
         /// <summary>
         /// The name of the property to observe.
@@ -35,6 +37,10 @@ namespace SVEN.Content
         /// Gets the name of the property to observe.
         /// </summary>
         public string Name => name;
+
+        private Instant lastSemantizedInstant;
+
+        private Interval interval;
 
         private class ObservedProperty
         {
@@ -54,6 +60,9 @@ namespace SVEN.Content
             public object LastValue;
         }
 
+        /// <summary>
+        /// The property to observe.
+        /// </summary>
         private readonly ObservedProperty observedProperty;
 
         /// <summary>
@@ -73,21 +82,21 @@ namespace SVEN.Content
         /// <summary>
         /// Initializes the semantization of the property.
         /// </summary>
-        /// <param name="graph">The graph output to semantize the property.</param>
+        /// <param name="graphBuffer">The graph buffer to semantize the property.</param>
         /// <param name="parentNode">The parent node of the property.</param>
-        public void SemanticObserve(IGraph graph, Component parentComponent)
+        public void SemanticObserve(GraphBuffer graphBuffer, Component parentComponent)
         {
-            if (graph == null || parentComponent == null)
+            if (graphBuffer == null || parentComponent == null)
             {
-                Debug.LogWarning("You are trying to initialize the semantization of a property without a graph node or parent component.");
+                Debug.LogWarning("You are trying to initialize the semantization of a property without a graph buffer or parent component.");
                 return;
             }
-            if (this.graph != null)
+            if (this.graphBuffer != null)
             {
                 Debug.LogWarning("You are trying to initialize the semantization of a property that has already been initialized.");
                 return;
             }
-            this.graph = graph;
+            this.graphBuffer = graphBuffer;
             this.parentComponent = parentComponent;
         }
 
@@ -99,19 +108,33 @@ namespace SVEN.Content
             object currentValue = observedProperty.Getter();
             if (!Equals(currentValue, observedProperty.LastValue))
             {
+                // limit the semantization with the graph instantPerSecond
+                Instant currentInstant = graphBuffer.CurrentInstant;
+                if (lastSemantizedInstant != null && currentInstant == lastSemantizedInstant) return;
+
+                lastSemantizedInstant = currentInstant;
                 observedProperty.LastValue = currentValue;
-                if (graph != null) Semantize();
+                if (graphBuffer != null) Semantize(currentInstant);
             }
         }
 
         /// <summary>
         /// Semantizes the property.
         /// </summary>
-        public void Semantize()
+        public void Semantize(Instant currentInstant)
         {
+            if (graphBuffer == null)
+            {
+                Debug.LogWarning("You are trying to semantize a property without a graph buffer.");
+                return;
+            }
+
             if (Settings.Debug)
                 Debug.Log("Semantizing property (" + parentComponent.name + ")." + parentComponent.GetType().Name + "." + Name + " with value " + observedProperty.LastValue);
             DestroyUUID();
+
+            IGraph graph = graphBuffer.Graph;
+
             IUriNode propertyNode = graph.CreateUriNode("sven:" + GetUUID());
 
             graph.Assert(new Triple(ParentNode, graph.CreateUriNode("sven:" + name), propertyNode));
@@ -124,6 +147,13 @@ namespace SVEN.Content
                 if (XmlSchemaDataType == XmlSpecsHelper.XmlSchemaDataTypeBoolean) stringValue = stringValue.ToLower();
                 graph.Assert(new Triple(propertyNode, graph.CreateUriNode("sven:" + value.Key), graph.CreateLiteralNode(stringValue, new Uri(XmlSchemaDataType))));
             }
+
+            Interval oldInterval = interval;
+            interval = new Interval("sven:", GetUUID());
+            oldInterval?.End(currentInstant, interval);
+            interval.Start(currentInstant, oldInterval);
+            oldInterval?.Semantize(graph);
+            interval.Semantize(graph);
         }
     }
 }

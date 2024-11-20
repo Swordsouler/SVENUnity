@@ -23,16 +23,21 @@ namespace SVEN
         /// </summary>
         private readonly Dictionary<Component, List<Property>> componentsProperties = new();
 
+        //[SerializeField]
+        //private GraphBuffer graphBuffer;
+
         /// <summary>
-        /// The graph output, where the GameObject is semantized.
+        /// The graph buffer to semantize the GameObject.
         /// </summary>
-        private IGraph graph;
+        [SerializeField]
+        private GraphBuffer graphBuffer;
 
         /// <summary>
         /// Start is called before the first frame update.
         /// </summary>
         private void Start()
         {
+            if (graphBuffer == null) graphBuffer = GraphManager.Get("sven");
             componentsToSemantize.RemoveAll(component => component == null);
             Initialize();
         }
@@ -44,15 +49,12 @@ namespace SVEN
         {
             try
             {
-                GraphManager graphManager = GraphManager.Get("sven");
-                graph = graphManager.graph; //NewGraph();
-
                 // Semantize the GameObject attached to his properties and components
-                componentsProperties.Add(this, SemanticObserve(graph));
+                componentsProperties.Add(this, SemanticObserve(graphBuffer));
 
                 // foreach component in the GameObject, semantize the component and his properties
                 foreach (Component component in componentsToSemantize)
-                    componentsProperties.Add(component, component.SemanticObserve(graph));
+                    componentsProperties.Add(component, component.SemanticObserve(graphBuffer));
 
             }
             catch (System.Exception e)
@@ -74,15 +76,15 @@ namespace SVEN
             }
 
             componentsToSemantize.Add(component);
-            List<Property> properties = component.SemanticObserve(graph);
+            List<Property> properties = component.SemanticObserve(graphBuffer);
             componentsProperties.Add(component, properties);
         }
 
         /// <summary>
         /// Overrides the default SemanticObserve method to focus on the GameObject semantization.
         /// </summary>
-        /// <param name="graph">The graph output to semantize the GameObject.</param>
-        public List<Property> SemanticObserve(IGraph graph)
+        /// <param name="graphBuffer">The graph buffer to semantize the GameObject.</param>
+        public List<Property> SemanticObserve(GraphBuffer graphBuffer)
         {
             List<Property> properties = new()
             {
@@ -92,13 +94,15 @@ namespace SVEN
                 new Property("layer", () => LayerMask.LayerToName(gameObject.layer))
             };
 
+            IGraph graph = graphBuffer.Graph;
+
             IUriNode gameObjectNode = graph.CreateUriNode("sven:" + this.GetUUID());
 
             graph.Assert(new Triple(gameObjectNode, graph.CreateUriNode("rdf:type"), graph.CreateUriNode("sven:GameObject")));
             graph.Assert(new Triple(gameObjectNode, graph.CreateUriNode("rdfs:label"), graph.CreateLiteralNode(name)));
             foreach (Property property in properties)
             {
-                property.SemanticObserve(graph, this);
+                property.SemanticObserve(graphBuffer, this);
                 if (Settings.Debug)
                     Debug.Log("Observing property (" + name + ")." + GetType().Name + "." + property.Name);
             }
