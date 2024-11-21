@@ -116,6 +116,21 @@ namespace SVEN.Content
         }
 
         /// <summary>
+        /// Get properties of the Renderer component.
+        /// </summary>
+        /// <param name="renderer">Renderer component to get the properties.</param>
+        /// <returns>List of properties that can be observed and semantized. (position, rotation, scale)</returns>
+        public static List<Property> GetProperties(this Renderer renderer)
+        {
+            List<Property> observers = new()
+            {
+                new Property("color", () => renderer.material.color),
+            };
+
+            return observers;
+        }
+
+        /// <summary>
         /// Get properties of the Transform component.
         /// </summary>
         /// <param name="transform">Transform component to get the properties.</param>
