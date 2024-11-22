@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using OWLTime;
 using RDF;
 using SVEN.Content;
 using UnityEngine;
@@ -107,6 +108,9 @@ namespace SVEN
                     Debug.Log("Observing property (" + name + ")." + GetType().Name + "." + property.Name);
             }
 
+            Interval interval = this.GetInterval();
+            interval.Start(graphBuffer.CurrentInstant);
+            interval.Semantize(graph);
 
             return properties;
         }
@@ -134,7 +138,14 @@ namespace SVEN
             }
 
             foreach (Component component in toRemove)
+            {
+                Interval interval = component.GetInterval();
+                interval.End(graphBuffer.CurrentInstant);
+                interval.Semantize(graphBuffer.Graph);
+                component.DestroyUUID();
+
                 componentsProperties.Remove(component);
+            }
         }
 
         /// <summary>
@@ -168,10 +179,15 @@ namespace SVEN
         {
             foreach (KeyValuePair<Component, List<Property>> componentProperties in componentsProperties)
             {
+                Interval interval = componentProperties.Key.GetInterval();
+                interval.End(graphBuffer.CurrentInstant);
+                interval.Semantize(graphBuffer.Graph);
                 componentProperties.Key.DestroyUUID();
 
                 foreach (Property property in componentProperties.Value)
-                    property.DestroyUUID();
+                {
+                    property.Destroy();
+                }
             }
 
             // TODO : semantize the end of life of the gameObject

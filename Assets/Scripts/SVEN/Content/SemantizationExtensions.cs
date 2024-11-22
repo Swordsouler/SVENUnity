@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Reflection;
+using OWLTime;
 using RDF;
 using UnityEngine;
 using VDS.RDF;
@@ -19,7 +20,7 @@ namespace SVEN.Content
         /// Generates a unique identifier for the component.
         /// </summary>
         /// <returns>Unique identifier.</returns>
-        private static readonly Dictionary<Component, string> componentUUIDs = new();
+        private static readonly Dictionary<Component, (string, Interval)> componentUUIDs = new();
 
         /// <summary>
         /// Generates a unique identifier for the component.
@@ -27,7 +28,9 @@ namespace SVEN.Content
         /// <param name="component">Component to generate the identifier.</param>
         private static void GenerateUUID(this Component component)
         {
-            componentUUIDs[component] = System.Guid.NewGuid().ToString();
+            string UUID = Guid.NewGuid().ToString();
+            Interval interval = new("sven:", UUID);
+            componentUUIDs[component] = (UUID, interval);
         }
 
         /// <summary>
@@ -50,12 +53,31 @@ namespace SVEN.Content
             try
             {
                 if (!componentUUIDs.ContainsKey(component)) component.GenerateUUID();
-                return componentUUIDs[component];
+                return componentUUIDs[component].Item1;
             }
             catch (KeyNotFoundException e)
             {
                 Debug.LogError(e);
                 return "";
+            }
+        }
+
+        /// <summary>
+        /// Gets the interval for the component.
+        /// </summary>
+        /// <param name="component">Component to get the interval.</param>
+        /// <returns>Interval.</returns>
+        public static Interval GetInterval(this Component component)
+        {
+            try
+            {
+                if (!componentUUIDs.ContainsKey(component)) component.GenerateUUID();
+                return componentUUIDs[component].Item2;
+            }
+            catch (KeyNotFoundException e)
+            {
+                Debug.LogError(e);
+                return new Interval();
             }
         }
 
@@ -200,6 +222,10 @@ namespace SVEN.Content
                 if (Settings.Debug)
                     Debug.Log("Observing property (" + semantizationCore.name + ")." + component.GetType().Name + "." + property.Name);
             }
+
+            Interval interval = component.GetInterval();
+            interval.Start(graphBuffer.CurrentInstant);
+            interval.Semantize(graph);
 
             return properties;
         }

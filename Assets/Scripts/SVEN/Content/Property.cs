@@ -155,5 +155,15 @@ namespace SVEN.Content
             oldInterval?.Semantize(graph);
             interval.Semantize(graph);
         }
+
+        public void Destroy()
+        {
+            IGraph graph = graphBuffer.Graph;
+            Interval oldInterval = interval;
+            interval = new Interval("sven:", GetUUID());
+            oldInterval?.End(graphBuffer.CurrentInstant, interval);
+            oldInterval?.Semantize(graph);
+            DestroyUUID();
+        }
     }
 }

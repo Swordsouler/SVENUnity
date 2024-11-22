@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics;
 using VDS.RDF;
 using VDS.RDF.Parsing;
 
@@ -109,7 +110,7 @@ namespace OWLTime
         /// <param name="previous">The temporal entity that occurs before this one.</param>
         public void Start(Instant instant, TemporalEntity previous = null)
         {
-            hasBeginning = new Instant();
+            hasBeginning = instant;
             if (previous != null) after = previous;
         }
 
@@ -119,7 +120,7 @@ namespace OWLTime
         /// <param name="next">The temporal entity that occurs after this one.</param>
         public void End(Instant instant, TemporalEntity next = null)
         {
-            hasEnd = new Instant();
+            hasEnd = instant;
             if (next != null) before = next;
             hasXSDDuration = new XSDDuration(hasBeginning.inXSDDateTime, hasEnd.inXSDDateTime);
         }
