@@ -132,7 +132,7 @@ namespace SVEN
                 }
                 catch
                 {
-                    Debug.LogWarning("Component " + componentProperties.Key.GetType().Name + " has been destroyed. Removing from semantization.");
+                    if (Settings.Debug) Debug.LogWarning("Component " + componentProperties.Key.GetType().Name + " has been destroyed. Removing from semantization.");
                     toRemove.Add(componentProperties.Key);
                 }
             }
