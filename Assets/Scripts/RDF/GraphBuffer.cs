@@ -7,6 +7,8 @@ using UnityEngine;
 using VDS.RDF;
 using VDS.RDF.Writing;
 using System.Net.Http;
+using VDS.RDF.Parsing;
+
 
 #if UNITY_EDITOR
 using UnityEditor;
@@ -123,7 +125,7 @@ namespace RDF
             }
 
             StringBuilder sb = new();
-            CompressingTurtleWriter writer = new();
+            CompressingTurtleWriter writer = new(TurtleSyntax.Rdf11Star);
             writer.Save(graph, new System.IO.StringWriter(sb));
 
             Debug.Log(sb.ToString());
@@ -142,7 +144,7 @@ namespace RDF
             }
 
             StringBuilder sb = new();
-            CompressingTurtleWriter writer = new();
+            CompressingTurtleWriter writer = new(TurtleSyntax.Rdf11Star);
             writer.Save(graph, new System.IO.StringWriter(sb));
 
 #if UNITY_EDITOR
@@ -174,7 +176,7 @@ namespace RDF
                 return;
             }
 
-            var writer = new CompressingTurtleWriter();
+            var writer = new CompressingTurtleWriter(TurtleSyntax.Rdf11Star);
             var sb = new StringBuilder();
             writer.Save(graph, new System.IO.StringWriter(sb));
 

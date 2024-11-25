@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using OWLTime;
 using RDF;
@@ -138,6 +139,22 @@ namespace SVEN.Content
         }
 
         /// <summary>
+        /// Get properties of the MeshFilter component.
+        /// </summary>
+        /// <param name="meshFilter">MeshFilter component to get the properties.</param>
+        /// <returns>List of properties that can be observed and semantized. (position, rotation, scale)</returns>
+        public static List<Property> GetProperties(this MeshFilter meshFilter)
+        {
+            List<Property> observers = new()
+            {
+                new Property("triangles", () => string.Join(",", meshFilter.mesh.triangles.Select(t => t.ToString()))),
+                new Property("vertices", () => string.Join(",", meshFilter.mesh.vertices.Select(v => v.ToString()))),
+            };
+
+            return observers;
+        }
+
+        /// <summary>
         /// Get properties of the Renderer component.
         /// </summary>
         /// <param name="renderer">Renderer component to get the properties.</param>
@@ -146,6 +163,8 @@ namespace SVEN.Content
         {
             List<Property> observers = new()
             {
+                new Property("enabled", () => renderer.enabled),
+                new Property("isVisible", () => renderer.isVisible),
                 new Property("color", () => renderer.material.color),
             };
 
@@ -161,9 +180,9 @@ namespace SVEN.Content
         {
             List<Property> observers = new()
             {
-                new Property("position", () => transform.position),
-                new Property("rotation", () => transform.rotation),
-                new Property("scale", () => transform.localScale),
+                new Property("position", () => transform.position, "virtualPosition"),
+                new Property("rotation", () => transform.rotation, "virtualRotation"),
+                new Property("scale", () => transform.lossyScale, "virtualSize"),
             };
 
             return observers;

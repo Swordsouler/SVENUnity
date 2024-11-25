@@ -24,9 +24,24 @@ namespace SVEN.Content
         private Component parentComponent;
 
         /// <summary>
-        /// The parent node of the property.
+        /// The semantization core to semantize the property.
         /// </summary>
-        private IUriNode ParentNode => graphBuffer.Graph.CreateUriNode("sven:" + parentComponent.GetUUID());
+        private SemantizationCore parentObject;
+
+        /// <summary>
+        /// The parent object node of the property.
+        /// </summary>
+        private IUriNode ParentObjectNode => graphBuffer.Graph.CreateUriNode("sven:" + parentObject.GetUUID());
+
+        /// <summary>
+        /// The parent component node of the property.
+        /// </summary>
+        private IUriNode ParentComponentNode => graphBuffer.Graph.CreateUriNode("sven:" + parentComponent.GetUUID());
+
+        /// <summary>
+        /// The simplified name of the property to observe.
+        /// </summary>
+        private readonly string simplifiedName;
 
         /// <summary>
         /// The name of the property to observe.
@@ -38,10 +53,19 @@ namespace SVEN.Content
         /// </summary>
         public string Name => name;
 
+        /// <summary>
+        /// The last instant the property was semantized.
+        /// </summary>
         private Instant lastSemantizedInstant;
 
+        /// <summary>
+        /// The interval of the property.
+        /// </summary>
         private Interval interval;
 
+        /// <summary>
+        /// Represents a property to observe.
+        /// </summary>
         private class ObservedProperty
         {
             /// <summary>
@@ -69,9 +93,10 @@ namespace SVEN.Content
         /// Initializes a new instance of the <see cref="PropertyObserver"/> class.
         /// </summary>
         /// <param name="getter">A function that returns the value of the property to observe.</param>
-        public Property(string name, Func<object> getter)
+        public Property(string name, Func<object> getter, string simplifiedName = "")
         {
             this.name = name;
+            this.simplifiedName = simplifiedName;
             observedProperty = new ObservedProperty
             {
                 Getter = getter,
@@ -98,6 +123,7 @@ namespace SVEN.Content
             }
             this.graphBuffer = graphBuffer;
             this.parentComponent = parentComponent;
+            parentObject = parentComponent.GetComponent<SemantizationCore>();
         }
 
         /// <summary>
@@ -137,16 +163,8 @@ namespace SVEN.Content
 
             IUriNode propertyNode = graph.CreateUriNode("sven:" + GetUUID());
 
-            graph.Assert(new Triple(ParentNode, graph.CreateUriNode("sven:" + name), propertyNode));
+            graph.Assert(new Triple(ParentComponentNode, graph.CreateUriNode("sven:" + name), propertyNode));
             graph.Assert(new Triple(propertyNode, graph.CreateUriNode("rdf:type"), graph.CreateUriNode("sven:Property")));
-            Dictionary<string, object> values = observedProperty.LastValue.GetSemantizableValues();
-            foreach (KeyValuePair<string, object> value in values)
-            {
-                string stringValue = value.Value.ToString();
-                string XmlSchemaDataType = value.Value.GetXmlSchemaTypes();
-                if (XmlSchemaDataType == XmlSpecsHelper.XmlSchemaDataTypeBoolean) stringValue = stringValue.ToLower();
-                graph.Assert(new Triple(propertyNode, graph.CreateUriNode("sven:" + value.Key), graph.CreateLiteralNode(stringValue, new Uri(XmlSchemaDataType))));
-            }
 
             Interval oldInterval = interval;
             interval = new Interval();
@@ -156,6 +174,24 @@ namespace SVEN.Content
             interval.Start(currentInstant, oldInterval);
             IUriNode intervalNode = interval.Semantize(graph);
             graph.Assert(new Triple(propertyNode, graph.CreateUriNode("time:hasTemporalExtent"), intervalNode));
+
+            Dictionary<string, object> values = observedProperty.LastValue.GetSemantizableValues();
+            foreach (KeyValuePair<string, object> value in values)
+            {
+                string stringValue = value.Value.ToString();
+                string XmlSchemaDataType = value.Value.GetXmlSchemaTypes();
+                if (XmlSchemaDataType == XmlSpecsHelper.XmlSchemaDataTypeBoolean) stringValue = stringValue.ToLower();
+                ILiteralNode literalNode = graph.CreateLiteralNode(stringValue, new Uri(XmlSchemaDataType));
+                graph.Assert(new Triple(propertyNode, graph.CreateUriNode("sven:" + value.Key), literalNode));
+
+                if (simplifiedName != "")
+                {
+                    string simplifiedType = value.Key == "value" ? "" : value.Key.ToUpper();
+                    Triple triple = new(ParentComponentNode, graph.CreateUriNode("sven:" + simplifiedName + simplifiedType), literalNode);
+                    graph.Assert(triple);
+                    graph.Assert(new Triple(graph.CreateTripleNode(triple), graph.CreateUriNode("time:hasTemporalExtent"), intervalNode));
+                }
+            }
         }
 
         public void Destroy()

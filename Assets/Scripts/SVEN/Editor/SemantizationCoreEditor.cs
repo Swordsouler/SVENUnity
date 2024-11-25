@@ -52,10 +52,17 @@ namespace SVEN.Editor
                     // Check if the component is in the componentsToSemantize list
                     bool isSemantized = core.componentsToSemantize.Contains(component);
 
+                    // Create a GUIStyle for the label
+                    GUIStyle labelStyle = new GUIStyle(EditorStyles.label);
+                    if (!hasGetProperties)
+                    {
+                        labelStyle.normal.textColor = Color.yellow;
+                    }
+
                     // Display a checkbox for the component with "(ALL)" and a tooltip if it doesn't have GetProperties
                     string label = component.GetType().Name + (hasGetProperties ? "" : " (ALL)");
                     GUIContent content = new(label, "The component will be fully semantized, which may cause performance issues. To fix this, declare a GetProperties function for this component in SemantizationExtensions.");
-                    bool newIsSemantized = EditorGUILayout.Toggle(content, isSemantized);
+                    bool newIsSemantized = EditorGUILayout.ToggleLeft(content, isSemantized, labelStyle);
 
                     // Update the componentsToSemantize list based on the checkbox state
                     if (newIsSemantized && !isSemantized)
