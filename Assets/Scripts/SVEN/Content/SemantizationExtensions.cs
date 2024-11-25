@@ -29,7 +29,7 @@ namespace SVEN.Content
         private static void GenerateUUID(this Component component)
         {
             string UUID = Guid.NewGuid().ToString();
-            Interval interval = new("sven:", UUID);
+            Interval interval = new();
             componentUUIDs[component] = (UUID, interval);
         }
 
@@ -225,7 +225,8 @@ namespace SVEN.Content
 
             Interval interval = component.GetInterval();
             interval.Start(graphBuffer.CurrentInstant);
-            interval.Semantize(graph);
+            IUriNode intervalNode = interval.Semantize(graph);
+            graph.Assert(new Triple(componentNode, graph.CreateUriNode("time:hasTemporalExtent"), intervalNode));
 
             return properties;
         }

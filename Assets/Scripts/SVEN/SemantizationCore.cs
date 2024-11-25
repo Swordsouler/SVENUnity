@@ -110,7 +110,8 @@ namespace SVEN
 
             Interval interval = this.GetInterval();
             interval.Start(graphBuffer.CurrentInstant);
-            interval.Semantize(graph);
+            IUriNode intervalNode = interval.Semantize(graph);
+            graph.Assert(new Triple(gameObjectNode, graph.CreateUriNode("time:hasTemporalExtent"), intervalNode));
 
             return properties;
         }

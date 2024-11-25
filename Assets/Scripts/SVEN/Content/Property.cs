@@ -149,11 +149,13 @@ namespace SVEN.Content
             }
 
             Interval oldInterval = interval;
-            interval = new Interval("sven:", GetUUID());
+            interval = new Interval();
             oldInterval?.End(currentInstant, interval);
-            interval.Start(currentInstant, oldInterval);
             oldInterval?.Semantize(graph);
-            interval.Semantize(graph);
+
+            interval.Start(currentInstant, oldInterval);
+            IUriNode intervalNode = interval.Semantize(graph);
+            graph.Assert(new Triple(propertyNode, graph.CreateUriNode("time:hasTemporalExtent"), intervalNode));
         }
 
         public void Destroy()
