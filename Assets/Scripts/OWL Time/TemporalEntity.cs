@@ -1,7 +1,6 @@
 using System;
-using System.Diagnostics;
+using System.Collections.Generic;
 using VDS.RDF;
-using VDS.RDF.Parsing;
 
 namespace OWLTime
 {
@@ -11,6 +10,11 @@ namespace OWLTime
     public class TemporalEntity
     {
         /// <summary>
+        /// Instantiated intervals.
+        /// </summary>
+        protected static readonly List<Interval> intervals = new();
+
+        /// <summary>
         /// The prefix of the temporal entity.
         /// </summary>
         private readonly string prefix = "time:";
@@ -18,6 +22,16 @@ namespace OWLTime
         public string GetUUID()
         {
             return UUID;
+        }
+
+        /// <summary>
+        /// The URI of the temporal entity.
+        /// </summary>
+        /// <param name="graph">The graph to get the URI from.</param>
+        /// <returns>The URI of the temporal entity.</returns>
+        public IUriNode GetUriNode(IGraph graph)
+        {
+            return graph.CreateUriNode(prefix + UUID);
         }
 
         /// <summary>
@@ -94,7 +108,7 @@ namespace OWLTime
         /// <param name="graph">The graph to semantize the temporal entity.</param>
         public IUriNode Semantize(IGraph graph)
         {
-            IUriNode temporalEntityNode = graph.CreateUriNode(prefix + UUID);
+            IUriNode temporalEntityNode = GetUriNode(graph);
             graph.Assert(new Triple(temporalEntityNode, graph.CreateUriNode("rdf:type"), graph.CreateUriNode($"time:{GetType().Name}")));
             if (after != null) graph.Assert(new Triple(temporalEntityNode, graph.CreateUriNode("time:after"), graph.CreateUriNode($"time:{after}")));
             if (before != null) graph.Assert(new Triple(temporalEntityNode, graph.CreateUriNode("time:before"), graph.CreateUriNode($"time:{before}")));
@@ -123,6 +137,59 @@ namespace OWLTime
             hasEnd = instant;
             if (next != null) before = next;
             hasXSDDuration = new XSDDuration(hasBeginning.inXSDDateTime, hasEnd.inXSDDateTime);
+        }
+
+        /// <summary>
+        /// Compares two temporal entities.
+        /// </summary>
+        public static bool operator ==(TemporalEntity left, TemporalEntity right)
+        {
+            if (ReferenceEquals(left, right))
+            {
+                return true;
+            }
+
+            if (ReferenceEquals(left, null) || ReferenceEquals(right, null))
+            {
+                return false;
+            }
+
+            return left.UUID == right.UUID;
+        }
+
+        /// <summary>
+        /// Compares two temporal entities.
+        /// </summary>
+        public static bool operator !=(TemporalEntity left, TemporalEntity right)
+        {
+            return !(left == right);
+        }
+
+        /// <summary>
+        /// Compares two temporal entities.
+        /// </summary>
+        public override bool Equals(object obj)
+        {
+            if (ReferenceEquals(this, obj))
+            {
+                return true;
+            }
+
+            if (obj == null || GetType() != obj.GetType())
+            {
+                return false;
+            }
+
+            TemporalEntity other = (TemporalEntity)obj;
+            return UUID == other.UUID;
+        }
+
+        /// <summary>
+        /// Gets the hash code of the temporal entity.
+        /// </summary>
+        public override int GetHashCode()
+        {
+            return UUID.GetHashCode();
         }
     }
 }

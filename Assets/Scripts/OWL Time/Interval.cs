@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using VDS.RDF;
 
 namespace OWLTime
 {
@@ -8,12 +10,6 @@ namespace OWLTime
     /// </summary>
     public class Interval : TemporalEntity
     {
-        /// <summary>
-        /// The instant inside the interval.
-        /// </summary>
-        /// <returns></returns>
-        public List<Instant> inside = new();
-
         /// <summary>
         /// Initializes a new instance of the Interval class.
         /// </summary>
@@ -31,5 +27,39 @@ namespace OWLTime
         /// Initializes a new instance of the Interval class.
         /// </summary>
         public Interval(DateTime dateTime) : this() { }
+
+        /// <summary>
+        /// Starts the interval.
+        /// </summary>
+        /// <param name="previous">The interval that occurs before this one.</param>
+        public new void Start(Instant instant, TemporalEntity previous = null)
+        {
+            intervals.Add(this);
+            base.Start(instant, previous);
+        }
+
+        /// <summary>
+        /// Ends the interval.
+        /// </summary>
+        /// <param name="next">The interval that occurs after this one.</param>
+        public new void End(Instant instant, TemporalEntity next = null)
+        {
+            intervals.Remove(this);
+            base.End(instant, next);
+        }
+
+        /// <summary>
+        /// Semantizes the instant inside the interval.
+        /// </summary>
+        /// <param name="graph">The graph to semantize the interval.</param>
+        /// <param name="instant">The instant to semantize inside the interval.</param>
+        public static void SemantizeInside(IGraph graph, Instant instant)
+        {
+            IUriNode instantNode = instant.GetUriNode(graph);
+            foreach (Interval interval in intervals)
+            {
+                graph.Assert(new Triple(interval.GetUriNode(graph), graph.CreateUriNode("time:inside"), instantNode));
+            }
+        }
     }
 }

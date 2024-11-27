@@ -45,13 +45,15 @@ namespace OWLTime
         /// Semantizes the temporal entity in the graph.
         /// </summary>
         /// <param name="graph">The graph to semantize the temporal entity.</param>
-        public new void Semantize(IGraph graph)
+        public new IUriNode Semantize(IGraph graph)
         {
-            IUriNode temporalEntityNode = base.Semantize(graph);
-            if (inXSDDateTime != null) graph.Assert(new Triple(temporalEntityNode, graph.CreateUriNode("time:inXSDDateTime"), inXSDDateTime.ToLiteralNode(graph)));
+            IUriNode instantNode = base.Semantize(graph);
+            Interval.SemantizeInside(graph, this);
+            if (inXSDDateTime != null) graph.Assert(new Triple(instantNode, graph.CreateUriNode("time:inXSDDateTime"), inXSDDateTime.ToLiteralNode(graph)));
             // seems to be useless in our case
             // if (inXSDDate != null) graph.Assert(new Triple(temporalEntityNode, graph.CreateUriNode("time:inXSDDate"), inXSDDate.ToLiteralNode(graph)));
             // if (inXSDTimeStamp != null) graph.Assert(new Triple(temporalEntityNode, graph.CreateUriNode("time:inXSDTimeStamp"), inXSDTimeStamp.ToLiteralNode(graph)));
+            return instantNode;
         }
     }
 }
