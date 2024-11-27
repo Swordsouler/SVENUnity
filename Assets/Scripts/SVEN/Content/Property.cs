@@ -186,6 +186,7 @@ namespace SVEN.Content
 
                 if (simplifiedName != "")
                 {
+                    // créez un nouvelle intervalle à chaque fois ?
                     string simplifiedType = value.Key == "value" ? "" : value.Key.ToUpper();
                     Triple triple = new(ParentComponentNode, graph.CreateUriNode("sven:" + simplifiedName + simplifiedType), literalNode);
                     graph.Assert(triple);
