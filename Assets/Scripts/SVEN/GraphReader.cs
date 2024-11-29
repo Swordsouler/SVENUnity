@@ -86,18 +86,21 @@ namespace SVEN
                 PREFIX time: <http://www.w3.org/2006/time#>
                 PREFIX sven: <http://www.sven.fr/ontology#>
 
-                SELECT ?object ?componentType ?component ?propertyName ?propertyType ?propertyIndex ?propertyValue
+                SELECT ?object ?componentType ?component ?property ?propertyName ?propertyType ?propertyIndex ?propertyValue
                 WHERE {{
                     ?object a sven:GameObject ;
                             sven:component ?component .
                     ?component a sven:Component ;
                                sven:exactType ?componentExactType ;
-                               ?propertyName ?property ;
-                               time:hasTemporalExtent ?interval .
-                    ?componentExactType sven:unityEngine ?componentType .
+                               ?realPropertyName ?property .
                     ?property ?propertyIndex ?propertyValue ;
-                              sven:exactType ?propertyExactType .
+                              sven:exactType ?propertyExactType ;
+                              time:hasTemporalExtent ?interval .
+
+                    ?componentExactType sven:unityEngine ?componentType .
                     ?propertyExactType sven:unityEngine ?propertyType .
+                    OPTIONAL {{ ?realPropertyName sven:unityEngine ?enginePropertyName }} .
+                    BIND(IF(BOUND(?enginePropertyName), ?enginePropertyName, ?realPropertyName) AS ?propertyName) .
                     ?interval time:inside <{instant.GetUriNode(graph)}> .
                 }}";
 
@@ -116,7 +119,11 @@ namespace SVEN
                 string componentUUID = result["component"].ToString().Split('#')[1];
                 string componentStringType = result["componentType"].AsValuedNode().AsString();
                 string propertyStringType = result["propertyType"].AsValuedNode().AsString();
-                string propertyName = result["propertyName"].ToString().Split('#')[1];
+                string propertyName = result["propertyName"].NodeType switch
+                {
+                    NodeType.Uri => result["propertyName"].ToString().Split('#')[1],
+                    _ => result["propertyName"].AsValuedNode().AsString()
+                };
                 string propertyIndex = result["propertyIndex"].ToString().Split('#')[1];
                 string propertyValue = result["propertyValue"].AsValuedNode().AsString();
 
@@ -143,7 +150,9 @@ namespace SVEN
                 }
 
                 if (!sceneContent[objectUUID][componentUUID].Item2[propertyName].Item2.ContainsKey(propertyIndex))
+                {
                     sceneContent[objectUUID][componentUUID].Item2[propertyName].Item2[propertyIndex] = propertyValue;
+                }
             }
             /*
                         foreach (var obj in sceneContent)
@@ -180,6 +189,15 @@ namespace SVEN
                         else
                         {
                             component = gameObject.AddComponent(comp.Value.Item1);
+                            if (component is MeshRenderer meshRenderer)
+                            {
+                                meshRenderer.material = new Material(Shader.Find("Standard"));
+                            }
+                            if (component is MeshFilter meshFilter)
+                            {
+                                // load from resources
+                                meshFilter.mesh = Resources.Load<Mesh>("Models/Pyramid");
+                            }
                         }
                     }
                     newSceneContent[obj.Key].Item2[comp.Key] = component;
@@ -196,81 +214,51 @@ namespace SVEN
                         {
                             List<string> indexes = SemantizationExtensions.SupportedNestedTypes[propertyType];
 
-                            if (propertyType == typeof(Vector3))
+                            if (indexes != null && indexes.Count > 0)
                             {
-                                Vector3 newInfo = new(
-                                    float.Parse(propertyValues["x"].ToString()),
-                                    float.Parse(propertyValues["y"].ToString()),
-                                    float.Parse(propertyValues["z"].ToString())
-                                );
-                                Debug.Log(component.GetType() + " " + propertyName + " " + newInfo);
-                                component.GetType().GetProperty(propertyName).SetValue(component, newInfo);
-                            }
-                            /*Type type = propertyType;
-                            object newInfo = Activator.CreateInstance(type);
-
-                            foreach (var prop in type.GetProperties())
-                            {
-                                if (propertyValues.ContainsKey(prop.Name))
+                                var constructorParams = new object[indexes.Count];
+                                for (int i = 0; i < indexes.Count; i++)
                                 {
-                                    var value = Convert.ChangeType(propertyValues[prop.Name], prop.PropertyType);
-                                    prop.SetValue(newInfo, value);
+                                    constructorParams[i] = float.Parse(propertyValues[indexes[i]].ToString());
+                                }
+
+                                var newInfo = Activator.CreateInstance(propertyType, constructorParams);
+                                //Debug.Log(component.GetType() + " " + propertyName + " " + newInfo + " " + string.Join(" ", indexes.Select(index => propertyValues[index].ToString())));
+                                if (propertyName.Contains("."))
+                                {
+                                    //nested property example material.color
+                                    string[] nestedProperties = propertyName.Split('.');
+                                    PropertyInfo property = component.GetType().GetProperty(nestedProperties[0]);
+                                    if (property != null)
+                                    {
+                                        object nestedComponent = property.GetValue(component);
+                                        PropertyInfo nestedProperty = nestedComponent.GetType().GetProperty(nestedProperties[1]);
+                                        nestedProperty?.SetValue(nestedComponent, newInfo);
+                                    }
+                                }
+                                else
+                                {
+                                    component.GetType().GetProperty(propertyName).SetValue(component, newInfo);
                                 }
                             }
-
-                            Debug.Log(component.GetType() + " " + propertyName + " " + newInfo);
-                            component.GetType().GetProperty(propertyName).SetValue(component, newInfo);*/
-                            // make an instance of the type and apply the values for each indexes from property1.Value.Item2[index]
-                            // for example if we instantiate a UnityEngine.Vector3, we will have to apply the values for x, y and z
-                            /*object propertyInstance = Activator.CreateInstance(propertyType);
-                            foreach (var index in indexes)
-                            {
-                                PropertyInfo property = propertyType.GetProperty(index);
-                                property?.SetValue(propertyInstance, propertyValues[index]);
-                            }
-                            Debug.Log($"{obj.Key} -> {comp.Key} -> {component.GetType().Name} -> {propertyName} -> {propertyInstance}");*/
                         }
                         catch (KeyNotFoundException)
                         {
-                            // apply the value directly to the property
-                            PropertyInfo property = propertyType.GetProperty(propertyName);
-                            property?.SetValue(component, property1.Value.Item2["value"]);
+                            if (propertyName == "material.shader")
+                            {
+                                Material material = (component as MeshRenderer).material;
+                                material.shader = Shader.Find(property1.Value.Item2["value"].ToString());
+                            }
+                            else
+                            {
+                                // apply the value directly to the property
+                                PropertyInfo property = propertyType.GetProperty(propertyName);
+                                property?.SetValue(component, property1.Value.Item2["value"]);
+                            }
+
                         }
                     }
                 }
-
-                // create components for each identified component
-                /*foreach (var component in obj.Value)
-                {
-                    if (components.ContainsKey(component.Key))
-                    {
-                        // don't delete this component if it exist already
-                        componentsToDelete.Remove(component.Key);
-                    }
-                    else
-                    {
-                        // instantiate component if it doesn't exist
-                        Type componentType = component.Value.Item1.Contains("UnityEngine") ?
-                                                    unityAssembly.GetType(component.Value.Item1) :
-                                                    Type.GetType(component.Value.Item1);
-                        Component componentInstance = gameObject.AddComponent(componentType);
-                        components[component.Key] = componentInstance;
-
-                        // make a link between the gameobject and the component
-                        gameObjectComponents[gameObjects[obj.Key]].Add(componentInstance);
-
-                        // set properties for each identified property
-                        foreach (var property in component.Value.Item2)
-                        {
-                            // set property value
-                            foreach (var value in property.Value)
-                            {
-                                // set property value
-                                //componentInstance.SetPropertyValue(property.Key, value.Key, value.Value);
-                            }
-                        }
-                    }
-                }*/
             }
 
             // compare the old scene content with the new one and delete components and objects that are not present anymore

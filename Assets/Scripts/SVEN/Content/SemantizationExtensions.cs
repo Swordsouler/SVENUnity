@@ -168,6 +168,7 @@ namespace SVEN.Content
                 new Property("enabled", () => renderer.enabled),
                 new Property("isVisible", () => renderer.isVisible),
                 new Property("color", () => renderer.material.color),
+                new Property("shader", () => renderer.material.shader.name),
             };
 
             return observers;
@@ -184,7 +185,7 @@ namespace SVEN.Content
             {
                 new Property("position", () => transform.position, "virtualPosition"),
                 new Property("rotation", () => transform.rotation, "virtualRotation"),
-                new Property("scale", () => transform.lossyScale, "virtualSize"),
+                new Property("scale", () => transform.localScale, "virtualSize"),
             };
 
             return observers;
