@@ -54,19 +54,19 @@ namespace RDF
         /// <summary>
         /// Base URI for the graph.
         /// </summary>
-        [SerializeField, DisableIf("IsStarted"), ShowIf("IsStarted"), HideIf("HasGraphConfig")]
+        [SerializeField, DisableIf("IsStarted"), HideIf("HasGraphConfig")]
         private string baseUri = "http://www.example.com#";
 
         /// <summary>
         /// Endpoint to send the RDF data.
         /// </summary>
-        [SerializeField, DisableIf("IsStarted"), ShowIf("IsStarted"), HideIf("HasGraphConfig")]
+        [SerializeField, DisableIf("IsStarted"), HideIf("HasGraphConfig")]
         private string endpoint = "http://localhost:9999/blazegraph/sparql";
 
         /// <summary>
         /// List of prefixes to add to the graph.
         /// </summary>
-        [SerializeField, DisableIf("IsStarted"), ShowIf("IsStarted"), HideIf("HasGraphConfig")]
+        [SerializeField, DisableIf("IsStarted"), HideIf("HasGraphConfig")]
         private List<Namespace> namespaces = new() {
             new Namespace { Name = "rdf", Uri = "http://www.w3.org/1999/02/22-rdf-syntax-ns#" },
             new Namespace { Name = "rdfs", Uri = "http://www.w3.org/2000/01/rdf-schema#" },
@@ -77,13 +77,13 @@ namespace RDF
         /// <summary>
         /// Number of instant created per second.
         /// </summary>
-        [SerializeField, DisableIf("IsStarted"), ShowIf("IsStarted"), HideIf("HasGraphConfig"), Range(0, 60)]
+        [SerializeField, DisableIf("IsStarted"), HideIf("HasGraphConfig"), Range(0, 60)]
         private int instantPerSecond = 30;
 
         /// <summary>
         /// Graph to store the RDF data.
         /// </summary>
-        private IGraph graph;
+        protected IGraph graph;
         /// <summary>
         /// Graph to store the RDF data.
         /// </summary>

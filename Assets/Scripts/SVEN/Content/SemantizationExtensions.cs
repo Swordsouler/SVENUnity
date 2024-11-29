@@ -149,6 +149,8 @@ namespace SVEN.Content
             {
                 new Property("triangles", () => string.Join(",", meshFilter.mesh.triangles.Select(t => t.ToString()))),
                 new Property("vertices", () => string.Join(",", meshFilter.mesh.vertices.Select(v => v.ToString()))),
+                new Property("normals", () => string.Join(",", meshFilter.mesh.normals.Select(n => n.ToString()))),
+                new Property("uvs", () => string.Join(",", meshFilter.mesh.uv.Select(uv => uv.ToString())))
             };
 
             return observers;
@@ -230,9 +232,11 @@ namespace SVEN.Content
 
             IUriNode gameObjectNode = graph.CreateUriNode("sven:" + semantizationCore.GetUUID());
             IUriNode componentNode = graph.CreateUriNode("sven:" + component.GetUUID());
+            IUriNode componentTypeNode = graph.CreateUriNode(component.GetRdfType());
 
             graph.Assert(new Triple(gameObjectNode, graph.CreateUriNode("sven:component"), componentNode));
-            graph.Assert(new Triple(componentNode, graph.CreateUriNode("rdf:type"), graph.CreateUriNode(component.GetRdfType())));
+            graph.Assert(new Triple(componentNode, graph.CreateUriNode("rdf:type"), componentTypeNode));
+            graph.Assert(new Triple(componentNode, graph.CreateUriNode("sven:exactType"), componentTypeNode));
 
             List<Property> properties = component.GetProperties();
             foreach (Property property in properties)
@@ -284,7 +288,7 @@ namespace SVEN.Content
         /// <summary>
         /// Get the XML Schema data type for the object.
         /// </summary>
-        private static Dictionary<Type, List<string>> SupportedNestedTypes { get; } = new()
+        public static Dictionary<Type, List<string>> SupportedNestedTypes { get; } = new()
         {
             { typeof(Matrix4x4), new List<string> { "m00", "m01", "m02", "m03", "m10", "m11", "m12", "m13", "m20", "m21", "m22", "m23", "m30", "m31", "m32", "m33" } },
             { typeof(Quaternion), new List<string> { "x", "y", "z", "w" } },

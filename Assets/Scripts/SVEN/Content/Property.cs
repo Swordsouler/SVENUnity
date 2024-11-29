@@ -162,9 +162,11 @@ namespace SVEN.Content
             IGraph graph = graphBuffer.Graph;
 
             IUriNode propertyNode = graph.CreateUriNode("sven:" + GetUUID());
+            IUriNode propertyTypeNode = graph.CreateUriNode("sven:" + observedProperty.LastValue.GetType().Name);
 
             graph.Assert(new Triple(ParentComponentNode, graph.CreateUriNode("sven:" + name), propertyNode));
-            graph.Assert(new Triple(propertyNode, graph.CreateUriNode("rdf:type"), graph.CreateUriNode("sven:Property")));
+            graph.Assert(new Triple(propertyNode, graph.CreateUriNode("rdf:type"), propertyTypeNode));
+            graph.Assert(new Triple(propertyNode, graph.CreateUriNode("sven:exactType"), propertyTypeNode));
 
             Interval oldInterval = interval;
             interval = new Interval();
