@@ -8,7 +8,7 @@
 
 sven:unityEngine rdfs:type owl:AnnotationProperty .
 
-sven:MeshFilter sven:unityEngine "UnityEngine.MeshFilter" .
+sven:Shape sven:unityEngine "UnityEngine.MeshFilter" .
 sven:MeshRenderer sven:unityEngine "UnityEngine.MeshRenderer" .
 sven:Renderer sven:unityEngine "UnityEngine.Renderer" .
 sven:Transform sven:unityEngine "UnityEngine.Transform" .

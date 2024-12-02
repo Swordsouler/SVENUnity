@@ -72,7 +72,7 @@ namespace RDF
         /// <summary>
         /// Number of instant created per second.
         /// </summary>
-        [SerializeField, DisableIf("IsStarted"), HideIf("HasGraphConfig"), Range(0, 60)]
+        [SerializeField, DisableIf("IsStarted"), HideIf("HasGraphConfig"), Range(1, 60)]
         private int instantPerSecond = 30;
 
         #endregion

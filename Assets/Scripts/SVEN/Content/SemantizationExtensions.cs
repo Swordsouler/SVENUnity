@@ -127,89 +127,19 @@ namespace SVEN.Content
         /// <returns>List of properties that can be observed and semantized.</returns>
         private static List<Property> GetProperties(this Component component)
         {
-            var method = typeof(SemantizationExtensions).GetMethod("GetProperties", new[] { component.GetType() });
-            if (method != null)
+            Type type = component.GetType();
+            if (MapppedComponents.ContainsKey(type))
             {
-                return (List<Property>)method.Invoke(null, new object[] { component });
+                List<Property> properties = new();
+                foreach (Delegate del in MapppedComponents.GetValue(type))
+                {
+                    MapppedComponents.PropertyDescription propertyDescription = del.DynamicInvoke(component) as MapppedComponents.PropertyDescription;
+                    properties.Add(new Property(propertyDescription.PredicateName, propertyDescription.Getter, propertyDescription.SimplifiedName));
+                }
+                return properties;
             }
-            else
-            {
-                return GetAllProperties(component);
-            }
+            else return GetAllProperties(component);
         }
-
-        /// <summary>
-        /// Get properties of the MeshFilter component.
-        /// </summary>
-        /// <param name="meshFilter">MeshFilter component to get the properties.</param>
-        /// <returns>List of properties that can be observed and semantized. (position, rotation, scale)</returns>
-        public static List<Property> GetProperties(this MeshFilter meshFilter)
-        {
-            List<Property> observers = new()
-            {
-                new Property("triangles", () => string.Join(",", meshFilter.mesh.triangles.Select(t => t.ToString()))),
-                new Property("vertices", () => string.Join(",", meshFilter.mesh.vertices.Select(v => v.ToString()))),
-                new Property("normals", () => string.Join(",", meshFilter.mesh.normals.Select(n => n.ToString()))),
-                new Property("uvs", () => string.Join(",", meshFilter.mesh.uv.Select(uv => uv.ToString())))
-            };
-
-            return observers;
-        }
-
-        /// <summary>
-        /// Get properties of the Renderer component.
-        /// </summary>
-        /// <param name="renderer">Renderer component to get the properties.</param>
-        /// <returns>List of properties that can be observed and semantized. (position, rotation, scale)</returns>
-        public static List<Property> GetProperties(this Renderer renderer)
-        {
-            List<Property> observers = new()
-            {
-                new Property("enabled", () => renderer.enabled),
-                new Property("isVisible", () => renderer.isVisible),
-                new Property("color", () => renderer.material.color),
-                new Property("shader", () => renderer.material.shader.name),
-            };
-
-            return observers;
-        }
-
-        /// <summary>
-        /// Get properties of the Transform component.
-        /// </summary>
-        /// <param name="transform">Transform component to get the properties.</param>
-        /// <returns>List of properties that can be observed and semantized. (position, rotation, scale)</returns>
-        public static List<Property> GetProperties(this Transform transform)
-        {
-            List<Property> observers = new()
-            {
-                new Property("position", () => transform.position, "virtualPosition"),
-                new Property("rotation", () => transform.rotation, "virtualRotation"),
-                new Property("scale", () => transform.localScale, "virtualSize"),
-            };
-
-            return observers;
-        }
-
-        /*public static List<Property> GetProperties(this MeshRenderer meshRenderer)
-        {
-            List<Property> observers = new()
-            {
-                new Property("isVisible", () => meshRenderer.isVisible),
-            };
-
-            return observers;
-        }*/
-
-        /// <summary>
-        /// Get properties of the Atom component.
-        /// </summary>
-        /// <param name="atom">Atom component to get the properties.</param>
-        /// <returns>List of properties that can be observed and semantized. (all)</returns>
-        /*public static List<Property> GetProperties(this Atom atom)
-        {
-            return atom.GetAllProperties();
-        }*/
 
         #endregion
 
@@ -255,6 +185,11 @@ namespace SVEN.Content
             return properties;
         }
 
+        private static readonly Dictionary<Type, string> specialRdfType = new()
+        {
+            { typeof(MeshFilter), "Shape" },
+        };
+
         /// <summary>
         /// Get the RDF type of the component.
         /// </summary>
@@ -262,7 +197,8 @@ namespace SVEN.Content
         /// <returns>RDF type of the component.</returns>
         public static string GetRdfType(this Component component)
         {
-            return "sven:" + component.GetType().Name;
+            if (specialRdfType.ContainsKey(component.GetType())) return "sven:" + specialRdfType[component.GetType()];
+            else return "sven:" + component.GetType().Name;
         }
 
         #endregion
@@ -286,18 +222,16 @@ namespace SVEN.Content
             };
         }
 
-        /// <summary>
-        /// Get the XML Schema data type for the object.
-        /// </summary>
-        public static Dictionary<Type, List<string>> SupportedNestedTypes { get; } = new()
+        public static string ToRdfString(this object obj)
         {
-            { typeof(Matrix4x4), new List<string> { "m00", "m01", "m02", "m03", "m10", "m11", "m12", "m13", "m20", "m21", "m22", "m23", "m30", "m31", "m32", "m33" } },
-            { typeof(Quaternion), new List<string> { "x", "y", "z", "w" } },
-            { typeof(Vector4), new List<string> { "x", "y", "z", "w" } },
-            { typeof(Vector3), new List<string> { "x", "y", "z" } },
-            { typeof(Vector2), new List<string> { "x", "y" } },
-            { typeof(Color), new List<string> { "r", "g", "b", "a" } },
-        };
+            Type type = obj.GetType();
+            return type switch
+            {
+                Type t when t == typeof(bool) => obj.ToString().ToLower(),
+                Type t when t == typeof(float) => ((float)obj).ToString("N4", System.Globalization.CultureInfo.InvariantCulture),
+                _ => obj.ToString(),
+            };
+        }
 
         /// <summary>
         /// Get the nested values of the object.
@@ -310,30 +244,29 @@ namespace SVEN.Content
             Type type = obj.GetType();
             if (type.IsPrimitive || type == typeof(string))
             {
-                values.Add("value", obj);
-
+                values.Add("value", obj.ToRdfString());
             }
             else
             {
-                if (!SupportedNestedTypes.ContainsKey(type))
+                if (!MapppedProperties.ContainsKey(type))
                 {
                     Debug.LogWarning($"Type {type} is not supported for nested values. Returning the object as a string.");
                     values.Add("value", obj.ToString());
                     return values;
                 }
-                foreach (string fieldName in SupportedNestedTypes[type])
+                foreach (string fieldName in MapppedProperties.GetValue(type).NestedProperties)
                 {
                     FieldInfo field = type.GetField(fieldName);
                     if (field != null)
                     {
-                        values.Add(fieldName, field.GetValue(obj));
+                        values.Add(fieldName, field.GetValue(obj).ToRdfString());
                     }
                     else
                     {
                         PropertyInfo property = type.GetProperty(fieldName);
                         if (property != null)
                         {
-                            values.Add(fieldName, property.GetValue(obj));
+                            values.Add(fieldName, property.GetValue(obj).ToRdfString());
                         }
                     }
                 }

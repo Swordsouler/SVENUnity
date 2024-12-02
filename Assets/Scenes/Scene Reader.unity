@@ -163,24 +163,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2329338d9657a9943b9c5743f53961b1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  graphConfig: {fileID: 0}
-  graphName: default
-  baseUri: http://www.example.com#
-  endpoint: http://localhost:9999/blazegraph/sparql
-  namespaces:
-  - <Name>k__BackingField: rdf
-    <Uri>k__BackingField: http://www.w3.org/1999/02/22-rdf-syntax-ns#
-  - <Name>k__BackingField: rdfs
-    <Uri>k__BackingField: http://www.w3.org/2000/01/rdf-schema#
-  - <Name>k__BackingField: owl
-    <Uri>k__BackingField: http://www.w3.org/2002/07/owl#
-  - <Name>k__BackingField: xsd
-    <Uri>k__BackingField: http://www.w3.org/2001/XMLSchema#
-  instantPerSecond: 30
-  instantIndex: 0
   tempGraphFile: {fileID: 102900000, guid: 21ac9eb1b3c378647b2c956473fa7bee, type: 3}
   tempSchemaFile: {fileID: 102900000, guid: 75db038add333d245b2bbd7b56780537, type: 3}
   tempUnitySupportFile: {fileID: 102900000, guid: 16082f706cdb30d41b7e3a4122907103, type: 3}
+  _currentInstantIndex: 0
 --- !u!1 &963504302
 GameObject:
   m_ObjectHideFlags: 0

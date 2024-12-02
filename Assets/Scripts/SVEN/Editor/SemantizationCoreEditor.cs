@@ -46,14 +46,13 @@ namespace SVEN.Editor
                     if (component is SemantizationCore) continue;
 
                     // Check if the component has the Semantize method
-                    MethodInfo semantizeMethod = typeof(SemantizationExtensions).GetMethod("GetProperties", new[] { component.GetType() });
-                    bool hasGetProperties = semantizeMethod != null;
+                    bool hasGetProperties = MapppedComponents.ContainsKey(component.GetType());
 
                     // Check if the component is in the componentsToSemantize list
                     bool isSemantized = core.componentsToSemantize.Contains(component);
 
                     // Create a GUIStyle for the label
-                    GUIStyle labelStyle = new GUIStyle(EditorStyles.label);
+                    GUIStyle labelStyle = new(EditorStyles.label);
                     if (!hasGetProperties)
                     {
                         labelStyle.normal.textColor = Color.yellow;

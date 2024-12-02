@@ -38,7 +38,7 @@ namespace RDF
         /// <summary>
         /// Number of instant created per second.
         /// </summary>
-        [field: SerializeField, Range(0, 60), Tooltip("Number of instant created per second.")]
+        [field: SerializeField, Range(1, 60), Tooltip("Number of instant created per second.")]
         public int InstantPerSecond { get; private set; } = 30;
     }
 }

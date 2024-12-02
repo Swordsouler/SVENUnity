@@ -162,7 +162,7 @@ namespace SVEN.Content
             IGraph graph = graphBuffer.Graph;
 
             IUriNode propertyNode = graph.CreateUriNode("sven:" + GetUUID());
-            IUriNode propertyTypeNode = graph.CreateUriNode("sven:" + observedProperty.LastValue.GetType().Name);
+            IUriNode propertyTypeNode = graph.CreateUriNode("sven:" + MapppedProperties.GetValue(observedProperty.LastValue.GetType()).TypeName);
 
             graph.Assert(new Triple(ParentComponentNode, graph.CreateUriNode("sven:" + name), propertyNode));
             graph.Assert(new Triple(propertyNode, graph.CreateUriNode("rdf:type"), propertyTypeNode));
@@ -190,7 +190,7 @@ namespace SVEN.Content
                 {
                     // créez un nouvelle intervalle à chaque fois ?
                     string simplifiedType = value.Key == "value" ? "" : value.Key.ToUpper();
-                    Triple triple = new(ParentComponentNode, graph.CreateUriNode("sven:" + simplifiedName + simplifiedType), literalNode);
+                    Triple triple = new(ParentObjectNode, graph.CreateUriNode("sven:" + simplifiedName + simplifiedType), literalNode);
                     graph.Assert(triple);
                     graph.Assert(new Triple(graph.CreateTripleNode(triple), graph.CreateUriNode("time:hasTemporalExtent"), intervalNode));
                 }

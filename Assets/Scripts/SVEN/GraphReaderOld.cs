@@ -18,7 +18,7 @@ namespace SVEN
     /// <summary>
     /// Graph reader to load the scene content from the graph.
     /// </summary>
-    public class GraphReader : GraphBehaviour
+    public class GraphReaderOld : GraphBehaviour
     {
         /// <summary>
         /// Current scene content.
@@ -30,9 +30,6 @@ namespace SVEN
         /// </summary>
         private Graph schema;
 
-        /// <summary>
-        /// Validate properties and fields.
-        /// </summary>
         private void OnValidate()
         {
             if (instants != null && instants.Count > 0)
@@ -64,7 +61,7 @@ namespace SVEN
                 reasoner.Apply(graph);
             }
             LoadInstants();
-            CurrentInstantIndex = 5;
+            CurrentInstantIndex = 9;
         }
 
         private void LoadInstant(Instant instant)
@@ -141,13 +138,13 @@ namespace SVEN
                     sceneContent[objectUUID][componentUUID].Item2[propertyName].Item2[propertyIndex] = propertyValue;
                 }
             }
-
-            foreach (var obj in sceneContent)
-                foreach (var component in obj.Value)
-                    foreach (var property in component.Value.Item2)
-                        foreach (var value in property.Value.Item2)
-                            Debug.Log($"{obj.Key} -> {component.Key} -> {component.Value.Item1} -> {property.Key} -> {property.Value.Item1} -> {value.Key} -> {value.Value}");
-
+            /*
+                        foreach (var obj in sceneContent)
+                            foreach (var component in obj.Value)
+                                foreach (var property in component.Value.Item2)
+                                    foreach (var value in property.Value.Item2)
+                                        Debug.Log($"{obj.Key} -> {component.Key} -> {component.Value.Item1} -> {property.Key} -> {property.Value.Item1} -> {value.Key} -> {value.Value}");
+            */
             // create gameobject for each identified object
             Dictionary<string, Tuple<GameObject, Dictionary<string, Component>>> oldSceneContent = new(currentSceneContent);
             Dictionary<string, Tuple<GameObject, Dictionary<string, Component>>> newSceneContent = new();
@@ -206,7 +203,7 @@ namespace SVEN
                                 var constructorParams = new object[indexes.Count];
                                 for (int i = 0; i < indexes.Count; i++)
                                 {
-                                    constructorParams[i] = float.Parse(propertyValues[indexes[i]].ToString(), System.Globalization.CultureInfo.InvariantCulture);
+                                    constructorParams[i] = float.Parse(propertyValues[indexes[i]].ToString());
                                 }
 
                                 var newInfo = Activator.CreateInstance(propertyType, constructorParams);
