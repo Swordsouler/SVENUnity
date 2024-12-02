@@ -17,19 +17,14 @@ using UnityEditor;
 namespace RDF
 {
     [DisallowMultipleComponent]
-    public class GraphBuffer : MonoBehaviour
+    public class GraphBuffer : GraphBehaviour
     {
         #region Flags
 
         /// <summary>
-        /// Flag to check if the graph is started.
-        /// </summary>
-        private bool IsStarted => graph != null;
-
-        /// <summary>
         /// Flag to check if the graph has a configuration.
         /// </summary>
-        private bool HasGraphConfig => graphConfig != null;
+        protected bool HasGraphConfig => graphConfig != null;
 
         #endregion
 
@@ -80,15 +75,6 @@ namespace RDF
         [SerializeField, DisableIf("IsStarted"), HideIf("HasGraphConfig"), Range(0, 60)]
         private int instantPerSecond = 30;
 
-        /// <summary>
-        /// Graph to store the RDF data.
-        /// </summary>
-        protected IGraph graph;
-        /// <summary>
-        /// Graph to store the RDF data.
-        /// </summary>
-        public IGraph Graph { get => graph; }
-
         #endregion
 
         /// <summary>
@@ -113,39 +99,12 @@ namespace RDF
         #region Graph Actions
 
         /// <summary>
-        /// Print the turtle of the graph in the console.
-        /// </summary>
-        [Button("Print")]
-        private void Print()
-        {
-            if (!IsStarted)
-            {
-                Debug.LogError("Graph is not started.");
-                return;
-            }
-
-            StringBuilder sb = new();
-            CompressingTurtleWriter writer = new(TurtleSyntax.Rdf11Star);
-            writer.Save(graph, new System.IO.StringWriter(sb));
-
-            Debug.Log(sb.ToString());
-        }
-
-        /// <summary>
         /// Save the turtle of the graph to a file.
         /// </summary>
         [Button("Save to File")]
         private void SaveToFile()
         {
-            if (!IsStarted)
-            {
-                Debug.LogError("Graph is not started.");
-                return;
-            }
-
-            StringBuilder sb = new();
-            CompressingTurtleWriter writer = new(TurtleSyntax.Rdf11Star);
-            writer.Save(graph, new System.IO.StringWriter(sb));
+            string turtle = DecodeGraph(Graph);
 
 #if UNITY_EDITOR
             string path = EditorUtility.SaveFilePanel(
@@ -156,11 +115,11 @@ namespace RDF
 
             if (!string.IsNullOrEmpty(path))
             {
-                System.IO.File.WriteAllText(path, sb.ToString());
+                System.IO.File.WriteAllText(path, turtle);
             }
 #else
     // Code pour les builds non-éditeur si nécessaire
-    System.IO.File.WriteAllText("Assets/Resources/graph.ttl", sb.ToString());
+    System.IO.File.WriteAllText("Assets/Resources/graph.ttl", turtle);
 #endif
         }
 
@@ -170,18 +129,10 @@ namespace RDF
         [Button("Save to Endpoint")]
         private async void SaveToEndpoint()
         {
-            if (!IsStarted)
-            {
-                Debug.LogError("Graph is not started.");
-                return;
-            }
+            string turtle = DecodeGraph(Graph);
 
-            var writer = new CompressingTurtleWriter(TurtleSyntax.Rdf11Star);
-            var sb = new StringBuilder();
-            writer.Save(graph, new System.IO.StringWriter(sb));
-
-            var content = new StringContent(sb.ToString(), Encoding.UTF8, "text/turtle");
-            var client = new HttpClient();
+            StringContent content = new(turtle, Encoding.UTF8, "text/turtle");
+            HttpClient client = new();
 
             try
             {
@@ -201,7 +152,7 @@ namespace RDF
         /// Initialize a new graph with the base URI and prefixes.
         /// </summary>
         /// <returns>Graph.</returns>
-        public IGraph CreateNewGraph()
+        public Graph CreateNewGraph()
         {
             graph = new Graph() { BaseUri = UriFactory.Create(baseUri) };
             foreach (Namespace ns in namespaces)

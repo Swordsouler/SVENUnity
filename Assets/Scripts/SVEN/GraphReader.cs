@@ -15,43 +15,27 @@ using VDS.RDF.Query.Inference;
 
 namespace SVEN
 {
-    public class GraphReader : GraphBuffer
+    /// <summary>
+    /// Graph reader to load the scene content from the graph.
+    /// </summary>
+    public class GraphReader : GraphBehaviour
     {
+        /// <summary>
+        /// Current scene content.
+        /// </summary>
         private Dictionary<string, Tuple<GameObject, Dictionary<string, Component>>> currentSceneContent = new();
 
-        private List<Instant> instants = new();
-
+        /// <summary>
+        /// Graph that contains rules
+        /// </summary>
         private Graph schema;
-
-        private int MaxInstantIndex => instants.Count - 1;
-
-
-        [SerializeField]
-        private int instantIndex;
-
-        public int InstantIndex
-        {
-            get => instantIndex;
-            private set
-            {
-                instantIndex = value;
-                if (instants != null && instants.Count > 0)
-                {
-                    LoadInstant(instants[instantIndex]);
-                }
-            }
-        }
 
         private void OnValidate()
         {
             if (instants != null && instants.Count > 0)
-            {
-                InstantIndex = Mathf.Clamp(InstantIndex, 0, MaxInstantIndex);
-            }
+                CurrentInstantIndex = Mathf.Clamp(CurrentInstantIndex, 0, MaxInstantIndex);
             else
-            {
-                InstantIndex = 0;
-            }
+                CurrentInstantIndex = 0;
         }
 
 
@@ -77,7 +61,7 @@ namespace SVEN
                 reasoner.Apply(graph);
             }
             LoadInstants();
-            InstantIndex = 9;
+            CurrentInstantIndex = 9;
         }
 
         private void LoadInstant(Instant instant)
@@ -283,6 +267,84 @@ namespace SVEN
             currentSceneContent = newSceneContent;
         }
 
+        /// <summary>
+        /// Load the graph from a file.
+        /// </summary>
+        [Button("Load Graph from file")]
+        private void LoadGraph()
+        {
+#if UNITY_EDITOR
+            string path = EditorUtility.OpenFilePanel("Load Graph", "Assets/Resources", "ttl");
+            if (!string.IsNullOrEmpty(path))
+            {
+                graph = new Graph();
+                graph.LoadFromFile(path);
+                LoadInstants();
+            }
+#else
+    graph = new Graph();
+    graph.LoadFromFile("Assets/Resources/ontology.ttl");
+#endif
+        }
+
+        /// <summary>
+        /// Load the schema from a file.
+        /// </summary>
+        [Button("Load Schema from file")]
+        private void LoadSchema()
+        {
+#if UNITY_EDITOR
+            string path = EditorUtility.OpenFilePanel("Load Schema", "Assets/Resources", "ttl");
+            if (!string.IsNullOrEmpty(path))
+            {
+                schema ??= new Graph();
+                schema.LoadFromFile(path);
+                StaticRdfsReasoner reasoner = new();
+                reasoner.Initialise(schema);
+                reasoner.Apply(graph);
+            }
+#else
+    schema = new Graph();
+    schema.LoadFromFile("Assets/Resources/schema.ttl");
+#endif
+        }
+
+
+        #region Time Management
+        /// <summary>
+        /// List of instants that can be loaded.
+        /// </summary>
+        private List<Instant> instants = new();
+
+        /// <summary>
+        /// Maximum index of the instants list.
+        /// </summary>
+        private int MaxInstantIndex => instants.Count - 1;
+
+        /// <summary>
+        /// Current index of the instants list.
+        /// </summary>
+        [SerializeField]
+        private int _currentInstantIndex;
+        /// <summary>
+        /// Current index of the instants list.
+        /// </summary>
+        public int CurrentInstantIndex
+        {
+            get => _currentInstantIndex;
+            private set
+            {
+                _currentInstantIndex = value;
+                if (instants != null && instants.Count > 0)
+                {
+                    LoadInstant(instants[_currentInstantIndex]);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Load all time:Instant instances from the graph.
+        /// </summary>
         private void LoadInstants()
         {
             //sparql query to get all time:Instant instances
@@ -309,49 +371,7 @@ namespace SVEN
                 //add the instant to the list
                 instants.Add(instant);
             }
-
         }
-
-        /// <summary>
-        /// Load the graph from a file.
-        /// </summary>
-        [Button("Load Graph")]
-        private void LoadGraph()
-        {
-#if UNITY_EDITOR
-            string path = EditorUtility.OpenFilePanel("Load Graph", "Assets/Resources", "ttl");
-            if (!string.IsNullOrEmpty(path))
-            {
-                graph = new Graph();
-                graph.LoadFromFile(path);
-                LoadInstants();
-            }
-#else
-    graph = new Graph();
-    graph.LoadFromFile("Assets/Resources/ontology.ttl");
-#endif
-        }
-
-        /// <summary>
-        /// Load the schema from a file.
-        /// </summary>
-        [Button("Load Schema")]
-        private void LoadSchema()
-        {
-#if UNITY_EDITOR
-            string path = EditorUtility.OpenFilePanel("Load Schema", "Assets/Resources", "ttl");
-            if (!string.IsNullOrEmpty(path))
-            {
-                schema ??= new Graph();
-                schema.LoadFromFile(path);
-                StaticRdfsReasoner reasoner = new();
-                reasoner.Initialise(schema);
-                reasoner.Apply(graph);
-            }
-#else
-    schema = new Graph();
-    schema.LoadFromFile("Assets/Resources/schema.ttl");
-#endif
-        }
+        #endregion
     }
 }
