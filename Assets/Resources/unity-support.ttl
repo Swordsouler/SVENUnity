@@ -19,8 +19,7 @@ sven:Vector4 sven:unityEngine "UnityEngine.Vector4" .
 sven:Vector3 sven:unityEngine "UnityEngine.Vector3" .
 sven:Vector2 sven:unityEngine "UnityEngine.Vector2" .
 sven:Vector1 sven:unityEngine "UnityEngine.Vector1" .
-sven:Boolean sven:unityEngine "System.Boolean" .
-sven:String sven:unityEngine "System.String" .
+sven:Field sven:unityEngine "System.String" .
 
 sven:scale sven:unityEngine "localScale" .
 sven:color sven:unityEngine "material.color" .

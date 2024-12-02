@@ -22,6 +22,8 @@ namespace SVEN
     {
         /// <summary>
         /// Current scene content.
+        /// First string is the UUID of the object.
+        /// Second string is the UUID of the component.
         /// </summary>
         private Dictionary<string, Tuple<GameObject, Dictionary<string, Component>>> currentSceneContent = new();
 
@@ -67,30 +69,95 @@ namespace SVEN
             CurrentInstantIndex = 5;
         }
 
+        /// <summary>
+        /// Object description.
+        /// </summary>
+        public class ComponentDescription
+        {
+            /// <summary>
+            /// Component.
+            /// </summary>
+            public Component Component { get; set; }
+
+            /// <summary>
+            /// Active state of the object.
+            /// </summary>
+            public bool Active { get; set; }
+            /// <summary>
+            /// Layer of the object.
+            /// </summary>
+            public int Layer { get; set; }
+            /// <summary>
+            /// Tag of the object.
+            /// </summary> 
+            public string Tag { get; set; }
+            /// <summary>
+            /// Name of the object.
+            /// </summary>
+            public string Name { get; set; }
+        }
+
+        /// <summary>
+        /// Object description.
+        /// </summary>
+        public class GameObjectDescription
+        {
+            /// <summary>
+            /// GameObject.
+            /// </summary>
+            public GameObject GameObject { get; set; }
+
+            /// <summary>
+            /// UUID of the object.
+            /// </summary>
+            public string UUID { get; set; }
+
+            /// <summary>
+            /// Equals method.
+            /// </summary>
+            /// <param name="obj">Object to compare.</param>
+            /// <returns>True if the objects are equal, false otherwise.</returns>
+            public override bool Equals(object obj)
+            {
+                return obj is GameObjectDescription description &&
+                       UUID == description.UUID;
+            }
+
+            /// <summary>
+            /// Get the hash code.
+            /// </summary>
+            /// <returns>Hash code.</returns>
+            public override int GetHashCode()
+            {
+                return HashCode.Combine(UUID);
+            }
+        }
+
         private void LoadInstant(Instant instant)
         {
+            /*
+            ?active ?layer ?tag ?name 
+            sven:active ?active ;
+            sven:layer ?layer ;
+            sven:tag ?tag ;
+            sven:name ?name ;
+            */
             string query = $@"
                 PREFIX time: <http://www.w3.org/2006/time#>
                 PREFIX sven: <http://www.sven.fr/ontology#>
 
-                SELECT ?object ?componentType ?component ?property ?propertyName ?propertyType ?propertyIndex ?propertyValue
+                SELECT ?object ?component ?componentType ?propertyName ?propertyNestedName ?propertyValue ?propertyType
                 WHERE {{
                     ?object a sven:GameObject ;
                             sven:component ?component .
-                    ?component a sven:Component ;
-                               sven:exactType ?componentExactType ;
-                               ?realPropertyName ?property .
-                    ?property ?propertyIndex ?propertyValue ;
-                              sven:exactType ?propertyExactType ;
+                    ?component sven:exactType ?componentType ;
+                               ?propertyName ?property .
+                    ?property ?propertyNestedName ?propertyValue ;
                               time:hasTemporalExtent ?interval .
-
-                    ?componentExactType sven:unityEngine ?componentType .
-                    ?propertyExactType sven:unityEngine ?propertyType .
-                    OPTIONAL {{ ?realPropertyName sven:unityEngine ?enginePropertyName }} .
-                    BIND(IF(BOUND(?enginePropertyName), ?enginePropertyName, ?realPropertyName) AS ?propertyName) .
                     ?interval time:inside <{instant.GetUriNode(graph)}> .
                 }}";
 
+            // Execute the query
             SparqlResultSet results = graph.ExecuteQuery(query) as SparqlResultSet;
 
             // GameObject -> Component -> (ComponentType --- PropertyName -> PropertyIndex -> PropertyValue)
@@ -102,10 +169,14 @@ namespace SVEN
             Assembly unityAssembly = Assembly.Load("UnityEngine");
             foreach (SparqlResult result in results.Cast<SparqlResult>())
             {
+                // get uuids
                 string objectUUID = result["object"].ToString().Split('#')[1];
                 string componentUUID = result["component"].ToString().Split('#')[1];
+
+                // get types
                 string componentStringType = result["componentType"].AsValuedNode().AsString();
                 string propertyStringType = result["propertyType"].AsValuedNode().AsString();
+
                 string propertyName = result["propertyName"].NodeType switch
                 {
                     NodeType.Uri => result["propertyName"].ToString().Split('#')[1],
@@ -113,6 +184,14 @@ namespace SVEN
                 };
                 string propertyIndex = result["propertyIndex"].ToString().Split('#')[1];
                 string propertyValue = result["propertyValue"].AsValuedNode().AsString();
+
+                //Type componentType = unityAssembly.GetType(componentStringType);
+
+                if (MapppedComponents.GetValue(unityAssembly.GetType(componentStringType)) == null)
+                {
+                    Debug.Log($"Component {componentStringType} not found in MapppedComponents");
+                    continue;
+                }
 
                 if (propertyNameToIgnore.Contains(propertyName)) continue;
                 if (propertyIndexToIgnore.Contains(propertyIndex)) continue;

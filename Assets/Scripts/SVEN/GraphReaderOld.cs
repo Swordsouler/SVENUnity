@@ -66,6 +66,23 @@ namespace SVEN
 
         private void LoadInstant(Instant instant)
         {
+            /*string query = $@"
+                PREFIX time: <http://www.w3.org/2006/time#>
+                PREFIX sven: <http://www.sven.fr/ontology#>
+
+                SELECT ?object ?componentType ?component ?property ?propertyName ?propertyType ?propertyIndex ?propertyValue ?componentUnityType
+                WHERE {{
+                    ?object a sven:GameObject ;
+                            sven:component ?component .
+                    ?component sven:exactType ?componentType ;
+                               ?realPropertyName ?property .
+                    ?property ?propertyIndex ?propertyValue ;
+                              sven:exactType ?propertyType ;
+                              time:hasTemporalExtent ?interval .
+                    ?interval time:inside <{instant.GetUriNode(graph)}> .
+
+                    ?componentType sven:unityEngine ?componentUnityType .
+                }}";*/
             string query = $@"
                 PREFIX time: <http://www.w3.org/2006/time#>
                 PREFIX sven: <http://www.sven.fr/ontology#>
@@ -74,8 +91,7 @@ namespace SVEN
                 WHERE {{
                     ?object a sven:GameObject ;
                             sven:component ?component .
-                    ?component a sven:Component ;
-                               sven:exactType ?componentExactType ;
+                    ?component sven:exactType ?componentExactType ;
                                ?realPropertyName ?property .
                     ?property ?propertyIndex ?propertyValue ;
                               sven:exactType ?propertyExactType ;
@@ -138,13 +154,13 @@ namespace SVEN
                     sceneContent[objectUUID][componentUUID].Item2[propertyName].Item2[propertyIndex] = propertyValue;
                 }
             }
-            /*
-                        foreach (var obj in sceneContent)
-                            foreach (var component in obj.Value)
-                                foreach (var property in component.Value.Item2)
-                                    foreach (var value in property.Value.Item2)
-                                        Debug.Log($"{obj.Key} -> {component.Key} -> {component.Value.Item1} -> {property.Key} -> {property.Value.Item1} -> {value.Key} -> {value.Value}");
-            */
+
+            foreach (var obj in sceneContent)
+                foreach (var component in obj.Value)
+                    foreach (var property in component.Value.Item2)
+                        foreach (var value in property.Value.Item2)
+                            Debug.Log($"{obj.Key} -> {component.Key} -> {component.Value.Item1} -> {property.Key} -> {property.Value.Item1} -> {value.Key} -> {value.Value}");
+
             // create gameobject for each identified object
             Dictionary<string, Tuple<GameObject, Dictionary<string, Component>>> oldSceneContent = new(currentSceneContent);
             Dictionary<string, Tuple<GameObject, Dictionary<string, Component>>> newSceneContent = new();
@@ -196,6 +212,7 @@ namespace SVEN
                         Dictionary<string, object> propertyValues = property1.Value.Item2;
                         try
                         {
+                            if (propertyType == typeof(System.String)) throw new KeyNotFoundException();
                             List<string> indexes = MapppedProperties.GetValue(propertyType).NestedProperties;
 
                             if (indexes != null && indexes.Count > 0)
@@ -203,7 +220,7 @@ namespace SVEN
                                 var constructorParams = new object[indexes.Count];
                                 for (int i = 0; i < indexes.Count; i++)
                                 {
-                                    constructorParams[i] = float.Parse(propertyValues[indexes[i]].ToString());
+                                    constructorParams[i] = float.Parse(propertyValues[indexes[i]].ToString(), System.Globalization.CultureInfo.InvariantCulture);
                                 }
 
                                 var newInfo = Activator.CreateInstance(propertyType, constructorParams);
