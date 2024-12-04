@@ -42,28 +42,62 @@ namespace SVEN.Content
             { typeof(Vector3), new PropertyDescription("Vector3", new List<string> { "x", "y", "z" }) },
             { typeof(Vector2), new PropertyDescription("Vector2", new List<string> { "x", "y" }) },
             { typeof(Color), new PropertyDescription("Color", new List<string> { "r", "g", "b", "a" }) },
+            { typeof(object), new PropertyDescription("Field", new List<string> { "value" }) },
         };
 
         /// <summary>
-        /// Add a component to the mapped components.
+        /// Check if the property is mapped.
         /// </summary>
-        /// <param name="type">Type of the component.</param>
-        /// <returns>True if the component was added, false otherwise.</returns>
+        /// <param name="type">Type of the property.</param>
+        /// <returns>True if the property is mapped.</returns>
         public static bool ContainsKey(Type type)
         {
             return Value.ContainsKey(type);
         }
 
         /// <summary>
-        /// Get the values of the properties of a component.
+        /// Get the values of the properties.
         /// </summary>
-        /// <param name="type">Type of the component.</param>
-        /// <returns>List of properties of the component.</returns>
+        /// <param name="type">Type of the property.</param>
+        /// <returns>Values of the properties of the component.</returns>
         public static PropertyDescription GetValue(Type type)
         {
             if (Value.TryGetValue(type, out var value))
                 return value;
-            return new PropertyDescription("Field", new List<string> { "value" });
+            return Value[typeof(object)];
+        }
+
+        /// <summary>
+        /// Get the values of the properties.
+        /// </summary>
+        /// <param name="type">Type of the property.</param>
+        /// <param name="propertyDescription">Values of the properties of the component.</param>
+        /// <returns>True if the property was found, false otherwise.</returns>
+        public static bool TryGetValue(Type type, out PropertyDescription propertyDescription)
+        {
+            if (Value.TryGetValue(type, out propertyDescription))
+                return true;
+            return false;
+        }
+
+        /// <summary>
+        /// Check if a property has a nested property.
+        /// </summary>
+        /// <param name="type">Type of the property.</param>
+        /// <param name="propertyNestedName">Name of the nested property.</param>
+        /// <returns>True if the property has the nested property, false otherwise.</returns>
+        public static bool HasNestedProperty(Type type, string propertyNestedName)
+        {
+            if (Value.TryGetValue(type, out var propertyDescription))
+                return propertyDescription.NestedProperties.Contains(propertyNestedName);
+            return false;
+        }
+
+        public static Type GetType(string typeName)
+        {
+            if (Value.Values.Any(x => x.TypeName == typeName))
+                return Value.FirstOrDefault(x => x.Value.TypeName == typeName).Key;
+            return typeof(object);
         }
     }
 }

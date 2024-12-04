@@ -131,7 +131,7 @@ namespace SVEN.Content
             if (MapppedComponents.ContainsKey(type))
             {
                 List<Property> properties = new();
-                foreach (Delegate del in MapppedComponents.GetValue(type))
+                foreach (Delegate del in MapppedComponents.GetValue(type).Properties)
                 {
                     MapppedComponents.PropertyDescription propertyDescription = del.DynamicInvoke(component) as MapppedComponents.PropertyDescription;
                     properties.Add(new Property(propertyDescription.PredicateName, propertyDescription.Getter, propertyDescription.SimplifiedName));
@@ -185,11 +185,6 @@ namespace SVEN.Content
             return properties;
         }
 
-        private static readonly Dictionary<Type, string> specialRdfType = new()
-        {
-            { typeof(MeshFilter), "Shape" },
-        };
-
         /// <summary>
         /// Get the RDF type of the component.
         /// </summary>
@@ -197,7 +192,7 @@ namespace SVEN.Content
         /// <returns>RDF type of the component.</returns>
         public static string GetRdfType(this Component component)
         {
-            if (specialRdfType.ContainsKey(component.GetType())) return "sven:" + specialRdfType[component.GetType()];
+            if (MapppedComponents.ContainsKey(component.GetType())) return "sven:" + MapppedComponents.GetValue(component.GetType()).TypeName;
             else return "sven:" + component.GetType().Name;
         }
 

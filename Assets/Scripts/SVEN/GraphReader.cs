@@ -152,7 +152,8 @@ namespace SVEN
                             sven:component ?component .
                     ?component sven:exactType ?componentType ;
                                ?propertyName ?property .
-                    ?property ?propertyNestedName ?propertyValue ;
+                    ?property sven:exactType ?propertyType ;
+                              ?propertyNestedName ?propertyValue ;
                               time:hasTemporalExtent ?interval .
                     ?interval time:inside <{instant.GetUriNode(graph)}> .
                 }}";
@@ -164,9 +165,6 @@ namespace SVEN
             Dictionary<string, Dictionary<string, Tuple<Type, Dictionary<string, Tuple<Type, Dictionary<string, object>>>>>> sceneContent = new();
 
             Debug.Log($"Instant: {instant.inXSDDateTime}");
-            string[] propertyNameToIgnore = new[] { "hasTemporalExtent", "type", "exactType" };
-            string[] propertyIndexToIgnore = new[] { "hasTemporalExtent", "type", "exactType" };
-            Assembly unityAssembly = Assembly.Load("UnityEngine");
             foreach (SparqlResult result in results.Cast<SparqlResult>())
             {
                 // get uuids
@@ -174,51 +172,35 @@ namespace SVEN
                 string componentUUID = result["component"].ToString().Split('#')[1];
 
                 // get types
-                string componentStringType = result["componentType"].AsValuedNode().AsString();
-                string propertyStringType = result["propertyType"].AsValuedNode().AsString();
+                string componentStringType = result["componentType"].ToString().Split("#")[1];
+                string propertyStringType = result["propertyType"].ToString().Split("#")[1];
 
                 string propertyName = result["propertyName"].NodeType switch
                 {
                     NodeType.Uri => result["propertyName"].ToString().Split('#')[1],
                     _ => result["propertyName"].AsValuedNode().AsString()
                 };
-                string propertyIndex = result["propertyIndex"].ToString().Split('#')[1];
+                string propertyNestedName = result["propertyNestedName"].ToString().Split('#')[1];
                 string propertyValue = result["propertyValue"].AsValuedNode().AsString();
 
-                //Type componentType = unityAssembly.GetType(componentStringType);
+                Type componentType = MapppedComponents.GetType(componentStringType) ?? Type.GetType(componentStringType);
+                if (!MapppedComponents.HasProperty(componentType, propertyName)) continue;
 
-                if (MapppedComponents.GetValue(unityAssembly.GetType(componentStringType)) == null)
-                {
-                    Debug.Log($"Component {componentStringType} not found in MapppedComponents");
-                    continue;
-                }
-
-                if (propertyNameToIgnore.Contains(propertyName)) continue;
-                if (propertyIndexToIgnore.Contains(propertyIndex)) continue;
+                Type propertyType = MapppedProperties.GetType(propertyStringType) ?? Type.GetType(propertyStringType);
+                if (!MapppedProperties.HasNestedProperty(propertyType, propertyNestedName)) continue;
 
                 if (!sceneContent.ContainsKey(objectUUID))
                     sceneContent[objectUUID] = new();
 
                 if (!sceneContent[objectUUID].ContainsKey(componentUUID))
-                {
-                    Type componentType = componentStringType.Contains("UnityEngine") ?
-                        unityAssembly.GetType(componentStringType) :
-                        Type.GetType(componentStringType);
                     sceneContent[objectUUID][componentUUID] = new(componentType, new());
-                }
 
                 if (!sceneContent[objectUUID][componentUUID].Item2.ContainsKey(propertyName))
-                {
-                    Type propertyType = propertyStringType.Contains("UnityEngine") ?
-                        unityAssembly.GetType(propertyStringType) :
-                        Type.GetType(propertyStringType);
                     sceneContent[objectUUID][componentUUID].Item2[propertyName] = new(propertyType, new());
-                }
 
-                if (!sceneContent[objectUUID][componentUUID].Item2[propertyName].Item2.ContainsKey(propertyIndex))
-                {
-                    sceneContent[objectUUID][componentUUID].Item2[propertyName].Item2[propertyIndex] = propertyValue;
-                }
+                if (!sceneContent[objectUUID][componentUUID].Item2[propertyName].Item2.ContainsKey(propertyNestedName))
+                    sceneContent[objectUUID][componentUUID].Item2[propertyName].Item2[propertyNestedName] = propertyValue;
+
             }
 
             foreach (var obj in sceneContent)
@@ -230,6 +212,8 @@ namespace SVEN
             // create gameobject for each identified object
             Dictionary<string, Tuple<GameObject, Dictionary<string, Component>>> oldSceneContent = new(currentSceneContent);
             Dictionary<string, Tuple<GameObject, Dictionary<string, Component>>> newSceneContent = new();
+
+            //todo, manage it with MappedComponents Setter
             foreach (var obj in sceneContent)
             {
                 GameObject gameObject;
@@ -278,6 +262,7 @@ namespace SVEN
                         Dictionary<string, object> propertyValues = property1.Value.Item2;
                         try
                         {
+                            if (propertyType == typeof(object)) throw new KeyNotFoundException();
                             List<string> indexes = MapppedProperties.GetValue(propertyType).NestedProperties;
 
                             if (indexes != null && indexes.Count > 0)
@@ -285,6 +270,7 @@ namespace SVEN
                                 var constructorParams = new object[indexes.Count];
                                 for (int i = 0; i < indexes.Count; i++)
                                 {
+                                    Debug.Log(propertyValues[indexes[i]].ToString());
                                     constructorParams[i] = float.Parse(propertyValues[indexes[i]].ToString(), System.Globalization.CultureInfo.InvariantCulture);
                                 }
 
@@ -304,6 +290,7 @@ namespace SVEN
                                 }
                                 else
                                 {
+                                    Debug.Log(component.GetType() + " " + propertyName + " " + newInfo);
                                     component.GetType().GetProperty(propertyName).SetValue(component, newInfo);
                                 }
                             }
