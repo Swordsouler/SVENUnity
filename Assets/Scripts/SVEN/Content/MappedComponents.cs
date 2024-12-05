@@ -142,6 +142,15 @@ namespace SVEN.Content
             return new Vector2(float.Parse(values[0]), float.Parse(values[1]));
         }
 
+        public static Dictionary<string, Action<object>> GetSetters(Component component)
+        {
+            Dictionary<string, Action<object>> setters = new();
+            if (Value.TryGetValue(component.GetType(), out var componentDescription))
+                foreach (var property in componentDescription.CachedProperties)
+                    setters.Add(property.Key, property.Value.Setter);
+            return setters;
+        }
+
         /// <summary>
         /// Check if a component is mapped.
         /// </summary>

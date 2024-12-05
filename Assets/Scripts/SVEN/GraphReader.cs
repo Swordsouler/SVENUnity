@@ -20,28 +20,258 @@ namespace SVEN
     /// </summary>
     public class GraphReader : GraphBehaviour
     {
+        #region Scene Content Structure
+
+        /// <summary>
+        /// Graph that contains the scene content.
+        /// </summary>        
+        public class SceneContent
+        {
+            /// <summary>
+            /// Instant of the scene content.
+            /// </summary> 
+            public Instant Instant { get; set; }
+            /// <summary>
+            /// Scene content dictionary.
+            /// </summary>
+            public Dictionary<string, GameObjectDescription> GameObjects { get; set; }
+
+            public SceneContent()
+            {
+                GameObjects = new();
+            }
+
+            public SceneContent(Instant instant)
+            {
+                Instant = instant;
+                GameObjects = new();
+            }
+
+            public SceneContent(Dictionary<string, GameObjectDescription> gameObjects)
+            {
+                GameObjects = gameObjects;
+            }
+
+            /// <summary>
+            /// ToString method.
+            /// </summary>
+            /// <returns>String representation of the property description.</returns>
+            public override string ToString()
+            {
+                return $"{Instant.inXSDDateTime}\n{string.Join($"\n", GameObjects.Select(x => $"---------- {x.Key} ----------\n{x.Value}"))}";
+            }
+        }
+
+        /// <summary>
+        /// GameObject description.
+        /// </summary>
+        public class GameObjectDescription
+        {
+            /// <summary>
+            /// UUID of the GameObject.
+            /// </summary>
+            public string UUID { get; set; }
+
+            /// <summary>
+            /// GameObject.
+            /// </summary>
+            public GameObject GameObject { get; set; }
+
+            /// <summary>
+            /// Components of the GameObject.
+            /// </summary>
+            public Dictionary<string, ComponentDescription> Components { get; set; }
+
+            public GameObjectDescription(string uuid)
+            {
+                UUID = uuid;
+                Components = new();
+            }
+
+            public GameObjectDescription(string uuid, Dictionary<string, ComponentDescription> components)
+            {
+                UUID = uuid;
+                Components = components;
+            }
+
+            public GameObjectDescription(string uuid, GameObject gameObject, Dictionary<string, ComponentDescription> components)
+            {
+                UUID = uuid;
+                GameObject = gameObject;
+                Components = components;
+            }
+
+            /// <summary>
+            /// ToString method.
+            /// </summary>
+            /// <returns>String representation of the property description.</returns>
+            public override string ToString()
+            {
+                return string.Join("\n", Components.Select(x => $"{x.Key} ({x.Value.Type})\n{x.Value}"));
+            }
+        }
+
+        /// <summary>
+        /// Component description.
+        /// </summary>
+        public class ComponentDescription
+        {
+            /// <summary>
+            /// UUID of the GameObject.
+            /// </summary>
+            public string UUID { get; set; }
+
+            /// <summary>
+            /// Component.
+            /// </summary>
+            public Component Component { get; set; }
+
+            /// <summary>
+            /// Type of the component.
+            /// </summary>
+            public Type Type { get; set; }
+
+            /// <summary>
+            /// Properties of the component.
+            /// </summary>
+            public Dictionary<string, PropertyDescription> Properties { get; set; }
+
+            public ComponentDescription(string uuid, Type type)
+            {
+                UUID = uuid;
+                Type = type;
+                Properties = new();
+            }
+
+            public ComponentDescription(string uuid, Type type, Dictionary<string, PropertyDescription> properties)
+            {
+                UUID = uuid;
+                Type = type;
+                Properties = properties;
+            }
+
+            public ComponentDescription(string uuid, Component component, Dictionary<string, PropertyDescription> properties)
+            {
+                UUID = uuid;
+                Component = component;
+                Properties = properties;
+            }
+
+            /// <summary>
+            /// ToString method.
+            /// </summary>
+            /// <returns>String representation of the property description.</returns>
+            public override string ToString()
+            {
+                return string.Join("\n", Properties.Select(x => $"\t{x.Key} ({x.Value.Type}): ({x.Value})"));
+            }
+        }
+
+        /// <summary>
+        /// Property description.
+        /// </summary>
+        public class PropertyDescription
+        {
+            /// <summary>
+            /// Name of the property.
+            /// </summary>
+            public string Name { get; set; }
+
+            /// <summary>
+            /// Type of the property.
+            /// </summary>
+            public Type Type { get; set; }
+
+            /// <summary>
+            /// Values of the property.
+            /// </summary>
+            public Dictionary<string, object> Values { get; set; }
+
+            /// <summary>
+            /// Value of the property.
+            /// </summary>
+            private object _value = null;
+            /// <summary>
+            /// Value of the property.
+            /// </summary>
+            public object Value
+            {
+                get
+                {
+                    _value ??= GenerateValue();
+                    return _value;
+                }
+                private set => _value = value;
+            }
+
+            public object GenerateValue()
+            {
+                if (Type == typeof(object))
+                {
+                    return Values["value"];
+                }
+
+                object[] parameters = Values.Select(x => x.Value).ToArray();
+                try
+                {
+                    // try to create an instance of the property directly with the parameters
+                    return Activator.CreateInstance(Type, parameters);
+                }
+                catch (MissingMethodException)
+                {
+                    // if the constructor is not found, try to create a default instance and set the properties
+                    object instance = Activator.CreateInstance(Type);
+                    foreach (KeyValuePair<string, object> kvp in Values)
+                    {
+                        PropertyInfo property = Type.GetProperty(kvp.Key);
+                        if (property != null && property.CanWrite)
+                        {
+                            property.SetValue(instance, Convert.ChangeType(kvp.Value, property.PropertyType));
+                        }
+                    }
+                    return instance;
+                }
+            }
+
+            public PropertyDescription(string name, Type type)
+            {
+                Name = name;
+                Type = type;
+                Values = new();
+            }
+
+            public PropertyDescription(string name, Type type, Dictionary<string, object> values)
+            {
+                Name = name;
+                Type = type;
+                Values = values;
+            }
+
+            /// <summary>
+            /// ToString method.
+            /// </summary>
+            /// <returns>String representation of the property description.</returns>
+            public override string ToString()
+            {
+                int maxValueSize = 50;
+                // x.Value has a limited size of 50 characters
+                return string.Join(", ", Values.Select(x => $"{x.Key}: \"{(x.Value.ToString().Length > maxValueSize ? x.Value.ToString()[..maxValueSize] + "..." : x.Value.ToString())}\""));
+            }
+        }
+
+        #endregion
+
         /// <summary>
         /// Current scene content.
         /// First string is the UUID of the object.
         /// Second string is the UUID of the component.
         /// </summary>
-        private Dictionary<string, Tuple<GameObject, Dictionary<string, Component>>> currentSceneContent = new();
+        private SceneContent currentSceneContent = new();
 
         /// <summary>
         /// Graph that contains rules
         /// </summary>
         private Graph schema;
-
-        /// <summary>
-        /// Validate properties and fields.
-        /// </summary>
-        private void OnValidate()
-        {
-            if (instants != null && instants.Count > 0)
-                CurrentInstantIndex = Mathf.Clamp(CurrentInstantIndex, 0, MaxInstantIndex);
-            else
-                CurrentInstantIndex = 0;
-        }
 
 
         public UnityEngine.Object tempGraphFile;
@@ -67,70 +297,6 @@ namespace SVEN
             }
             LoadInstants();
             CurrentInstantIndex = 5;
-        }
-
-        /// <summary>
-        /// Object description.
-        /// </summary>
-        public class ComponentDescription
-        {
-            /// <summary>
-            /// Component.
-            /// </summary>
-            public Component Component { get; set; }
-
-            /// <summary>
-            /// Active state of the object.
-            /// </summary>
-            public bool Active { get; set; }
-            /// <summary>
-            /// Layer of the object.
-            /// </summary>
-            public int Layer { get; set; }
-            /// <summary>
-            /// Tag of the object.
-            /// </summary> 
-            public string Tag { get; set; }
-            /// <summary>
-            /// Name of the object.
-            /// </summary>
-            public string Name { get; set; }
-        }
-
-        /// <summary>
-        /// Object description.
-        /// </summary>
-        public class GameObjectDescription
-        {
-            /// <summary>
-            /// GameObject.
-            /// </summary>
-            public GameObject GameObject { get; set; }
-
-            /// <summary>
-            /// UUID of the object.
-            /// </summary>
-            public string UUID { get; set; }
-
-            /// <summary>
-            /// Equals method.
-            /// </summary>
-            /// <param name="obj">Object to compare.</param>
-            /// <returns>True if the objects are equal, false otherwise.</returns>
-            public override bool Equals(object obj)
-            {
-                return obj is GameObjectDescription description &&
-                       UUID == description.UUID;
-            }
-
-            /// <summary>
-            /// Get the hash code.
-            /// </summary>
-            /// <returns>Hash code.</returns>
-            public override int GetHashCode()
-            {
-                return HashCode.Combine(UUID);
-            }
         }
 
         private void LoadInstant(Instant instant)
@@ -162,9 +328,8 @@ namespace SVEN
             SparqlResultSet results = graph.ExecuteQuery(query) as SparqlResultSet;
 
             // GameObject -> Component -> (ComponentType --- PropertyName -> PropertyIndex -> PropertyValue)
-            Dictionary<string, Dictionary<string, Tuple<Type, Dictionary<string, Tuple<Type, Dictionary<string, object>>>>>> sceneContent = new();
+            SceneContent targetSceneContent = new(instant);
 
-            Debug.Log($"Instant: {instant.inXSDDateTime}");
             foreach (SparqlResult result in results.Cast<SparqlResult>())
             {
                 // get uuids
@@ -189,29 +354,26 @@ namespace SVEN
                 Type propertyType = MapppedProperties.GetType(propertyStringType) ?? Type.GetType(propertyStringType);
                 if (!MapppedProperties.HasNestedProperty(propertyType, propertyNestedName)) continue;
 
-                if (!sceneContent.ContainsKey(objectUUID))
-                    sceneContent[objectUUID] = new();
+                if (!targetSceneContent.GameObjects.ContainsKey(objectUUID))
+                    targetSceneContent.GameObjects[objectUUID] = new(objectUUID);
 
-                if (!sceneContent[objectUUID].ContainsKey(componentUUID))
-                    sceneContent[objectUUID][componentUUID] = new(componentType, new());
+                if (!targetSceneContent.GameObjects[objectUUID].Components.ContainsKey(componentUUID))
+                    targetSceneContent.GameObjects[objectUUID].Components[componentUUID] = new(componentUUID, componentType);
 
-                if (!sceneContent[objectUUID][componentUUID].Item2.ContainsKey(propertyName))
-                    sceneContent[objectUUID][componentUUID].Item2[propertyName] = new(propertyType, new());
+                if (!targetSceneContent.GameObjects[objectUUID].Components[componentUUID].Properties.ContainsKey(propertyName))
+                    targetSceneContent.GameObjects[objectUUID].Components[componentUUID].Properties[propertyName] = new(propertyName, propertyType);
 
-                if (!sceneContent[objectUUID][componentUUID].Item2[propertyName].Item2.ContainsKey(propertyNestedName))
-                    sceneContent[objectUUID][componentUUID].Item2[propertyName].Item2[propertyNestedName] = propertyValue;
-
+                if (!targetSceneContent.GameObjects[objectUUID].Components[componentUUID].Properties[propertyName].Values.ContainsKey(propertyNestedName))
+                    targetSceneContent.GameObjects[objectUUID].Components[componentUUID].Properties[propertyName].Values[propertyNestedName] = propertyValue;
+                else Debug.LogWarning($"Property {propertyNestedName} already exists in {propertyName} of {componentType} in {objectUUID} at {instant.inXSDDateTime}");
             }
 
-            foreach (var obj in sceneContent)
-                foreach (var component in obj.Value)
-                    foreach (var property in component.Value.Item2)
-                        foreach (var value in property.Value.Item2)
-                            Debug.Log($"{obj.Key} -> {component.Key} -> {component.Value.Item1} -> {property.Key} -> {property.Value.Item1} -> {value.Key} -> {value.Value}");
+            Debug.Log(targetSceneContent);
+            UpdateContent(targetSceneContent);
 
             // create gameobject for each identified object
-            Dictionary<string, Tuple<GameObject, Dictionary<string, Component>>> oldSceneContent = new(currentSceneContent);
-            Dictionary<string, Tuple<GameObject, Dictionary<string, Component>>> newSceneContent = new();
+            /*Dictionary<string, GameObjectDescription> oldSceneContent = new(currentSceneContent);
+            Dictionary<string, GameObjectDescription> newSceneContent = new();
 
             //todo, manage it with MappedComponents Setter
             foreach (var obj in sceneContent)
@@ -219,7 +381,7 @@ namespace SVEN
                 GameObject gameObject;
                 if (currentSceneContent.TryGetValue(obj.Key, out var gameObjectComponents))
                 {
-                    gameObject = gameObjectComponents.Item1;
+                    gameObject = gameObjectComponents.GameObject;
                 }
                 else
                 {
@@ -230,7 +392,7 @@ namespace SVEN
                 // create components for each identified component
                 foreach (var comp in obj.Value)
                 {
-                    if (!(currentSceneContent.ContainsKey(obj.Key) && currentSceneContent[obj.Key].Item2.TryGetValue(comp.Key, out Component component)))
+                    if (!(currentSceneContent.ContainsKey(obj.Key) && currentSceneContent[obj.Key].Components.TryGetValue(comp.Key, out Component component)))
                     {
                         if (comp.Value.Item1.Equals(typeof(Transform)))
                         {
@@ -250,7 +412,7 @@ namespace SVEN
                             }
                         }
                     }
-                    newSceneContent[obj.Key].Item2[comp.Key] = component;
+                    newSceneContent[obj.Key].Components[comp.Key] = component;
 
                     // apply properties for each identified property
                     foreach (var property1 in comp.Value.Item2)
@@ -319,13 +481,13 @@ namespace SVEN
             {
                 if (!newSceneContent.ContainsKey(obj.Key))
                 {
-                    Destroy(obj.Value.Item1);
+                    Destroy(obj.Value.GameObject);
                 }
                 else
                 {
-                    foreach (var comp in obj.Value.Item2)
+                    foreach (var comp in obj.Value.Components)
                     {
-                        if (!newSceneContent[obj.Key].Item2.ContainsKey(comp.Key))
+                        if (!newSceneContent[obj.Key].Components.ContainsKey(comp.Key))
                         {
                             Destroy(comp.Value);
                         }
@@ -333,7 +495,82 @@ namespace SVEN
                 }
             }
 
-            currentSceneContent = newSceneContent;
+            currentSceneContent = newSceneContent;*/
+        }
+
+        /// <summary>
+        /// Compare the target scene content with the current scene content and update it accordingly to modifications
+        /// </summary>
+        /// <param name="targetSceneContent">The target scene content to compare with the current content</param>
+        private void UpdateContent(SceneContent targetSceneContent)
+        {
+            foreach (GameObjectDescription gameObjectDescription in targetSceneContent.GameObjects.Values)
+            {
+                // create gamobject if it doesn't exist, otherwise get it from the current scene content
+                bool gameObjectExist = currentSceneContent.GameObjects.ContainsKey(gameObjectDescription.UUID);
+                if (gameObjectExist)
+                    gameObjectDescription.GameObject = currentSceneContent.GameObjects[gameObjectDescription.UUID].GameObject;
+                else
+                    gameObjectDescription.GameObject = new GameObject(gameObjectDescription.UUID);
+
+                foreach (ComponentDescription componentDescription in gameObjectDescription.Components.Values)
+                {
+                    // create component if it doesn't exist, otherwise get it from the current scene content
+                    bool componentExist = gameObjectExist && currentSceneContent.GameObjects[gameObjectDescription.UUID].Components.ContainsKey(componentDescription.UUID);
+                    if (componentExist)
+                        componentDescription.Component = currentSceneContent.GameObjects[gameObjectDescription.UUID].Components[componentDescription.UUID].Component;
+                    else
+                    {
+                        // we check transform because it is a special case, it is already attached to the gameObject at instantiation and is unique
+                        if (componentDescription.Type == typeof(Transform))
+                            componentDescription.Component = gameObjectDescription.GameObject.transform;
+                        else
+                        {
+                            componentDescription.Component = gameObjectDescription.GameObject.AddComponent(componentDescription.Type);
+                            //temporary to see object
+                            if (componentDescription.Component is MeshRenderer meshRenderer)
+                                meshRenderer.material = new Material(Shader.Find("Standard"));
+                            if (componentDescription.Component is MeshFilter meshFilter)
+                                meshFilter.mesh = Resources.Load<Mesh>("Models/Pyramid");
+                        }
+                    }
+
+                    // get the setters of the component
+                    Dictionary<string, Action<object>> setters = MapppedComponents.GetSetters(componentDescription.Component);
+                    // print every action :
+                    foreach (var setter in setters)
+                    {
+                        Debug.Log($"Setter: {setter.Key} {setter.Value}");
+                    }
+                    foreach (PropertyDescription propertyDescription in componentDescription.Properties.Values)
+                    {
+                        object propertyValue = propertyDescription.Value;
+                        if (propertyValue == null)
+                        {
+                            Debug.LogWarning($"Property {propertyDescription} is null in {componentDescription.Type} of {gameObjectDescription.UUID}");
+                            continue;
+                        }
+
+                        Debug.Log($"Property: {propertyDescription.Name} {propertyDescription.Type} {propertyValue}");
+                        if (setters.TryGetValue(propertyDescription.Name, out var setter) && setter != null) setter(propertyValue);
+                        else Debug.LogWarning($"Setter not found for {propertyDescription.Type} in {componentDescription.Type} of {gameObjectDescription.UUID}");
+                    }
+                }
+            }
+
+            foreach (GameObjectDescription gameObjectDescription in currentSceneContent.GameObjects.Values)
+            {
+                if (!targetSceneContent.GameObjects.ContainsKey(gameObjectDescription.UUID))
+                    Destroy(gameObjectDescription.GameObject);
+
+                foreach (ComponentDescription componentDescription in gameObjectDescription.Components.Values)
+                {
+                    if (!targetSceneContent.GameObjects[gameObjectDescription.UUID].Components.ContainsKey(componentDescription.UUID))
+                        Destroy(componentDescription.Component);
+                }
+            }
+
+            currentSceneContent = targetSceneContent;
         }
 
         /// <summary>
@@ -393,7 +630,7 @@ namespace SVEN
         /// <summary>
         /// Current index of the instants list.
         /// </summary>
-        [SerializeField]
+        [SerializeField, MinValue(0), OnValueChanged("LoadCurrentInstant")]
         private int _currentInstantIndex;
         /// <summary>
         /// Current index of the instants list.
@@ -404,10 +641,19 @@ namespace SVEN
             private set
             {
                 _currentInstantIndex = value;
-                if (instants != null && instants.Count > 0)
-                {
-                    LoadInstant(instants[_currentInstantIndex]);
-                }
+                LoadCurrentInstant();
+            }
+        }
+
+        /// <summary>
+        /// Load the current instant. (Work as a validation)
+        /// </summary>
+        private void LoadCurrentInstant()
+        {
+            _currentInstantIndex = Mathf.Clamp(_currentInstantIndex, 0, MaxInstantIndex);
+            if (instants != null && instants.Count > 0)
+            {
+                LoadInstant(instants[CurrentInstantIndex]);
             }
         }
 
