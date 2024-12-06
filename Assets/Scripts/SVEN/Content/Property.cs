@@ -180,7 +180,7 @@ namespace SVEN.Content
             Dictionary<string, object> values = observedProperty.LastValue.GetSemantizableValues();
             foreach (KeyValuePair<string, object> value in values)
             {
-                string stringValue = value.Value.ToString();
+                string stringValue = value.Value.ToRdfString();
                 string XmlSchemaDataType = value.Value.GetXmlSchemaTypes();
                 if (XmlSchemaDataType == XmlSpecsHelper.XmlSchemaDataTypeBoolean) stringValue = stringValue.ToLower();
                 ILiteralNode literalNode = graph.CreateLiteralNode(stringValue, new Uri(XmlSchemaDataType));

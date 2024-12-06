@@ -1,0 +1,612 @@
+@base <http://www.sven.fr/#>.
+
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>.
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>.
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#>.
+@prefix owl: <http://www.w3.org/2002/07/owl#>.
+@prefix sven: <http://www.sven.fr/ontology#>.
+@prefix time: <http://www.w3.org/2006/time#>.
+
+sven:02b0f41a-4460-4566-964d-8213d9f07412 sven:exactType sven:Transform;
+                                          sven:position sven:c7498bc9-c8d4-4296-b85a-42a0b01791df;
+                                          sven:rotation sven:7452305c-fcbd-4f81-981c-162d1ef3d1a6;
+                                          sven:scale sven:f9ad4622-8c7c-45f5-b113-dcba208d4c81;
+                                          a sven:Transform;
+                                          time:hasTemporalExtent time:ed0d2f3e-8073-465a-905f-6997e4c6b548.
+sven:05922ce1-d559-4369-b655-826b5897c2fb sven:exactType sven:Field;
+                                          sven:value false;
+                                          a sven:Field;
+                                          time:hasTemporalExtent time:3f8a0200-3760-4ad0-aadb-d7bb85be7d78.
+sven:0a6a1af0-a07f-48cd-a288-288dd040d2e5 sven:exactType sven:Field;
+                                          sven:value "Universal Render Pipeline/Lit";
+                                          a sven:Field;
+                                          time:hasTemporalExtent time:6603e05f-e415-4b7a-bcd1-02d7d6d528ee.
+sven:0eee967a-ee38-4984-88aa-47c86ba5da3c sven:exactType sven:Field;
+                                          sven:value false;
+                                          a sven:Field;
+                                          time:hasTemporalExtent time:afe35bf1-2b82-416a-8f50-066578f33fd4.
+sven:1087da34-e88f-45b3-9dd4-4d4cd80b99d9 sven:exactType sven:Field;
+                                          sven:value false;
+                                          a sven:Field;
+                                          time:hasTemporalExtent time:306ab49d-b6ec-4b49-9883-99677db93435.
+sven:12534d5d-5e24-41b1-bd5e-02a044a72d58 sven:exactType sven:Field;
+                                          sven:value "0|1|2|3|2|1|3|1|4|1|5|4|4|5|6|5|7|6|6|7|8|7|9|8|8|9|10|9|11|10|10|11|12|11|13|12|12|13|14|13|15|14|14|15|16|15|17|16|16|17|18|17|19|18|18|19|20|19|21|20|20|21|22|21|23|22|22|23|24|23|25|24|24|25|26|25|27|26|26|27|28|27|29|28|28|29|30|29|31|30|30|31|32|31|33|32|32|33|34|33|35|34|34|35|36|35|37|36|36|37|38|37|39|38|38|39|40|39|41|40|40|41|42|41|43|42|42|43|44|43|45|44|44|45|46|45|47|46|46|47|48|49|50|51|52|49|51|50|53|51|54|52|51|53|55|51|56|54|51|55|57|51|58|56|51|57|59|51|60|58|51|59|61|51|62|60|51|61|63|51|64|62|51|63|65|51|66|64|51|65|67|51|68|66|51|67|69|51|70|68|51|69|71|51|72|70|51|71|73|51|74|72|51|73|75|51|76|74|51|75|77|51|78|76|51|77|79|51|80|78|51|79|81|51|82|80|51|81|83|51|84|82|51|83|85|51|86|84|51|85|87|51|88|86|51|87|89|51|90|88|51|89|91|51|92|90|51|91|93|51|94|92|51|93|95|51|96|94|51|95|97|51|98|96|51|97|98|51";
+                                          a sven:Field;
+                                          time:hasTemporalExtent time:d8fc92eb-9f6d-4fe3-ada3-8d9eaefd13fd.
+sven:13110189-02af-4226-8351-1f05d2c10e63 sven:exactType sven:Field;
+                                          sven:value true;
+                                          a sven:Field;
+                                          time:hasTemporalExtent time:070c6ab5-64bf-4bc6-9b66-fee1ea1b8ede.
+sven:1340f19d-a81e-4ce7-bda2-171691ec13ff sven:exactType sven:Field;
+                                          sven:value "(0.42, -0.50, -0.28)|(0.45, -0.50, -0.22)|(0.40, -0.50, -0.30)|(0.35, -0.50, -0.35)|(0.30, -0.50, -0.40)|(0.47, -0.50, -0.16)|(0.25, -0.50, -0.43)|(0.49, -0.50, -0.10)|(0.19, -0.50, -0.46)|(0.50, -0.50, -0.03)|(0.13, -0.50, -0.48)|(0.50, -0.50, 0.03)|(0.07, -0.50, -0.50)|(0.49, -0.50, 0.10)|(0.00, -0.50, -0.50)|(0.47, -0.50, 0.16)|(-0.07, -0.50, -0.50)|(0.45, -0.50, 0.22)|(-0.13, -0.50, -0.48)|(0.42, -0.50, 0.28)|(-0.19, -0.50, -0.46)|(0.38, -0.50, 0.33)|(-0.25, -0.50, -0.43)|(0.33, -0.50, 0.38)|(-0.30, -0.50, -0.40)|(0.28, -0.50, 0.42)|(-0.35, -0.50, -0.35)|(0.22, -0.50, 0.45)|(-0.40, -0.50, -0.30)|(0.16, -0.50, 0.47)|(-0.43, -0.50, -0.25)|(0.10, -0.50, 0.49)|(-0.46, -0.50, -0.19)|(0.03, -0.50, 0.50)|(-0.48, -0.50, -0.13)|(-0.03, -0.50, 0.50)|(-0.50, -0.50, -0.07)|(-0.10, -0.50, 0.49)|(-0.50, -0.50, 0.00)|(-0.16, -0.50, 0.47)|(-0.50, -0.50, 0.07)|(-0.22, -0.50, 0.45)|(-0.48, -0.50, 0.13)|(-0.28, -0.50, 0.42)|(-0.46, -0.50, 0.19)|(-0.33, -0.50, 0.38)|(-0.43, -0.50, 0.25)|(-0.38, -0.50, 0.33)|(-0.40, -0.50, 0.30)|(-0.48, -0.50, 0.13)|(-0.46, -0.50, 0.19)|(0.00, 0.50, 0.00)|(-0.50, -0.50, 0.07)|(-0.43, -0.50, 0.25)|(-0.50, -0.50, 0.00)|(-0.40, -0.50, 0.30)|(-0.50, -0.50, -0.07)|(-0.38, -0.50, 0.33)|(-0.48, -0.50, -0.13)|(-0.33, -0.50, 0.38)|(-0.46, -0.50, -0.19)|(-0.28, -0.50, 0.42)|(-0.43, -0.50, -0.25)|(-0.22, -0.50, 0.45)|(-0.40, -0.50, -0.30)|(-0.16, -0.50, 0.47)|(-0.35, -0.50, -0.35)|(-0.10, -0.50, 0.49)|(-0.30, -0.50, -0.40)|(-0.03, -0.50, 0.50)|(-0.25, -0.50, -0.43)|(0.03, -0.50, 0.50)|(-0.19, -0.50, -0.46)|(0.10, -0.50, 0.49)|(-0.13, -0.50, -0.48)|(0.16, -0.50, 0.47)|(-0.07, -0.50, -0.50)|(0.22, -0.50, 0.45)|(0.00, -0.50, -0.50)|(0.28, -0.50, 0.42)|(0.07, -0.50, -0.50)|(0.33, -0.50, 0.38)|(0.13, -0.50, -0.48)|(0.38, -0.50, 0.33)|(0.19, -0.50, -0.46)|(0.42, -0.50, 0.28)|(0.25, -0.50, -0.43)|(0.45, -0.50, 0.22)|(0.30, -0.50, -0.40)|(0.47, -0.50, 0.16)|(0.35, -0.50, -0.35)|(0.49, -0.50, 0.10)|(0.40, -0.50, -0.30)|(0.50, -0.50, 0.03)|(0.42, -0.50, -0.28)|(0.50, -0.50, -0.03)|(0.45, -0.50, -0.22)|(0.49, -0.50, -0.10)|(0.47, -0.50, -0.16)";
+                                          a sven:Field;
+                                          time:hasTemporalExtent time:10e6d0f2-78a4-4a2c-b397-984fe2ce18e5.
+sven:1c809633-8bc4-44a5-b63e-be2c6b2305af sven:exactType sven:Field;
+                                          sven:value "Default";
+                                          a sven:Field;
+                                          time:hasTemporalExtent time:c4c9cb69-f635-4ea5-9e98-a4e66061aa5e.
+sven:1e435591-547d-4cde-a59f-bea00a96af7e sven:exactType sven:Field;
+                                          sven:value "Object 2";
+                                          a sven:Field;
+                                          time:hasTemporalExtent time:6ab58b6e-d636-4e79-87e5-c6c51cb63db4.
+sven:2820f2ea-6dc1-4e95-a9c7-b250a21a766c sven:exactType sven:Field;
+                                          sven:value "Object 1";
+                                          a sven:Field;
+                                          time:hasTemporalExtent time:2691038d-67e6-4b15-9792-beb1ad6cf81d.
+sven:30642896-127f-4151-8732-72a68a507b7a sven:exactType sven:Field;
+                                          sven:value true;
+                                          a sven:Field;
+                                          time:hasTemporalExtent time:475a9a1a-eee2-46db-9670-757f9e0339b5.
+sven:372de06d-4689-48d3-b796-6afd5a83d572 sven:exactType sven:Field;
+                                          sven:value true;
+                                          a sven:Field;
+                                          time:hasTemporalExtent time:3d2a4738-5f72-4467-b2ae-9324012636e1.
+sven:37ba8192-f343-4035-b58b-7772eab0dc22 sven:exactType sven:Field;
+                                          sven:value "(0.49, -1.00, -0.08)|(0.50, -1.00, -0.03)|(0.48, -1.00, -0.13)|(0.45, -1.00, -0.23)|(0.49, -1.00, 0.08)|(0.47, -1.00, 0.18)|(0.39, -1.00, -0.31)|(0.42, -1.00, 0.27)|(0.31, -1.00, -0.39)|(0.35, -1.00, 0.35)|(0.23, -1.00, -0.45)|(0.27, -1.00, 0.42)|(0.13, -1.00, -0.48)|(0.18, -1.00, 0.47)|(0.03, -1.00, -0.50)|(0.08, -1.00, 0.49)|(-0.08, -1.00, -0.49)|(-0.03, -1.00, 0.50)|(-0.18, -1.00, -0.47)|(-0.13, -1.00, 0.48)|(-0.27, -1.00, -0.42)|(-0.23, -1.00, 0.45)|(-0.35, -1.00, -0.35)|(-0.31, -1.00, 0.39)|(-0.42, -1.00, -0.27)|(-0.39, -1.00, 0.31)|(-0.47, -1.00, -0.18)|(-0.45, -1.00, 0.23)|(-0.49, -1.00, -0.08)|(-0.48, -1.00, 0.13)|(-0.50, -1.00, 0.03)|(0.13, 1.00, -0.48)|(0.03, 1.00, -0.50)|(0.23, 1.00, -0.45)|(0.31, 1.00, -0.39)|(-0.08, 1.00, -0.49)|(0.39, 1.00, -0.31)|(-0.18, 1.00, -0.47)|(0.45, 1.00, -0.23)|(-0.27, 1.00, -0.42)|(0.48, 1.00, -0.13)|(-0.35, 1.00, -0.35)|(0.49, 1.00, -0.08)|(-0.42, 1.00, -0.27)|(0.50, 1.00, -0.03)|(-0.47, 1.00, -0.18)|(0.49, 1.00, 0.08)|(0.47, 1.00, 0.18)|(-0.49, 1.00, -0.08)|(0.42, 1.00, 0.27)|(-0.50, 1.00, 0.03)|(0.35, 1.00, 0.35)|(-0.48, 1.00, 0.13)|(0.27, 1.00, 0.42)|(-0.45, 1.00, 0.23)|(0.18, 1.00, 0.47)|(-0.39, 1.00, 0.31)|(0.08, 1.00, 0.49)|(-0.31, 1.00, 0.39)|(-0.03, 1.00, 0.50)|(-0.23, 1.00, 0.45)|(-0.13, 1.00, 0.48)|(0.31, -1.00, -0.39)|(0.23, 1.00, -0.45)|(0.31, 1.00, -0.39)|(0.39, 1.00, -0.31)|(0.23, -1.00, -0.45)|(0.39, -1.00, -0.31)|(0.13, -1.00, -0.48)|(0.13, 1.00, -0.48)|(0.03, -1.00, -0.50)|(0.03, 1.00, -0.50)|(-0.08, -1.00, -0.49)|(-0.08, 1.00, -0.49)|(0.45, 1.00, -0.23)|(0.45, -1.00, -0.23)|(0.48, -1.00, -0.13)|(0.48, 1.00, -0.13)|(-0.18, -1.00, -0.47)|(-0.18, 1.00, -0.47)|(0.49, -1.00, -0.08)|(0.49, 1.00, -0.08)|(0.50, 1.00, -0.03)|(0.50, -1.00, -0.03)|(0.49, 1.00, 0.08)|(0.49, -1.00, 0.08)|(0.47, 1.00, 0.18)|(0.47, -1.00, 0.18)|(0.42, 1.00, 0.27)|(0.42, -1.00, 0.27)|(0.35, 1.00, 0.35)|(0.35, -1.00, 0.35)|(0.27, 1.00, 0.42)|(0.27, -1.00, 0.42)|(0.18, 1.00, 0.47)|(0.18, -1.00, 0.47)|(0.08, 1.00, 0.49)|(0.08, -1.00, 0.49)|(-0.03, 1.00, 0.50)|(-0.03, -1.00, 0.50)|(-0.13, 1.00, 0.48)|(-0.13, -1.00, 0.48)|(-0.23, 1.00, 0.45)|(-0.23, -1.00, 0.45)|(-0.31, -1.00, 0.39)|(-0.31, 1.00, 0.39)|(-0.39, 1.00, 0.31)|(-0.39, -1.00, 0.31)|(-0.45, 1.00, 0.23)|(-0.45, -1.00, 0.23)|(-0.48, 1.00, 0.13)|(-0.48, -1.00, 0.13)|(-0.50, 1.00, 0.03)|(-0.50, -1.00, 0.03)|(-0.49, 1.00, -0.08)|(-0.49, -1.00, -0.08)|(-0.47, 1.00, -0.18)|(-0.47, -1.00, -0.18)|(-0.42, 1.00, -0.27)|(-0.42, -1.00, -0.27)|(-0.35, -1.00, -0.35)|(-0.35, 1.00, -0.35)|(-0.27, 1.00, -0.42)|(-0.27, -1.00, -0.42)";
+                                          a sven:Field;
+                                          time:hasTemporalExtent time:5c4f9f21-3f5e-402a-aef9-447bed14ff54.
+sven:43d37e1e-4623-4583-8308-33d26d54c4e0 sven:exactType sven:Field;
+                                          sven:value true;
+                                          a sven:Field;
+                                          time:hasTemporalExtent time:6f9a1cc7-aefe-4340-b144-b1fb051befc8.
+sven:538a48ad-6ff3-41b6-8cb0-a3be0e5d8b30 sven:exactType sven:Field;
+                                          sven:value "Untagged";
+                                          a sven:Field;
+                                          time:hasTemporalExtent time:d0c23f2f-5374-49a2-a03f-61a8e11cda50.
+sven:55d07c56-780b-4712-a615-31e8bb2c0e7d sven:exactType sven:Field;
+                                          sven:value "Default";
+                                          a sven:Field;
+                                          time:hasTemporalExtent time:6b6def66-b286-4a76-ac31-b9f1614eda37.
+sven:5680ecee-6cc9-40b6-8021-6c72df618e80 sven:exactType sven:Field;
+                                          sven:value false;
+                                          a sven:Field;
+                                          time:hasTemporalExtent time:d7391562-d7cb-46bb-ae59-fbf5ad5f82a8.
+sven:5aeed0d5-a50e-448a-8ca9-d3caccff243c sven:exactType sven:Transform;
+                                          sven:position sven:de8a69ea-9a9a-4f16-8fae-f878d5545b50;
+                                          sven:rotation sven:ad3e2b07-dd77-437d-bda2-deaeb6f6e6aa;
+                                          sven:scale sven:88f7dbb4-88d1-444f-8db0-7df84d80f2e4;
+                                          a sven:Transform;
+                                          time:hasTemporalExtent time:57585fbd-6e19-4220-bf8b-04d3968960fa.
+sven:5f8f02e3-7e92-4f9f-9572-14b41810cb72 sven:exactType sven:Field;
+                                          sven:value true;
+                                          a sven:Field;
+                                          time:hasTemporalExtent time:23901652-5b41-49b7-a567-0f2b971c178e.
+sven:7452305c-fcbd-4f81-981c-162d1ef3d1a6 sven:exactType sven:Quaternion;
+                                          sven:w "1.0000"^^xsd:float;
+                                          sven:x "0.0000"^^xsd:float;
+                                          sven:y "0.0000"^^xsd:float;
+                                          sven:z "0.0000"^^xsd:float;
+                                          a sven:Quaternion;
+                                          time:hasTemporalExtent time:25a5ed78-4924-498f-a18b-09a182d0b09b.
+sven:8377a1f5-14aa-44fd-b999-2e21bbe68edc sven:exactType sven:Field;
+                                          sven:value "0|1|2|2|1|3|1|4|3|4|5|3|3|5|6|5|7|6|6|7|8|7|9|8|8|9|10|9|11|10|10|11|12|11|13|12|12|13|14|13|15|14|14|15|16|15|17|16|16|17|18|17|19|18|18|19|20|19|21|20|20|21|22|21|23|22|22|23|24|23|25|24|24|25|26|25|27|26|26|27|28|27|29|28|28|29|30|31|32|33|33|32|34|32|35|34|34|35|36|35|37|36|36|37|38|37|39|38|38|39|40|39|41|40|40|41|42|41|43|42|42|43|44|43|45|44|44|45|46|46|45|47|45|48|47|47|48|49|48|50|49|49|50|51|50|52|51|51|52|53|52|54|53|53|54|55|54|56|55|55|56|57|56|58|57|57|58|59|58|60|59|59|60|61|62|63|64|64|65|62|66|63|62|65|67|62|63|66|68|69|63|68|69|68|70|71|69|70|71|70|72|73|71|72|65|74|67|74|75|67|75|74|76|76|74|77|73|72|78|79|73|78|76|77|80|80|77|81|80|81|82|82|83|80|83|82|84|84|85|83|84|86|85|86|87|85|86|88|87|88|89|87|88|90|89|90|91|89|90|92|91|92|93|91|92|94|93|94|95|93|94|96|95|96|97|95|96|98|97|98|99|97|98|100|99|100|101|99|100|102|101|102|103|101|103|102|104|104|102|105|105|106|104|106|107|104|106|108|107|108|109|107|108|110|109|110|111|109|110|112|111|112|113|111|112|114|113|114|115|113|114|116|115|116|117|115|116|118|117|118|119|117|119|118|120|120|118|121|121|122|120|122|123|120|123|122|78|78|122|79";
+                                          a sven:Field;
+                                          time:hasTemporalExtent time:b704962b-cf4d-4892-b996-65a2071a1fa0.
+sven:88f7dbb4-88d1-444f-8db0-7df84d80f2e4 sven:exactType sven:Vector3;
+                                          sven:x "1.0000"^^xsd:float;
+                                          sven:y "1.0000"^^xsd:float;
+                                          sven:z "1.0000"^^xsd:float;
+                                          a sven:Vector3;
+                                          time:hasTemporalExtent time:b955fdb9-27e8-49b5-9569-583f96355822.
+sven:945c07f6-14a2-4a96-8104-760bd54d03d2 sven:a "1.0000"^^xsd:float;
+                                          sven:b "1.0000"^^xsd:float;
+                                          sven:exactType sven:Color;
+                                          sven:g "1.0000"^^xsd:float;
+                                          sven:r "1.0000"^^xsd:float;
+                                          a sven:Color;
+                                          time:hasTemporalExtent time:d060c64c-d870-436b-8221-8d631891ed55.
+sven:95dab656-a892-4122-8f12-16e096215a5c sven:active sven:edbbca6c-8aea-4d03-82ee-d48147a43ee3;
+                                          sven:component sven:e32634e3-1770-4de6-8fb5-373d520298dc,
+                                                         sven:02b0f41a-4460-4566-964d-8213d9f07412,
+                                                         sven:b01f2a49-5bab-4060-b0c0-8dc628d838f8;
+                                          sven:layer sven:1c809633-8bc4-44a5-b63e-be2c6b2305af;
+                                          sven:name sven:1e435591-547d-4cde-a59f-bea00a96af7e;
+                                          sven:tag sven:538a48ad-6ff3-41b6-8cb0-a3be0e5d8b30;
+                                          sven:virtualColorA "1.0000"^^xsd:float {| time:hasTemporalExtent time:b3b7934c-6b8b-4fbb-afd2-a31d913db81f |};
+                                          sven:virtualColorB "1.0000"^^xsd:float {| time:hasTemporalExtent time:b3b7934c-6b8b-4fbb-afd2-a31d913db81f |};
+                                          sven:virtualColorG "1.0000"^^xsd:float {| time:hasTemporalExtent time:b3b7934c-6b8b-4fbb-afd2-a31d913db81f |};
+                                          sven:virtualColorR "1.0000"^^xsd:float {| time:hasTemporalExtent time:b3b7934c-6b8b-4fbb-afd2-a31d913db81f |};
+                                          sven:virtualPositionX "-1.0000"^^xsd:float {| time:hasTemporalExtent time:81159ed3-4322-4d2e-8a64-5d0a91d0ad61 |};
+                                          sven:virtualPositionY "0.0000"^^xsd:float {| time:hasTemporalExtent time:81159ed3-4322-4d2e-8a64-5d0a91d0ad61 |};
+                                          sven:virtualPositionZ "0.0000"^^xsd:float {| time:hasTemporalExtent time:81159ed3-4322-4d2e-8a64-5d0a91d0ad61 |};
+                                          sven:virtualRotationW "1.0000"^^xsd:float {| time:hasTemporalExtent time:25a5ed78-4924-498f-a18b-09a182d0b09b |};
+                                          sven:virtualRotationX "0.0000"^^xsd:float {| time:hasTemporalExtent time:25a5ed78-4924-498f-a18b-09a182d0b09b |};
+                                          sven:virtualRotationY "0.0000"^^xsd:float {| time:hasTemporalExtent time:25a5ed78-4924-498f-a18b-09a182d0b09b |};
+                                          sven:virtualRotationZ "0.0000"^^xsd:float {| time:hasTemporalExtent time:25a5ed78-4924-498f-a18b-09a182d0b09b |};
+                                          sven:virtualSizeX "1.0000"^^xsd:float {| time:hasTemporalExtent time:083d4062-f3fa-4bd9-86d9-23c7c1b446ae |};
+                                          sven:virtualSizeY "1.0000"^^xsd:float {| time:hasTemporalExtent time:083d4062-f3fa-4bd9-86d9-23c7c1b446ae |};
+                                          sven:virtualSizeZ "1.0000"^^xsd:float {| time:hasTemporalExtent time:083d4062-f3fa-4bd9-86d9-23c7c1b446ae |};
+                                          a sven:VirtualObject;
+                                          rdfs:label "Object 2";
+                                          time:hasTemporalExtent time:3abb2bb0-4325-4b07-991f-ed54cefe9b92.
+sven:9808b63c-ce53-4ffc-8813-7a9afa3a11e7 sven:exactType sven:Shape;
+                                          sven:normals sven:e9f64c61-ec7e-444d-bfb6-164e0d12c17b;
+                                          sven:triangles sven:8377a1f5-14aa-44fd-b999-2e21bbe68edc;
+                                          sven:uvs sven:fb12ef96-612d-4380-9a4b-d26052f7a317;
+                                          sven:vertices sven:37ba8192-f343-4035-b58b-7772eab0dc22;
+                                          a sven:Shape;
+                                          time:hasTemporalExtent time:afb12c58-e818-4367-a52e-008c238a7e52.
+sven:99430bb1-0ddb-4e52-acf8-d394e4e6a8e3 sven:color sven:945c07f6-14a2-4a96-8104-760bd54d03d2;
+                                          sven:enabled sven:30642896-127f-4151-8732-72a68a507b7a;
+                                          sven:exactType sven:MeshRenderer;
+                                          sven:isVisible sven:0eee967a-ee38-4984-88aa-47c86ba5da3c,
+                                                         sven:d22052ea-c4b2-4b37-8926-f9a842c0424b,
+                                                         sven:05922ce1-d559-4369-b655-826b5897c2fb,
+                                                         sven:43d37e1e-4623-4583-8308-33d26d54c4e0;
+                                          sven:shader sven:dbada060-8863-451d-be7c-eef2d679ab30;
+                                          a sven:MeshRenderer;
+                                          time:hasTemporalExtent time:99f70f6d-b716-4ba9-aa88-c5f1121ae05b.
+sven:ad3e2b07-dd77-437d-bda2-deaeb6f6e6aa sven:exactType sven:Quaternion;
+                                          sven:w "1.0000"^^xsd:float;
+                                          sven:x "0.0000"^^xsd:float;
+                                          sven:y "0.0000"^^xsd:float;
+                                          sven:z "0.0000"^^xsd:float;
+                                          a sven:Quaternion;
+                                          time:hasTemporalExtent time:fcfb2732-ecdd-4d59-ae34-44dee04233a8.
+sven:b01f2a49-5bab-4060-b0c0-8dc628d838f8 sven:color sven:d8849b55-084c-4959-89dc-e519d77038bc;
+                                          sven:enabled sven:d55f9a0a-c1bb-44b5-82bc-781ac0e84db1;
+                                          sven:exactType sven:MeshRenderer;
+                                          sven:isVisible sven:1087da34-e88f-45b3-9dd4-4d4cd80b99d9,
+                                                         sven:5f8f02e3-7e92-4f9f-9572-14b41810cb72,
+                                                         sven:5680ecee-6cc9-40b6-8021-6c72df618e80,
+                                                         sven:e1e5a743-61ae-4fd0-b3fb-82da903f3203,
+                                                         sven:b0e3819c-4a88-41d2-a886-94e50ef56680,
+                                                         sven:372de06d-4689-48d3-b796-6afd5a83d572;
+                                          sven:shader sven:0a6a1af0-a07f-48cd-a288-288dd040d2e5;
+                                          a sven:MeshRenderer;
+                                          time:hasTemporalExtent time:eef999cc-fcfe-42e8-98a7-451663841fe8.
+sven:b0e3819c-4a88-41d2-a886-94e50ef56680 sven:exactType sven:Field;
+                                          sven:value false;
+                                          a sven:Field;
+                                          time:hasTemporalExtent time:f85635c6-4330-4f4e-8e82-6a50f29bc890.
+sven:c7498bc9-c8d4-4296-b85a-42a0b01791df sven:exactType sven:Vector3;
+                                          sven:x "-1.0000"^^xsd:float;
+                                          sven:y "0.0000"^^xsd:float;
+                                          sven:z "0.0000"^^xsd:float;
+                                          a sven:Vector3;
+                                          time:hasTemporalExtent time:81159ed3-4322-4d2e-8a64-5d0a91d0ad61.
+sven:c9c06911-b4e2-41bc-8848-5a3a16316c48 sven:exactType sven:Field;
+                                          sven:value "";
+                                          a sven:Field;
+                                          time:hasTemporalExtent time:d475931f-e901-4624-b8cb-49c64119b0e0.
+sven:cca67f26-9c7c-48e2-974d-62b97794aaae sven:exactType sven:Field;
+                                          sven:value "Untagged";
+                                          a sven:Field;
+                                          time:hasTemporalExtent time:564bc238-d7ed-41e4-98a7-b96de9cb49ce.
+sven:d112a4aa-236f-4581-b26a-0e1715d50ec0 sven:active sven:13110189-02af-4226-8351-1f05d2c10e63;
+                                          sven:component sven:9808b63c-ce53-4ffc-8813-7a9afa3a11e7,
+                                                         sven:5aeed0d5-a50e-448a-8ca9-d3caccff243c,
+                                                         sven:99430bb1-0ddb-4e52-acf8-d394e4e6a8e3;
+                                          sven:layer sven:55d07c56-780b-4712-a615-31e8bb2c0e7d;
+                                          sven:name sven:2820f2ea-6dc1-4e95-a9c7-b250a21a766c;
+                                          sven:tag sven:cca67f26-9c7c-48e2-974d-62b97794aaae;
+                                          sven:virtualColorA "1.0000"^^xsd:float {| time:hasTemporalExtent time:d060c64c-d870-436b-8221-8d631891ed55 |};
+                                          sven:virtualColorB "1.0000"^^xsd:float {| time:hasTemporalExtent time:d060c64c-d870-436b-8221-8d631891ed55 |};
+                                          sven:virtualColorG "1.0000"^^xsd:float {| time:hasTemporalExtent time:d060c64c-d870-436b-8221-8d631891ed55 |};
+                                          sven:virtualColorR "1.0000"^^xsd:float {| time:hasTemporalExtent time:d060c64c-d870-436b-8221-8d631891ed55 |};
+                                          sven:virtualPositionX "1.0000"^^xsd:float {| time:hasTemporalExtent time:2e814f19-1ce2-45d0-b981-0ca4f1898d86 |};
+                                          sven:virtualPositionY "0.0000"^^xsd:float {| time:hasTemporalExtent time:2e814f19-1ce2-45d0-b981-0ca4f1898d86 |};
+                                          sven:virtualPositionZ "0.0000"^^xsd:float {| time:hasTemporalExtent time:2e814f19-1ce2-45d0-b981-0ca4f1898d86 |};
+                                          sven:virtualRotationW "1.0000"^^xsd:float {| time:hasTemporalExtent time:fcfb2732-ecdd-4d59-ae34-44dee04233a8 |};
+                                          sven:virtualRotationX "0.0000"^^xsd:float {| time:hasTemporalExtent time:fcfb2732-ecdd-4d59-ae34-44dee04233a8 |};
+                                          sven:virtualRotationY "0.0000"^^xsd:float {| time:hasTemporalExtent time:fcfb2732-ecdd-4d59-ae34-44dee04233a8 |};
+                                          sven:virtualRotationZ "0.0000"^^xsd:float {| time:hasTemporalExtent time:fcfb2732-ecdd-4d59-ae34-44dee04233a8 |};
+                                          sven:virtualSizeX "1.0000"^^xsd:float {| time:hasTemporalExtent time:b955fdb9-27e8-49b5-9569-583f96355822 |};
+                                          sven:virtualSizeY "1.0000"^^xsd:float {| time:hasTemporalExtent time:b955fdb9-27e8-49b5-9569-583f96355822 |};
+                                          sven:virtualSizeZ "1.0000"^^xsd:float {| time:hasTemporalExtent time:b955fdb9-27e8-49b5-9569-583f96355822 |};
+                                          a sven:VirtualObject;
+                                          rdfs:label "Object 1";
+                                          time:hasTemporalExtent time:2ef22cab-82d2-4cf1-b6eb-b9313a8a0899.
+sven:d22052ea-c4b2-4b37-8926-f9a842c0424b sven:exactType sven:Field;
+                                          sven:value true;
+                                          a sven:Field;
+                                          time:hasTemporalExtent time:37210afc-c5eb-4f59-ab9d-da8d850c4447.
+sven:d55f9a0a-c1bb-44b5-82bc-781ac0e84db1 sven:exactType sven:Field;
+                                          sven:value true;
+                                          a sven:Field;
+                                          time:hasTemporalExtent time:f85c4f42-2b88-44d4-92ab-72a083f21f73.
+sven:d8849b55-084c-4959-89dc-e519d77038bc sven:a "1.0000"^^xsd:float;
+                                          sven:b "1.0000"^^xsd:float;
+                                          sven:exactType sven:Color;
+                                          sven:g "1.0000"^^xsd:float;
+                                          sven:r "1.0000"^^xsd:float;
+                                          a sven:Color;
+                                          time:hasTemporalExtent time:b3b7934c-6b8b-4fbb-afd2-a31d913db81f.
+sven:dbada060-8863-451d-be7c-eef2d679ab30 sven:exactType sven:Field;
+                                          sven:value "Universal Render Pipeline/Lit";
+                                          a sven:Field;
+                                          time:hasTemporalExtent time:156671f8-a658-4478-a529-f051b206b689.
+sven:de8a69ea-9a9a-4f16-8fae-f878d5545b50 sven:exactType sven:Vector3;
+                                          sven:x "1.0000"^^xsd:float;
+                                          sven:y "0.0000"^^xsd:float;
+                                          sven:z "0.0000"^^xsd:float;
+                                          a sven:Vector3;
+                                          time:hasTemporalExtent time:2e814f19-1ce2-45d0-b981-0ca4f1898d86.
+sven:e0644b29-2c14-4ccd-9b02-b9f8ba9021cb sven:exactType sven:Field;
+                                          sven:value "(0.00, -1.00, 0.00)|(0.00, -1.00, 0.00)|(0.00, -1.00, 0.00)|(0.00, -1.00, 0.00)|(0.00, -1.00, 0.00)|(0.00, -1.00, 0.00)|(0.00, -1.00, 0.00)|(0.00, -1.00, 0.00)|(0.00, -1.00, 0.00)|(0.00, -1.00, 0.00)|(0.00, -1.00, 0.00)|(0.00, -1.00, 0.00)|(0.00, -1.00, 0.00)|(0.00, -1.00, 0.00)|(0.00, -1.00, 0.00)|(0.00, -1.00, 0.00)|(0.00, -1.00, 0.00)|(0.00, -1.00, 0.00)|(0.00, -1.00, 0.00)|(0.00, -1.00, 0.00)|(0.00, -1.00, 0.00)|(0.00, -1.00, 0.00)|(0.00, -1.00, 0.00)|(0.00, -1.00, 0.00)|(0.00, -1.00, 0.00)|(0.00, -1.00, 0.00)|(0.00, -1.00, 0.00)|(0.00, -1.00, 0.00)|(0.00, -1.00, 0.00)|(0.00, -1.00, 0.00)|(0.00, -1.00, 0.00)|(0.00, -1.00, 0.00)|(0.00, -1.00, 0.00)|(0.00, -1.00, 0.00)|(0.00, -1.00, 0.00)|(0.00, -1.00, 0.00)|(0.00, -1.00, 0.00)|(0.00, -1.00, 0.00)|(0.00, -1.00, 0.00)|(0.00, -1.00, 0.00)|(0.00, -1.00, 0.00)|(0.00, -1.00, 0.00)|(0.00, -1.00, 0.00)|(0.00, -1.00, 0.00)|(0.00, -1.00, 0.00)|(0.00, -1.00, 0.00)|(0.00, -1.00, 0.00)|(0.00, -1.00, 0.00)|(0.00, -1.00, 0.00)|(-0.86, 0.45, 0.23)|(-0.83, 0.45, 0.34)|(0.00, 1.00, 0.00)|(-0.89, 0.45, 0.12)|(-0.77, 0.45, 0.45)|(-0.89, 0.45, 0.00)|(-0.73, 0.45, 0.52)|(-0.89, 0.45, -0.12)|(-0.65, 0.45, 0.61)|(-0.86, 0.45, -0.23)|(-0.59, 0.45, 0.67)|(-0.83, 0.45, -0.34)|(-0.50, 0.45, 0.74)|(-0.77, 0.45, -0.45)|(-0.40, 0.45, 0.80)|(-0.71, 0.45, -0.54)|(-0.29, 0.45, 0.85)|(-0.63, 0.45, -0.63)|(-0.17, 0.45, 0.88)|(-0.54, 0.45, -0.71)|(-0.06, 0.45, 0.89)|(-0.45, 0.45, -0.77)|(0.06, 0.45, 0.89)|(-0.34, 0.45, -0.83)|(0.17, 0.45, 0.88)|(-0.23, 0.45, -0.86)|(0.29, 0.45, 0.85)|(-0.12, 0.45, -0.89)|(0.40, 0.45, 0.80)|(0.00, 0.45, -0.89)|(0.50, 0.45, 0.74)|(0.12, 0.45, -0.89)|(0.59, 0.45, 0.67)|(0.23, 0.45, -0.86)|(0.67, 0.45, 0.59)|(0.34, 0.45, -0.83)|(0.74, 0.45, 0.50)|(0.45, 0.45, -0.77)|(0.80, 0.45, 0.40)|(0.54, 0.45, -0.71)|(0.85, 0.45, 0.29)|(0.63, 0.45, -0.63)|(0.88, 0.45, 0.17)|(0.69, 0.45, -0.57)|(0.89, 0.45, 0.06)|(0.76, 0.45, -0.47)|(0.89, 0.45, -0.06)|(0.80, 0.45, -0.40)|(0.88, 0.45, -0.17)|(0.85, 0.45, -0.29)";
+                                          a sven:Field;
+                                          time:hasTemporalExtent time:f28ed9cf-31c0-4deb-8106-56f00df295ce.
+sven:e1e5a743-61ae-4fd0-b3fb-82da903f3203 sven:exactType sven:Field;
+                                          sven:value true;
+                                          a sven:Field;
+                                          time:hasTemporalExtent time:2a083e67-8367-49f0-8ab3-5a24720897cc.
+sven:e32634e3-1770-4de6-8fb5-373d520298dc sven:exactType sven:Shape;
+                                          sven:normals sven:e0644b29-2c14-4ccd-9b02-b9f8ba9021cb;
+                                          sven:triangles sven:12534d5d-5e24-41b1-bd5e-02a044a72d58;
+                                          sven:uvs sven:c9c06911-b4e2-41bc-8848-5a3a16316c48;
+                                          sven:vertices sven:1340f19d-a81e-4ce7-bda2-171691ec13ff;
+                                          a sven:Shape;
+                                          time:hasTemporalExtent time:fce37769-af47-48ea-a2dc-bb975653aefd.
+sven:e9f64c61-ec7e-444d-bfb6-164e0d12c17b sven:exactType sven:Field;
+                                          sven:value "(0.00, -1.00, 0.00)|(0.00, -1.00, 0.00)|(0.00, -1.00, 0.00)|(0.00, -1.00, 0.00)|(0.00, -1.00, 0.00)|(0.00, -1.00, 0.00)|(0.00, -1.00, 0.00)|(0.00, -1.00, 0.00)|(0.00, -1.00, 0.00)|(0.00, -1.00, 0.00)|(0.00, -1.00, 0.00)|(0.00, -1.00, 0.00)|(0.00, -1.00, 0.00)|(0.00, -1.00, 0.00)|(0.00, -1.00, 0.00)|(0.00, -1.00, 0.00)|(0.00, -1.00, 0.00)|(0.00, -1.00, 0.00)|(0.00, -1.00, 0.00)|(0.00, -1.00, 0.00)|(0.00, -1.00, 0.00)|(0.00, -1.00, 0.00)|(0.00, -1.00, 0.00)|(0.00, -1.00, 0.00)|(0.00, -1.00, 0.00)|(0.00, -1.00, 0.00)|(0.00, -1.00, 0.00)|(0.00, -1.00, 0.00)|(0.00, -1.00, 0.00)|(0.00, -1.00, 0.00)|(0.00, -1.00, 0.00)|(0.00, 1.00, 0.00)|(0.00, 1.00, 0.00)|(0.00, 1.00, 0.00)|(0.00, 1.00, 0.00)|(0.00, 1.00, 0.00)|(0.00, 1.00, 0.00)|(0.00, 1.00, 0.00)|(0.00, 1.00, 0.00)|(0.00, 1.00, 0.00)|(0.00, 1.00, 0.00)|(0.00, 1.00, 0.00)|(0.00, 1.00, 0.00)|(0.00, 1.00, 0.00)|(0.00, 1.00, 0.00)|(0.00, 1.00, 0.00)|(0.00, 1.00, 0.00)|(0.00, 1.00, 0.00)|(0.00, 1.00, 0.00)|(0.00, 1.00, 0.00)|(0.00, 1.00, 0.00)|(0.00, 1.00, 0.00)|(0.00, 1.00, 0.00)|(0.00, 1.00, 0.00)|(0.00, 1.00, 0.00)|(0.00, 1.00, 0.00)|(0.00, 1.00, 0.00)|(0.00, 1.00, 0.00)|(0.00, 1.00, 0.00)|(0.00, 1.00, 0.00)|(0.00, 1.00, 0.00)|(0.00, 1.00, 0.00)|(0.63, 0.00, -0.78)|(0.45, 0.00, -0.89)|(0.63, 0.00, -0.78)|(0.78, 0.00, -0.63)|(0.45, 0.00, -0.89)|(0.78, 0.00, -0.63)|(0.26, 0.00, -0.97)|(0.26, 0.00, -0.97)|(0.05, 0.00, -1.00)|(0.05, 0.00, -1.00)|(-0.16, 0.00, -0.99)|(-0.16, 0.00, -0.99)|(0.89, 0.00, -0.45)|(0.89, 0.00, -0.45)|(0.95, 0.00, -0.31)|(0.95, 0.00, -0.31)|(-0.36, 0.00, -0.93)|(-0.36, 0.00, -0.93)|(0.99, 0.00, -0.16)|(0.99, 0.00, -0.16)|(1.00, 0.00, 0.00)|(1.00, 0.00, 0.00)|(0.99, 0.00, 0.16)|(0.99, 0.00, 0.16)|(0.93, 0.00, 0.36)|(0.93, 0.00, 0.36)|(0.84, 0.00, 0.54)|(0.84, 0.00, 0.54)|(0.71, 0.00, 0.71)|(0.71, 0.00, 0.71)|(0.54, 0.00, 0.84)|(0.54, 0.00, 0.84)|(0.36, 0.00, 0.93)|(0.36, 0.00, 0.93)|(0.16, 0.00, 0.99)|(0.16, 0.00, 0.99)|(-0.05, 0.00, 1.00)|(-0.05, 0.00, 1.00)|(-0.26, 0.00, 0.97)|(-0.26, 0.00, 0.97)|(-0.45, 0.00, 0.89)|(-0.45, 0.00, 0.89)|(-0.63, 0.00, 0.78)|(-0.63, 0.00, 0.78)|(-0.78, 0.00, 0.63)|(-0.78, 0.00, 0.63)|(-0.89, 0.00, 0.45)|(-0.89, 0.00, 0.45)|(-0.97, 0.00, 0.26)|(-0.97, 0.00, 0.26)|(-1.00, 0.00, 0.05)|(-1.00, 0.00, 0.05)|(-0.99, 0.00, -0.16)|(-0.99, 0.00, -0.16)|(-0.93, 0.00, -0.36)|(-0.93, 0.00, -0.36)|(-0.84, 0.00, -0.54)|(-0.84, 0.00, -0.54)|(-0.71, 0.00, -0.71)|(-0.71, 0.00, -0.71)|(-0.54, 0.00, -0.84)|(-0.54, 0.00, -0.84)";
+                                          a sven:Field;
+                                          time:hasTemporalExtent time:3ce78297-c057-4804-bbe2-98b60409b430.
+sven:edbbca6c-8aea-4d03-82ee-d48147a43ee3 sven:exactType sven:Field;
+                                          sven:value true;
+                                          a sven:Field;
+                                          time:hasTemporalExtent time:72a3f024-2c4e-46ff-81f7-53b4980527ae.
+sven:f9ad4622-8c7c-45f5-b113-dcba208d4c81 sven:exactType sven:Vector3;
+                                          sven:x "1.0000"^^xsd:float;
+                                          sven:y "1.0000"^^xsd:float;
+                                          sven:z "1.0000"^^xsd:float;
+                                          a sven:Vector3;
+                                          time:hasTemporalExtent time:083d4062-f3fa-4bd9-86d9-23c7c1b446ae.
+sven:fb12ef96-612d-4380-9a4b-d26052f7a317 sven:exactType sven:Field;
+                                          sven:value "";
+                                          a sven:Field;
+                                          time:hasTemporalExtent time:a68a1751-4348-4cf1-ad24-9ff64ad24bfa.
+time:070c6ab5-64bf-4bc6-9b66-fee1ea1b8ede a time:Interval;
+                                          time:hasBeginning time:2024-12-06-15-01-23-000;
+                                          time:inside time:2024-12-06-15-01-25-000,
+                                                      time:2024-12-06-15-01-32-000,
+                                                      time:2024-12-06-15-01-33-000,
+                                                      time:2024-12-06-15-01-35-000,
+                                                      time:2024-12-06-15-01-36-000.
+time:083d4062-f3fa-4bd9-86d9-23c7c1b446ae a time:Interval;
+                                          time:hasBeginning time:2024-12-06-15-01-23-000;
+                                          time:inside time:2024-12-06-15-01-25-000,
+                                                      time:2024-12-06-15-01-32-000,
+                                                      time:2024-12-06-15-01-33-000,
+                                                      time:2024-12-06-15-01-35-000,
+                                                      time:2024-12-06-15-01-36-000.
+time:10e6d0f2-78a4-4a2c-b397-984fe2ce18e5 a time:Interval;
+                                          time:hasBeginning time:2024-12-06-15-01-23-000;
+                                          time:inside time:2024-12-06-15-01-25-000,
+                                                      time:2024-12-06-15-01-32-000,
+                                                      time:2024-12-06-15-01-33-000,
+                                                      time:2024-12-06-15-01-35-000,
+                                                      time:2024-12-06-15-01-36-000.
+time:156671f8-a658-4478-a529-f051b206b689 a time:Interval;
+                                          time:before time:dbada060-8863-451d-be7c-eef2d679ab30;
+                                          time:hasBeginning time:2024-12-06-15-01-23-000;
+                                          time:hasEnd time:2024-12-06-15-01-35-000;
+                                          time:hasXSDDuration "PT12S"^^xsd:duration;
+                                          time:inside time:2024-12-06-15-01-25-000,
+                                                      time:2024-12-06-15-01-32-000,
+                                                      time:2024-12-06-15-01-33-000,
+                                                      time:2024-12-06-15-01-35-000.
+time:2024-12-06-15-01-23-000 a time:Instant;
+                             time:inXSDDateTime "2024-12-06T15:01:23.000Z"^^xsd:dateTime.
+time:2024-12-06-15-01-25-000 a time:Instant;
+                             time:inXSDDateTime "2024-12-06T15:01:25.000Z"^^xsd:dateTime.
+time:2024-12-06-15-01-32-000 a time:Instant;
+                             time:inXSDDateTime "2024-12-06T15:01:32.000Z"^^xsd:dateTime.
+time:2024-12-06-15-01-33-000 a time:Instant;
+                             time:inXSDDateTime "2024-12-06T15:01:33.000Z"^^xsd:dateTime.
+time:2024-12-06-15-01-35-000 a time:Instant;
+                             time:inXSDDateTime "2024-12-06T15:01:35.000Z"^^xsd:dateTime.
+time:2024-12-06-15-01-36-000 a time:Instant;
+                             time:inXSDDateTime "2024-12-06T15:01:36.000Z"^^xsd:dateTime.
+time:23901652-5b41-49b7-a567-0f2b971c178e a time:Interval;
+                                          time:after time:306ab49d-b6ec-4b49-9883-99677db93435;
+                                          time:before time:d7391562-d7cb-46bb-ae59-fbf5ad5f82a8;
+                                          time:hasBeginning time:2024-12-06-15-01-25-000;
+                                          time:hasEnd time:2024-12-06-15-01-32-000;
+                                          time:hasXSDDuration "PT7S"^^xsd:duration;
+                                          time:inside time:2024-12-06-15-01-32-000.
+time:25a5ed78-4924-498f-a18b-09a182d0b09b a time:Interval;
+                                          time:hasBeginning time:2024-12-06-15-01-23-000;
+                                          time:inside time:2024-12-06-15-01-25-000,
+                                                      time:2024-12-06-15-01-32-000,
+                                                      time:2024-12-06-15-01-33-000,
+                                                      time:2024-12-06-15-01-35-000,
+                                                      time:2024-12-06-15-01-36-000.
+time:2691038d-67e6-4b15-9792-beb1ad6cf81d a time:Interval;
+                                          time:hasBeginning time:2024-12-06-15-01-23-000;
+                                          time:inside time:2024-12-06-15-01-25-000,
+                                                      time:2024-12-06-15-01-32-000,
+                                                      time:2024-12-06-15-01-33-000,
+                                                      time:2024-12-06-15-01-35-000,
+                                                      time:2024-12-06-15-01-36-000.
+time:2a083e67-8367-49f0-8ab3-5a24720897cc a time:Interval;
+                                          time:after time:d7391562-d7cb-46bb-ae59-fbf5ad5f82a8;
+                                          time:before time:f85635c6-4330-4f4e-8e82-6a50f29bc890;
+                                          time:hasBeginning time:2024-12-06-15-01-33-000;
+                                          time:hasEnd time:2024-12-06-15-01-35-000;
+                                          time:hasXSDDuration "PT2S"^^xsd:duration;
+                                          time:inside time:2024-12-06-15-01-35-000.
+time:2e814f19-1ce2-45d0-b981-0ca4f1898d86 a time:Interval;
+                                          time:hasBeginning time:2024-12-06-15-01-23-000;
+                                          time:inside time:2024-12-06-15-01-25-000,
+                                                      time:2024-12-06-15-01-32-000,
+                                                      time:2024-12-06-15-01-33-000,
+                                                      time:2024-12-06-15-01-35-000,
+                                                      time:2024-12-06-15-01-36-000.
+time:2ef22cab-82d2-4cf1-b6eb-b9313a8a0899 a time:Interval;
+                                          time:hasBeginning time:2024-12-06-15-01-23-000;
+                                          time:inside time:2024-12-06-15-01-25-000,
+                                                      time:2024-12-06-15-01-32-000,
+                                                      time:2024-12-06-15-01-33-000,
+                                                      time:2024-12-06-15-01-35-000,
+                                                      time:2024-12-06-15-01-36-000.
+time:306ab49d-b6ec-4b49-9883-99677db93435 a time:Interval;
+                                          time:before time:23901652-5b41-49b7-a567-0f2b971c178e;
+                                          time:hasBeginning time:2024-12-06-15-01-23-000;
+                                          time:hasEnd time:2024-12-06-15-01-25-000;
+                                          time:hasXSDDuration "PT2S"^^xsd:duration;
+                                          time:inside time:2024-12-06-15-01-25-000.
+time:37210afc-c5eb-4f59-ab9d-da8d850c4447 a time:Interval;
+                                          time:after time:afe35bf1-2b82-416a-8f50-066578f33fd4;
+                                          time:before time:3f8a0200-3760-4ad0-aadb-d7bb85be7d78;
+                                          time:hasBeginning time:2024-12-06-15-01-25-000;
+                                          time:hasEnd time:2024-12-06-15-01-32-000;
+                                          time:hasXSDDuration "PT7S"^^xsd:duration;
+                                          time:inside time:2024-12-06-15-01-32-000.
+time:3abb2bb0-4325-4b07-991f-ed54cefe9b92 a time:Interval;
+                                          time:hasBeginning time:2024-12-06-15-01-23-000;
+                                          time:inside time:2024-12-06-15-01-25-000,
+                                                      time:2024-12-06-15-01-32-000,
+                                                      time:2024-12-06-15-01-33-000,
+                                                      time:2024-12-06-15-01-35-000,
+                                                      time:2024-12-06-15-01-36-000.
+time:3ce78297-c057-4804-bbe2-98b60409b430 a time:Interval;
+                                          time:hasBeginning time:2024-12-06-15-01-23-000;
+                                          time:inside time:2024-12-06-15-01-25-000,
+                                                      time:2024-12-06-15-01-32-000,
+                                                      time:2024-12-06-15-01-33-000,
+                                                      time:2024-12-06-15-01-35-000,
+                                                      time:2024-12-06-15-01-36-000.
+time:3d2a4738-5f72-4467-b2ae-9324012636e1 a time:Interval;
+                                          time:after time:f85635c6-4330-4f4e-8e82-6a50f29bc890;
+                                          time:hasBeginning time:2024-12-06-15-01-36-000.
+time:3f8a0200-3760-4ad0-aadb-d7bb85be7d78 a time:Interval;
+                                          time:after time:37210afc-c5eb-4f59-ab9d-da8d850c4447;
+                                          time:before time:6f9a1cc7-aefe-4340-b144-b1fb051befc8;
+                                          time:hasBeginning time:2024-12-06-15-01-32-000;
+                                          time:hasEnd time:2024-12-06-15-01-33-000;
+                                          time:hasXSDDuration "PT1S"^^xsd:duration;
+                                          time:inside time:2024-12-06-15-01-33-000.
+time:475a9a1a-eee2-46db-9670-757f9e0339b5 a time:Interval;
+                                          time:before time:30642896-127f-4151-8732-72a68a507b7a;
+                                          time:hasBeginning time:2024-12-06-15-01-23-000;
+                                          time:hasEnd time:2024-12-06-15-01-35-000;
+                                          time:hasXSDDuration "PT12S"^^xsd:duration;
+                                          time:inside time:2024-12-06-15-01-25-000,
+                                                      time:2024-12-06-15-01-32-000,
+                                                      time:2024-12-06-15-01-33-000,
+                                                      time:2024-12-06-15-01-35-000.
+time:564bc238-d7ed-41e4-98a7-b96de9cb49ce a time:Interval;
+                                          time:hasBeginning time:2024-12-06-15-01-23-000;
+                                          time:inside time:2024-12-06-15-01-25-000,
+                                                      time:2024-12-06-15-01-32-000,
+                                                      time:2024-12-06-15-01-33-000,
+                                                      time:2024-12-06-15-01-35-000,
+                                                      time:2024-12-06-15-01-36-000.
+time:57585fbd-6e19-4220-bf8b-04d3968960fa a time:Interval;
+                                          time:hasBeginning time:2024-12-06-15-01-23-000;
+                                          time:inside time:2024-12-06-15-01-25-000,
+                                                      time:2024-12-06-15-01-32-000,
+                                                      time:2024-12-06-15-01-33-000,
+                                                      time:2024-12-06-15-01-35-000,
+                                                      time:2024-12-06-15-01-36-000.
+time:5c4f9f21-3f5e-402a-aef9-447bed14ff54 a time:Interval;
+                                          time:hasBeginning time:2024-12-06-15-01-23-000;
+                                          time:inside time:2024-12-06-15-01-25-000,
+                                                      time:2024-12-06-15-01-32-000,
+                                                      time:2024-12-06-15-01-33-000,
+                                                      time:2024-12-06-15-01-35-000,
+                                                      time:2024-12-06-15-01-36-000.
+time:6603e05f-e415-4b7a-bcd1-02d7d6d528ee a time:Interval;
+                                          time:hasBeginning time:2024-12-06-15-01-23-000;
+                                          time:inside time:2024-12-06-15-01-25-000,
+                                                      time:2024-12-06-15-01-32-000,
+                                                      time:2024-12-06-15-01-33-000,
+                                                      time:2024-12-06-15-01-35-000,
+                                                      time:2024-12-06-15-01-36-000.
+time:6ab58b6e-d636-4e79-87e5-c6c51cb63db4 a time:Interval;
+                                          time:hasBeginning time:2024-12-06-15-01-23-000;
+                                          time:inside time:2024-12-06-15-01-25-000,
+                                                      time:2024-12-06-15-01-32-000,
+                                                      time:2024-12-06-15-01-33-000,
+                                                      time:2024-12-06-15-01-35-000,
+                                                      time:2024-12-06-15-01-36-000.
+time:6b6def66-b286-4a76-ac31-b9f1614eda37 a time:Interval;
+                                          time:hasBeginning time:2024-12-06-15-01-23-000;
+                                          time:inside time:2024-12-06-15-01-25-000,
+                                                      time:2024-12-06-15-01-32-000,
+                                                      time:2024-12-06-15-01-33-000,
+                                                      time:2024-12-06-15-01-35-000,
+                                                      time:2024-12-06-15-01-36-000.
+time:6f9a1cc7-aefe-4340-b144-b1fb051befc8 a time:Interval;
+                                          time:after time:3f8a0200-3760-4ad0-aadb-d7bb85be7d78;
+                                          time:before time:43d37e1e-4623-4583-8308-33d26d54c4e0;
+                                          time:hasBeginning time:2024-12-06-15-01-33-000;
+                                          time:hasEnd time:2024-12-06-15-01-35-000;
+                                          time:hasXSDDuration "PT2S"^^xsd:duration;
+                                          time:inside time:2024-12-06-15-01-35-000.
+time:72a3f024-2c4e-46ff-81f7-53b4980527ae a time:Interval;
+                                          time:hasBeginning time:2024-12-06-15-01-23-000;
+                                          time:inside time:2024-12-06-15-01-25-000,
+                                                      time:2024-12-06-15-01-32-000,
+                                                      time:2024-12-06-15-01-33-000,
+                                                      time:2024-12-06-15-01-35-000,
+                                                      time:2024-12-06-15-01-36-000.
+time:81159ed3-4322-4d2e-8a64-5d0a91d0ad61 a time:Interval;
+                                          time:hasBeginning time:2024-12-06-15-01-23-000;
+                                          time:inside time:2024-12-06-15-01-25-000,
+                                                      time:2024-12-06-15-01-32-000,
+                                                      time:2024-12-06-15-01-33-000,
+                                                      time:2024-12-06-15-01-35-000,
+                                                      time:2024-12-06-15-01-36-000.
+time:99f70f6d-b716-4ba9-aa88-c5f1121ae05b a time:Interval;
+                                          time:hasBeginning time:2024-12-06-15-01-23-000;
+                                          time:hasEnd time:2024-12-06-15-01-35-000;
+                                          time:hasXSDDuration "PT12S"^^xsd:duration;
+                                          time:inside time:2024-12-06-15-01-25-000,
+                                                      time:2024-12-06-15-01-32-000,
+                                                      time:2024-12-06-15-01-33-000,
+                                                      time:2024-12-06-15-01-35-000.
+time:a68a1751-4348-4cf1-ad24-9ff64ad24bfa a time:Interval;
+                                          time:hasBeginning time:2024-12-06-15-01-23-000;
+                                          time:inside time:2024-12-06-15-01-25-000,
+                                                      time:2024-12-06-15-01-32-000,
+                                                      time:2024-12-06-15-01-33-000,
+                                                      time:2024-12-06-15-01-35-000,
+                                                      time:2024-12-06-15-01-36-000.
+time:afb12c58-e818-4367-a52e-008c238a7e52 a time:Interval;
+                                          time:hasBeginning time:2024-12-06-15-01-23-000;
+                                          time:inside time:2024-12-06-15-01-25-000,
+                                                      time:2024-12-06-15-01-32-000,
+                                                      time:2024-12-06-15-01-33-000,
+                                                      time:2024-12-06-15-01-35-000,
+                                                      time:2024-12-06-15-01-36-000.
+time:afe35bf1-2b82-416a-8f50-066578f33fd4 a time:Interval;
+                                          time:before time:37210afc-c5eb-4f59-ab9d-da8d850c4447;
+                                          time:hasBeginning time:2024-12-06-15-01-23-000;
+                                          time:hasEnd time:2024-12-06-15-01-25-000;
+                                          time:hasXSDDuration "PT2S"^^xsd:duration;
+                                          time:inside time:2024-12-06-15-01-25-000.
+time:b3b7934c-6b8b-4fbb-afd2-a31d913db81f a time:Interval;
+                                          time:hasBeginning time:2024-12-06-15-01-23-000;
+                                          time:inside time:2024-12-06-15-01-25-000,
+                                                      time:2024-12-06-15-01-32-000,
+                                                      time:2024-12-06-15-01-33-000,
+                                                      time:2024-12-06-15-01-35-000,
+                                                      time:2024-12-06-15-01-36-000.
+time:b704962b-cf4d-4892-b996-65a2071a1fa0 a time:Interval;
+                                          time:hasBeginning time:2024-12-06-15-01-23-000;
+                                          time:inside time:2024-12-06-15-01-25-000,
+                                                      time:2024-12-06-15-01-32-000,
+                                                      time:2024-12-06-15-01-33-000,
+                                                      time:2024-12-06-15-01-35-000,
+                                                      time:2024-12-06-15-01-36-000.
+time:b955fdb9-27e8-49b5-9569-583f96355822 a time:Interval;
+                                          time:hasBeginning time:2024-12-06-15-01-23-000;
+                                          time:inside time:2024-12-06-15-01-25-000,
+                                                      time:2024-12-06-15-01-32-000,
+                                                      time:2024-12-06-15-01-33-000,
+                                                      time:2024-12-06-15-01-35-000,
+                                                      time:2024-12-06-15-01-36-000.
+time:c4c9cb69-f635-4ea5-9e98-a4e66061aa5e a time:Interval;
+                                          time:hasBeginning time:2024-12-06-15-01-23-000;
+                                          time:inside time:2024-12-06-15-01-25-000,
+                                                      time:2024-12-06-15-01-32-000,
+                                                      time:2024-12-06-15-01-33-000,
+                                                      time:2024-12-06-15-01-35-000,
+                                                      time:2024-12-06-15-01-36-000.
+time:d060c64c-d870-436b-8221-8d631891ed55 a time:Interval;
+                                          time:before time:945c07f6-14a2-4a96-8104-760bd54d03d2;
+                                          time:hasBeginning time:2024-12-06-15-01-23-000;
+                                          time:hasEnd time:2024-12-06-15-01-35-000;
+                                          time:hasXSDDuration "PT12S"^^xsd:duration;
+                                          time:inside time:2024-12-06-15-01-25-000,
+                                                      time:2024-12-06-15-01-32-000,
+                                                      time:2024-12-06-15-01-33-000,
+                                                      time:2024-12-06-15-01-35-000.
+time:d0c23f2f-5374-49a2-a03f-61a8e11cda50 a time:Interval;
+                                          time:hasBeginning time:2024-12-06-15-01-23-000;
+                                          time:inside time:2024-12-06-15-01-25-000,
+                                                      time:2024-12-06-15-01-32-000,
+                                                      time:2024-12-06-15-01-33-000,
+                                                      time:2024-12-06-15-01-35-000,
+                                                      time:2024-12-06-15-01-36-000.
+time:d475931f-e901-4624-b8cb-49c64119b0e0 a time:Interval;
+                                          time:hasBeginning time:2024-12-06-15-01-23-000;
+                                          time:inside time:2024-12-06-15-01-25-000,
+                                                      time:2024-12-06-15-01-32-000,
+                                                      time:2024-12-06-15-01-33-000,
+                                                      time:2024-12-06-15-01-35-000,
+                                                      time:2024-12-06-15-01-36-000.
+time:d7391562-d7cb-46bb-ae59-fbf5ad5f82a8 a time:Interval;
+                                          time:after time:23901652-5b41-49b7-a567-0f2b971c178e;
+                                          time:before time:2a083e67-8367-49f0-8ab3-5a24720897cc;
+                                          time:hasBeginning time:2024-12-06-15-01-32-000;
+                                          time:hasEnd time:2024-12-06-15-01-33-000;
+                                          time:hasXSDDuration "PT1S"^^xsd:duration;
+                                          time:inside time:2024-12-06-15-01-33-000.
+time:d8fc92eb-9f6d-4fe3-ada3-8d9eaefd13fd a time:Interval;
+                                          time:hasBeginning time:2024-12-06-15-01-23-000;
+                                          time:inside time:2024-12-06-15-01-25-000,
+                                                      time:2024-12-06-15-01-32-000,
+                                                      time:2024-12-06-15-01-33-000,
+                                                      time:2024-12-06-15-01-35-000,
+                                                      time:2024-12-06-15-01-36-000.
+time:ed0d2f3e-8073-465a-905f-6997e4c6b548 a time:Interval;
+                                          time:hasBeginning time:2024-12-06-15-01-23-000;
+                                          time:inside time:2024-12-06-15-01-25-000,
+                                                      time:2024-12-06-15-01-32-000,
+                                                      time:2024-12-06-15-01-33-000,
+                                                      time:2024-12-06-15-01-35-000,
+                                                      time:2024-12-06-15-01-36-000.
+time:eef999cc-fcfe-42e8-98a7-451663841fe8 a time:Interval;
+                                          time:hasBeginning time:2024-12-06-15-01-23-000;
+                                          time:inside time:2024-12-06-15-01-25-000,
+                                                      time:2024-12-06-15-01-32-000,
+                                                      time:2024-12-06-15-01-33-000,
+                                                      time:2024-12-06-15-01-35-000,
+                                                      time:2024-12-06-15-01-36-000.
+time:f28ed9cf-31c0-4deb-8106-56f00df295ce a time:Interval;
+                                          time:hasBeginning time:2024-12-06-15-01-23-000;
+                                          time:inside time:2024-12-06-15-01-25-000,
+                                                      time:2024-12-06-15-01-32-000,
+                                                      time:2024-12-06-15-01-33-000,
+                                                      time:2024-12-06-15-01-35-000,
+                                                      time:2024-12-06-15-01-36-000.
+time:f85635c6-4330-4f4e-8e82-6a50f29bc890 a time:Interval;
+                                          time:after time:2a083e67-8367-49f0-8ab3-5a24720897cc;
+                                          time:before time:3d2a4738-5f72-4467-b2ae-9324012636e1;
+                                          time:hasBeginning time:2024-12-06-15-01-35-000;
+                                          time:hasEnd time:2024-12-06-15-01-36-000;
+                                          time:hasXSDDuration "PT1S"^^xsd:duration;
+                                          time:inside time:2024-12-06-15-01-36-000.
+time:f85c4f42-2b88-44d4-92ab-72a083f21f73 a time:Interval;
+                                          time:hasBeginning time:2024-12-06-15-01-23-000;
+                                          time:inside time:2024-12-06-15-01-25-000,
+                                                      time:2024-12-06-15-01-32-000,
+                                                      time:2024-12-06-15-01-33-000,
+                                                      time:2024-12-06-15-01-35-000,
+                                                      time:2024-12-06-15-01-36-000.
+time:fce37769-af47-48ea-a2dc-bb975653aefd a time:Interval;
+                                          time:hasBeginning time:2024-12-06-15-01-23-000;
+                                          time:inside time:2024-12-06-15-01-25-000,
+                                                      time:2024-12-06-15-01-32-000,
+                                                      time:2024-12-06-15-01-33-000,
+                                                      time:2024-12-06-15-01-35-000,
+                                                      time:2024-12-06-15-01-36-000.
+time:fcfb2732-ecdd-4d59-ae34-44dee04233a8 a time:Interval;
+                                          time:hasBeginning time:2024-12-06-15-01-23-000;
+                                          time:inside time:2024-12-06-15-01-25-000,
+                                                      time:2024-12-06-15-01-32-000,
+                                                      time:2024-12-06-15-01-33-000,
+                                                      time:2024-12-06-15-01-35-000,
+                                                      time:2024-12-06-15-01-36-000.

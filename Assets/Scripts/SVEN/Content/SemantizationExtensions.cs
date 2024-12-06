@@ -6,6 +6,7 @@ using OWLTime;
 using RDF;
 using UnityEngine;
 using VDS.RDF;
+using VDS.RDF.Nodes;
 using VDS.RDF.Parsing;
 
 namespace SVEN.Content
@@ -200,6 +201,20 @@ namespace SVEN.Content
 
         #region Data Types
 
+        public static object ToValue(this IValuedNode node)
+        {
+            return node.EffectiveType.Split("#")[1] switch
+            {
+                "string" => node.AsString(),
+                "int" => node.AsInteger(),
+                "float" => node.AsFloat(),
+                "double" => node.AsDouble(),
+                "bool" => node.AsBoolean(),
+                "dateTime" => node.AsDateTime(),
+                _ => node.AsString(),
+            };
+        }
+
         /// <summary>
         /// Get the XML Schema data type for the object.
         /// </summary>
@@ -239,7 +254,7 @@ namespace SVEN.Content
             Type type = obj.GetType();
             if (type.IsPrimitive || type == typeof(string))
             {
-                values.Add("value", obj.ToRdfString());
+                values.Add("value", obj);
             }
             else
             {
@@ -254,14 +269,14 @@ namespace SVEN.Content
                     FieldInfo field = type.GetField(fieldName);
                     if (field != null)
                     {
-                        values.Add(fieldName, field.GetValue(obj).ToRdfString());
+                        values.Add(fieldName, field.GetValue(obj));
                     }
                     else
                     {
                         PropertyInfo property = type.GetProperty(fieldName);
                         if (property != null)
                         {
-                            values.Add(fieldName, property.GetValue(obj).ToRdfString());
+                            values.Add(fieldName, property.GetValue(obj));
                         }
                     }
                 }

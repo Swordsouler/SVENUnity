@@ -31,13 +31,27 @@ namespace SVEN.Content
             /// Simplified name of the property.
             /// </summary>
             public string SimplifiedName { get; set; }
+            /// <summary>
+            /// Priority of the property. (closer to 0 is higher priority)
+            /// </summary>
+            public int Priority { get; set; }
 
-            public PropertyDescription(string predicateName, Func<object> getter, Action<object> setter, string simplifiedName = "")
+            public PropertyDescription(string predicateName, Func<object> getter, Action<object> setter, int priority, string simplifiedName = "")
             {
                 PredicateName = predicateName;
                 Getter = getter;
                 Setter = setter;
                 SimplifiedName = simplifiedName;
+                Priority = priority;
+            }
+
+            public PropertyDescription(string predicateName, Func<object> getter, Action<object> setter, int priority)
+            {
+                PredicateName = predicateName;
+                Getter = getter;
+                Setter = setter;
+                SimplifiedName = "";
+                Priority = priority;
             }
         }
 
@@ -93,29 +107,48 @@ namespace SVEN.Content
                 typeof(Transform), new("Transform",
                 new List<Delegate>
                 {
-                    (Func<Transform, PropertyDescription>)(transform => new PropertyDescription("position", () => transform.position, value => transform.position = (Vector3)value, "virtualPosition")),
-                    (Func<Transform, PropertyDescription>)(transform => new PropertyDescription("rotation", () => transform.rotation, value => transform.rotation = (Quaternion)value, "virtualRotation")),
-                    (Func<Transform, PropertyDescription>)(transform => new PropertyDescription("scale", () => transform.localScale, value => transform.localScale = (Vector3)value, "virtualSize")),
+                    (Func<Transform, PropertyDescription>)(transform => new PropertyDescription("position", () => transform.position, value => transform.position = (Vector3)value, 1, "virtualPosition")),
+                    (Func<Transform, PropertyDescription>)(transform => new PropertyDescription("rotation", () => transform.rotation, value => transform.rotation = (Quaternion)value, 1, "virtualRotation")),
+                    (Func<Transform, PropertyDescription>)(transform => new PropertyDescription("scale", () => transform.localScale, value => transform.localScale = (Vector3)value, 1, "virtualSize")),
                 })
             },
             {
                 typeof(MeshRenderer), new("MeshRenderer",
                 new List<Delegate>
                 {
-                    (Func<MeshRenderer, PropertyDescription>)(meshRenderer => new PropertyDescription("enabled", () => meshRenderer.enabled, value => meshRenderer.enabled = (bool)value)),
-                    (Func<MeshRenderer, PropertyDescription>)(meshRenderer => new PropertyDescription("isVisible", () => meshRenderer.isVisible, null)),
-                    (Func<MeshRenderer, PropertyDescription>)(meshRenderer => new PropertyDescription("color", () => meshRenderer.material.color, value => meshRenderer.material.color = (Color)value, "virtualColor")),
-                    (Func<MeshRenderer, PropertyDescription>)(meshRenderer => new PropertyDescription("shader", () => meshRenderer.material.shader.name, value => meshRenderer.material.shader = Shader.Find((string)value))),
+                    (Func<MeshRenderer, PropertyDescription>)(meshRenderer => new PropertyDescription("enabled", () => meshRenderer.enabled, value => meshRenderer.enabled = value.ToString().ToLower() == "true", 1)),
+                    (Func<MeshRenderer, PropertyDescription>)(meshRenderer => new PropertyDescription("isVisible", () => meshRenderer.isVisible, null, 1)),
+                    (Func<MeshRenderer, PropertyDescription>)(meshRenderer => new PropertyDescription("color", () => meshRenderer.material.color, value => meshRenderer.material.color = (Color)value, 1, "virtualColor")),
+                    (Func<MeshRenderer, PropertyDescription>)(meshRenderer => new PropertyDescription("shader", () => meshRenderer.material.shader.name, value => meshRenderer.material.shader = Shader.Find((string)value), 1)),
                 })
             },
             {
                 typeof(MeshFilter), new("Shape",
                 new List<Delegate>
                 {
-                    (Func<MeshFilter, PropertyDescription>)(meshFilter => new PropertyDescription("triangles", () => string.Join("|", meshFilter.mesh.triangles.Select(t => t.ToString())), value => meshFilter.mesh.SetTriangles(((string)value).Split('|').Select(int.Parse).ToArray(), 0))),
-                    (Func<MeshFilter, PropertyDescription>)(meshFilter => new PropertyDescription("vertices", () => string.Join("|", meshFilter.mesh.vertices.Select(v => v.ToString())), value => meshFilter.mesh.SetVertices(((string)value).Split('|').Select(ParseVector3).ToArray()))),
-                    (Func<MeshFilter, PropertyDescription>)(meshFilter => new PropertyDescription("normals", () => string.Join("|", meshFilter.mesh.normals.Select(n => n.ToString())), value => meshFilter.mesh.SetNormals(((string)value).Split('|').Select(ParseVector3).ToArray()))),
-                    (Func<MeshFilter, PropertyDescription>)(meshFilter => new PropertyDescription("uvs", () => string.Join("|", meshFilter.mesh.uv.Select(uv => uv.ToString())), value => meshFilter.mesh.SetUVs(0, ((string)value).Split('|').Select(ParseVector2).ToArray()))),
+                    (Func<MeshFilter, PropertyDescription>)(meshFilter => new PropertyDescription("vertices", () => string.Join("|", meshFilter.mesh.vertices.Select(v => v.ToString())), value => {
+                            try {
+                                Vector3[] vertices = ((string)value).Split('|').Select(ParseVector3).ToArray();
+                                if (vertices.Length == meshFilter.mesh.vertexCount) return;
+                                meshFilter.mesh.Clear();
+                                meshFilter.mesh.SetVertices(vertices);
+                            } catch {}
+                        }, 1)),
+                    (Func<MeshFilter, PropertyDescription>)(meshFilter => new PropertyDescription("triangles", () => string.Join("|", meshFilter.mesh.triangles.Select(t => t.ToString())), value => {
+                            try {
+                                int[] triangles = ((string)value).Split('|').Select(int.Parse).ToArray();
+                                if (triangles.Length == meshFilter.mesh.triangles.Length) return;
+                                meshFilter.mesh.SetTriangles(triangles, 0);
+                            } catch {}
+                        }, 2)),
+                    (Func<MeshFilter, PropertyDescription>)(meshFilter => new PropertyDescription("normals", () => string.Join("|", meshFilter.mesh.normals.Select(n => n.ToString())), value => {
+                            try {
+                                Vector3[] normals = ((string)value).Split('|').Select(ParseVector3).ToArray();
+                                if (normals.Length == meshFilter.mesh.vertexCount) return;
+                                meshFilter.mesh.SetNormals(normals);
+                            } catch {}
+                        }, 2)),
+                    //(Func<MeshFilter, PropertyDescription>)(meshFilter => new PropertyDescription("uvs", () => string.Join("|", meshFilter.mesh.uv.Select(uv => uv.ToString())), value => { try { meshFilter.mesh.SetUVs(0, ((string)value).Split('|').Select(ParseVector2).ToArray()); } catch {}})),
                 })
             },
         };
@@ -127,8 +160,10 @@ namespace SVEN.Content
         /// <returns>Vector3 parsed.</returns> 
         private static Vector3 ParseVector3(string value)
         {
-            string[] values = value.Split(',');
-            return new Vector3(float.Parse(values[0]), float.Parse(values[1]), float.Parse(values[2]));
+            string[] values = value.Replace("(", "").Replace(")", "").Replace(" ", "").Split(',');
+            if (values.Length < 3)
+                return Vector3.zero;
+            return new Vector3(float.Parse(values[0], System.Globalization.CultureInfo.InvariantCulture), float.Parse(values[1], System.Globalization.CultureInfo.InvariantCulture), float.Parse(values[2], System.Globalization.CultureInfo.InvariantCulture));
         }
 
         /// <summary>
@@ -138,16 +173,24 @@ namespace SVEN.Content
         /// <returns>Vector2 parsed.</returns>
         private static Vector2 ParseVector2(string value)
         {
-            string[] values = value.Split(',');
-            return new Vector2(float.Parse(values[0]), float.Parse(values[1]));
+            string[] values = value.Replace("(", "").Replace(")", "").Replace(" ", "").Split(',');
+            if (values.Length < 2)
+                return Vector2.zero;
+            return new Vector2(float.Parse(values[0], System.Globalization.CultureInfo.InvariantCulture), float.Parse(values[1], System.Globalization.CultureInfo.InvariantCulture));
         }
 
-        public static Dictionary<string, Action<object>> GetSetters(Component component)
+        /// <summary>
+        /// Get the properties of a component.
+        /// </summary>
+        /// <param name="component">Component to get the properties from.</param>
+        /// <returns>Dictionary of properties of the component.</returns>
+        public static Dictionary<string, Tuple<int, Action<object>>> GetSetters(Component component)
         {
-            Dictionary<string, Action<object>> setters = new();
+            Dictionary<string, Tuple<int, Action<object>>> setters = new();
             if (Value.TryGetValue(component.GetType(), out var componentDescription))
-                foreach (var property in componentDescription.CachedProperties)
-                    setters.Add(property.Key, property.Value.Setter);
+                foreach (Delegate del in componentDescription.Properties)
+                    if (del.DynamicInvoke(component) is PropertyDescription propertyDescription)
+                        setters.Add(propertyDescription.PredicateName, new(propertyDescription.Priority, propertyDescription.Setter));
             return setters;
         }
 

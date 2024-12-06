@@ -211,11 +211,26 @@ namespace SVEN
                     return Values["value"];
                 }
 
-                object[] parameters = Values.Select(x => x.Value).ToArray();
+
                 try
                 {
-                    // try to create an instance of the property directly with the parameters
-                    return Activator.CreateInstance(Type, parameters);
+                    // try to create an instance of the property directly with the parameters and constructor
+                    ConstructorInfo constructor = Type.GetConstructors()
+                                          .OrderByDescending(c => c.GetParameters().Length)
+                                          .FirstOrDefault();
+
+                    ParameterInfo[] parameterInfos = constructor.GetParameters();
+                    object[] orderedParameters = new object[parameterInfos.Length];
+                    object[] parameters = Values.Select(x => x.Value).ToArray();
+
+                    for (int i = 0; i < parameterInfos.Length; i++)
+                    {
+                        var paramInfo = parameterInfos[i];
+                        var value = Values.FirstOrDefault(v => v.Key == paramInfo.Name).Value;
+                        orderedParameters[i] = value ?? throw new InvalidOperationException($"No value provided for parameter '{paramInfo.Name}'.");
+                    }
+
+                    return Activator.CreateInstance(Type, orderedParameters);
                 }
                 catch (MissingMethodException)
                 {
@@ -224,10 +239,12 @@ namespace SVEN
                     foreach (KeyValuePair<string, object> kvp in Values)
                     {
                         PropertyInfo property = Type.GetProperty(kvp.Key);
-                        if (property != null && property.CanWrite)
-                        {
-                            property.SetValue(instance, Convert.ChangeType(kvp.Value, property.PropertyType));
-                        }
+                        property?.SetValue(instance, Convert.ChangeType(kvp.Value, property.PropertyType));
+                        if (property != null) continue;
+
+                        //try in fields
+                        FieldInfo field = Type.GetField(kvp.Key);
+                        field?.SetValue(instance, Convert.ChangeType(kvp.Value, field.FieldType));
                     }
                     return instance;
                 }
@@ -346,13 +363,16 @@ namespace SVEN
                     _ => result["propertyName"].AsValuedNode().AsString()
                 };
                 string propertyNestedName = result["propertyNestedName"].ToString().Split('#')[1];
-                string propertyValue = result["propertyValue"].AsValuedNode().AsString();
 
                 Type componentType = MapppedComponents.GetType(componentStringType) ?? Type.GetType(componentStringType);
                 if (!MapppedComponents.HasProperty(componentType, propertyName)) continue;
 
                 Type propertyType = MapppedProperties.GetType(propertyStringType) ?? Type.GetType(propertyStringType);
                 if (!MapppedProperties.HasNestedProperty(propertyType, propertyNestedName)) continue;
+
+                object propertyValue = result["propertyValue"].AsValuedNode().ToValue();
+                //if (propertyName == "position")
+                //Debug.Log(propertyName + " " + propertyNestedName + " " + propertyValue + " " + result["propertyValue"].AsValuedNode());
 
                 if (!targetSceneContent.GameObjects.ContainsKey(objectUUID))
                     targetSceneContent.GameObjects[objectUUID] = new(objectUUID);
@@ -370,132 +390,6 @@ namespace SVEN
 
             Debug.Log(targetSceneContent);
             UpdateContent(targetSceneContent);
-
-            // create gameobject for each identified object
-            /*Dictionary<string, GameObjectDescription> oldSceneContent = new(currentSceneContent);
-            Dictionary<string, GameObjectDescription> newSceneContent = new();
-
-            //todo, manage it with MappedComponents Setter
-            foreach (var obj in sceneContent)
-            {
-                GameObject gameObject;
-                if (currentSceneContent.TryGetValue(obj.Key, out var gameObjectComponents))
-                {
-                    gameObject = gameObjectComponents.GameObject;
-                }
-                else
-                {
-                    gameObject = new(obj.Key);
-                }
-                newSceneContent[obj.Key] = new(gameObject, new());
-
-                // create components for each identified component
-                foreach (var comp in obj.Value)
-                {
-                    if (!(currentSceneContent.ContainsKey(obj.Key) && currentSceneContent[obj.Key].Components.TryGetValue(comp.Key, out Component component)))
-                    {
-                        if (comp.Value.Item1.Equals(typeof(Transform)))
-                        {
-                            component = gameObject.transform;
-                        }
-                        else
-                        {
-                            component = gameObject.AddComponent(comp.Value.Item1);
-                            if (component is MeshRenderer meshRenderer)
-                            {
-                                meshRenderer.material = new Material(Shader.Find("Standard"));
-                            }
-                            if (component is MeshFilter meshFilter)
-                            {
-                                // load from resources
-                                meshFilter.mesh = Resources.Load<Mesh>("Models/Pyramid");
-                            }
-                        }
-                    }
-                    newSceneContent[obj.Key].Components[comp.Key] = component;
-
-                    // apply properties for each identified property
-                    foreach (var property1 in comp.Value.Item2)
-                    {
-                        // propertyName = position, rotation, scale, etc.
-                        string propertyName = property1.Key;
-                        // propertyType = UnityEngine.Vector3, UnityEngine.Quaternion, etc.
-                        Type propertyType = property1.Value.Item1;
-                        Dictionary<string, object> propertyValues = property1.Value.Item2;
-                        try
-                        {
-                            if (propertyType == typeof(object)) throw new KeyNotFoundException();
-                            List<string> indexes = MapppedProperties.GetValue(propertyType).NestedProperties;
-
-                            if (indexes != null && indexes.Count > 0)
-                            {
-                                var constructorParams = new object[indexes.Count];
-                                for (int i = 0; i < indexes.Count; i++)
-                                {
-                                    Debug.Log(propertyValues[indexes[i]].ToString());
-                                    constructorParams[i] = float.Parse(propertyValues[indexes[i]].ToString(), System.Globalization.CultureInfo.InvariantCulture);
-                                }
-
-                                var newInfo = Activator.CreateInstance(propertyType, constructorParams);
-                                //Debug.Log(component.GetType() + " " + propertyName + " " + newInfo + " " + string.Join(" ", indexes.Select(index => propertyValues[index].ToString())));
-                                if (propertyName.Contains("."))
-                                {
-                                    //nested property example material.color
-                                    string[] nestedProperties = propertyName.Split('.');
-                                    PropertyInfo property = component.GetType().GetProperty(nestedProperties[0]);
-                                    if (property != null)
-                                    {
-                                        object nestedComponent = property.GetValue(component);
-                                        PropertyInfo nestedProperty = nestedComponent.GetType().GetProperty(nestedProperties[1]);
-                                        nestedProperty?.SetValue(nestedComponent, newInfo);
-                                    }
-                                }
-                                else
-                                {
-                                    Debug.Log(component.GetType() + " " + propertyName + " " + newInfo);
-                                    component.GetType().GetProperty(propertyName).SetValue(component, newInfo);
-                                }
-                            }
-                        }
-                        catch (KeyNotFoundException)
-                        {
-                            if (propertyName == "material.shader")
-                            {
-                                Material material = (component as MeshRenderer).material;
-                                material.shader = Shader.Find(property1.Value.Item2["value"].ToString());
-                            }
-                            else
-                            {
-                                // apply the value directly to the property
-                                PropertyInfo property = propertyType.GetProperty(propertyName);
-                                property?.SetValue(component, property1.Value.Item2["value"]);
-                            }
-
-                        }
-                    }
-                }
-            }
-
-            // compare the old scene content with the new one and delete components and objects that are not present anymore
-            foreach (var obj in oldSceneContent)
-            {
-                if (!newSceneContent.ContainsKey(obj.Key))
-                {
-                    Destroy(obj.Value.GameObject);
-                }
-                else
-                {
-                    foreach (var comp in obj.Value.Components)
-                    {
-                        if (!newSceneContent[obj.Key].Components.ContainsKey(comp.Key))
-                        {
-                            Destroy(comp.Value);
-                        }
-                    }
-                }
-            }
-
-            currentSceneContent = newSceneContent;*/
         }
 
         /// <summary>
@@ -527,21 +421,21 @@ namespace SVEN
                         else
                         {
                             componentDescription.Component = gameObjectDescription.GameObject.AddComponent(componentDescription.Type);
-                            //temporary to see object
+
+                            // Default initialization
                             if (componentDescription.Component is MeshRenderer meshRenderer)
                                 meshRenderer.material = new Material(Shader.Find("Standard"));
                             if (componentDescription.Component is MeshFilter meshFilter)
-                                meshFilter.mesh = Resources.Load<Mesh>("Models/Pyramid");
+                                meshFilter.mesh = new Mesh();
                         }
                     }
 
-                    // get the setters of the component
-                    Dictionary<string, Action<object>> setters = MapppedComponents.GetSetters(componentDescription.Component);
-                    // print every action :
-                    foreach (var setter in setters)
-                    {
-                        Debug.Log($"Setter: {setter.Key} {setter.Value}");
-                    }
+                    // get the setters of the component item1 = priority, item2 = setter
+                    Dictionary<string, Tuple<int, Action<object>>> setters = MapppedComponents.GetSetters(componentDescription.Component);
+                    //reorder the properties by priority
+                    componentDescription.Properties = componentDescription.Properties.OrderBy(x => setters[x.Key].Item1).ToDictionary(x => x.Key, x => x.Value);
+                    //if (componentDescription.Component.GetType() == typeof(MeshFilter)) continue;
+
                     foreach (PropertyDescription propertyDescription in componentDescription.Properties.Values)
                     {
                         object propertyValue = propertyDescription.Value;
@@ -550,10 +444,11 @@ namespace SVEN
                             Debug.LogWarning($"Property {propertyDescription} is null in {componentDescription.Type} of {gameObjectDescription.UUID}");
                             continue;
                         }
+                        if (componentDescription.Component.GetType() == typeof(MeshFilter))
+                            Debug.Log($"Property: {propertyDescription.Name} {propertyDescription.Type} {propertyValue.GetType()}  {propertyValue}");
 
-                        Debug.Log($"Property: {propertyDescription.Name} {propertyDescription.Type} {propertyValue}");
-                        if (setters.TryGetValue(propertyDescription.Name, out var setter) && setter != null) setter(propertyValue);
-                        else Debug.LogWarning($"Setter not found for {propertyDescription.Type} in {componentDescription.Type} of {gameObjectDescription.UUID}");
+                        if (setters.TryGetValue(propertyDescription.Name, out var setter) && setter.Item2 != null) setter.Item2(propertyValue);
+                        //else Debug.LogWarning($"Setter not found for {propertyDescription.Type} in {componentDescription.Type} of {gameObjectDescription.UUID}");
                     }
                 }
             }
@@ -561,12 +456,17 @@ namespace SVEN
             foreach (GameObjectDescription gameObjectDescription in currentSceneContent.GameObjects.Values)
             {
                 if (!targetSceneContent.GameObjects.ContainsKey(gameObjectDescription.UUID))
-                    Destroy(gameObjectDescription.GameObject);
-
-                foreach (ComponentDescription componentDescription in gameObjectDescription.Components.Values)
                 {
-                    if (!targetSceneContent.GameObjects[gameObjectDescription.UUID].Components.ContainsKey(componentDescription.UUID))
-                        Destroy(componentDescription.Component);
+                    foreach (ComponentDescription componentDescription in gameObjectDescription.Components.Values)
+                        if (componentDescription.Type != typeof(Transform))
+                            Destroy(componentDescription.Component);
+                    Destroy(gameObjectDescription.GameObject);
+                }
+                else
+                {
+                    foreach (ComponentDescription componentDescription in gameObjectDescription.Components.Values)
+                        if (!targetSceneContent.GameObjects[gameObjectDescription.UUID].Components.ContainsKey(componentDescription.UUID) && componentDescription.Type != typeof(Transform))
+                            Destroy(componentDescription.Component);
                 }
             }
 

@@ -140,6 +140,9 @@ namespace SVEN
 
             foreach (Component component in toRemove)
             {
+                foreach (Property property in componentsProperties[component])
+                    property.Destroy();
+
                 Interval interval = component.GetInterval();
                 interval.End(graphBuffer.CurrentInstant);
                 interval.Semantize(graphBuffer.Graph);
@@ -180,18 +183,14 @@ namespace SVEN
         {
             foreach (KeyValuePair<Component, List<Property>> componentProperties in componentsProperties)
             {
+                foreach (Property property in componentProperties.Value)
+                    property.Destroy();
+
                 Interval interval = componentProperties.Key.GetInterval();
                 interval.End(graphBuffer.CurrentInstant);
                 interval.Semantize(graphBuffer.Graph);
                 componentProperties.Key.DestroyUUID();
-
-                foreach (Property property in componentProperties.Value)
-                {
-                    property.Destroy();
-                }
             }
-
-            // TODO : semantize the end of life of the gameObject
         }
 
         #endregion
