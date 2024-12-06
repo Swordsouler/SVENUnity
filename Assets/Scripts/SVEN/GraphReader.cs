@@ -2,12 +2,14 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using DG.Tweening;
 using NaughtyAttributes;
 using OWLTime;
 using RDF;
 using SVEN.Content;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.UI;
 using VDS.RDF;
 using VDS.RDF.Nodes;
 using VDS.RDF.Query;
@@ -294,6 +296,17 @@ namespace SVEN
         public UnityEngine.Object tempGraphFile;
         public UnityEngine.Object tempSchemaFile;
         public UnityEngine.Object tempUnitySupportFile;
+        public Slider instantSlider;
+
+        private void Update()
+        {
+            if (instants.Count > 0)
+            {
+                instantSlider.maxValue = MaxInstantIndex;
+                CurrentInstantIndex = (int)instantSlider.value;
+            }
+        }
+
         private void Start()
         {
             if (tempGraphFile != null)
@@ -458,15 +471,22 @@ namespace SVEN
                 if (!targetSceneContent.GameObjects.ContainsKey(gameObjectDescription.UUID))
                 {
                     foreach (ComponentDescription componentDescription in gameObjectDescription.Components.Values)
+                    {
+                        DOTween.Kill(componentDescription.Component);
                         if (componentDescription.Type != typeof(Transform))
                             Destroy(componentDescription.Component);
+                    }
                     Destroy(gameObjectDescription.GameObject);
                 }
                 else
                 {
                     foreach (ComponentDescription componentDescription in gameObjectDescription.Components.Values)
-                        if (!targetSceneContent.GameObjects[gameObjectDescription.UUID].Components.ContainsKey(componentDescription.UUID) && componentDescription.Type != typeof(Transform))
-                            Destroy(componentDescription.Component);
+                        if (!targetSceneContent.GameObjects[gameObjectDescription.UUID].Components.ContainsKey(componentDescription.UUID))
+                        {
+                            DOTween.Kill(componentDescription.Component);
+                            if (componentDescription.Type != typeof(Transform))
+                                Destroy(componentDescription.Component);
+                        }
                 }
             }
 

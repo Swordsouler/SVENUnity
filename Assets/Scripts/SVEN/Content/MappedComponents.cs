@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using DG.Tweening;
 using UnityEngine;
 
 namespace SVEN.Content
@@ -98,6 +99,8 @@ namespace SVEN.Content
             }
         }
 
+        private static readonly float lerpSpeed = 0.5f;
+
         /// <summary>
         /// Values of the properties of the components.
         /// </summary>
@@ -107,9 +110,9 @@ namespace SVEN.Content
                 typeof(Transform), new("Transform",
                 new List<Delegate>
                 {
-                    (Func<Transform, PropertyDescription>)(transform => new PropertyDescription("position", () => transform.position, value => transform.position = (Vector3)value, 1, "virtualPosition")),
-                    (Func<Transform, PropertyDescription>)(transform => new PropertyDescription("rotation", () => transform.rotation, value => transform.rotation = (Quaternion)value, 1, "virtualRotation")),
-                    (Func<Transform, PropertyDescription>)(transform => new PropertyDescription("scale", () => transform.localScale, value => transform.localScale = (Vector3)value, 1, "virtualSize")),
+                    (Func<Transform, PropertyDescription>)(transform => new PropertyDescription("position", () => transform.position, value => transform.DOMove((Vector3)value, lerpSpeed), 1, "virtualPosition")),
+                    (Func<Transform, PropertyDescription>)(transform => new PropertyDescription("rotation", () => transform.rotation, value => transform.DORotateQuaternion((Quaternion)value, lerpSpeed), 1, "virtualRotation")),
+                    (Func<Transform, PropertyDescription>)(transform => new PropertyDescription("scale", () => transform.localScale, value => transform.DOScale((Vector3)value, lerpSpeed), 1, "virtualSize")),
                 })
             },
             {
@@ -118,7 +121,7 @@ namespace SVEN.Content
                 {
                     (Func<MeshRenderer, PropertyDescription>)(meshRenderer => new PropertyDescription("enabled", () => meshRenderer.enabled, value => meshRenderer.enabled = value.ToString().ToLower() == "true", 1)),
                     (Func<MeshRenderer, PropertyDescription>)(meshRenderer => new PropertyDescription("isVisible", () => meshRenderer.isVisible, null, 1)),
-                    (Func<MeshRenderer, PropertyDescription>)(meshRenderer => new PropertyDescription("color", () => meshRenderer.material.color, value => meshRenderer.material.color = (Color)value, 1, "virtualColor")),
+                    (Func<MeshRenderer, PropertyDescription>)(meshRenderer => new PropertyDescription("color", () => meshRenderer.material.color, value => meshRenderer.material.DOColor((Color)value, lerpSpeed), 1, "virtualColor")),
                     (Func<MeshRenderer, PropertyDescription>)(meshRenderer => new PropertyDescription("shader", () => meshRenderer.material.shader.name, value => meshRenderer.material.shader = Shader.Find((string)value), 1)),
                 })
             },
