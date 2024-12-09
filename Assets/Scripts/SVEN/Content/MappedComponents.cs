@@ -99,7 +99,7 @@ namespace SVEN.Content
             }
         }
 
-        private static readonly float lerpSpeed = 0.5f;
+        private static readonly float lerpSpeed = 0.4f;
 
         /// <summary>
         /// Values of the properties of the components.
@@ -147,11 +147,17 @@ namespace SVEN.Content
                     (Func<MeshFilter, PropertyDescription>)(meshFilter => new PropertyDescription("normals", () => string.Join("|", meshFilter.mesh.normals.Select(n => n.ToString())), value => {
                             try {
                                 Vector3[] normals = ((string)value).Split('|').Select(ParseVector3).ToArray();
-                                if (normals.Length == meshFilter.mesh.vertexCount) return;
+                                if (normals.Length != meshFilter.mesh.vertexCount || normals.Length == meshFilter.mesh.normals.Length) return;
                                 meshFilter.mesh.SetNormals(normals);
                             } catch {}
                         }, 2)),
-                    //(Func<MeshFilter, PropertyDescription>)(meshFilter => new PropertyDescription("uvs", () => string.Join("|", meshFilter.mesh.uv.Select(uv => uv.ToString())), value => { try { meshFilter.mesh.SetUVs(0, ((string)value).Split('|').Select(ParseVector2).ToArray()); } catch {}})),
+                    (Func<MeshFilter, PropertyDescription>)(meshFilter => new PropertyDescription("uvs", () => string.Join("|", meshFilter.mesh.uv.Select(uv => uv.ToString())), value => {
+                        try {
+                                Vector2[] uvs = ((string)value).Split('|').Select(ParseVector2).ToArray();
+                                if (uvs.Length != meshFilter.mesh.vertexCount || uvs.Length == meshFilter.mesh.uv.Length) return;
+                                meshFilter.mesh.SetUVs(0, uvs);
+                            } catch {}
+                        }, 2)),
                 })
             },
         };

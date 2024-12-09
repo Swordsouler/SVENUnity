@@ -2,7 +2,6 @@
 using UnityEditor;
 using UnityEngine;
 using NaughtyAttributes.Editor;
-using System.Reflection;
 using SVEN.Content;
 
 namespace SVEN.Editor
@@ -11,6 +10,7 @@ namespace SVEN.Editor
     /// Custom editor for the SemantizationCore component.
     /// </summary>
     [CustomEditor(typeof(SemantizationCore))]
+    //[CanEditMultipleObjects]
     public class SemantizationCoreEditor : NaughtyInspector
     {
         /// <summary>

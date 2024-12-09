@@ -241,8 +241,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   componentsToSemantize:
-  - {fileID: 99221825}
   - {fileID: 99221826}
+  - {fileID: 99221825}
   - {fileID: 99221824}
   graphBuffer: {fileID: 0}
 --- !u!1 &137352178
@@ -336,8 +336,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   componentsToSemantize:
-  - {fileID: 404167589}
   - {fileID: 404167590}
+  - {fileID: 404167589}
   - {fileID: 404167588}
   graphBuffer: {fileID: 0}
 --- !u!65 &404167587

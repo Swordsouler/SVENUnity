@@ -300,11 +300,12 @@ namespace SVEN
 
         private void Update()
         {
-            if (instants.Count > 0)
+            /*if (instants.Count > 0)
             {
                 instantSlider.maxValue = MaxInstantIndex;
-                CurrentInstantIndex = (int)instantSlider.value;
-            }
+                if ((int)instantSlider.value != CurrentInstantIndex)
+                    instantSlider.value = CurrentInstantIndex = (int)instantSlider.value;
+            }*/
         }
 
         private void Start()
@@ -326,7 +327,6 @@ namespace SVEN
                 reasoner.Apply(graph);
             }
             LoadInstants();
-            CurrentInstantIndex = 5;
         }
 
         private void LoadInstant(Instant instant)
@@ -418,7 +418,10 @@ namespace SVEN
                 if (gameObjectExist)
                     gameObjectDescription.GameObject = currentSceneContent.GameObjects[gameObjectDescription.UUID].GameObject;
                 else
+                {
                     gameObjectDescription.GameObject = new GameObject(gameObjectDescription.UUID);
+                    gameObjectDescription.GameObject.transform.SetParent(transform);
+                }
 
                 foreach (ComponentDescription componentDescription in gameObjectDescription.Components.Values)
                 {
@@ -457,8 +460,8 @@ namespace SVEN
                             Debug.LogWarning($"Property {propertyDescription} is null in {componentDescription.Type} of {gameObjectDescription.UUID}");
                             continue;
                         }
-                        if (componentDescription.Component.GetType() == typeof(MeshFilter))
-                            Debug.Log($"Property: {propertyDescription.Name} {propertyDescription.Type} {propertyValue.GetType()}  {propertyValue}");
+                        //if (componentDescription.Component.GetType() == typeof(MeshFilter))
+                        //    Debug.Log($"Property: {propertyDescription.Name} {propertyDescription.Type} {propertyValue.GetType()}  {propertyValue}");
 
                         if (setters.TryGetValue(propertyDescription.Name, out var setter) && setter.Item2 != null) setter.Item2(propertyValue);
                         //else Debug.LogWarning($"Setter not found for {propertyDescription.Type} in {componentDescription.Type} of {gameObjectDescription.UUID}");
@@ -535,17 +538,26 @@ namespace SVEN
 #endif
         }
 
+        public Action OnGraphLoaded;
+
+        public bool IsGraphLoaded => graph != null;
+
 
         #region Time Management
         /// <summary>
         /// List of instants that can be loaded.
         /// </summary>
         private List<Instant> instants = new();
+        public List<Instant> Instants => instants;
 
         /// <summary>
         /// Maximum index of the instants list.
         /// </summary>
-        private int MaxInstantIndex => instants.Count - 1;
+        public int MaxInstantIndex => instants.Count - 1;
+
+        public DateTime StartedAt => instants[0].inXSDDateTime;
+        public DateTime EndedAt => instants[^1].inXSDDateTime;
+        public float Duration => (float)(EndedAt - StartedAt).TotalSeconds;
 
         /// <summary>
         /// Current index of the instants list.
@@ -560,6 +572,7 @@ namespace SVEN
             get => _currentInstantIndex;
             private set
             {
+                if (_currentInstantIndex == value) return;
                 _currentInstantIndex = value;
                 LoadCurrentInstant();
             }
@@ -606,6 +619,49 @@ namespace SVEN
                 //add the instant to the list
                 instants.Add(instant);
             }
+            CurrentInstantIndex = 0;
+            OnGraphLoaded?.Invoke();
+        }
+
+        /// <summary>
+        /// Search the instant that is closer previous the duration sent.
+        /// </summary>
+        /// <param name="duration">Duration to search.</param>
+        public void SearchAt(float duration)
+        {
+            for (int i = 0; i < instants.Count; i++)
+            {
+                if (instants[i].inXSDDateTime > StartedAt.AddSeconds(duration))
+                {
+                    CurrentInstantIndex = i - 1;
+                    return;
+                }
+            }
+
+            // If no element satisfies the condition, set the last element as the CurrentInstantIndex
+            CurrentInstantIndex = instants.Count - 1;
+        }
+
+        /// <summary>
+        /// Get the next instant.
+        /// </summary>
+        /// <returns>The next instant.</returns>
+        public Instant NextInstant()
+        {
+            if (CurrentInstantIndex < MaxInstantIndex)
+                return instants[++CurrentInstantIndex];
+            return null;
+        }
+
+        /// <summary>
+        /// Get the previous instant.
+        /// </summary>
+        /// <returns>The previous instant.</returns>
+        public Instant PreviousInstant()
+        {
+            if (CurrentInstantIndex > 0)
+                return instants[--CurrentInstantIndex];
+            return null;
         }
         #endregion
     }
