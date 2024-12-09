@@ -116,6 +116,13 @@ namespace SVEN.Content
                 })
             },
             {
+                typeof(Camera), new("Camera",
+                new List<Delegate>
+                {
+                    (Func<Camera, PropertyDescription>)(camera => new PropertyDescription("enabled", () => camera.backgroundColor, value => camera.backgroundColor = (Color)value, 1)),
+                })
+            },
+            {
                 typeof(MeshRenderer), new("MeshRenderer",
                 new List<Delegate>
                 {

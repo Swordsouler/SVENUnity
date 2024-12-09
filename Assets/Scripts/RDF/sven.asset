@@ -28,4 +28,4 @@ MonoBehaviour:
     <Uri>k__BackingField: http://www.sven.fr/ontology#
   - <Name>k__BackingField: time
     <Uri>k__BackingField: http://www.w3.org/2006/time#
-  <InstantPerSecond>k__BackingField: 30
+  <InstantPerSecond>k__BackingField: 10
