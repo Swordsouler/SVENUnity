@@ -119,7 +119,13 @@ namespace SVEN.Content
                 typeof(Camera), new("Camera",
                 new List<Delegate>
                 {
-                    (Func<Camera, PropertyDescription>)(camera => new PropertyDescription("enabled", () => camera.backgroundColor, value => camera.backgroundColor = (Color)value, 1)),
+                    (Func<Camera, PropertyDescription>)(camera => new PropertyDescription("nearClipPlane", () => camera.nearClipPlane, value => camera.nearClipPlane = (float)value, 1)),
+                    (Func<Camera, PropertyDescription>)(camera => new PropertyDescription("farClipPlane", () => camera.farClipPlane, value => camera.farClipPlane = (float)value, 1)),
+                    (Func<Camera, PropertyDescription>)(camera => new PropertyDescription("fieldOfView", () => camera.fieldOfView, value => camera.fieldOfView = (float)value, 1)),
+                    (Func<Camera, PropertyDescription>)(camera => new PropertyDescription("orthographic", () => camera.orthographic, value => camera.orthographic = value.ToString() == "true", 1)),
+                    (Func<Camera, PropertyDescription>)(camera => new PropertyDescription("orthographicSize", () => camera.orthographicSize, value => camera.orthographicSize = (float)value, 1)),
+                    (Func<Camera, PropertyDescription>)(camera => new PropertyDescription("clearFlags", () => camera.clearFlags.ToString(), value => camera.clearFlags = (CameraClearFlags)Enum.Parse(typeof(CameraClearFlags), (string)value), 1)),
+                    (Func<Camera, PropertyDescription>)(camera => new PropertyDescription("backgroundColor", () => camera.backgroundColor, value => camera.backgroundColor = (Color)value, 1)),
                 })
             },
             {

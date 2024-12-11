@@ -45,6 +45,9 @@ namespace SVEN.Tools
         [SerializeField]
         private Button forwardButton;
 
+        [SerializeField]
+        private TMP_Dropdown speedDropdown;
+
 
         private bool _isPlaying;
         private bool IsPlaying
@@ -116,14 +119,25 @@ namespace SVEN.Tools
 
         private void OnPlayValueChanged(bool value)
         {
-            IsPlaying = value;
+            IsPlaying = !IsPlaying;
         }
 
         private void Update()
         {
+            float speed = speedDropdown.value switch
+            {
+                0 => 8,
+                1 => 4,
+                2 => 2,
+                3 => 1,
+                4 => 0.75f,
+                5 => 0.5f,
+                6 => 0.25f,
+                _ => 1
+            };
             if (IsPlaying)
             {
-                slider.value += Time.deltaTime;
+                slider.value += Time.deltaTime * speed;
                 if (slider.value >= slider.maxValue)
                 {
                     IsPlaying = false;
