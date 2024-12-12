@@ -303,7 +303,6 @@ namespace SVEN
             {
                 graph = new Graph();
                 graph.LoadFromFile(AssetDatabase.GetAssetPath(tempGraphFile));
-                LoadInstants();
             }
 
             if (tempSchemaFile != null)
@@ -319,6 +318,8 @@ namespace SVEN
 
         private void LoadInstant(Instant instant)
         {
+            DateTime startProcessing = DateTime.Now;
+
             /*
             ?active ?layer ?tag ?name 
             sven:active ?active ;
@@ -391,6 +392,9 @@ namespace SVEN
 
             Debug.Log(targetSceneContent);
             UpdateContent(targetSceneContent);
+
+            DateTime endProcessing = DateTime.Now;
+            Debug.Log($"Processing time: {(endProcessing - startProcessing).TotalMilliseconds} ms");
         }
 
         /// <summary>
@@ -532,11 +536,29 @@ namespace SVEN
 
 
         #region Time Management
+
+        /// <summary>
+        /// Instant class, but with amount of content modifier.
+        /// </summary>
+        public class InstantDescription : Instant
+        {
+            /// <summary>
+            /// Amount of properties/components/objects that has started at this instant.
+            /// </summary>
+            public int ContentModifier { get; set; }
+
+            public InstantDescription(DateTime dateTime, int contentModifier) : base(dateTime)
+            {
+                ContentModifier = contentModifier;
+            }
+        }
+
+
         /// <summary>
         /// List of instants that can be loaded.
         /// </summary>
-        private List<Instant> instants = new();
-        public List<Instant> Instants => instants;
+        private readonly List<InstantDescription> instants = new();
+        public List<InstantDescription> Instants => instants;
 
         /// <summary>
         /// Maximum index of the instants list.
@@ -546,6 +568,7 @@ namespace SVEN
         public DateTime StartedAt => instants[0].inXSDDateTime;
         public DateTime EndedAt => instants[^1].inXSDDateTime;
         public float Duration => (float)(EndedAt - StartedAt).TotalSeconds;
+        public int MeanContentModifier => instants.Sum(x => x.ContentModifier) / instants.Count;
 
         /// <summary>
         /// Current index of the instants list.
@@ -587,11 +610,13 @@ namespace SVEN
             string query = @"
                 PREFIX time: <http://www.w3.org/2006/time#>
 
-                SELECT ?instant ?dateTime
+                SELECT ?instant ?dateTime (COUNT(?contentModification) as ?contentModifier)
                 WHERE {
                     ?instant a time:Instant ;
                             time:inXSDDateTime ?dateTime .
-                } ORDER BY ?dateTime";
+                    ?contentModification time:hasTemporalExtent ?interval .
+                    ?interval time:hasBeginning ?instant .
+                } GROUP BY ?instant ?dateTime ORDER BY ?dateTime";
 
             //execute the query
             SparqlResultSet results = graph.ExecuteQuery(query) as SparqlResultSet;
@@ -602,8 +627,9 @@ namespace SVEN
             {
                 //get the dateTime
                 INode dateTimeNode = result["dateTime"];
+                int contentModifier = (int)result["contentModifier"].AsValuedNode().AsInteger();
                 //create a new instant
-                Instant instant = new(dateTimeNode.AsValuedNode().AsDateTime());
+                InstantDescription instant = new(dateTimeNode.AsValuedNode().AsDateTime(), contentModifier);
                 //add the instant to the list
                 instants.Add(instant);
             }

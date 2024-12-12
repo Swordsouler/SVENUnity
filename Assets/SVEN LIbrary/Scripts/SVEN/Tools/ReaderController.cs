@@ -3,9 +3,11 @@ using System.Collections.Generic;
 using System.Globalization;
 using NaughtyAttributes;
 using OWLTime;
+using Sven.Utils;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using static SVEN.GraphReader;
 
 namespace SVEN.Tools
 {
@@ -30,7 +32,7 @@ namespace SVEN.Tools
         }
 
         [SerializeField]
-        private Slider slider;
+        private Slider timeSlider;
         [SerializeField]
         private TextMeshProUGUI timeText;
         [SerializeField]
@@ -47,6 +49,9 @@ namespace SVEN.Tools
 
         [SerializeField]
         private TMP_Dropdown speedDropdown;
+
+        [SerializeField]
+        private UILineRenderer contentLine;
 
 
         private bool _isPlaying;
@@ -87,10 +92,10 @@ namespace SVEN.Tools
         private void ResetController()
         {
             if (GraphReader == null || !GraphReader.IsGraphLoaded) return;
-            slider.minValue = 0;
-            slider.maxValue = GraphReader.Duration;
-            slider.onValueChanged.RemoveListener(OnSliderValueChanged);
-            slider.onValueChanged.AddListener(OnSliderValueChanged);
+            timeSlider.minValue = 0;
+            timeSlider.maxValue = GraphReader.Duration;
+            timeSlider.onValueChanged.RemoveListener(OnSliderValueChanged);
+            timeSlider.onValueChanged.AddListener(OnSliderValueChanged);
             playPauseButton.onValueChanged.RemoveListener(OnPlayValueChanged);
             playPauseButton.onValueChanged.AddListener(OnPlayValueChanged);
             backwardButton.onClick.RemoveListener(StepBackward);
@@ -98,23 +103,59 @@ namespace SVEN.Tools
             forwardButton.onClick.RemoveListener(StepForward);
             forwardButton.onClick.AddListener(StepForward);
 
-            List<Instant> instants = GraphReader.Instants;
+            DrawContentLine();
+        }
+
+        /// <summary>
+        /// Draw the content line above the slider.
+        /// </summary>
+        private void DrawContentLine()
+        {
+            int meanContentModifier = GraphReader.MeanContentModifier;
+            List<InstantDescription> instants = GraphReader.Instants;
             DateTime StartedAt = GraphReader.StartedAt;
-            // for each instant, draw a little line above the slider
-            foreach (Instant instant in instants)
+
+            // Define the threshold for the time gap (in seconds)
+            float timeThreshold = 1.0f; // Adjust this value as needed
+
+            // Get the RectTransform of the slider
+            RectTransform sliderRect = timeSlider.GetComponent<RectTransform>();
+
+            // Calculate the positions for the LineRenderer
+            List<Vector2> positions = new();
+            for (int i = 0; i < instants.Count; i++)
             {
+                InstantDescription instant = instants[i];
                 float x = (float)(instant.inXSDDateTime - StartedAt).TotalSeconds;
-                GameObject line = new GameObject("Line");
-                line.transform.SetParent(slider.transform);
-                RectTransform rect = line.AddComponent<RectTransform>();
-                rect.anchorMin = new Vector2(x / slider.maxValue, 1f);
-                rect.anchorMax = new Vector2(x / slider.maxValue, 1f);
-                rect.sizeDelta = new Vector2(2, 10);
-                rect.anchoredPosition = new Vector2(0, 0);
-                rect.pivot = new Vector2(0.5f, 0f);
-                Image image = line.AddComponent<Image>();
-                image.color = Color.gray;
+                float importance = Mathf.Clamp01((float)instant.ContentModifier / meanContentModifier);
+                float height = Mathf.Lerp(10, 50, importance); // Adjust the range as needed
+
+                // Calculate the position relative to the slider's dimensions and position
+                Debug.Log(sliderRect.position.x + " " + sliderRect.position.y);
+                float normalizedX = x / timeSlider.maxValue;
+                float posX = normalizedX * sliderRect.rect.width; // Calculate the x position
+                float posY = height + sliderRect.rect.height / 2; // Calculate the y position above the slider
+
+                // Add the current position
+                positions.Add(new Vector2(posX, posY));
+
+                // Check the time gap with the next instant
+                if (i < instants.Count - 1)
+                {
+                    float nextX = (float)(instants[i + 1].inXSDDateTime - StartedAt).TotalSeconds;
+                    if (nextX - x > timeThreshold)
+                    {
+                        // Add a point at 0 if the gap exceeds the threshold
+                        positions.Add(new Vector2(posX, 0));
+                        float nextNormalizedX = nextX / timeSlider.maxValue;
+                        float nextPosX = nextNormalizedX * sliderRect.rect.width;
+                        positions.Add(new Vector2(nextPosX, 0));
+                    }
+                }
             }
+
+            // Assign the positions to the LineRenderer
+            contentLine.points = positions.ToArray();
         }
 
         private void OnPlayValueChanged(bool value)
@@ -137,8 +178,8 @@ namespace SVEN.Tools
             };
             if (IsPlaying)
             {
-                slider.value += Time.deltaTime * speed;
-                if (slider.value >= slider.maxValue)
+                timeSlider.value += Time.deltaTime * speed;
+                if (timeSlider.value >= timeSlider.maxValue)
                 {
                     IsPlaying = false;
                 }
@@ -158,13 +199,13 @@ namespace SVEN.Tools
         private void StepForward()
         {
             Instant instant = GraphReader.NextInstant();
-            if (instant != null) slider.value = (float)(instant.inXSDDateTime - GraphReader.StartedAt).TotalSeconds;
+            if (instant != null) timeSlider.value = (float)(instant.inXSDDateTime - GraphReader.StartedAt).TotalSeconds;
         }
 
         private void StepBackward()
         {
             Instant instant = GraphReader.PreviousInstant();
-            if (instant != null) slider.value = (float)(instant.inXSDDateTime - GraphReader.StartedAt).TotalSeconds;
+            if (instant != null) timeSlider.value = (float)(instant.inXSDDateTime - GraphReader.StartedAt).TotalSeconds;
         }
     }
 }
