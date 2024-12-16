@@ -12,8 +12,11 @@ using UnityEngine;
 using UnityEngine.UI;
 using VDS.RDF;
 using VDS.RDF.Nodes;
+using VDS.RDF.Parsing;
 using VDS.RDF.Query;
+using VDS.RDF.Query.Datasets;
 using VDS.RDF.Query.Inference;
+using VDS.RDF.Update;
 
 namespace SVEN
 {
@@ -316,6 +319,39 @@ namespace SVEN
             LoadInstants();
         }
 
+        /// <summary>
+        /// Delete all the shapes properties in the graph.
+        /// </summary>
+        private void DeleteShape()
+        {
+            //amount of triples
+            Debug.Log(graph.Triples.Count);
+
+            InMemoryDataset dataset = new(graph);
+            ISparqlUpdateProcessor updateProcessor = new LeviathanUpdateProcessor(dataset);
+            SparqlUpdateCommandSet updateCommandSet = new SparqlUpdateParser().ParseFromString($@"
+                PREFIX time: <http://www.w3.org/2006/time#>
+                PREFIX sven: <http://www.sven.fr/ontology#>
+
+                DELETE {{
+                    ?object sven:component ?shape .
+                    ?shape ?propertyName ?property .
+                    ?property ?propertyNestedName ?propertyValue .
+                }} WHERE {{
+                    ?object a sven:GameObject ;
+                            sven:component ?shape .
+                    ?shape sven:exactType sven:Shape .
+                    ?shape ?propertyName ?property .
+                    OPTIONAL {{
+                        ?property ?propertyNestedName ?propertyValue .
+                    }}
+                }}");
+
+            updateProcessor.ProcessCommandSet(updateCommandSet);
+
+            Debug.Log(graph.Triples.Count);
+        }
+
         private void LoadInstant(Instant instant)
         {
             DateTime startProcessing = DateTime.Now;
@@ -327,7 +363,7 @@ namespace SVEN
             sven:tag ?tag ;
             sven:name ?name ;
             */
-            string query = $@"
+            SparqlQuery query = new SparqlQueryParser().ParseFromString($@"
                 PREFIX time: <http://www.w3.org/2006/time#>
                 PREFIX sven: <http://www.sven.fr/ontology#>
 
@@ -341,10 +377,11 @@ namespace SVEN
                               ?propertyNestedName ?propertyValue ;
                               time:hasTemporalExtent ?interval .
                     ?interval time:inside <{instant.GetUriNode(graph)}> .
-                }}";
+                }}");
 
             // Execute the query
             SparqlResultSet results = graph.ExecuteQuery(query) as SparqlResultSet;
+            double queryTime = (DateTime.Now - startProcessing).TotalMilliseconds;
 
             // GameObject -> Component -> (ComponentType --- PropertyName -> PropertyIndex -> PropertyValue)
             SceneContent targetSceneContent = new(instant);
@@ -394,7 +431,10 @@ namespace SVEN
             UpdateContent(targetSceneContent);
 
             DateTime endProcessing = DateTime.Now;
-            Debug.Log($"Processing time: {(endProcessing - startProcessing).TotalMilliseconds} ms");
+            double sceneUpdateTime = (endProcessing - startProcessing).TotalMilliseconds - queryTime;
+            Debug.Log($"Query Time: {queryTime} ms");
+            Debug.Log($"Scene Update Time: {sceneUpdateTime} ms");
+            Debug.Log($"Processing Time: {(endProcessing - startProcessing).TotalMilliseconds} ms");
         }
 
         /// <summary>
@@ -452,7 +492,7 @@ namespace SVEN
                             Debug.LogWarning($"Property {propertyDescription} is null in {componentDescription.Type} of {gameObjectDescription.UUID}");
                             continue;
                         }
-                        //if (componentDescription.Component.GetType() == typeof(MeshFilter))
+                        //if (componentDescription.Component.GetType() == typeof(MeshRenderer))
                         //    Debug.Log($"Property: {propertyDescription.Name} {propertyDescription.Type} {propertyValue.GetType()}  {propertyValue}");
 
                         if (setters.TryGetValue(propertyDescription.Name, out var setter) && setter.Item2 != null) setter.Item2(propertyValue);
@@ -607,7 +647,7 @@ namespace SVEN
         private void LoadInstants()
         {
             //sparql query to get all time:Instant instances
-            string query = @"
+            SparqlQuery query = new SparqlQueryParser().ParseFromString(@"
                 PREFIX time: <http://www.w3.org/2006/time#>
 
                 SELECT ?instant ?dateTime (COUNT(?contentModification) as ?contentModifier)
@@ -616,7 +656,7 @@ namespace SVEN
                             time:inXSDDateTime ?dateTime .
                     ?contentModification time:hasTemporalExtent ?interval .
                     ?interval time:hasBeginning ?instant .
-                } GROUP BY ?instant ?dateTime ORDER BY ?dateTime";
+                } GROUP BY ?instant ?dateTime ORDER BY ?dateTime");
 
             //execute the query
             SparqlResultSet results = graph.ExecuteQuery(query) as SparqlResultSet;

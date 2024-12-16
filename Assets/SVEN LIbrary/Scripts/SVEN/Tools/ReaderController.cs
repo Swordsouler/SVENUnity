@@ -131,7 +131,6 @@ namespace SVEN.Tools
                 float height = Mathf.Lerp(10, 50, importance); // Adjust the range as needed
 
                 // Calculate the position relative to the slider's dimensions and position
-                Debug.Log(sliderRect.position.x + " " + sliderRect.position.y);
                 float normalizedX = x / timeSlider.maxValue;
                 float posX = normalizedX * sliderRect.rect.width; // Calculate the x position
                 float posY = height + sliderRect.rect.height / 2; // Calculate the y position above the slider

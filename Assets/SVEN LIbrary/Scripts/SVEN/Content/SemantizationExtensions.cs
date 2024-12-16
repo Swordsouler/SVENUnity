@@ -65,6 +65,16 @@ namespace SVEN.Content
         }
 
         /// <summary>
+        /// Gets the component by the identifier.
+        /// </summary>
+        /// <param name="UUID">Identifier to get the component.</param>
+        /// <returns>Component.</returns>
+        public static Component GetComponentByUUID(string UUID)
+        {
+            return componentUUIDs.FirstOrDefault(x => x.Value.Item1 == UUID).Key;
+        }
+
+        /// <summary>
         /// Gets the interval for the component.
         /// </summary>
         /// <param name="component">Component to get the interval.</param>

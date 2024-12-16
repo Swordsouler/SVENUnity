@@ -41,8 +41,8 @@ namespace SVEN.Content
             { typeof(Vector4), new PropertyDescription("Vector4", new List<string> { "x", "y", "z", "w" }) },
             { typeof(Vector3), new PropertyDescription("Vector3", new List<string> { "x", "y", "z" }) },
             { typeof(Vector2), new PropertyDescription("Vector2", new List<string> { "x", "y" }) },
-            { typeof(Color), new PropertyDescription("Color", new List<string> { "r", "g", "b", "a" }) },
-            { typeof(object), new PropertyDescription("Field", new List<string> { "value" }) },
+            { typeof(Color), new PropertyDescription("Color", new List<string> { "r", "g", "b", "a"}) },
+            { typeof(object), new PropertyDescription("Primitive", new List<string> { "value" }) },
         };
 
         /// <summary>

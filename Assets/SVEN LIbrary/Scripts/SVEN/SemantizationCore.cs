@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using OWLTime;
 using RDF;
@@ -32,6 +33,10 @@ namespace SVEN
         /// </summary>
         [SerializeField]
         private GraphBuffer graphBuffer;
+        public GraphBuffer GraphBuffer => graphBuffer;
+
+        [SerializeField]
+        private bool isStatic = false;
 
         /// <summary>
         /// Start is called before the first frame update.
@@ -41,6 +46,7 @@ namespace SVEN
             if (graphBuffer == null) graphBuffer = GraphManager.Get("sven");
             componentsToSemantize.RemoveAll(component => component == null);
             Initialize();
+            StartCoroutine(CheckForChanges(1.0f / graphBuffer.InstantPerSecond));
         }
 
         /// <summary>
@@ -121,41 +127,46 @@ namespace SVEN
         /// <summary>
         /// Checks if the observed properties have changed and invokes the callbacks if they have.
         /// </summary>
-        private void CheckForChanges()
+        private IEnumerator CheckForChanges(float i)
         {
-            List<Component> toRemove = new();
-            foreach (KeyValuePair<Component, List<Property>> componentProperties in componentsProperties)
+            do
             {
-                try
+                List<Component> toRemove = new();
+                foreach (KeyValuePair<Component, List<Property>> componentProperties in componentsProperties)
                 {
-                    foreach (Property property in componentProperties.Value)
-                        property.CheckForChanges();
+                    try
+                    {
+                        foreach (Property property in componentProperties.Value)
+                            property.CheckForChanges();
+                    }
+                    catch
+                    {
+                        if (Settings.Debug) Debug.LogWarning("Component " + componentProperties.Key.GetType().Name + " has been destroyed. Removing from semantization.");
+                        toRemove.Add(componentProperties.Key);
+                    }
                 }
-                catch
+
+                foreach (Component component in toRemove)
                 {
-                    if (Settings.Debug) Debug.LogWarning("Component " + componentProperties.Key.GetType().Name + " has been destroyed. Removing from semantization.");
-                    toRemove.Add(componentProperties.Key);
+                    foreach (Property property in componentsProperties[component])
+                        property.Destroy();
+
+                    Interval interval = component.GetInterval();
+                    interval.End(graphBuffer.CurrentInstant);
+                    interval.Semantize(graphBuffer.Graph);
+                    component.DestroyUUID();
+
+                    componentsProperties.Remove(component);
                 }
+                yield return new WaitForSeconds(i);
             }
-
-            foreach (Component component in toRemove)
-            {
-                foreach (Property property in componentsProperties[component])
-                    property.Destroy();
-
-                Interval interval = component.GetInterval();
-                interval.End(graphBuffer.CurrentInstant);
-                interval.Semantize(graphBuffer.Graph);
-                component.DestroyUUID();
-
-                componentsProperties.Remove(component);
-            }
+            while (!isStatic);
         }
 
         /// <summary>
         /// OnEnable is called when the object becomes enabled and active.
         /// </summary>
-        private void OnEnable()
+        /*private void OnEnable()
         {
             CheckForChanges();
         }
@@ -174,7 +185,7 @@ namespace SVEN
         private void Update()
         {
             CheckForChanges();
-        }
+        }*/
 
         /// <summary>
         /// This function is called when the MonoBehaviour will be destroyed.

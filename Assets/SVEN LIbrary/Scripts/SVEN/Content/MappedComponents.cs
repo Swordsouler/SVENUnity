@@ -116,12 +116,22 @@ namespace SVEN.Content
                 })
             },
             {
+                typeof(AudioSource), new("Audio",
+                new List<Delegate>
+                {
+                    (Func<AudioSource, PropertyDescription>)(audioSource => new PropertyDescription("enabled", () => audioSource.enabled, value => audioSource.enabled = value.ToString().ToLower() == "true", 1)),
+                    (Func<AudioSource, PropertyDescription>)(audioSource => new PropertyDescription("minDistance", () => audioSource.minDistance, value => audioSource.minDistance = (float)value, 1, "minSoundDistance")),
+                    (Func<AudioSource, PropertyDescription>)(audioSource => new PropertyDescription("maxDistance", () => audioSource.maxDistance, value => audioSource.maxDistance = (float)value, 1, "maxSoundDistance")),
+                })
+            },
+            {
                 typeof(Camera), new("Camera",
                 new List<Delegate>
                 {
-                    (Func<Camera, PropertyDescription>)(camera => new PropertyDescription("nearClipPlane", () => camera.nearClipPlane, value => camera.nearClipPlane = (float)value, 1)),
-                    (Func<Camera, PropertyDescription>)(camera => new PropertyDescription("farClipPlane", () => camera.farClipPlane, value => camera.farClipPlane = (float)value, 1)),
-                    (Func<Camera, PropertyDescription>)(camera => new PropertyDescription("fieldOfView", () => camera.fieldOfView, value => camera.fieldOfView = (float)value, 1)),
+                    (Func<Camera, PropertyDescription>)(camera => new PropertyDescription("enabled", () => camera.enabled, value => camera.enabled = value.ToString().ToLower() == "true", 1)),
+                    (Func<Camera, PropertyDescription>)(camera => new PropertyDescription("nearClipPlane", () => camera.nearClipPlane, value => camera.nearClipPlane = (float)value, 1, "POVNear")),
+                    (Func<Camera, PropertyDescription>)(camera => new PropertyDescription("farClipPlane", () => camera.farClipPlane, value => camera.farClipPlane = (float)value, 1, "POVFar")),
+                    (Func<Camera, PropertyDescription>)(camera => new PropertyDescription("fieldOfView", () => camera.fieldOfView, value => camera.fieldOfView = (float)value, 1, "POVFOV")),
                     (Func<Camera, PropertyDescription>)(camera => new PropertyDescription("orthographic", () => camera.orthographic, value => camera.orthographic = value.ToString() == "true", 1)),
                     (Func<Camera, PropertyDescription>)(camera => new PropertyDescription("orthographicSize", () => camera.orthographicSize, value => camera.orthographicSize = (float)value, 1)),
                     (Func<Camera, PropertyDescription>)(camera => new PropertyDescription("clearFlags", () => camera.clearFlags.ToString(), value => camera.clearFlags = (CameraClearFlags)Enum.Parse(typeof(CameraClearFlags), (string)value), 1)),
@@ -129,13 +139,21 @@ namespace SVEN.Content
                 })
             },
             {
-                typeof(MeshRenderer), new("MeshRenderer",
+                typeof(MeshRenderer), new("3DRender",
                 new List<Delegate>
                 {
                     (Func<MeshRenderer, PropertyDescription>)(meshRenderer => new PropertyDescription("enabled", () => meshRenderer.enabled, value => meshRenderer.enabled = value.ToString().ToLower() == "true", 1)),
-                    (Func<MeshRenderer, PropertyDescription>)(meshRenderer => new PropertyDescription("isVisible", () => meshRenderer.isVisible, null, 1)),
                     (Func<MeshRenderer, PropertyDescription>)(meshRenderer => new PropertyDescription("color", () => meshRenderer.material.color, value => meshRenderer.material.DOColor((Color)value, lerpSpeed), 1, "virtualColor")),
                     (Func<MeshRenderer, PropertyDescription>)(meshRenderer => new PropertyDescription("shader", () => meshRenderer.material.shader.name, value => meshRenderer.material.shader = Shader.Find((string)value), 1)),
+                })
+            },
+            {
+                typeof(SpriteRenderer), new("2DRender",
+                new List<Delegate>
+                {
+                    (Func<SpriteRenderer, PropertyDescription>)(spriteRenderer => new PropertyDescription("enabled", () => spriteRenderer.enabled, value => spriteRenderer.enabled = value.ToString().ToLower() == "true", 1)),
+                    (Func<SpriteRenderer, PropertyDescription>)(spriteRenderer => new PropertyDescription("color", () => spriteRenderer.color, value => spriteRenderer.color = (Color)value, 1, "virtualColor")),
+                    (Func<SpriteRenderer, PropertyDescription>)(spriteRenderer => new PropertyDescription("sprite", () => spriteRenderer.sprite.name, value => spriteRenderer.sprite = Resources.Load<Sprite>((string)value), 1)),
                 })
             },
             {
@@ -153,13 +171,14 @@ namespace SVEN.Content
                     (Func<MeshFilter, PropertyDescription>)(meshFilter => new PropertyDescription("triangles", () => string.Join("|", meshFilter.mesh.triangles.Select(t => t.ToString())), value => {
                             try {
                                 int[] triangles = ((string)value).Split('|').Select(int.Parse).ToArray();
+                                if (triangles.Length == meshFilter.mesh.triangles.Length) return;
                                 meshFilter.mesh.SetTriangles(triangles, 0);
                             } catch {}
                         }, 2)),
                     (Func<MeshFilter, PropertyDescription>)(meshFilter => new PropertyDescription("normals", () => string.Join("|", meshFilter.mesh.normals.Select(n => n.ToString())), value => {
                             try {
                                 Vector3[] normals = ((string)value).Split('|').Select(ParseVector3).ToArray();
-                                if (normals.Length != meshFilter.mesh.vertexCount) return;
+                                if (normals.Length != meshFilter.mesh.vertexCount || normals.Length == meshFilter.mesh.normals.Length) return;
                                 meshFilter.mesh.SetNormals(normals);
                             } catch {}
                         }, 2)),

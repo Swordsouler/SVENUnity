@@ -75,6 +75,8 @@ namespace RDF
         [SerializeField, DisableIf("IsStarted"), HideIf("HasGraphConfig"), Range(1, 60)]
         private int instantPerSecond = 30;
 
+        public int InstantPerSecond => instantPerSecond;
+
         #endregion
 
         /// <summary>
@@ -173,8 +175,7 @@ namespace RDF
             get
             {
                 // example : instantPerSecond = 10 -> if now = 2021-10-10T10:10:10.0516051 then dateTime will be 2021-10-10T10:10:10.0000000
-                DateTime now = DateTime.Now;
-                DateTime dateTime = new(now.Year, now.Month, now.Day, now.Hour, now.Minute, now.Second, now.Millisecond / (1000 / instantPerSecond) * (1000 / instantPerSecond));
+                DateTime dateTime = FormatDateTime(DateTime.Now);
                 if (currentInstant == null || currentInstant.inXSDDateTime != dateTime)
                     CurrentInstant = new Instant(dateTime);
                 return currentInstant;
@@ -184,6 +185,16 @@ namespace RDF
                 currentInstant = value;
                 currentInstant.Semantize(graph);
             }
+        }
+
+        /// <summary>
+        /// Format the DateTime to the instantPerSecond.
+        /// </summary>
+        /// <param name="dateTime">The DateTime to format.</param>
+        /// <returns>DateTime.</returns>
+        public DateTime FormatDateTime(DateTime dateTime)
+        {
+            return new(dateTime.Year, dateTime.Month, dateTime.Day, dateTime.Hour, dateTime.Minute, dateTime.Second, dateTime.Millisecond / (1000 / instantPerSecond) * (1000 / instantPerSecond));
         }
 
         #endregion
