@@ -1,0 +1,177 @@
+@prefix : <http://www.sven.fr/ontology#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix xml: <http://www.w3.org/XML/1998/namespace> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix sven: <http://www.sven.fr/ontology#> .
+@base <http://www.sven.fr/ontology#> .
+
+<http://www.sven.fr/ontology#> rdf:type owl:Ontology .
+
+#################################################################
+#    Classes
+#################################################################
+
+###  http://www.sven.fr/ontology#Actor
+sven:Actor rdf:type owl:Class ;
+           owl:equivalentClass sven:GameObject ;
+           rdfs:subClassOf sven:Component .
+
+
+###  http://www.sven.fr/ontology#ActorComponent
+sven:ActorComponent rdf:type owl:Class ;
+                    owl:equivalentClass sven:Component .
+
+
+###  http://www.sven.fr/ontology#Audio
+sven:Audio rdf:type owl:Class ;
+           rdfs:subClassOf sven:Component .
+
+
+###  http://www.sven.fr/ontology#AudioObject
+sven:AudioObject rdf:type owl:Class ;
+                 rdfs:subClassOf sven:VirtualObject .
+
+
+###  http://www.sven.fr/ontology#Camera
+sven:Camera rdf:type owl:Class ;
+            rdfs:subClassOf sven:Component .
+
+
+###  http://www.sven.fr/ontology#Color
+sven:Color rdf:type owl:Class ;
+           rdfs:subClassOf sven:Property .
+
+
+###  http://www.sven.fr/ontology#Component
+sven:Component rdf:type owl:Class ;
+               owl:equivalentClass sven:Node .
+
+
+###  http://www.sven.fr/ontology#GameObject
+sven:GameObject rdf:type owl:Class ;
+                owl:equivalentClass sven:Object ;
+                rdfs:subClassOf sven:Component .
+
+
+###  http://www.sven.fr/ontology#GraspArea
+sven:GraspArea rdf:type owl:Class ;
+               rdfs:subClassOf sven:Interactor .
+
+
+###  http://www.sven.fr/ontology#Interactor
+sven:Interactor rdf:type owl:Class ;
+                rdfs:subClassOf sven:VirtualObject .
+
+
+###  http://www.sven.fr/ontology#Node
+sven:Node rdf:type owl:Class .
+
+
+###  http://www.sven.fr/ontology#Object
+sven:Object rdf:type owl:Class ;
+            rdfs:subClassOf sven:Component .
+
+
+###  http://www.sven.fr/ontology#PhysicalObject
+sven:PhysicalObject rdf:type owl:Class .
+
+
+###  http://www.sven.fr/ontology#PointOfView
+sven:PointOfView rdf:type owl:Class ;
+                 rdfs:subClassOf sven:Interactor .
+
+
+###  http://www.sven.fr/ontology#Pointer
+sven:Pointer rdf:type owl:Class ;
+             rdfs:subClassOf sven:Component .
+
+
+###  http://www.sven.fr/ontology#PointerObject
+sven:PointerObject rdf:type owl:Class ;
+                   rdfs:subClassOf sven:Interactor .
+
+
+###  http://www.sven.fr/ontology#Primitive
+sven:Primitive rdf:type owl:Class ;
+               rdfs:subClassOf sven:Property .
+
+
+###  http://www.sven.fr/ontology#Property
+sven:Property rdf:type owl:Class .
+
+
+###  http://www.sven.fr/ontology#Quaternion
+sven:Quaternion rdf:type owl:Class ;
+                owl:equivalentClass sven:Vector4 ;
+                rdfs:subClassOf sven:Property .
+
+
+###  http://www.sven.fr/ontology#Reference
+sven:Reference rdf:type owl:Class ;
+               rdfs:subClassOf sven:Property .
+
+
+###  http://www.sven.fr/ontology#Render
+sven:Render rdf:type owl:Class ;
+            rdfs:subClassOf sven:Component .
+
+
+###  http://www.sven.fr/ontology#RenderObject
+sven:RenderObject rdf:type owl:Class ;
+                  rdfs:subClassOf sven:VirtualObject .
+
+
+###  http://www.sven.fr/ontology#Shape
+sven:Shape rdf:type owl:Class ;
+           rdfs:subClassOf sven:Component .
+
+
+###  http://www.sven.fr/ontology#TangibleObject
+sven:TangibleObject rdf:type owl:Class ;
+                    rdfs:subClassOf sven:PhysicalObject ,
+                                    sven:VirtualObject .
+
+
+###  http://www.sven.fr/ontology#Transform
+sven:Transform rdf:type owl:Class ;
+               rdfs:subClassOf sven:Component .
+
+
+###  http://www.sven.fr/ontology#Vector1
+sven:Vector1 rdf:type owl:Class ;
+             rdfs:subClassOf sven:Property .
+
+
+###  http://www.sven.fr/ontology#Vector2
+sven:Vector2 rdf:type owl:Class ;
+             rdfs:subClassOf sven:Property .
+
+
+###  http://www.sven.fr/ontology#Vector3
+sven:Vector3 rdf:type owl:Class ;
+             rdfs:subClassOf sven:Property .
+
+
+###  http://www.sven.fr/ontology#Vector4
+sven:Vector4 rdf:type owl:Class ;
+             rdfs:subClassOf sven:Property .
+
+
+###  http://www.sven.fr/ontology#VirtualObject
+sven:VirtualObject rdf:type owl:Class ;
+                   rdfs:subClassOf sven:GameObject .
+
+
+###  http://www.sven.fr/ontology#2DRender
+<http://www.sven.fr/ontology#2DRender> rdf:type owl:Class ;
+                                       rdfs:subClassOf sven:Render .
+
+
+###  http://www.sven.fr/ontology#3DRender
+<http://www.sven.fr/ontology#3DRender> rdf:type owl:Class ;
+                                       rdfs:subClassOf sven:Render .
+
+
+###  Generated by the OWL API (version 4.5.26.2023-07-17T20:34:13Z) https://github.com/owlcs/owlapi

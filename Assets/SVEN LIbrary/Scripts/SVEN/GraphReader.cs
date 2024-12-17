@@ -83,6 +83,26 @@ namespace SVEN
             public GameObject GameObject { get; set; }
 
             /// <summary>
+            /// Active state of the GameObject.
+            /// </summary>
+            public bool Active;
+
+            /// <summary>
+            /// Layer of the GameObject.
+            /// </summary>
+            public string Layer;
+
+            /// <summary>
+            /// Tag of the GameObject.
+            /// </summary>
+            public string Tag;
+
+            /// <summary>
+            /// Name of the GameObject.
+            /// </summary>
+            public string Name;
+
+            /// <summary>
             /// Components of the GameObject.
             /// </summary>
             public Dictionary<string, ComponentDescription> Components { get; set; }
@@ -338,7 +358,7 @@ namespace SVEN
                     ?shape ?propertyName ?property .
                     ?property ?propertyNestedName ?propertyValue .
                 }} WHERE {{
-                    ?object a sven:GameObject ;
+                    ?object a sven:Object ;
                             sven:component ?shape .
                     ?shape sven:exactType sven:Shape .
                     ?shape ?propertyName ?property .
@@ -356,14 +376,7 @@ namespace SVEN
         {
             DateTime startProcessing = DateTime.Now;
 
-            /*
-            ?active ?layer ?tag ?name 
-            sven:active ?active ;
-            sven:layer ?layer ;
-            sven:tag ?tag ;
-            sven:name ?name ;
-            */
-            SparqlQuery query = new SparqlQueryParser().ParseFromString($@"
+            /*SparqlQuery query = new SparqlQueryParser().ParseFromString($@"
                 PREFIX time: <http://www.w3.org/2006/time#>
                 PREFIX sven: <http://www.sven.fr/ontology#>
 
@@ -372,15 +385,59 @@ namespace SVEN
                     ?object a sven:GameObject ;
                             sven:component ?component .
                     ?component sven:exactType ?componentType ;
-                               ?propertyName ?property .
+                            ?propertyName ?property .
                     ?property sven:exactType ?propertyType ;
-                              ?propertyNestedName ?propertyValue ;
-                              time:hasTemporalExtent ?interval .
+                            ?propertyNestedName ?propertyValue ;
+                            time:hasTemporalExtent ?interval .
+                    ?interval time:inside <{instant.GetUriNode(graph)}> .
+                }}");*/
+
+            SparqlQuery query = new SparqlQueryParser().ParseFromString($@"
+                PREFIX time: <http://www.w3.org/2006/time#>
+                PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+                PREFIX sven: <http://www.sven.fr/ontology#>
+
+                SELECT ?object ?component ?componentType ?propertyName ?propertyNestedName ?propertyValue ?propertyType
+                WHERE {{
+                    {{
+                        SELECT *
+                        WHERE {{
+                            VALUES ?propertyName {{
+                                sven:active
+                                sven:layer
+                                sven:tag
+                                sven:name
+                            }}
+                            ?object a sven:Object ;
+                                    ?propertyName ?property .
+                            ?property sven:value ?propertyValue ;
+                                        time:hasTemporalExtent ?interval .
+                        }}
+                    }}
+                    UNION
+                    {{
+                        SELECT *
+                        WHERE {{
+                            ?object a sven:Object ;
+                                    sven:component ?component .
+                            ?component sven:exactType ?componentType ;
+                                    ?propertyName ?property .
+                            ?propertyName rdfs:subPropertyOf sven:componentProperties ;
+                                        rdfs:range ?propertyRange .
+                            ?property sven:exactType ?propertyType ;
+                                    ?propertyNestedName ?propertyValue ;
+                                    time:hasTemporalExtent ?interval .
+                            ?propertyNestedName rdfs:subPropertyOf sven:propertyData ;
+                                        rdfs:range ?propertyNestedRange .
+                        }}
+                    }}
                     ?interval time:inside <{instant.GetUriNode(graph)}> .
                 }}");
 
+
             // Execute the query
             SparqlResultSet results = graph.ExecuteQuery(query) as SparqlResultSet;
+            Debug.Log(results.Count);
             double queryTime = (DateTime.Now - startProcessing).TotalMilliseconds;
 
             // GameObject -> Component -> (ComponentType --- PropertyName -> PropertyIndex -> PropertyValue)
@@ -390,18 +447,45 @@ namespace SVEN
             {
                 // get uuids
                 string objectUUID = result["object"].ToString().Split('#')[1];
-                string componentUUID = result["component"].ToString().Split('#')[1];
-
-                // get types
-                string componentStringType = result["componentType"].ToString().Split("#")[1];
-                string propertyStringType = result["propertyType"].ToString().Split("#")[1];
 
                 string propertyName = result["propertyName"].NodeType switch
                 {
                     NodeType.Uri => result["propertyName"].ToString().Split('#')[1],
                     _ => result["propertyName"].AsValuedNode().AsString()
                 };
-                string propertyNestedName = result["propertyNestedName"].ToString().Split('#')[1];
+                string componentUUID, componentStringType, propertyStringType, propertyNestedName;
+                try
+                {
+                    componentUUID = result["component"].ToString().Split('#')[1];
+
+                    // get types
+                    componentStringType = result["componentType"]?.ToString().Split("#")[1];
+                    propertyStringType = result["propertyType"].ToString().Split("#")[1];
+                    propertyNestedName = result["propertyNestedName"].ToString().Split('#')[1];
+                }
+                catch
+                {
+                    if (!targetSceneContent.GameObjects.ContainsKey(objectUUID))
+                        targetSceneContent.GameObjects[objectUUID] = new(objectUUID);
+
+                    switch (propertyName)
+                    {
+                        case "active":
+                            targetSceneContent.GameObjects[objectUUID].Active = result["propertyValue"].AsValuedNode().AsString() == "true";
+                            continue;
+                        case "layer":
+                            targetSceneContent.GameObjects[objectUUID].Layer = result["propertyValue"].AsValuedNode().AsString();
+                            continue;
+                        case "tag":
+                            targetSceneContent.GameObjects[objectUUID].Tag = result["propertyValue"].AsValuedNode().AsString();
+                            continue;
+                        case "name":
+                            targetSceneContent.GameObjects[objectUUID].Name = result["propertyValue"].AsValuedNode().AsString();
+                            continue;
+                    }
+                    continue;
+                }
+
 
                 Type componentType = MapppedComponents.GetType(componentStringType) ?? Type.GetType(componentStringType);
                 if (!MapppedComponents.HasProperty(componentType, propertyName)) continue;
@@ -454,6 +538,10 @@ namespace SVEN
                     gameObjectDescription.GameObject = new GameObject(gameObjectDescription.UUID);
                     gameObjectDescription.GameObject.transform.SetParent(transform);
                 }
+                gameObjectDescription.GameObject.SetActive(gameObjectDescription.Active);
+                gameObjectDescription.GameObject.layer = LayerMask.NameToLayer(gameObjectDescription.Layer);
+                gameObjectDescription.GameObject.tag = gameObjectDescription.Tag;
+                gameObjectDescription.GameObject.name = gameObjectDescription.Name;
 
                 foreach (ComponentDescription componentDescription in gameObjectDescription.Components.Values)
                 {

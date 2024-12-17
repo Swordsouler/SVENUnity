@@ -120,8 +120,8 @@ namespace SVEN.Content
                 new List<Delegate>
                 {
                     (Func<AudioSource, PropertyDescription>)(audioSource => new PropertyDescription("enabled", () => audioSource.enabled, value => audioSource.enabled = value.ToString().ToLower() == "true", 1)),
-                    (Func<AudioSource, PropertyDescription>)(audioSource => new PropertyDescription("minDistance", () => audioSource.minDistance, value => audioSource.minDistance = (float)value, 1, "minSoundDistance")),
-                    (Func<AudioSource, PropertyDescription>)(audioSource => new PropertyDescription("maxDistance", () => audioSource.maxDistance, value => audioSource.maxDistance = (float)value, 1, "maxSoundDistance")),
+                    (Func<AudioSource, PropertyDescription>)(audioSource => new PropertyDescription("minAudioDistance", () => audioSource.minDistance, value => audioSource.minDistance = (float)value, 1, "minSoundDistance")),
+                    (Func<AudioSource, PropertyDescription>)(audioSource => new PropertyDescription("maxAudioDistance", () => audioSource.maxDistance, value => audioSource.maxDistance = (float)value, 1, "maxSoundDistance")),
                 })
             },
             {

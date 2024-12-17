@@ -38,6 +38,8 @@ namespace SVEN
         [SerializeField]
         private bool isStatic = false;
 
+        private Coroutine checkForChangesCoroutine;
+
         /// <summary>
         /// Start is called before the first frame update.
         /// </summary>
@@ -46,7 +48,7 @@ namespace SVEN
             if (graphBuffer == null) graphBuffer = GraphManager.Get("sven");
             componentsToSemantize.RemoveAll(component => component == null);
             Initialize();
-            StartCoroutine(CheckForChanges(1.0f / graphBuffer.InstantPerSecond));
+            checkForChangesCoroutine = StartCoroutine(LoopCheckForChanges(1.0f / graphBuffer.InstantPerSecond));
         }
 
         /// <summary>
@@ -127,48 +129,48 @@ namespace SVEN
         /// <summary>
         /// Checks if the observed properties have changed and invokes the callbacks if they have.
         /// </summary>
-        private IEnumerator CheckForChanges(float i)
+        private void CheckForChanges()
         {
-            do
+            List<Component> toRemove = new();
+            foreach (KeyValuePair<Component, List<Property>> componentProperties in componentsProperties)
             {
-                List<Component> toRemove = new();
-                foreach (KeyValuePair<Component, List<Property>> componentProperties in componentsProperties)
+                try
                 {
-                    try
-                    {
-                        foreach (Property property in componentProperties.Value)
-                            property.CheckForChanges();
-                    }
-                    catch
-                    {
-                        if (Settings.Debug) Debug.LogWarning("Component " + componentProperties.Key.GetType().Name + " has been destroyed. Removing from semantization.");
-                        toRemove.Add(componentProperties.Key);
-                    }
+                    foreach (Property property in componentProperties.Value)
+                        property.CheckForChanges();
                 }
-
-                foreach (Component component in toRemove)
+                catch
                 {
-                    foreach (Property property in componentsProperties[component])
-                        property.Destroy();
-
-                    Interval interval = component.GetInterval();
-                    interval.End(graphBuffer.CurrentInstant);
-                    interval.Semantize(graphBuffer.Graph);
-                    component.DestroyUUID();
-
-                    componentsProperties.Remove(component);
+                    if (Settings.Debug) Debug.LogWarning("Component " + componentProperties.Key.GetType().Name + " has been destroyed. Removing from semantization.");
+                    toRemove.Add(componentProperties.Key);
                 }
-                yield return new WaitForSeconds(i);
             }
-            while (!isStatic);
+
+            foreach (Component component in toRemove)
+            {
+                foreach (Property property in componentsProperties[component])
+                    property.Destroy();
+
+                Interval interval = component.GetInterval();
+                interval.End(graphBuffer.CurrentInstant);
+                interval.Semantize(graphBuffer.Graph);
+                component.DestroyUUID();
+
+                componentsProperties.Remove(component);
+            }
         }
 
         /// <summary>
-        /// OnEnable is called when the object becomes enabled and active.
+        /// Coroutine to check for changes in the properties of the GameObject.
         /// </summary>
-        /*private void OnEnable()
+        private IEnumerator LoopCheckForChanges(float interval)
         {
-            CheckForChanges();
+            do
+            {
+                CheckForChanges();
+                yield return new WaitForSeconds(interval);
+            }
+            while (!isStatic);
         }
 
         /// <summary>
@@ -177,12 +179,23 @@ namespace SVEN
         private void OnDisable()
         {
             CheckForChanges();
+            if (checkForChangesCoroutine != null) StopCoroutine(checkForChangesCoroutine);
+        }
+
+        /// <summary>
+        /// OnEnable is called when the object becomes enabled and active.
+        /// </summary>
+        private void OnEnable()
+        {
+            if (graphBuffer == null) return;
+            if (checkForChangesCoroutine != null) StopCoroutine(checkForChangesCoroutine);
+            StartCoroutine(LoopCheckForChanges(1.0f / graphBuffer.InstantPerSecond));
         }
 
         /// <summary>
         /// Update is called every frame, if the MonoBehaviour is enabled.
         /// </summary>
-        private void Update()
+        /*private void Update()
         {
             CheckForChanges();
         }*/

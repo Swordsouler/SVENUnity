@@ -156,7 +156,7 @@ MonoBehaviour:
   - {fileID: 18707782}
   - {fileID: 18707781}
   graphBuffer: {fileID: 0}
-  isStatic: 1
+  isStatic: 0
 --- !u!65 &18707780
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -283,7 +283,7 @@ MonoBehaviour:
   - {fileID: 18809439}
   - {fileID: 18809438}
   graphBuffer: {fileID: 0}
-  isStatic: 1
+  isStatic: 0
 --- !u!65 &18809437
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -537,7 +537,7 @@ MonoBehaviour:
   - {fileID: 109594608}
   - {fileID: 109594607}
   graphBuffer: {fileID: 0}
-  isStatic: 1
+  isStatic: 0
 --- !u!65 &109594606
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -737,7 +737,7 @@ MonoBehaviour:
   - {fileID: 139254687}
   - {fileID: 139254686}
   graphBuffer: {fileID: 0}
-  isStatic: 1
+  isStatic: 0
 --- !u!65 &139254685
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -864,7 +864,7 @@ MonoBehaviour:
   - {fileID: 178014773}
   - {fileID: 178014772}
   graphBuffer: {fileID: 0}
-  isStatic: 1
+  isStatic: 0
 --- !u!65 &178014771
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -976,7 +976,7 @@ MonoBehaviour:
   - {fileID: 192216012}
   - {fileID: 192216011}
   graphBuffer: {fileID: 0}
-  isStatic: 1
+  isStatic: 0
 --- !u!65 &192216010
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -1103,7 +1103,7 @@ MonoBehaviour:
   - {fileID: 243088058}
   - {fileID: 243088057}
   graphBuffer: {fileID: 0}
-  isStatic: 1
+  isStatic: 0
 --- !u!65 &243088056
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -1245,7 +1245,7 @@ MonoBehaviour:
   - {fileID: 296809121}
   - {fileID: 296809120}
   graphBuffer: {fileID: 0}
-  isStatic: 1
+  isStatic: 0
 --- !u!65 &296809119
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -1357,7 +1357,7 @@ MonoBehaviour:
   - {fileID: 301198114}
   - {fileID: 301198113}
   graphBuffer: {fileID: 0}
-  isStatic: 1
+  isStatic: 0
 --- !u!65 &301198112
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -1484,7 +1484,7 @@ MonoBehaviour:
   - {fileID: 315038267}
   - {fileID: 315038266}
   graphBuffer: {fileID: 0}
-  isStatic: 1
+  isStatic: 0
 --- !u!65 &315038265
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -1611,7 +1611,7 @@ MonoBehaviour:
   - {fileID: 348499335}
   - {fileID: 348499334}
   graphBuffer: {fileID: 0}
-  isStatic: 1
+  isStatic: 0
 --- !u!65 &348499333
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -1753,7 +1753,7 @@ MonoBehaviour:
   - {fileID: 349687757}
   - {fileID: 349687756}
   graphBuffer: {fileID: 0}
-  isStatic: 1
+  isStatic: 0
 --- !u!65 &349687755
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -1865,7 +1865,7 @@ MonoBehaviour:
   - {fileID: 351919017}
   - {fileID: 351919016}
   graphBuffer: {fileID: 0}
-  isStatic: 1
+  isStatic: 0
 --- !u!65 &351919015
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -2007,7 +2007,7 @@ MonoBehaviour:
   - {fileID: 373197439}
   - {fileID: 373197438}
   graphBuffer: {fileID: 0}
-  isStatic: 1
+  isStatic: 0
 --- !u!65 &373197437
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -2134,7 +2134,7 @@ MonoBehaviour:
   - {fileID: 377837960}
   - {fileID: 377837959}
   graphBuffer: {fileID: 0}
-  isStatic: 1
+  isStatic: 0
 --- !u!65 &377837958
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -2246,7 +2246,7 @@ MonoBehaviour:
   - {fileID: 382373859}
   - {fileID: 382373858}
   graphBuffer: {fileID: 0}
-  isStatic: 1
+  isStatic: 0
 --- !u!65 &382373857
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -2388,7 +2388,7 @@ MonoBehaviour:
   - {fileID: 387247259}
   - {fileID: 387247258}
   graphBuffer: {fileID: 0}
-  isStatic: 1
+  isStatic: 0
 --- !u!65 &387247257
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -2500,7 +2500,7 @@ MonoBehaviour:
   - {fileID: 400727473}
   - {fileID: 400727472}
   graphBuffer: {fileID: 0}
-  isStatic: 1
+  isStatic: 0
 --- !u!65 &400727471
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -2604,7 +2604,7 @@ GameObject:
   - component: {fileID: 404167587}
   - component: {fileID: 404167586}
   m_Layer: 0
-  m_Name: Object 2
+  m_Name: Will be edit
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2627,7 +2627,7 @@ MonoBehaviour:
   - {fileID: 404167589}
   - {fileID: 404167588}
   graphBuffer: {fileID: 0}
-  isStatic: 1
+  isStatic: 0
 --- !u!65 &404167587
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -2769,7 +2769,7 @@ MonoBehaviour:
   - {fileID: 424306188}
   - {fileID: 424306187}
   graphBuffer: {fileID: 0}
-  isStatic: 1
+  isStatic: 0
 --- !u!65 &424306186
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -2896,7 +2896,7 @@ MonoBehaviour:
   - {fileID: 427433359}
   - {fileID: 427433358}
   graphBuffer: {fileID: 0}
-  isStatic: 1
+  isStatic: 0
 --- !u!65 &427433357
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -3008,7 +3008,7 @@ MonoBehaviour:
   - {fileID: 447227022}
   - {fileID: 447227021}
   graphBuffer: {fileID: 0}
-  isStatic: 1
+  isStatic: 0
 --- !u!65 &447227020
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -3135,7 +3135,7 @@ MonoBehaviour:
   - {fileID: 473770827}
   - {fileID: 473770826}
   graphBuffer: {fileID: 0}
-  isStatic: 1
+  isStatic: 0
 --- !u!65 &473770825
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -3262,7 +3262,7 @@ MonoBehaviour:
   - {fileID: 495821764}
   - {fileID: 495821763}
   graphBuffer: {fileID: 0}
-  isStatic: 1
+  isStatic: 0
 --- !u!65 &495821762
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -3404,7 +3404,7 @@ MonoBehaviour:
   - {fileID: 501133143}
   - {fileID: 501133142}
   graphBuffer: {fileID: 0}
-  isStatic: 1
+  isStatic: 0
 --- !u!65 &501133141
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -3516,7 +3516,7 @@ MonoBehaviour:
   - {fileID: 503405101}
   - {fileID: 503405100}
   graphBuffer: {fileID: 0}
-  isStatic: 1
+  isStatic: 0
 --- !u!65 &503405099
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -3658,7 +3658,7 @@ MonoBehaviour:
   - {fileID: 512869090}
   - {fileID: 512869089}
   graphBuffer: {fileID: 0}
-  isStatic: 1
+  isStatic: 0
 --- !u!65 &512869088
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -3861,7 +3861,7 @@ MonoBehaviour:
   - {fileID: 577034706}
   - {fileID: 577034705}
   graphBuffer: {fileID: 0}
-  isStatic: 1
+  isStatic: 0
 --- !u!65 &577034704
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -3973,7 +3973,7 @@ MonoBehaviour:
   - {fileID: 628936021}
   - {fileID: 628936020}
   graphBuffer: {fileID: 0}
-  isStatic: 1
+  isStatic: 0
 --- !u!65 &628936019
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -4100,7 +4100,7 @@ MonoBehaviour:
   - {fileID: 653840546}
   - {fileID: 653840545}
   graphBuffer: {fileID: 0}
-  isStatic: 1
+  isStatic: 0
 --- !u!65 &653840544
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -4227,7 +4227,7 @@ MonoBehaviour:
   - {fileID: 661080905}
   - {fileID: 661080904}
   graphBuffer: {fileID: 0}
-  isStatic: 1
+  isStatic: 0
 --- !u!65 &661080903
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -4354,7 +4354,7 @@ MonoBehaviour:
   - {fileID: 675496110}
   - {fileID: 675496109}
   graphBuffer: {fileID: 0}
-  isStatic: 1
+  isStatic: 0
 --- !u!65 &675496108
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -4496,7 +4496,7 @@ MonoBehaviour:
   - {fileID: 688540137}
   - {fileID: 688540136}
   graphBuffer: {fileID: 0}
-  isStatic: 1
+  isStatic: 0
 --- !u!65 &688540135
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -4623,7 +4623,7 @@ MonoBehaviour:
   - {fileID: 732789170}
   - {fileID: 732789169}
   graphBuffer: {fileID: 0}
-  isStatic: 1
+  isStatic: 0
 --- !u!65 &732789168
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -4735,7 +4735,7 @@ MonoBehaviour:
   - {fileID: 779261017}
   - {fileID: 779261016}
   graphBuffer: {fileID: 0}
-  isStatic: 1
+  isStatic: 0
 --- !u!65 &779261015
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -4877,7 +4877,7 @@ MonoBehaviour:
   - {fileID: 785371987}
   - {fileID: 785371986}
   graphBuffer: {fileID: 0}
-  isStatic: 1
+  isStatic: 0
 --- !u!65 &785371985
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -5004,7 +5004,7 @@ MonoBehaviour:
   - {fileID: 787490185}
   - {fileID: 787490184}
   graphBuffer: {fileID: 0}
-  isStatic: 1
+  isStatic: 0
 --- !u!65 &787490183
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -5116,7 +5116,7 @@ MonoBehaviour:
   - {fileID: 798286538}
   - {fileID: 798286537}
   graphBuffer: {fileID: 0}
-  isStatic: 1
+  isStatic: 0
 --- !u!65 &798286536
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -5258,7 +5258,7 @@ MonoBehaviour:
   - {fileID: 841839981}
   - {fileID: 841839980}
   graphBuffer: {fileID: 0}
-  isStatic: 1
+  isStatic: 0
 --- !u!65 &841839979
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -5370,7 +5370,7 @@ MonoBehaviour:
   - {fileID: 865777821}
   - {fileID: 865777820}
   graphBuffer: {fileID: 0}
-  isStatic: 1
+  isStatic: 0
 --- !u!65 &865777819
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -5512,7 +5512,7 @@ MonoBehaviour:
   - {fileID: 871139828}
   - {fileID: 871139827}
   graphBuffer: {fileID: 0}
-  isStatic: 1
+  isStatic: 0
 --- !u!65 &871139826
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -5624,7 +5624,7 @@ MonoBehaviour:
   - {fileID: 889026154}
   - {fileID: 889026153}
   graphBuffer: {fileID: 0}
-  isStatic: 1
+  isStatic: 0
 --- !u!65 &889026152
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -5766,7 +5766,7 @@ MonoBehaviour:
   - {fileID: 890523643}
   - {fileID: 890523642}
   graphBuffer: {fileID: 0}
-  isStatic: 1
+  isStatic: 0
 --- !u!65 &890523641
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -5878,7 +5878,7 @@ MonoBehaviour:
   - {fileID: 917386032}
   - {fileID: 917386031}
   graphBuffer: {fileID: 0}
-  isStatic: 1
+  isStatic: 0
 --- !u!65 &917386030
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -6020,7 +6020,7 @@ MonoBehaviour:
   - {fileID: 942711870}
   - {fileID: 942711869}
   graphBuffer: {fileID: 0}
-  isStatic: 1
+  isStatic: 0
 --- !u!65 &942711868
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -6147,7 +6147,7 @@ MonoBehaviour:
   - {fileID: 943854599}
   - {fileID: 943854598}
   graphBuffer: {fileID: 0}
-  isStatic: 1
+  isStatic: 0
 --- !u!65 &943854597
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -6274,7 +6274,7 @@ MonoBehaviour:
   - {fileID: 973361641}
   - {fileID: 973361640}
   graphBuffer: {fileID: 0}
-  isStatic: 1
+  isStatic: 0
 --- !u!65 &973361639
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -6401,7 +6401,7 @@ MonoBehaviour:
   - {fileID: 1012912197}
   - {fileID: 1012912196}
   graphBuffer: {fileID: 0}
-  isStatic: 1
+  isStatic: 0
 --- !u!65 &1012912195
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -6528,7 +6528,7 @@ MonoBehaviour:
   - {fileID: 1084599805}
   - {fileID: 1084599804}
   graphBuffer: {fileID: 0}
-  isStatic: 1
+  isStatic: 0
 --- !u!65 &1084599803
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -6640,7 +6640,7 @@ MonoBehaviour:
   - {fileID: 1112166768}
   - {fileID: 1112166767}
   graphBuffer: {fileID: 0}
-  isStatic: 1
+  isStatic: 0
 --- !u!65 &1112166766
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -6782,7 +6782,7 @@ MonoBehaviour:
   - {fileID: 1155200227}
   - {fileID: 1155200226}
   graphBuffer: {fileID: 0}
-  isStatic: 1
+  isStatic: 0
 --- !u!65 &1155200225
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -6894,7 +6894,7 @@ MonoBehaviour:
   - {fileID: 1177088668}
   - {fileID: 1177088667}
   graphBuffer: {fileID: 0}
-  isStatic: 1
+  isStatic: 0
 --- !u!65 &1177088666
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -7021,7 +7021,7 @@ MonoBehaviour:
   - {fileID: 1199251224}
   - {fileID: 1199251223}
   graphBuffer: {fileID: 0}
-  isStatic: 1
+  isStatic: 0
 --- !u!65 &1199251222
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -7163,7 +7163,7 @@ MonoBehaviour:
   - {fileID: 1226983342}
   - {fileID: 1226983341}
   graphBuffer: {fileID: 0}
-  isStatic: 1
+  isStatic: 0
 --- !u!65 &1226983340
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -7371,7 +7371,7 @@ MonoBehaviour:
   - {fileID: 1234850247}
   - {fileID: 1234850246}
   graphBuffer: {fileID: 0}
-  isStatic: 1
+  isStatic: 0
 --- !u!65 &1234850245
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -7498,7 +7498,7 @@ MonoBehaviour:
   - {fileID: 1243022126}
   - {fileID: 1243022125}
   graphBuffer: {fileID: 0}
-  isStatic: 1
+  isStatic: 0
 --- !u!65 &1243022124
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -7610,7 +7610,7 @@ MonoBehaviour:
   - {fileID: 1279299735}
   - {fileID: 1279299734}
   graphBuffer: {fileID: 0}
-  isStatic: 1
+  isStatic: 0
 --- !u!65 &1279299733
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -7752,7 +7752,7 @@ MonoBehaviour:
   - {fileID: 1289153274}
   - {fileID: 1289153273}
   graphBuffer: {fileID: 0}
-  isStatic: 1
+  isStatic: 0
 --- !u!65 &1289153272
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -7864,7 +7864,7 @@ MonoBehaviour:
   - {fileID: 1317311147}
   - {fileID: 1317311146}
   graphBuffer: {fileID: 0}
-  isStatic: 1
+  isStatic: 0
 --- !u!65 &1317311145
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -8006,7 +8006,7 @@ MonoBehaviour:
   - {fileID: 1319338670}
   - {fileID: 1319338669}
   graphBuffer: {fileID: 0}
-  isStatic: 1
+  isStatic: 0
 --- !u!65 &1319338668
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -8118,7 +8118,7 @@ MonoBehaviour:
   - {fileID: 1334272759}
   - {fileID: 1334272758}
   graphBuffer: {fileID: 0}
-  isStatic: 1
+  isStatic: 0
 --- !u!65 &1334272757
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -8260,7 +8260,7 @@ MonoBehaviour:
   - {fileID: 1417338170}
   - {fileID: 1417338169}
   graphBuffer: {fileID: 0}
-  isStatic: 1
+  isStatic: 0
 --- !u!65 &1417338168
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -8387,7 +8387,7 @@ MonoBehaviour:
   - {fileID: 1419873667}
   - {fileID: 1419873666}
   graphBuffer: {fileID: 0}
-  isStatic: 1
+  isStatic: 0
 --- !u!65 &1419873665
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -8499,7 +8499,7 @@ MonoBehaviour:
   - {fileID: 1440647624}
   - {fileID: 1440647623}
   graphBuffer: {fileID: 0}
-  isStatic: 1
+  isStatic: 0
 --- !u!65 &1440647622
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -8641,7 +8641,7 @@ MonoBehaviour:
   - {fileID: 1454404077}
   - {fileID: 1454404076}
   graphBuffer: {fileID: 0}
-  isStatic: 1
+  isStatic: 0
 --- !u!65 &1454404075
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -8768,7 +8768,7 @@ MonoBehaviour:
   - {fileID: 1465493233}
   - {fileID: 1465493232}
   graphBuffer: {fileID: 0}
-  isStatic: 1
+  isStatic: 0
 --- !u!65 &1465493231
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -8880,7 +8880,7 @@ MonoBehaviour:
   - {fileID: 1533234385}
   - {fileID: 1533234384}
   graphBuffer: {fileID: 0}
-  isStatic: 1
+  isStatic: 0
 --- !u!65 &1533234383
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -9007,7 +9007,7 @@ MonoBehaviour:
   - {fileID: 1543228519}
   - {fileID: 1543228518}
   graphBuffer: {fileID: 0}
-  isStatic: 1
+  isStatic: 0
 --- !u!65 &1543228517
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -9149,7 +9149,7 @@ MonoBehaviour:
   - {fileID: 1555392081}
   - {fileID: 1555392080}
   graphBuffer: {fileID: 0}
-  isStatic: 1
+  isStatic: 0
 --- !u!65 &1555392079
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -9261,7 +9261,7 @@ MonoBehaviour:
   - {fileID: 1605024104}
   - {fileID: 1605024103}
   graphBuffer: {fileID: 0}
-  isStatic: 1
+  isStatic: 0
 --- !u!65 &1605024102
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -9403,7 +9403,7 @@ MonoBehaviour:
   - {fileID: 1625423932}
   - {fileID: 1625423931}
   graphBuffer: {fileID: 0}
-  isStatic: 1
+  isStatic: 0
 --- !u!65 &1625423930
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -9515,7 +9515,7 @@ MonoBehaviour:
   - {fileID: 1667031138}
   - {fileID: 1667031137}
   graphBuffer: {fileID: 0}
-  isStatic: 1
+  isStatic: 0
 --- !u!65 &1667031136
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -9657,7 +9657,7 @@ MonoBehaviour:
   - {fileID: 1670999035}
   - {fileID: 1670999034}
   graphBuffer: {fileID: 0}
-  isStatic: 1
+  isStatic: 0
 --- !u!65 &1670999033
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -9784,7 +9784,7 @@ MonoBehaviour:
   - {fileID: 1681451876}
   - {fileID: 1681451875}
   graphBuffer: {fileID: 0}
-  isStatic: 1
+  isStatic: 0
 --- !u!65 &1681451874
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -9911,7 +9911,7 @@ MonoBehaviour:
   - {fileID: 1724514326}
   - {fileID: 1724514325}
   graphBuffer: {fileID: 0}
-  isStatic: 1
+  isStatic: 0
 --- !u!65 &1724514324
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -10038,7 +10038,7 @@ MonoBehaviour:
   - {fileID: 1731685489}
   - {fileID: 1731685488}
   graphBuffer: {fileID: 0}
-  isStatic: 1
+  isStatic: 0
 --- !u!65 &1731685487
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -10150,7 +10150,7 @@ MonoBehaviour:
   - {fileID: 1733651519}
   - {fileID: 1733651518}
   graphBuffer: {fileID: 0}
-  isStatic: 1
+  isStatic: 0
 --- !u!65 &1733651517
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -10292,7 +10292,7 @@ MonoBehaviour:
   - {fileID: 1767988928}
   - {fileID: 1767988927}
   graphBuffer: {fileID: 0}
-  isStatic: 1
+  isStatic: 0
 --- !u!65 &1767988926
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -10419,7 +10419,7 @@ MonoBehaviour:
   - {fileID: 1786106199}
   - {fileID: 1786106198}
   graphBuffer: {fileID: 0}
-  isStatic: 1
+  isStatic: 0
 --- !u!65 &1786106197
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -10652,7 +10652,7 @@ MonoBehaviour:
   - {fileID: 1802558400}
   - {fileID: 1802558399}
   graphBuffer: {fileID: 0}
-  isStatic: 1
+  isStatic: 0
 --- !u!65 &1802558398
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -10779,7 +10779,7 @@ MonoBehaviour:
   - {fileID: 1826494631}
   - {fileID: 1826494630}
   graphBuffer: {fileID: 0}
-  isStatic: 1
+  isStatic: 0
 --- !u!65 &1826494629
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -10921,7 +10921,7 @@ MonoBehaviour:
   - {fileID: 1840998371}
   - {fileID: 1840998370}
   graphBuffer: {fileID: 0}
-  isStatic: 1
+  isStatic: 0
 --- !u!65 &1840998369
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -11114,7 +11114,7 @@ MonoBehaviour:
   - {fileID: 1873446923}
   - {fileID: 1873446922}
   graphBuffer: {fileID: 0}
-  isStatic: 1
+  isStatic: 0
 --- !u!65 &1873446921
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -11241,7 +11241,7 @@ MonoBehaviour:
   - {fileID: 1879434474}
   - {fileID: 1879434473}
   graphBuffer: {fileID: 0}
-  isStatic: 1
+  isStatic: 0
 --- !u!65 &1879434472
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -11383,7 +11383,7 @@ MonoBehaviour:
   - {fileID: 1899403462}
   - {fileID: 1899403461}
   graphBuffer: {fileID: 0}
-  isStatic: 1
+  isStatic: 0
 --- !u!65 &1899403460
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -11572,7 +11572,7 @@ MonoBehaviour:
   - {fileID: 1916925911}
   - {fileID: 1916925910}
   graphBuffer: {fileID: 0}
-  isStatic: 1
+  isStatic: 0
 --- !u!65 &1916925909
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -11699,7 +11699,7 @@ MonoBehaviour:
   - {fileID: 1918199264}
   - {fileID: 1918199263}
   graphBuffer: {fileID: 0}
-  isStatic: 1
+  isStatic: 0
 --- !u!65 &1918199262
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -11826,7 +11826,7 @@ MonoBehaviour:
   - {fileID: 1938627692}
   - {fileID: 1938627691}
   graphBuffer: {fileID: 0}
-  isStatic: 1
+  isStatic: 0
 --- !u!65 &1938627690
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -12070,7 +12070,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1942567330}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fc0275620122f9a43b37534676c6031c, type: 3}
   m_Name: 
@@ -12127,7 +12127,7 @@ MonoBehaviour:
   - {fileID: 1974739201}
   - {fileID: 1974739200}
   graphBuffer: {fileID: 0}
-  isStatic: 1
+  isStatic: 0
 --- !u!65 &1974739199
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -12254,7 +12254,7 @@ MonoBehaviour:
   - {fileID: 1985603450}
   - {fileID: 1985603449}
   graphBuffer: {fileID: 0}
-  isStatic: 1
+  isStatic: 0
 --- !u!65 &1985603448
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -12381,7 +12381,7 @@ MonoBehaviour:
   - {fileID: 2007031668}
   - {fileID: 2007031667}
   graphBuffer: {fileID: 0}
-  isStatic: 1
+  isStatic: 0
 --- !u!65 &2007031666
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -12493,7 +12493,7 @@ MonoBehaviour:
   - {fileID: 2023413511}
   - {fileID: 2023413510}
   graphBuffer: {fileID: 0}
-  isStatic: 1
+  isStatic: 0
 --- !u!65 &2023413509
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -12635,7 +12635,7 @@ MonoBehaviour:
   - {fileID: 2031073837}
   - {fileID: 2031073836}
   graphBuffer: {fileID: 0}
-  isStatic: 1
+  isStatic: 0
 --- !u!65 &2031073835
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -12762,7 +12762,7 @@ MonoBehaviour:
   - {fileID: 2033943694}
   - {fileID: 2033943693}
   graphBuffer: {fileID: 0}
-  isStatic: 1
+  isStatic: 0
 --- !u!65 &2033943692
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -12874,7 +12874,7 @@ MonoBehaviour:
   - {fileID: 2038774176}
   - {fileID: 2038774175}
   graphBuffer: {fileID: 0}
-  isStatic: 1
+  isStatic: 0
 --- !u!65 &2038774174
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -13016,7 +13016,7 @@ MonoBehaviour:
   - {fileID: 2058572890}
   - {fileID: 2058572889}
   graphBuffer: {fileID: 0}
-  isStatic: 1
+  isStatic: 0
 --- !u!65 &2058572888
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -13128,7 +13128,7 @@ MonoBehaviour:
   - {fileID: 2060119669}
   - {fileID: 2060119668}
   graphBuffer: {fileID: 0}
-  isStatic: 1
+  isStatic: 0
 --- !u!65 &2060119667
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -13255,7 +13255,7 @@ MonoBehaviour:
   - {fileID: 2077387638}
   - {fileID: 2077387637}
   graphBuffer: {fileID: 0}
-  isStatic: 1
+  isStatic: 0
 --- !u!65 &2077387636
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -13382,7 +13382,7 @@ MonoBehaviour:
   - {fileID: 2087766935}
   - {fileID: 2087766934}
   graphBuffer: {fileID: 0}
-  isStatic: 1
+  isStatic: 0
 --- !u!65 &2087766933
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -13509,7 +13509,7 @@ MonoBehaviour:
   - {fileID: 2145531886}
   - {fileID: 2145531885}
   graphBuffer: {fileID: 0}
-  isStatic: 1
+  isStatic: 0
 --- !u!65 &2145531884
 BoxCollider:
   m_ObjectHideFlags: 0
