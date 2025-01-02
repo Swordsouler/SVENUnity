@@ -94,6 +94,7 @@ namespace SVEN.Tools
             if (GraphReader == null || !GraphReader.IsGraphLoaded) return;
             timeSlider.minValue = 0;
             timeSlider.maxValue = GraphReader.Duration;
+            timeSlider.value = 0;
             timeSlider.onValueChanged.RemoveListener(OnSliderValueChanged);
             timeSlider.onValueChanged.AddListener(OnSliderValueChanged);
             playPauseButton.onValueChanged.RemoveListener(OnPlayValueChanged);
@@ -155,6 +156,7 @@ namespace SVEN.Tools
 
             // Assign the positions to the LineRenderer
             contentLine.points = positions.ToArray();
+            contentLine.SetAllDirty();
         }
 
         private void OnPlayValueChanged(bool value)
@@ -195,12 +197,18 @@ namespace SVEN.Tools
             if (GraphReader != null) GraphReader.OnGraphLoaded -= ResetController;
         }
 
+        /// <summary>
+        /// Step forward in time.
+        /// </summary>
         private void StepForward()
         {
             Instant instant = GraphReader.NextInstant();
             if (instant != null) timeSlider.value = (float)(instant.inXSDDateTime - GraphReader.StartedAt).TotalSeconds;
         }
 
+        /// <summary>
+        /// Step backward in time.
+        /// </summary>
         private void StepBackward()
         {
             Instant instant = GraphReader.PreviousInstant();

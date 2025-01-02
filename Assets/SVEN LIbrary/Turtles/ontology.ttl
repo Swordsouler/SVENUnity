@@ -29,8 +29,7 @@ sven:audioProperties rdf:type owl:ObjectProperty ;
 ###  http://www.sven.fr/ontology#backgroundColor
 sven:backgroundColor rdf:type owl:ObjectProperty ;
                      rdfs:subPropertyOf sven:cameraProperties ;
-                     rdfs:range sven:Color ,
-                                sven:Primitive .
+                     rdfs:range sven:Color .
 
 
 ###  http://www.sven.fr/ontology#cameraProperties

@@ -1,9 +1,12 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
 using System.Reflection;
+using System.Threading.Tasks;
 using DG.Tweening;
 using NaughtyAttributes;
+using NUnit.Framework;
 using OWLTime;
 using RDF;
 using SVEN.Content;
@@ -16,6 +19,7 @@ using VDS.RDF.Parsing;
 using VDS.RDF.Query;
 using VDS.RDF.Query.Datasets;
 using VDS.RDF.Query.Inference;
+using VDS.RDF.Storage;
 using VDS.RDF.Update;
 
 namespace SVEN
@@ -25,6 +29,47 @@ namespace SVEN
     /// </summary>
     public class GraphReader : GraphBehaviour
     {
+        #region Flags
+
+        /// <summary>
+        /// Is graph loaded.
+        /// </summary>
+        public bool IsGraphLoaded => instants.Count > 0;
+
+        /// <summary>
+        /// Reading mode of the graph.
+        /// </summary>
+        protected enum ReadingMode
+        {
+            Local,
+            Remote
+        }
+        /// <summary>
+        /// Reading mode of the graph.
+        /// </summary>
+        [SerializeField, DisableIf("IsGraphLoaded")]
+        protected ReadingMode _readingMode = ReadingMode.Local;
+
+        /// <summary>
+        /// Graph that contains the scene content.
+        /// </summary>
+        protected bool IsLocal => _readingMode == ReadingMode.Local;
+        /// <summary>
+        /// Graph that contains the scene content.
+        /// </summary>
+        protected bool IsRemote => _readingMode == ReadingMode.Remote;
+
+        /// <summary>
+        /// Game has started.
+        /// </summary>
+        private bool GameHasStarted => _gameHasStarted;
+        /// <summary>
+        /// Game has not started.
+        /// </summary>
+        private bool GameHasNotStarted => !_gameHasStarted;
+
+        #endregion
+
         #region Scene Content Structure
 
         /// <summary>
@@ -229,6 +274,10 @@ namespace SVEN
                 private set => _value = value;
             }
 
+            /// <summary>
+            /// Generate the value of the property.
+            /// </summary>
+            /// <returns>Value of the property.</returns>
             public object GenerateValue()
             {
                 if (Type == typeof(object))
@@ -315,28 +364,22 @@ namespace SVEN
         /// </summary>
         private Graph schema;
 
+        /// <summary>
+        /// Graph that contains the scene content.
+        /// </summary>
+        [SerializeField, ShowIf(EConditionOperator.And, "IsLocal", "GameHasNotStarted")]
+        private UnityEngine.Object ontologyFile;
 
-        public UnityEngine.Object tempGraphFile;
-        public UnityEngine.Object tempSchemaFile;
-        public Slider instantSlider;
+        /// <summary>
+        /// Graph that contains the scene content.
+        /// </summary>
+        private bool _gameHasStarted = false;
 
-        private void Start()
+        private void Awake()
         {
-            if (tempGraphFile != null)
-            {
-                graph = new Graph();
-                graph.LoadFromFile(AssetDatabase.GetAssetPath(tempGraphFile));
-            }
-
-            if (tempSchemaFile != null)
-            {
-                schema = new Graph();
-                schema.LoadFromFile(AssetDatabase.GetAssetPath(tempSchemaFile));
-                StaticRdfsReasoner reasoner = new();
-                reasoner.Initialise(schema);
-                reasoner.Apply(graph);
-            }
-            LoadInstants();
+            _gameHasStarted = true;
+            if (ontologyFile != null) LoadSchema(AssetDatabase.GetAssetPath(ontologyFile));
+            if (IsRemote) LoadFromEndpoint();
         }
 
         /// <summary>
@@ -372,27 +415,11 @@ namespace SVEN
             Debug.Log(graph.Triples.Count);
         }
 
-        private void LoadInstant(Instant instant)
+        private async void LoadInstant(Instant instant)
         {
             DateTime startProcessing = DateTime.Now;
 
-            /*SparqlQuery query = new SparqlQueryParser().ParseFromString($@"
-                PREFIX time: <http://www.w3.org/2006/time#>
-                PREFIX sven: <http://www.sven.fr/ontology#>
-
-                SELECT ?object ?component ?componentType ?propertyName ?propertyNestedName ?propertyValue ?propertyType
-                WHERE {{
-                    ?object a sven:GameObject ;
-                            sven:component ?component .
-                    ?component sven:exactType ?componentType ;
-                            ?propertyName ?property .
-                    ?property sven:exactType ?propertyType ;
-                            ?propertyNestedName ?propertyValue ;
-                            time:hasTemporalExtent ?interval .
-                    ?interval time:inside <{instant.GetUriNode(graph)}> .
-                }}");*/
-
-            SparqlQuery query = new SparqlQueryParser().ParseFromString($@"
+            string query = $@"
                 PREFIX time: <http://www.w3.org/2006/time#>
                 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
                 PREFIX sven: <http://www.sven.fr/ontology#>
@@ -408,7 +435,7 @@ namespace SVEN
                                 sven:tag
                                 sven:name
                             }}
-                            ?object a sven:Object ;
+                            ?object a sven:VirtualObject ;
                                     ?propertyName ?property .
                             ?property sven:value ?propertyValue ;
                                         time:hasTemporalExtent ?interval .
@@ -418,26 +445,24 @@ namespace SVEN
                     {{
                         SELECT *
                         WHERE {{
-                            ?object a sven:Object ;
+                            ?object a sven:VirtualObject ;
                                     sven:component ?component .
                             ?component sven:exactType ?componentType ;
                                     ?propertyName ?property .
-                            ?propertyName rdfs:subPropertyOf sven:componentProperties ;
+                            ?propertyName rdfs:subPropertyOf* sven:componentProperties ;
                                         rdfs:range ?propertyRange .
                             ?property sven:exactType ?propertyType ;
                                     ?propertyNestedName ?propertyValue ;
                                     time:hasTemporalExtent ?interval .
-                            ?propertyNestedName rdfs:subPropertyOf sven:propertyData ;
-                                        rdfs:range ?propertyNestedRange .
+                            ?propertyNestedName rdfs:subPropertyOf sven:propertyData .
+                            FILTER(?propertyNestedName != sven:propertyData)
                         }}
                     }}
                     ?interval time:inside <{instant.GetUriNode(graph)}> .
-                }}");
-
+                }}";
 
             // Execute the query
-            SparqlResultSet results = graph.ExecuteQuery(query) as SparqlResultSet;
-            Debug.Log(results.Count);
+            SparqlResultSet results = await Request(query);
             double queryTime = (DateTime.Now - startProcessing).TotalMilliseconds;
 
             // GameObject -> Component -> (ComponentType --- PropertyName -> PropertyIndex -> PropertyValue)
@@ -619,16 +644,50 @@ namespace SVEN
         /// <summary>
         /// Load the graph from a file.
         /// </summary>
-        [Button("Load Graph from file")]
-        private void LoadGraph()
+        /// <param name="path">Path of the file.</param>
+        /// <exception cref="ArgumentNullException">If the path is null.</exception>
+        private void LoadGraph(string path)
+        {
+            if (path == null) throw new ArgumentNullException(nameof(path));
+            graph = new Graph();
+            graph.LoadFromFile(path);
+            ApplyCurrentSchema();
+            LoadInstants();
+        }
+
+        private void ApplyCurrentSchema()
+        {
+            StaticRdfsReasoner reasoner = new();
+            reasoner.Initialise(schema);
+            graph ??= new();
+            reasoner.Apply(graph);
+            graph.Merge(schema);
+        }
+
+        /// <summary>
+        /// Load the graph from a file.
+        /// </summary>
+        /// <param name="path">Path of the file.</param>
+        /// <exception cref="ArgumentNullException">If the path is null.</exception>
+        private void LoadSchema(string path)
+        {
+            if (path == null) throw new ArgumentNullException(nameof(path));
+            schema = new Graph();
+            schema.LoadFromFile(path);
+            ApplyCurrentSchema();
+        }
+
+        /// <summary>
+        /// Load the graph from a file.
+        /// </summary>
+        [Button("Load Graph from file"), ShowIf("IsLocal")]
+        private void LoadGraphFromFile()
         {
 #if UNITY_EDITOR
             string path = EditorUtility.OpenFilePanel("Load Graph", "Assets/Resources", "ttl");
             if (!string.IsNullOrEmpty(path))
             {
-                graph = new Graph();
-                graph.LoadFromFile(path);
-                LoadInstants();
+                LoadGraph(path);
             }
 #else
     graph = new Graph();
@@ -639,18 +698,14 @@ namespace SVEN
         /// <summary>
         /// Load the schema from a file.
         /// </summary>
-        [Button("Load Schema from file")]
-        private void LoadSchema()
+        //[Button("Load Schema from file"), ShowIf("IsLocal")]
+        private void LoadSchemaFromFile()
         {
 #if UNITY_EDITOR
             string path = EditorUtility.OpenFilePanel("Load Schema", "Assets/Resources", "ttl");
             if (!string.IsNullOrEmpty(path))
             {
-                schema ??= new Graph();
-                schema.LoadFromFile(path);
-                StaticRdfsReasoner reasoner = new();
-                reasoner.Initialise(schema);
-                reasoner.Apply(graph);
+                LoadSchema(path);
             }
 #else
     schema = new Graph();
@@ -658,9 +713,33 @@ namespace SVEN
 #endif
         }
 
-        public Action OnGraphLoaded;
+        /// <summary>
+        /// Endpoint of the graph.
+        /// </summary>
+        [SerializeField, ShowIf("IsRemote")]
+        private string _endpoint;
 
-        public bool IsGraphLoaded => graph != null;
+        [SerializeField, ShowIf("IsRemote")]
+        private void LoadFromEndpoint(string url)
+        {
+            if (string.IsNullOrEmpty(url)) return;
+            _endpoint = url;
+            LoadInstants();
+        }
+
+        /// <summary>
+        /// Load the graph from an endpoint.
+        /// </summary>
+        [Button("Load from Endpoint"), ShowIf("IsRemote")]
+        private void LoadFromEndpoint()
+        {
+            LoadFromEndpoint(_endpoint);
+        }
+
+        /// <summary>
+        /// Action to be executed when the graph is loaded.
+        /// </summary>
+        public Action OnGraphLoaded;
 
 
         #region Time Management
@@ -701,7 +780,7 @@ namespace SVEN
         /// <summary>
         /// Current index of the instants list.
         /// </summary>
-        [SerializeField, MinValue(0), OnValueChanged("LoadCurrentInstant")]
+        [SerializeField, MinValue(0), OnValueChanged("LoadCurrentInstant"), ShowIf("IsGraphLoaded")]
         private int _currentInstantIndex;
         /// <summary>
         /// Current index of the instants list.
@@ -729,13 +808,42 @@ namespace SVEN
             }
         }
 
+        private async Task<SparqlResultSet> Request(string query)
+        {
+            if (IsLocal) return LocalRequest(query);
+            else if (IsRemote) return await RemoteRequest(query);
+            return null;
+        }
+
+        private SparqlResultSet LocalRequest(string query)
+        {
+            SparqlQuery sparqlQuery = new SparqlQueryParser().ParseFromString(query);
+            return graph.ExecuteQuery(sparqlQuery) as SparqlResultSet;
+        }
+
+        private async Task<SparqlResultSet> RemoteRequest(string query)
+        {
+            // URL de votre endpoint GraphDB
+            Uri endpointUri = new(_endpoint);
+
+            // Créez une instance de HttpClient
+            HttpClient httpClient = new();
+
+            // Créez une instance de SparqlQueryClient avec HttpClient et l'URI de l'endpoint
+            SparqlQueryClient sparqlQueryClient = new(httpClient, endpointUri);
+
+            // Exécutez la requête SPARQL
+            SparqlResultSet results = await sparqlQueryClient.QueryWithResultSetAsync(query);
+
+            return results;
+        }
+
         /// <summary>
         /// Load all time:Instant instances from the graph.
         /// </summary>
-        private void LoadInstants()
+        private async void LoadInstants()
         {
-            //sparql query to get all time:Instant instances
-            SparqlQuery query = new SparqlQueryParser().ParseFromString(@"
+            string query = @"
                 PREFIX time: <http://www.w3.org/2006/time#>
 
                 SELECT ?instant ?dateTime (COUNT(?contentModification) as ?contentModifier)
@@ -744,10 +852,9 @@ namespace SVEN
                             time:inXSDDateTime ?dateTime .
                     ?contentModification time:hasTemporalExtent ?interval .
                     ?interval time:hasBeginning ?instant .
-                } GROUP BY ?instant ?dateTime ORDER BY ?dateTime");
+                } GROUP BY ?instant ?dateTime ORDER BY ?dateTime";
 
-            //execute the query
-            SparqlResultSet results = graph.ExecuteQuery(query) as SparqlResultSet;
+            SparqlResultSet results = await Request(query);
             instants.Clear();
 
             //iterate over the results

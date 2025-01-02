@@ -1,7 +1,6 @@
 using System;
 using System.Text;
 using NaughtyAttributes;
-using OWLTime;
 using UnityEngine;
 using VDS.RDF;
 using VDS.RDF.Writing;
@@ -30,7 +29,7 @@ namespace RDF
         /// <summary>
         /// Graph to store the RDF data.
         /// </summary>
-        public Graph Graph { get => graph; }
+        public Graph Graph => graph;
 
         #endregion
 
@@ -53,7 +52,7 @@ namespace RDF
         /// <summary>
         /// Print the turtle of the graph in the console.
         /// </summary>
-        [Button("Print")]
+        [Button("Print"), ShowIf(EConditionOperator.And, "IsStarted", "IsLocal")]
         private void Print()
         {
             Debug.Log(DecodeGraph(Graph));
