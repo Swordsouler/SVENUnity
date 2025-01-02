@@ -6,11 +6,11 @@ using System.Reflection;
 using System.Threading.Tasks;
 using DG.Tweening;
 using NaughtyAttributes;
-using NUnit.Framework;
 using OWLTime;
 using RDF;
 using SVEN.Content;
 using UnityEditor;
+using UnityEditor.SearchService;
 using UnityEngine;
 using UnityEngine.UI;
 using VDS.RDF;
@@ -19,7 +19,6 @@ using VDS.RDF.Parsing;
 using VDS.RDF.Query;
 using VDS.RDF.Query.Datasets;
 using VDS.RDF.Query.Inference;
-using VDS.RDF.Storage;
 using VDS.RDF.Update;
 
 namespace SVEN
@@ -63,10 +62,6 @@ namespace SVEN
         /// Game has started.
         /// </summary>
         private bool GameHasStarted => _gameHasStarted;
-        /// <summary>
-        /// Game has not started.
-        /// </summary>
-        private bool GameHasNotStarted => !_gameHasStarted;
 
         #endregion
 
@@ -367,7 +362,7 @@ namespace SVEN
         /// <summary>
         /// Graph that contains the scene content.
         /// </summary>
-        [SerializeField, ShowIf(EConditionOperator.And, "IsLocal", "GameHasNotStarted")]
+        [SerializeField, HideIf("GameHasStarted")]
         private UnityEngine.Object ontologyFile;
 
         /// <summary>
@@ -415,135 +410,177 @@ namespace SVEN
             Debug.Log(graph.Triples.Count);
         }
 
+        /// <summary>
+        /// Load the instants from the graph.
+        /// </summary>
+        private bool _isReadingInstant = false;
+
+        /// <summary>
+        /// Load the instants from the graph.
+        /// </summary>
+        /// <param name="instant">Instant to load.</param>
         private async void LoadInstant(Instant instant)
         {
-            DateTime startProcessing = DateTime.Now;
+            if (_isReadingInstant) return;
+            _isReadingInstant = true;
+            try
+            {
+                DateTime startProcessing = DateTime.Now;
 
-            string query = $@"
-                PREFIX time: <http://www.w3.org/2006/time#>
-                PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
-                PREFIX sven: <http://www.sven.fr/ontology#>
-
-                SELECT ?object ?component ?componentType ?propertyName ?propertyNestedName ?propertyValue ?propertyType
-                WHERE {{
-                    {{
-                        SELECT *
-                        WHERE {{
-                            VALUES ?propertyName {{
-                                sven:active
-                                sven:layer
-                                sven:tag
-                                sven:name
-                            }}
-                            ?object a sven:VirtualObject ;
-                                    ?propertyName ?property .
-                            ?property sven:value ?propertyValue ;
-                                        time:hasTemporalExtent ?interval .
+                // with dateTime
+                string intervalProcessing = $@"{{
+                    SELECT DISTINCT ?interval
+                    WHERE {{
+                        VALUES ?instantTime {{ {$"\"{instant.inXSDDateTime:yyyy-MM-ddTHH:mm:ss.fffzzz}\""}^^xsd:dateTime }}
+                        ?interval a time:Interval ;
+                                time:hasBeginning ?start .
+                        ?start time:inXSDDateTime ?startTime .
+                        OPTIONAL {{
+                            ?interval time:hasEnd ?end .
+                            ?end time:inXSDDateTime ?_endTime .
                         }}
-                    }}
-                    UNION
-                    {{
-                        SELECT *
-                        WHERE {{
-                            ?object a sven:VirtualObject ;
-                                    sven:component ?component .
-                            ?component sven:exactType ?componentType ;
-                                    ?propertyName ?property .
-                            ?propertyName rdfs:subPropertyOf* sven:componentProperties ;
-                                        rdfs:range ?propertyRange .
-                            ?property sven:exactType ?propertyType ;
-                                    ?propertyNestedName ?propertyValue ;
-                                    time:hasTemporalExtent ?interval .
-                            ?propertyNestedName rdfs:subPropertyOf sven:propertyData .
-                            FILTER(?propertyNestedName != sven:propertyData)
-                        }}
-                    }}
-                    ?interval time:inside <{instant.GetUriNode(graph)}> .
+                        BIND(IF(BOUND(?_endTime), ?_endTime, NOW()) AS ?endTime)
+                        FILTER(?startTime <= ?instantTime && ?instantTime < ?endTime)
+                    }} ORDER BY ?startTime ?endTime limit 10000
                 }}";
 
-            // Execute the query
-            SparqlResultSet results = await Request(query);
-            double queryTime = (DateTime.Now - startProcessing).TotalMilliseconds;
+                // with inside
+                //string intervalProcessing = $@"?interval time:inside <{instant.GetUriNode(graph)}> .";
 
-            // GameObject -> Component -> (ComponentType --- PropertyName -> PropertyIndex -> PropertyValue)
-            SceneContent targetSceneContent = new(instant);
+                string query = $@"
+                    PREFIX time: <http://www.w3.org/2006/time#>
+                    PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+                    PREFIX sven: <http://www.sven.fr/ontology#>
 
-            foreach (SparqlResult result in results.Cast<SparqlResult>())
-            {
-                // get uuids
-                string objectUUID = result["object"].ToString().Split('#')[1];
+                    SELECT ?object ?component ?componentType ?propertyName ?propertyNestedName ?propertyValue ?propertyType
+                    WHERE {{
+                        {{
+                            SELECT *
+                            WHERE {{
+                                VALUES ?propertyName {{
+                                    sven:active
+                                    sven:layer
+                                    sven:tag
+                                    sven:name
+                                }}
+                                ?object a sven:VirtualObject ;
+                                        ?propertyName ?property .
+                                ?property sven:value ?propertyValue ;
+                                            time:hasTemporalExtent ?interval .
+                            }}
+                        }}
+                        UNION
+                        {{
+                            SELECT *
+                            WHERE {{
+                                ?object a sven:VirtualObject ;
+                                        sven:component ?component .
+                                ?component sven:exactType ?componentType ;
+                                        ?propertyName ?property .
+                                ?propertyName rdfs:subPropertyOf* sven:componentProperties ;
+                                            rdfs:range ?propertyRange .
+                                ?property sven:exactType ?propertyType ;
+                                        ?propertyNestedName ?propertyValue ;
+                                        time:hasTemporalExtent ?interval .
+                                ?propertyNestedName rdfs:subPropertyOf sven:propertyData .
+                                FILTER(?propertyNestedName != sven:propertyData)
+                            }}
+                        }}
+                        {intervalProcessing}
+                    }}";
 
-                string propertyName = result["propertyName"].NodeType switch
+                // Execute the query
+                SparqlResultSet results = await Request(query);
+                double queryTime = (DateTime.Now - startProcessing).TotalMilliseconds;
+
+                // GameObject -> Component -> (ComponentType --- PropertyName -> PropertyIndex -> PropertyValue)
+                SceneContent targetSceneContent = await Task.Run(() =>
                 {
-                    NodeType.Uri => result["propertyName"].ToString().Split('#')[1],
-                    _ => result["propertyName"].AsValuedNode().AsString()
-                };
-                string componentUUID, componentStringType, propertyStringType, propertyNestedName;
-                try
-                {
-                    componentUUID = result["component"].ToString().Split('#')[1];
+                    SceneContent targetSceneContent = new(instant);
 
-                    // get types
-                    componentStringType = result["componentType"]?.ToString().Split("#")[1];
-                    propertyStringType = result["propertyType"].ToString().Split("#")[1];
-                    propertyNestedName = result["propertyNestedName"].ToString().Split('#')[1];
-                }
-                catch
-                {
-                    if (!targetSceneContent.GameObjects.ContainsKey(objectUUID))
-                        targetSceneContent.GameObjects[objectUUID] = new(objectUUID);
-
-                    switch (propertyName)
+                    foreach (SparqlResult result in results.Cast<SparqlResult>())
                     {
-                        case "active":
-                            targetSceneContent.GameObjects[objectUUID].Active = result["propertyValue"].AsValuedNode().AsString() == "true";
+                        // get uuids
+                        string objectUUID = result["object"].ToString().Split('#')[1];
+
+                        string propertyName = result["propertyName"].NodeType switch
+                        {
+                            NodeType.Uri => result["propertyName"].ToString().Split('#')[1],
+                            _ => result["propertyName"].AsValuedNode().AsString()
+                        };
+                        string componentUUID, componentStringType, propertyStringType, propertyNestedName;
+                        try
+                        {
+                            componentUUID = result["component"].ToString().Split('#')[1];
+
+                            // get types
+                            componentStringType = result["componentType"]?.ToString().Split("#")[1];
+                            propertyStringType = result["propertyType"].ToString().Split("#")[1];
+                            propertyNestedName = result["propertyNestedName"].ToString().Split('#')[1];
+                        }
+                        catch
+                        {
+                            if (!targetSceneContent.GameObjects.ContainsKey(objectUUID))
+                                targetSceneContent.GameObjects[objectUUID] = new(objectUUID);
+
+                            switch (propertyName)
+                            {
+                                case "active":
+                                    targetSceneContent.GameObjects[objectUUID].Active = result["propertyValue"].AsValuedNode().AsString() == "true";
+                                    continue;
+                                case "layer":
+                                    targetSceneContent.GameObjects[objectUUID].Layer = result["propertyValue"].AsValuedNode().AsString();
+                                    continue;
+                                case "tag":
+                                    targetSceneContent.GameObjects[objectUUID].Tag = result["propertyValue"].AsValuedNode().AsString();
+                                    continue;
+                                case "name":
+                                    targetSceneContent.GameObjects[objectUUID].Name = result["propertyValue"].AsValuedNode().AsString();
+                                    continue;
+                            }
                             continue;
-                        case "layer":
-                            targetSceneContent.GameObjects[objectUUID].Layer = result["propertyValue"].AsValuedNode().AsString();
-                            continue;
-                        case "tag":
-                            targetSceneContent.GameObjects[objectUUID].Tag = result["propertyValue"].AsValuedNode().AsString();
-                            continue;
-                        case "name":
-                            targetSceneContent.GameObjects[objectUUID].Name = result["propertyValue"].AsValuedNode().AsString();
-                            continue;
+                        }
+
+
+                        Type componentType = MapppedComponents.GetType(componentStringType) ?? Type.GetType(componentStringType);
+                        if (!MapppedComponents.HasProperty(componentType, propertyName)) continue;
+
+                        Type propertyType = MapppedProperties.GetType(propertyStringType) ?? Type.GetType(propertyStringType);
+                        if (!MapppedProperties.HasNestedProperty(propertyType, propertyNestedName)) continue;
+
+                        object propertyValue = result["propertyValue"].AsValuedNode().ToValue();
+                        //if (propertyName == "position")
+                        //Debug.Log(propertyName + " " + propertyNestedName + " " + propertyValue + " " + result["propertyValue"].AsValuedNode());
+
+                        if (!targetSceneContent.GameObjects.ContainsKey(objectUUID))
+                            targetSceneContent.GameObjects[objectUUID] = new(objectUUID);
+
+                        if (!targetSceneContent.GameObjects[objectUUID].Components.ContainsKey(componentUUID))
+                            targetSceneContent.GameObjects[objectUUID].Components[componentUUID] = new(componentUUID, componentType);
+
+                        if (!targetSceneContent.GameObjects[objectUUID].Components[componentUUID].Properties.ContainsKey(propertyName))
+                            targetSceneContent.GameObjects[objectUUID].Components[componentUUID].Properties[propertyName] = new(propertyName, propertyType);
+
+                        if (!targetSceneContent.GameObjects[objectUUID].Components[componentUUID].Properties[propertyName].Values.ContainsKey(propertyNestedName))
+                            targetSceneContent.GameObjects[objectUUID].Components[componentUUID].Properties[propertyName].Values[propertyNestedName] = propertyValue;
+                        else Debug.LogWarning($"Property {propertyNestedName} already exists in {propertyName} of {componentType} in {objectUUID} at {instant.inXSDDateTime}");
                     }
-                    continue;
-                }
+                    return targetSceneContent;
+                });
+                Debug.Log(targetSceneContent);
+                UpdateContent(targetSceneContent);
 
-
-                Type componentType = MapppedComponents.GetType(componentStringType) ?? Type.GetType(componentStringType);
-                if (!MapppedComponents.HasProperty(componentType, propertyName)) continue;
-
-                Type propertyType = MapppedProperties.GetType(propertyStringType) ?? Type.GetType(propertyStringType);
-                if (!MapppedProperties.HasNestedProperty(propertyType, propertyNestedName)) continue;
-
-                object propertyValue = result["propertyValue"].AsValuedNode().ToValue();
-                //if (propertyName == "position")
-                //Debug.Log(propertyName + " " + propertyNestedName + " " + propertyValue + " " + result["propertyValue"].AsValuedNode());
-
-                if (!targetSceneContent.GameObjects.ContainsKey(objectUUID))
-                    targetSceneContent.GameObjects[objectUUID] = new(objectUUID);
-
-                if (!targetSceneContent.GameObjects[objectUUID].Components.ContainsKey(componentUUID))
-                    targetSceneContent.GameObjects[objectUUID].Components[componentUUID] = new(componentUUID, componentType);
-
-                if (!targetSceneContent.GameObjects[objectUUID].Components[componentUUID].Properties.ContainsKey(propertyName))
-                    targetSceneContent.GameObjects[objectUUID].Components[componentUUID].Properties[propertyName] = new(propertyName, propertyType);
-
-                if (!targetSceneContent.GameObjects[objectUUID].Components[componentUUID].Properties[propertyName].Values.ContainsKey(propertyNestedName))
-                    targetSceneContent.GameObjects[objectUUID].Components[componentUUID].Properties[propertyName].Values[propertyNestedName] = propertyValue;
-                else Debug.LogWarning($"Property {propertyNestedName} already exists in {propertyName} of {componentType} in {objectUUID} at {instant.inXSDDateTime}");
+                DateTime endProcessing = DateTime.Now;
+                double sceneUpdateTime = (endProcessing - startProcessing).TotalMilliseconds - queryTime;
+                Debug.Log($"Query Time: {queryTime} ms");
+                Debug.Log($"Scene Update Time: {sceneUpdateTime} ms");
+                Debug.Log($"Processing Time: {(endProcessing - startProcessing).TotalMilliseconds} ms");
             }
-
-            Debug.Log(targetSceneContent);
-            UpdateContent(targetSceneContent);
-
-            DateTime endProcessing = DateTime.Now;
-            double sceneUpdateTime = (endProcessing - startProcessing).TotalMilliseconds - queryTime;
-            Debug.Log($"Query Time: {queryTime} ms");
-            Debug.Log($"Scene Update Time: {sceneUpdateTime} ms");
-            Debug.Log($"Processing Time: {(endProcessing - startProcessing).TotalMilliseconds} ms");
+            catch (Exception ex)
+            {
+                Debug.LogError($"An error occurred: {ex.Message}");
+            }
+            _isReadingInstant = false;
         }
 
         /// <summary>
@@ -719,11 +756,16 @@ namespace SVEN
         [SerializeField, ShowIf("IsRemote")]
         private string _endpoint;
 
+        /// <summary>
+        /// Loaded endpoint.
+        /// </summary>
+        private string _loadedEndpoint;
+
         [SerializeField, ShowIf("IsRemote")]
         private void LoadFromEndpoint(string url)
         {
             if (string.IsNullOrEmpty(url)) return;
-            _endpoint = url;
+            _loadedEndpoint = _endpoint = url;
             LoadInstants();
         }
 
@@ -810,9 +852,12 @@ namespace SVEN
 
         private async Task<SparqlResultSet> Request(string query)
         {
-            if (IsLocal) return LocalRequest(query);
-            else if (IsRemote) return await RemoteRequest(query);
-            return null;
+            return await Task.Run(async () =>
+            {
+                if (IsLocal) return LocalRequest(query);
+                else if (IsRemote) return await RemoteRequest(query);
+                return null;
+            });
         }
 
         private SparqlResultSet LocalRequest(string query)
@@ -824,7 +869,7 @@ namespace SVEN
         private async Task<SparqlResultSet> RemoteRequest(string query)
         {
             // URL de votre endpoint GraphDB
-            Uri endpointUri = new(_endpoint);
+            Uri endpointUri = new(_loadedEndpoint);
 
             // Créez une instance de HttpClient
             HttpClient httpClient = new();
@@ -833,7 +878,7 @@ namespace SVEN
             SparqlQueryClient sparqlQueryClient = new(httpClient, endpointUri);
 
             // Exécutez la requête SPARQL
-            SparqlResultSet results = await sparqlQueryClient.QueryWithResultSetAsync(query);
+            SparqlResultSet results = await sparqlQueryClient.QueryWithResultSetAsync(query).ConfigureAwait(false);
 
             return results;
         }
@@ -864,7 +909,8 @@ namespace SVEN
                 INode dateTimeNode = result["dateTime"];
                 int contentModifier = (int)result["contentModifier"].AsValuedNode().AsInteger();
                 //create a new instant
-                InstantDescription instant = new(dateTimeNode.AsValuedNode().AsDateTime(), contentModifier);
+                DateTimeOffset dateTimeOffset = DateTimeOffset.Parse(dateTimeNode.AsValuedNode().AsString());
+                InstantDescription instant = new(dateTimeOffset.DateTime, contentModifier);
                 //add the instant to the list
                 instants.Add(instant);
             }

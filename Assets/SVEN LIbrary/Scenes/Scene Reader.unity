@@ -240,7 +240,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _readingMode: 1
   ontologyFile: {fileID: 102900000, guid: 97570f68d960d9046a36fec21bfbf79b, type: 3}
-  _endpoint: http://PC-NSL:7200/repositories/SVEN
+  _endpoint: http://PC-NSL:7200/repositories/SVEN-BIG
   _currentInstantIndex: 0
 --- !u!1 &109644543
 GameObject:

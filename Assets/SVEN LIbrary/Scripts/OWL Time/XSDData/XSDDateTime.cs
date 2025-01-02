@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics;
 using VDS.RDF;
 using VDS.RDF.Parsing;
 
@@ -16,7 +17,7 @@ namespace OWLTime
         /// <returns>The literal node.</returns>
         public static ILiteralNode ToLiteralNode(this DateTime dateTime, INodeFactory factory)
         {
-            return factory.CreateLiteralNode(dateTime.ToString("yyyy-MM-ddTHH:mm:ss.fffZ"), new Uri(XmlSpecsHelper.XmlSchemaDataTypeDateTime));
+            return factory.CreateLiteralNode(dateTime.ToString("yyyy-MM-ddTHH:mm:ss.fffzzz"), new Uri(XmlSpecsHelper.XmlSchemaDataTypeDateTime));
         }
     }
 }
