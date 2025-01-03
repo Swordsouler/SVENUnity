@@ -451,6 +451,7 @@ namespace SVEN
                     PREFIX time: <http://www.w3.org/2006/time#>
                     PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
                     PREFIX sven: <http://www.sven.fr/ontology#>
+                    PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
 
                     SELECT ?object ?component ?componentType ?propertyName ?propertyNestedName ?propertyValue ?propertyType
                     WHERE {{

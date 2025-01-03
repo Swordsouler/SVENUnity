@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
 using OWLTime;
 using RDF;
 using UnityEngine;
@@ -126,22 +128,35 @@ namespace SVEN.Content
             parentObject = parentComponent.GetComponent<SemantizationCore>();
         }
 
+        private bool _isCheckingForChanges = false;
+
         /// <summary>
         /// Checks if the observed property has changed and invokes the callbacks if it has.
         /// </summary>
-        public void CheckForChanges()
+        public async void CheckForChanges()
         {
-            object currentValue = observedProperty.Getter();
-            if (!Equals(currentValue, observedProperty.LastValue))
+            if (_isCheckingForChanges) return;
+            _isCheckingForChanges = true;
+            SynchronizationContext context = SynchronizationContext.Current;
+            await Task.Run(() =>
             {
-                // limit the semantization with the graph instantPerSecond
-                Instant currentInstant = graphBuffer.CurrentInstant;
-                if (lastSemantizedInstant != null && currentInstant == lastSemantizedInstant) return;
+                object currentValue = null;
+                context.Send(_ => { if (observedProperty != null && parentObject != null) currentValue = observedProperty.Getter(); }, null);
+                if (currentValue == null) return;
 
-                lastSemantizedInstant = currentInstant;
-                observedProperty.LastValue = currentValue;
-                if (graphBuffer != null) Semantize(currentInstant);
-            }
+                if (!Equals(currentValue, observedProperty.LastValue))
+                {
+                    // limit the semantization with the graph instantPerSecond
+                    Instant currentInstant = null;
+                    context.Send(_ => currentInstant = graphBuffer.CurrentInstant, null);
+                    if (lastSemantizedInstant != null && currentInstant == lastSemantizedInstant) return;
+
+                    lastSemantizedInstant = currentInstant;
+                    observedProperty.LastValue = currentValue;
+                    if (graphBuffer != null) context.Send(_ => Semantize(currentInstant), null);
+                }
+            });
+            _isCheckingForChanges = false;
         }
 
         /// <summary>

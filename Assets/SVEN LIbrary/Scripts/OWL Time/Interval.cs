@@ -56,12 +56,11 @@ namespace OWLTime
         public static void SemantizeInside(IGraph graph, Instant instant)
         {
             IUriNode instantNode = instant.GetUriNode(graph);
-            /*
+
             foreach (Interval interval in intervals)
             {
                 graph.Assert(new Triple(interval.GetUriNode(graph), graph.CreateUriNode("time:inside"), instantNode));
             }
-            */
         }
     }
 }

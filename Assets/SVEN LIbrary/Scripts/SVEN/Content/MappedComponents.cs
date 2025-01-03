@@ -143,8 +143,8 @@ namespace SVEN.Content
                 new List<Delegate>
                 {
                     (Func<MeshRenderer, PropertyDescription>)(meshRenderer => new PropertyDescription("enabled", () => meshRenderer.enabled, value => meshRenderer.enabled = value.ToString().ToLower() == "true", 1)),
-                    (Func<MeshRenderer, PropertyDescription>)(meshRenderer => new PropertyDescription("color", () => meshRenderer.material.color, value => meshRenderer.material.DOColor((Color)value, lerpSpeed), 1, "virtualColor")),
-                    (Func<MeshRenderer, PropertyDescription>)(meshRenderer => new PropertyDescription("shader", () => meshRenderer.material.shader.name, value => meshRenderer.material.shader = Shader.Find((string)value), 1)),
+                    (Func<MeshRenderer, PropertyDescription>)(meshRenderer => new PropertyDescription("color", () => meshRenderer.sharedMaterial.color, value => meshRenderer.material.DOColor((Color)value, lerpSpeed), 1, "virtualColor")),
+                    (Func<MeshRenderer, PropertyDescription>)(meshRenderer => new PropertyDescription("shader", () => meshRenderer.sharedMaterial.shader.name, value => meshRenderer.material.shader = Shader.Find((string)value), 1)),
                 })
             },
             {
@@ -160,7 +160,7 @@ namespace SVEN.Content
                 typeof(MeshFilter), new("Shape",
                 new List<Delegate>
                 {
-                    (Func<MeshFilter, PropertyDescription>)(meshFilter => new PropertyDescription("vertices", () => string.Join("|", meshFilter.mesh.vertices.Select(v => v.ToString())), value => {
+                    (Func<MeshFilter, PropertyDescription>)(meshFilter => new PropertyDescription("vertices", () => string.Join("|", meshFilter.sharedMesh.vertices.Select(v => v.ToString())), value => {
                             try {
                                 Vector3[] vertices = ((string)value).Split('|').Select(ParseVector3).ToArray();
                                 if (vertices.Length == meshFilter.mesh.vertexCount) return;
@@ -168,21 +168,21 @@ namespace SVEN.Content
                                 meshFilter.mesh.SetVertices(vertices);
                             } catch {}
                         }, 1)),
-                    (Func<MeshFilter, PropertyDescription>)(meshFilter => new PropertyDescription("triangles", () => string.Join("|", meshFilter.mesh.triangles.Select(t => t.ToString())), value => {
+                    (Func<MeshFilter, PropertyDescription>)(meshFilter => new PropertyDescription("triangles", () => string.Join("|", meshFilter.sharedMesh.triangles.Select(t => t.ToString())), value => {
                             try {
                                 int[] triangles = ((string)value).Split('|').Select(int.Parse).ToArray();
                                 if (triangles.Length == meshFilter.mesh.triangles.Length) return;
                                 meshFilter.mesh.SetTriangles(triangles, 0);
                             } catch {}
                         }, 2)),
-                    (Func<MeshFilter, PropertyDescription>)(meshFilter => new PropertyDescription("normals", () => string.Join("|", meshFilter.mesh.normals.Select(n => n.ToString())), value => {
+                    (Func<MeshFilter, PropertyDescription>)(meshFilter => new PropertyDescription("normals", () => string.Join("|", meshFilter.sharedMesh.normals.Select(n => n.ToString())), value => {
                             try {
                                 Vector3[] normals = ((string)value).Split('|').Select(ParseVector3).ToArray();
                                 if (normals.Length != meshFilter.mesh.vertexCount || normals.Length == meshFilter.mesh.normals.Length) return;
                                 meshFilter.mesh.SetNormals(normals);
                             } catch {}
                         }, 2)),
-                    (Func<MeshFilter, PropertyDescription>)(meshFilter => new PropertyDescription("uvs", () => string.Join("|", meshFilter.mesh.uv.Select(uv => uv.ToString())), value => {
+                    (Func<MeshFilter, PropertyDescription>)(meshFilter => new PropertyDescription("uvs", () => string.Join("|", meshFilter.sharedMesh.uv.Select(uv => uv.ToString())), value => {
                             try {
                                 if((string)value == "") {
                                     meshFilter.mesh.SetUVs(0, new List<Vector2>(new Vector2[meshFilter.mesh.vertexCount]));
