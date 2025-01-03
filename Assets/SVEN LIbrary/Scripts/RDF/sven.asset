@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   <Name>k__BackingField: sven
   <BaseUri>k__BackingField: http://www.sven.fr#
-  <Endpoint>k__BackingField: http://localhost:9999/blazegraph/namespace/default/sparql
+  <Endpoint>k__BackingField: http://PC-NSL:7200/repositories/TEST-UPLOAD/rdf-graphs/service
   <Namespaces>k__BackingField:
   - <Name>k__BackingField: rdf
     <Uri>k__BackingField: http://www.w3.org/1999/02/22-rdf-syntax-ns#

@@ -136,7 +136,8 @@ namespace OWLTime
         {
             hasEnd = instant;
             if (next != null) before = next;
-            hasXSDDuration = new XSDDuration(hasBeginning.inXSDDateTime, hasEnd.inXSDDateTime);
+            if (hasBeginning != null)
+                hasXSDDuration = new XSDDuration(hasBeginning.inXSDDateTime, hasEnd.inXSDDateTime);
         }
 
         /// <summary>

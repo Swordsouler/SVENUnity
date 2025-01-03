@@ -143,8 +143,8 @@ namespace SVEN.Content
                 new List<Delegate>
                 {
                     (Func<MeshRenderer, PropertyDescription>)(meshRenderer => new PropertyDescription("enabled", () => meshRenderer.enabled, value => meshRenderer.enabled = value.ToString().ToLower() == "true", 1)),
-                    (Func<MeshRenderer, PropertyDescription>)(meshRenderer => new PropertyDescription("color", () => meshRenderer.sharedMaterial.color, value => meshRenderer.material.DOColor((Color)value, lerpSpeed), 1, "virtualColor")),
-                    (Func<MeshRenderer, PropertyDescription>)(meshRenderer => new PropertyDescription("shader", () => meshRenderer.sharedMaterial.shader.name, value => meshRenderer.material.shader = Shader.Find((string)value), 1)),
+                    (Func<MeshRenderer, PropertyDescription>)(meshRenderer => new PropertyDescription("color", () => meshRenderer.material.color, value => meshRenderer.material.DOColor((Color)value, lerpSpeed), 1, "virtualColor")),
+                    (Func<MeshRenderer, PropertyDescription>)(meshRenderer => new PropertyDescription("shader", () => meshRenderer.material.shader.name, value => meshRenderer.material.shader = Shader.Find((string)value), 1)),
                 })
             },
             {
@@ -160,41 +160,65 @@ namespace SVEN.Content
                 typeof(MeshFilter), new("Shape",
                 new List<Delegate>
                 {
-                    (Func<MeshFilter, PropertyDescription>)(meshFilter => new PropertyDescription("vertices", () => string.Join("|", meshFilter.sharedMesh.vertices.Select(v => v.ToString())), value => {
+                    (Func<MeshFilter, PropertyDescription>)(meshFilter => new PropertyDescription("vertices", () => string.Join("|", meshFilter.mesh.vertices.Select(v => v.ToString())), value => {
                             try {
                                 Vector3[] vertices = ((string)value).Split('|').Select(ParseVector3).ToArray();
                                 if (vertices.Length == meshFilter.mesh.vertexCount) return;
                                 meshFilter.mesh.Clear();
                                 meshFilter.mesh.SetVertices(vertices);
+                                _meshFilterUpdates[meshFilter] = new() { Vertices = true };
                             } catch {}
                         }, 1)),
-                    (Func<MeshFilter, PropertyDescription>)(meshFilter => new PropertyDescription("triangles", () => string.Join("|", meshFilter.sharedMesh.triangles.Select(t => t.ToString())), value => {
+                    (Func<MeshFilter, PropertyDescription>)(meshFilter => new PropertyDescription("triangles", () => string.Join("|", meshFilter.mesh.triangles.Select(t => t.ToString())), value => {
                             try {
+                                if(!_meshFilterUpdates.TryGetValue(meshFilter, out MeshFilterUpdate update) || update.Triangles) return;
+
                                 int[] triangles = ((string)value).Split('|').Select(int.Parse).ToArray();
-                                if (triangles.Length == meshFilter.mesh.triangles.Length) return;
                                 meshFilter.mesh.SetTriangles(triangles, 0);
+                                update.Triangles = true;
+                                if(update.IsComplete) _meshFilterUpdates.Remove(meshFilter);
                             } catch {}
                         }, 2)),
-                    (Func<MeshFilter, PropertyDescription>)(meshFilter => new PropertyDescription("normals", () => string.Join("|", meshFilter.sharedMesh.normals.Select(n => n.ToString())), value => {
+                    (Func<MeshFilter, PropertyDescription>)(meshFilter => new PropertyDescription("normals", () => string.Join("|", meshFilter.mesh.normals.Select(n => n.ToString())), value => {
                             try {
+                                if(!_meshFilterUpdates.TryGetValue(meshFilter, out MeshFilterUpdate update) || update.Normals) return;
+
                                 Vector3[] normals = ((string)value).Split('|').Select(ParseVector3).ToArray();
-                                if (normals.Length != meshFilter.mesh.vertexCount || normals.Length == meshFilter.mesh.normals.Length) return;
+                                if (normals.Length != meshFilter.mesh.vertexCount) return;
                                 meshFilter.mesh.SetNormals(normals);
+                                update.Normals = true;
+                                if(update.IsComplete) _meshFilterUpdates.Remove(meshFilter);
                             } catch {}
                         }, 2)),
-                    (Func<MeshFilter, PropertyDescription>)(meshFilter => new PropertyDescription("uvs", () => string.Join("|", meshFilter.sharedMesh.uv.Select(uv => uv.ToString())), value => {
+                    (Func<MeshFilter, PropertyDescription>)(meshFilter => new PropertyDescription("uvs", () => string.Join("|", meshFilter.mesh.uv.Select(uv => uv.ToString())), value => {
                             try {
+                                if(!_meshFilterUpdates.TryGetValue(meshFilter, out MeshFilterUpdate update) || update.UVs) return;
+
                                 if((string)value == "") {
                                     meshFilter.mesh.SetUVs(0, new List<Vector2>(new Vector2[meshFilter.mesh.vertexCount]));
                                 } else {
                                     Vector2[] uvs = ((string)value).Split('|').Select(ParseVector2).ToArray();
                                     meshFilter.mesh.SetUVs(0, uvs);
                                 }
+                                update.UVs = true;
+                                if(update.IsComplete) _meshFilterUpdates.Remove(meshFilter);
                             } catch {}
                         }, 2)),
                 })
             },
         };
+
+        private static readonly Dictionary<MeshFilter, MeshFilterUpdate> _meshFilterUpdates = new();
+
+        private class MeshFilterUpdate
+        {
+            public bool Vertices { get; set; } = false;
+            public bool Triangles { get; set; } = false;
+            public bool Normals { get; set; } = false;
+            public bool UVs { get; set; } = false;
+
+            public bool IsComplete => Vertices && Triangles && Normals && UVs;
+        }
 
         /// <summary>
         /// Parse a Vector3 from a string.

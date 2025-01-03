@@ -203,7 +203,7 @@ namespace SVEN
         /// <summary>
         /// This function is called when the MonoBehaviour will be destroyed.
         /// </summary>
-        private void OnDestroy()
+        public void OnDestroy()
         {
             foreach (KeyValuePair<Component, List<Property>> componentProperties in componentsProperties)
             {

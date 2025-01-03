@@ -568,14 +568,14 @@ namespace SVEN
                     }
                     return targetSceneContent;
                 });
-                Debug.Log(targetSceneContent);
+                //Debug.Log(targetSceneContent);
                 UpdateContent(targetSceneContent);
 
                 DateTime endProcessing = DateTime.Now;
                 double sceneUpdateTime = (endProcessing - startProcessing).TotalMilliseconds - queryTime;
-                Debug.Log($"Query Time: {queryTime} ms");
-                Debug.Log($"Scene Update Time: {sceneUpdateTime} ms");
-                Debug.Log($"Processing Time: {(endProcessing - startProcessing).TotalMilliseconds} ms");
+                //Debug.Log($"Query Time: {queryTime} ms");
+                //Debug.Log($"Scene Update Time: {sceneUpdateTime} ms");
+                //Debug.Log($"Processing Time: {(endProcessing - startProcessing).TotalMilliseconds} ms");
             }
             catch (Exception ex)
             {

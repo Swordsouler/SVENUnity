@@ -6,6 +6,22 @@ using OWLTime;
 using UnityEngine;
 using VDS.RDF;
 using System.Net.Http;
+using VDS.RDF.Storage;
+using VDS.RDF.Writing;
+using VDS.RDF.Parsing;
+using System.Collections;
+using SVEN;
+using System.IO;
+using System.Linq;
+using System.Threading.Tasks;
+
+
+
+
+
+
+
+
 
 
 #if UNITY_EDITOR
@@ -127,25 +143,45 @@ namespace RDF
         /// Save the turtle of the graph to an endpoint.
         /// </summary>
         [Button("Save to Endpoint")]
-        private async void SaveToEndpoint()
+        private void SaveToEndpoint()
         {
-            string turtle = DecodeGraph(Graph);
-
-            StringContent content = new(turtle, Encoding.UTF8, "text/turtle");
-            HttpClient client = new();
-
-            try
+            Task.Run(() =>
             {
-                HttpResponseMessage response = await client.PostAsync(endpoint, content);
-                if (response.IsSuccessStatusCode)
-                    Debug.Log("Data successfully sent to the endpoint.");
-                else
-                    Debug.LogError("Failed to send data to the endpoint.");
-            }
-            catch (Exception ex)
-            {
-                Debug.LogError($"An error occurred: {ex.Message}");
-            }
+                MimeTypeDefinition writerMimeTypeDefinition = MimeTypesHelper.GetDefinitions("application/x-turtle").First();
+                string turtle = DecodeGraph(Graph);
+                string serviceUri = endpoint;
+                serviceUri = (!(Graph.BaseUri != null)) ? (serviceUri + "?default") : (serviceUri + "?graph=" + Uri.EscapeDataString(Graph.BaseUri.AbsoluteUri));
+                Debug.Log("Service URI: " + serviceUri + " with MIME Type: " + writerMimeTypeDefinition.CanonicalMimeType + " and Encoding: " + writerMimeTypeDefinition.Encoding);
+                Debug.Log(new GraphContent(Graph, writerMimeTypeDefinition.CanonicalMimeType).ToString());
+                try
+                {
+                    using HttpClient httpClient = new();
+                    HttpRequestMessage request = new(HttpMethod.Put, serviceUri)
+                    {
+                        Content = new StringContent(turtle, Encoding.UTF8, writerMimeTypeDefinition.CanonicalMimeType)
+                    };
+                    using HttpResponseMessage httpResponseMessage = httpClient.SendAsync(request).Result;
+                    if (httpResponseMessage.IsSuccessStatusCode)
+                    {
+                        return;
+                    }
+
+                    throw StorageHelper.HandleHttpError(httpResponseMessage, "saving a Graph to");
+                }
+                catch (Exception ex)
+                {
+                    throw StorageHelper.HandleError(ex, "saving a Graph to");
+                }
+            });
+        }
+
+
+        private void OnApplicationQuit()
+        {
+            // call Detroy of each SemantizationCore
+            foreach (SemantizationCore semantizationCore in FindObjectsByType<SemantizationCore>(FindObjectsSortMode.None))
+                semantizationCore.OnDestroy();
+            SaveToEndpoint();
         }
 
         /// <summary>
