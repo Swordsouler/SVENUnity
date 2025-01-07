@@ -64,7 +64,7 @@ namespace SVEN.Editor
                     {
                         string rdfType = MapppedComponents.GetValue(component.GetType()).TypeName;
                         if (rdfType != null && rdfType != label)
-                            label = $"{MapppedComponents.GetValue(component.GetType()).TypeName} ({label})";
+                            label = $"{label} ({MapppedComponents.GetValue(component.GetType()).TypeName})";
                     }
 
                     // Display a checkbox for the component with "(ALL)" and a tooltip if it doesn't have GetProperties
@@ -75,12 +75,12 @@ namespace SVEN.Editor
                     if (newIsSemantized && !isSemantized)
                     {
                         core.componentsToSemantize.Add(component);
-                        core.componentsToSemantize.RemoveAll(c => c == null);
+                        core.componentsToSemantize.RemoveAll(c => c == null || !component.gameObject.Equals(c.gameObject));
                     }
                     else if (!newIsSemantized && isSemantized)
                     {
                         core.componentsToSemantize.Remove(component);
-                        core.componentsToSemantize.RemoveAll(c => c == null);
+                        core.componentsToSemantize.RemoveAll(c => c == null || !component.gameObject.Equals(c.gameObject));
                     }
                 }
 
@@ -89,7 +89,11 @@ namespace SVEN.Editor
             }
 
             // Apply changes
-            if (GUI.changed) EditorUtility.SetDirty(core);
+            if (GUI.changed)
+            {
+                serializedObject.ApplyModifiedProperties();
+                EditorUtility.SetDirty(core);
+            }
         }
     }
 }

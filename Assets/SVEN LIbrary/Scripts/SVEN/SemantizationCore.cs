@@ -17,7 +17,6 @@ namespace SVEN
         /// <summary>
         /// Components to semantize at initialization. WARNING: Do not use this list for algorithmic purposes (it's just for the Unity Editor).
         /// </summary>
-        [HideInInspector]
         public List<Component> componentsToSemantize = new();
 
         /// <summary>
@@ -46,7 +45,8 @@ namespace SVEN
         private void Start()
         {
             if (graphBuffer == null) graphBuffer = GraphManager.Get("sven");
-            componentsToSemantize.RemoveAll(component => component == null);
+            Component component = GetComponent<Component>();
+            componentsToSemantize.RemoveAll(c => c == null || !component.gameObject.Equals(c.gameObject));
             Initialize();
             checkForChangesCoroutine = StartCoroutine(LoopCheckForChanges(1.0f / graphBuffer.InstantPerSecond));
         }
