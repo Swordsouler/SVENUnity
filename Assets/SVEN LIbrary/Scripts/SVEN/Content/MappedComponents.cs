@@ -163,6 +163,7 @@ namespace SVEN.Content
                     (Func<MeshFilter, PropertyDescription>)(meshFilter => new PropertyDescription("vertices", () => string.Join("|", meshFilter.mesh.vertices.Select(v => v.ToString())), value => {
                             try {
                                 Vector3[] vertices = ((string)value).Split('|').Select(ParseVector3).ToArray();
+                                Debug.Log(vertices.Length);
                                 if (vertices.Length == meshFilter.mesh.vertexCount) return;
                                 meshFilter.mesh.Clear();
                                 meshFilter.mesh.SetVertices(vertices);

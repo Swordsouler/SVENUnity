@@ -37,6 +37,15 @@ namespace SVEN
             /// </summary>
             [field: SerializeField]
             public SemanticProcessingMode ProcessingMode { get; set; }
+
+            /// <summary>
+            /// Properties of the component to semantize.
+            /// </summary>
+            public List<Property> Properties { get; set; }
+            /// <summary>
+            /// Flag to check if the component has been semantized atleast once.
+            /// </summary>
+            public bool IsSemantized { get; set; }
         }
 
         /// <summary>
@@ -51,7 +60,7 @@ namespace SVEN
         /// <summary>
         /// Properties of the each Component to semantize.
         /// </summary>
-        private readonly Dictionary<Component, List<Property>> componentsProperties = new();
+        private readonly Dictionary<Component, SemanticComponent> componentsProperties = new();
 
         //[SerializeField]
         //private GraphBuffer graphBuffer;
@@ -65,9 +74,6 @@ namespace SVEN
         /// The graph buffer to semantize the GameObject.
         /// </summary>
         public GraphBuffer GraphBuffer => graphBuffer;
-
-        [SerializeField]
-        private bool isStatic = false;
 
         /// <summary>
         /// Coroutine to check for changes in the properties of the GameObject.
@@ -94,11 +100,21 @@ namespace SVEN
             try
             {
                 // Semantize the GameObject attached to his properties and components
-                componentsProperties.Add(this, SemanticObserve(graphBuffer));
+                componentsProperties.Add(this, new SemanticComponent
+                {
+                    Component = this,
+                    ProcessingMode = SemanticProcessingMode.Dynamic,
+                    Properties = SemanticObserve(graphBuffer)
+                });
 
                 // foreach component in the GameObject, semantize the component and his properties
                 foreach (var component in componentsToSemantize)
-                    componentsProperties.Add(component.Component, component.Component.SemanticObserve(graphBuffer));
+                    componentsProperties.Add(component.Component, new SemanticComponent
+                    {
+                        Component = component.Component,
+                        ProcessingMode = component.ProcessingMode,
+                        Properties = component.Component.SemanticObserve(graphBuffer)
+                    });
 
             }
             catch (System.Exception e)
@@ -121,7 +137,12 @@ namespace SVEN
 
             componentsToSemantize.Add(new SemanticComponent { Component = component, ProcessingMode = mode });
             List<Property> properties = component.SemanticObserve(graphBuffer);
-            componentsProperties.Add(component, properties);
+            componentsProperties.Add(component, new SemanticComponent
+            {
+                Component = component,
+                ProcessingMode = mode,
+                Properties = properties
+            });
         }
 
         /// <summary>
@@ -167,11 +188,14 @@ namespace SVEN
         private void CheckForChanges()
         {
             List<Component> toRemove = new();
-            foreach (KeyValuePair<Component, List<Property>> componentProperties in componentsProperties)
+            foreach (KeyValuePair<Component, SemanticComponent> componentProperties in componentsProperties)
             {
+                if (componentProperties.Value.IsSemantized && componentProperties.Value.ProcessingMode == SemanticProcessingMode.Static) continue;
+                componentProperties.Value.IsSemantized = true;
+
                 try
                 {
-                    foreach (Property property in componentProperties.Value)
+                    foreach (Property property in componentProperties.Value.Properties)
                         property.CheckForChanges();
                 }
                 catch
@@ -183,7 +207,7 @@ namespace SVEN
 
             foreach (Component component in toRemove)
             {
-                foreach (Property property in componentsProperties[component])
+                foreach (Property property in componentsProperties[component].Properties)
                     property.Destroy();
 
                 Interval interval = component.GetInterval();
@@ -200,12 +224,11 @@ namespace SVEN
         /// </summary>
         private IEnumerator LoopCheckForChanges(float interval)
         {
-            do
+            while (componentsProperties.Count > 0)
             {
                 CheckForChanges();
                 yield return new WaitForSeconds(interval);
             }
-            while (!isStatic);
         }
 
         /// <summary>
@@ -240,9 +263,9 @@ namespace SVEN
         /// </summary>
         public void OnDestroy()
         {
-            foreach (KeyValuePair<Component, List<Property>> componentProperties in componentsProperties)
+            foreach (KeyValuePair<Component, SemanticComponent> componentProperties in componentsProperties)
             {
-                foreach (Property property in componentProperties.Value)
+                foreach (Property property in componentProperties.Value.Properties)
                     property.Destroy();
 
                 Interval interval = componentProperties.Key.GetInterval();

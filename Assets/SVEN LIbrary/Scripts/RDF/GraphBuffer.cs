@@ -7,23 +7,9 @@ using UnityEngine;
 using VDS.RDF;
 using System.Net.Http;
 using VDS.RDF.Storage;
-using VDS.RDF.Writing;
-using VDS.RDF.Parsing;
-using System.Collections;
 using SVEN;
-using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-
-
-
-
-
-
-
-
-
-
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
@@ -147,12 +133,11 @@ namespace RDF
         {
             Task.Run(() =>
             {
+                Debug.Log("Semantizing to the server...");
                 MimeTypeDefinition writerMimeTypeDefinition = MimeTypesHelper.GetDefinitions("application/x-turtle").First();
                 string turtle = DecodeGraph(Graph);
                 string serviceUri = endpoint;
                 serviceUri = (!(Graph.BaseUri != null)) ? (serviceUri + "?default") : (serviceUri + "?graph=" + Uri.EscapeDataString(Graph.BaseUri.AbsoluteUri));
-                Debug.Log("Service URI: " + serviceUri + " with MIME Type: " + writerMimeTypeDefinition.CanonicalMimeType + " and Encoding: " + writerMimeTypeDefinition.Encoding);
-                Debug.Log(new GraphContent(Graph, writerMimeTypeDefinition.CanonicalMimeType).ToString());
                 try
                 {
                     using HttpClient httpClient = new();
@@ -163,6 +148,7 @@ namespace RDF
                     using HttpResponseMessage httpResponseMessage = httpClient.SendAsync(request).Result;
                     if (httpResponseMessage.IsSuccessStatusCode)
                     {
+                        Debug.Log("Graph saved to endpoint.");
                         return;
                     }
 
