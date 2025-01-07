@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using OWLTime;
@@ -17,7 +18,35 @@ namespace SVEN
         /// <summary>
         /// Components to semantize at initialization. WARNING: Do not use this list for algorithmic purposes (it's just for the Unity Editor).
         /// </summary>
-        public List<Component> componentsToSemantize = new();
+        [HideInInspector]
+        public List<SemanticComponent> componentsToSemantize = new();
+
+        /// <summary>
+        /// Description of the component to semantize.
+        /// </summary>
+        [Serializable]
+        public class SemanticComponent
+        {
+            /// <summary>
+            /// The component to semantize.
+            /// </summary>
+            [field: SerializeField]
+            public Component Component { get; set; }
+            /// <summary>
+            /// The semantic processing mode of the GameObject.
+            /// </summary>
+            [field: SerializeField]
+            public SemanticProcessingMode ProcessingMode { get; set; }
+        }
+
+        /// <summary>
+        /// The semantic processing mode of the GameObject.
+        /// </summary>
+        public enum SemanticProcessingMode
+        {
+            Dynamic,
+            Static
+        }
 
         /// <summary>
         /// Properties of the each Component to semantize.
@@ -32,11 +61,17 @@ namespace SVEN
         /// </summary>
         [SerializeField]
         private GraphBuffer graphBuffer;
+        /// <summary>
+        /// The graph buffer to semantize the GameObject.
+        /// </summary>
         public GraphBuffer GraphBuffer => graphBuffer;
 
         [SerializeField]
         private bool isStatic = false;
 
+        /// <summary>
+        /// Coroutine to check for changes in the properties of the GameObject.
+        /// </summary>
         private Coroutine checkForChangesCoroutine;
 
         /// <summary>
@@ -46,7 +81,7 @@ namespace SVEN
         {
             if (graphBuffer == null) graphBuffer = GraphManager.Get("sven");
             Component component = GetComponent<Component>();
-            componentsToSemantize.RemoveAll(c => c == null || !component.gameObject.Equals(c.gameObject));
+            componentsToSemantize.RemoveAll(c => c == null || c.Component == null || !component.gameObject.Equals(c.Component.gameObject));
             Initialize();
             checkForChangesCoroutine = StartCoroutine(LoopCheckForChanges(1.0f / graphBuffer.InstantPerSecond));
         }
@@ -62,8 +97,8 @@ namespace SVEN
                 componentsProperties.Add(this, SemanticObserve(graphBuffer));
 
                 // foreach component in the GameObject, semantize the component and his properties
-                foreach (Component component in componentsToSemantize)
-                    componentsProperties.Add(component, component.SemanticObserve(graphBuffer));
+                foreach (var component in componentsToSemantize)
+                    componentsProperties.Add(component.Component, component.Component.SemanticObserve(graphBuffer));
 
             }
             catch (System.Exception e)
@@ -76,15 +111,15 @@ namespace SVEN
         /// Adds a component to the semantization process on the fly. WARNING: When adding components, it will be semantized until his end of life.
         /// </summary>
         /// <param name="component">The component to add to the semantization process.</param>
-        public void AddSemanticComponent(Component component)
+        public void AddSemanticComponent(Component component, SemanticProcessingMode mode)
         {
-            if (componentsToSemantize.Contains(component))
+            if (componentsToSemantize.Find(c => c.Component == component) != null)
             {
                 Debug.LogWarning("Component " + component.GetType().Name + " is already being semantized.");
                 return;
             }
 
-            componentsToSemantize.Add(component);
+            componentsToSemantize.Add(new SemanticComponent { Component = component, ProcessingMode = mode });
             List<Property> properties = component.SemanticObserve(graphBuffer);
             componentsProperties.Add(component, properties);
         }
