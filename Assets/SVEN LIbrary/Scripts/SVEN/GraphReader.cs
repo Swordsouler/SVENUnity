@@ -10,7 +10,6 @@ using OWLTime;
 using RDF;
 using SVEN.Content;
 using UnityEditor;
-using UnityEditor.SearchService;
 using UnityEngine;
 using UnityEngine.UI;
 using VDS.RDF;
@@ -182,7 +181,7 @@ namespace SVEN
         public class ComponentDescription
         {
             /// <summary>
-            /// UUID of the GameObject.
+            /// UUID of the Component.
             /// </summary>
             public string UUID { get; set; }
 
@@ -237,6 +236,11 @@ namespace SVEN
         /// </summary>
         public class PropertyDescription
         {
+            /// <summary>
+            /// UUID of the Property.
+            /// </summary>
+            public string UUID { get; set; }
+
             /// <summary>
             /// Name of the property.
             /// </summary>
@@ -319,15 +323,17 @@ namespace SVEN
                 }
             }
 
-            public PropertyDescription(string name, Type type)
+            public PropertyDescription(string uuid, string name, Type type)
             {
+                UUID = uuid;
                 Name = name;
                 Type = type;
                 Values = new();
             }
 
-            public PropertyDescription(string name, Type type, Dictionary<string, object> values)
+            public PropertyDescription(string uuid, string name, Type type, Dictionary<string, object> values)
             {
+                UUID = uuid;
                 Name = name;
                 Type = type;
                 Values = values;
@@ -453,7 +459,7 @@ namespace SVEN
                     PREFIX sven: <http://www.sven.fr/ontology#>
                     PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
 
-                    SELECT ?object ?component ?componentType ?propertyName ?propertyNestedName ?propertyValue ?propertyType
+                    SELECT ?object ?component ?componentType ?property ?propertyName ?propertyNestedName ?propertyValue ?propertyType
                     WHERE {{
                         {{
                             SELECT *
@@ -549,6 +555,7 @@ namespace SVEN
                         Type propertyType = MapppedProperties.GetType(propertyStringType) ?? Type.GetType(propertyStringType);
                         if (!MapppedProperties.HasNestedProperty(propertyType, propertyNestedName)) continue;
 
+                        string propertyUUID = result["property"].ToString().Split('#')[1];
                         object propertyValue = result["propertyValue"].AsValuedNode().ToValue();
                         //if (propertyName == "position")
                         //Debug.Log(propertyName + " " + propertyNestedName + " " + propertyValue + " " + result["propertyValue"].AsValuedNode());
@@ -560,7 +567,7 @@ namespace SVEN
                             targetSceneContent.GameObjects[objectUUID].Components[componentUUID] = new(componentUUID, componentType);
 
                         if (!targetSceneContent.GameObjects[objectUUID].Components[componentUUID].Properties.ContainsKey(propertyName))
-                            targetSceneContent.GameObjects[objectUUID].Components[componentUUID].Properties[propertyName] = new(propertyName, propertyType);
+                            targetSceneContent.GameObjects[objectUUID].Components[componentUUID].Properties[propertyName] = new(propertyUUID, propertyName, propertyType);
 
                         if (!targetSceneContent.GameObjects[objectUUID].Components[componentUUID].Properties[propertyName].Values.ContainsKey(propertyNestedName))
                             targetSceneContent.GameObjects[objectUUID].Components[componentUUID].Properties[propertyName].Values[propertyNestedName] = propertyValue;
@@ -568,8 +575,7 @@ namespace SVEN
                     }
                     return targetSceneContent;
                 });
-                if (Settings.Debug)
-                    Debug.Log(targetSceneContent);
+                if (Settings.Debug) Debug.Log(targetSceneContent);
                 UpdateContent(targetSceneContent);
 
                 DateTime endProcessing = DateTime.Now;
@@ -607,7 +613,7 @@ namespace SVEN
                 }
                 gameObjectDescription.GameObject.SetActive(gameObjectDescription.Active);
                 gameObjectDescription.GameObject.layer = LayerMask.NameToLayer(gameObjectDescription.Layer);
-                gameObjectDescription.GameObject.tag = gameObjectDescription.Tag;
+                gameObjectDescription.GameObject.tag = gameObjectDescription.Tag ?? "Untagged";
                 gameObjectDescription.GameObject.name = gameObjectDescription.Name;
 
                 foreach (ComponentDescription componentDescription in gameObjectDescription.Components.Values)
@@ -623,13 +629,20 @@ namespace SVEN
                             componentDescription.Component = gameObjectDescription.GameObject.transform;
                         else
                         {
-                            componentDescription.Component = gameObjectDescription.GameObject.AddComponent(componentDescription.Type);
+                            try
+                            {
+                                componentDescription.Component = gameObjectDescription.GameObject.AddComponent(componentDescription.Type);
 
-                            // Default initialization
-                            if (componentDescription.Component is MeshRenderer meshRenderer)
-                                meshRenderer.material = new Material(Shader.Find("Standard"));
-                            if (componentDescription.Component is MeshFilter meshFilter)
-                                meshFilter.mesh = new Mesh();
+                                // Default initialization
+                                if (componentDescription.Component is MeshRenderer meshRenderer)
+                                    meshRenderer.material = new Material(Shader.Find("Standard"));
+                                if (componentDescription.Component is MeshFilter meshFilter)
+                                    meshFilter.mesh = new Mesh();
+                            }
+                            catch (Exception ex)
+                            {
+                                Debug.LogError($"Error while adding component {componentDescription.Type} to {gameObjectDescription.UUID}: {ex.Message}");
+                            }
                         }
                     }
 
@@ -641,6 +654,10 @@ namespace SVEN
 
                     foreach (PropertyDescription propertyDescription in componentDescription.Properties.Values)
                     {
+                        // check if the property exists in the current scene content (by checking the uuid)
+                        bool propertyExist = componentExist && currentSceneContent.GameObjects[gameObjectDescription.UUID].Components[componentDescription.UUID].Properties.TryGetValue(propertyDescription.Name, out var currentPropertyDescription) && currentPropertyDescription.UUID == propertyDescription.UUID;
+                        if (propertyExist) continue;
+
                         object propertyValue = propertyDescription.Value;
                         if (propertyValue == null)
                         {
