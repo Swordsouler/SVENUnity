@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -22,7 +23,7 @@ namespace SVEN.Content
         /// Generates a unique identifier for the component.
         /// </summary>
         /// <returns>Unique identifier.</returns>
-        private static readonly Dictionary<Component, (string, Interval)> componentUUIDs = new();
+        private static readonly ConcurrentDictionary<Component, (string, Interval)> componentUUIDs = new();
 
         /// <summary>
         /// Generates a unique identifier for the component.
@@ -42,7 +43,7 @@ namespace SVEN.Content
         public static void DestroyUUID(this Component component)
         {
             if (componentUUIDs.ContainsKey(component))
-                componentUUIDs.Remove(component);
+                componentUUIDs.TryRemove(component, out _);
         }
 
         /// <summary>
@@ -84,7 +85,7 @@ namespace SVEN.Content
             try
             {
                 if (!componentUUIDs.ContainsKey(component)) component.GenerateUUID();
-                return componentUUIDs[component].Item2;
+                return componentUUIDs.TryGetValue(component, out (string, Interval) c) ? c.Item2 : throw new KeyNotFoundException();
             }
             catch (KeyNotFoundException e)
             {

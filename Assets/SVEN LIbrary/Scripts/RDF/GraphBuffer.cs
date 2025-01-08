@@ -10,6 +10,8 @@ using VDS.RDF.Storage;
 using SVEN;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Threading;
+
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
@@ -129,15 +131,23 @@ namespace RDF
         /// Save the turtle of the graph to an endpoint.
         /// </summary>
         [Button("Save to Endpoint")]
-        private void SaveToEndpoint()
+        private async Task SaveToEndpoint()
         {
-            Task.Run(() =>
+            await SaveToEndpoint(Graph);
+        }
+
+        /// <summary>
+        /// Save the turtle of the graph to an endpoint.
+        /// </summary>
+        private async Task SaveToEndpoint(Graph graph)
+        {
+            await Task.Run(() =>
             {
-                Debug.Log("Semantizing to the server...");
+                Debug.Log("Semantizing to the server... " + graph.Triples.Count + " triples in the graph.");
                 MimeTypeDefinition writerMimeTypeDefinition = MimeTypesHelper.GetDefinitions("application/x-turtle").First();
-                string turtle = DecodeGraph(Graph);
+                string turtle = DecodeGraph(graph);
                 string serviceUri = endpoint;
-                serviceUri = (!(Graph.BaseUri != null)) ? (serviceUri + "?default") : (serviceUri + "?graph=" + Uri.EscapeDataString(Graph.BaseUri.AbsoluteUri));
+                serviceUri = (!(graph.BaseUri != null)) ? (serviceUri + "?default") : (serviceUri + "?graph=" + Uri.EscapeDataString(graph.BaseUri.AbsoluteUri));
                 try
                 {
                     using HttpClient httpClient = new();
@@ -152,22 +162,28 @@ namespace RDF
                         return;
                     }
 
-                    throw StorageHelper.HandleHttpError(httpResponseMessage, "saving a Graph to");
+                    throw new Exception("Failed to save the graph to the endpoint. " + httpResponseMessage.ReasonPhrase);
                 }
                 catch (Exception ex)
                 {
-                    throw StorageHelper.HandleError(ex, "saving a Graph to");
+                    throw new Exception("Failed to save the graph to the endpoint. " + ex.Message);
                 }
             });
         }
 
 
-        private void OnApplicationQuit()
+        private async void OnApplicationQuit()
         {
-            // call Detroy of each SemantizationCore
-            foreach (SemantizationCore semantizationCore in FindObjectsByType<SemantizationCore>(FindObjectsSortMode.None))
-                semantizationCore.OnDestroy();
-            SaveToEndpoint();
+            Debug.Log("Destroying the semantization cores...");
+            SemantizationCore[] semantizationCores = FindObjectsByType<SemantizationCore>(FindObjectsSortMode.None);
+            SynchronizationContext context = SynchronizationContext.Current;
+            await Task.Run(() =>
+            {
+                foreach (SemantizationCore semantizationCore in semantizationCores)
+                    context.Send(_ => semantizationCore.OnDestroy(), null);
+            });
+            await SaveToEndpoint();
+            Application.Quit();
         }
 
         /// <summary>
