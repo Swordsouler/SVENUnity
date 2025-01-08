@@ -55,7 +55,7 @@ This project is developed as part of a PhD thesis at the LISN laboratory of the 
 
 // dire que ça envoie les données sur un serveur distant configurer dans le graphbuffer
 
-## Read your Semantize Virtual ENvironment (SVEN)
+## Replay your Semantize Virtual ENvironment (SVEN)
 
 // lancer la scene **Scene Reader**
 
