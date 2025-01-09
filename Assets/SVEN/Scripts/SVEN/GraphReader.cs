@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Reflection;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using DG.Tweening;
 using NaughtyAttributes;
@@ -360,18 +361,27 @@ namespace SVEN
         /// <summary>
         /// Graph that contains the scene content.
         /// </summary>
-        [SerializeField, HideIf("GameHasStarted")]
-        private UnityEngine.Object ontologyFile;
+        private bool _gameHasStarted = false;
 
         /// <summary>
-        /// Graph that contains the scene content.
+        /// Name of the graph.
         /// </summary>
-        private bool _gameHasStarted = false;
+        [SerializeField, DisableIf("IsStarted"), ShowIf("IsStarted"), HideIf("HasGraphConfig")]
+        private UnityEngine.Object ontologyFile;
 
         private void Awake()
         {
             _gameHasStarted = true;
-            if (ontologyFile != null) LoadSchema(AssetDatabase.GetAssetPath(ontologyFile));
+            if (graphConfig != null)
+            {
+                schema = new Graph();
+                schema.LoadFromFile(AssetDatabase.GetAssetPath(graphConfig.OntologyFile));
+                CreateNewGraph(graphConfig.BaseUri, graphConfig.Namespaces, schema);
+            }
+            else if (ontologyFile != null)
+            {
+                LoadSchema(AssetDatabase.GetAssetPath(ontologyFile));
+            }
             if (IsRemote) LoadFromEndpoint();
         }
 
@@ -771,6 +781,12 @@ namespace SVEN
         private string _endpoint;
 
         /// <summary>
+        /// Storage name of the graph.
+        /// </summary>
+        [SerializeField, ShowIf("IsRemote")]
+        public string storageName = "Scene 1";
+
+        /// <summary>
         /// Loaded endpoint.
         /// </summary>
         private string _loadedEndpoint;
@@ -891,8 +907,14 @@ namespace SVEN
             // Créez une instance de SparqlQueryClient avec HttpClient et l'URI de l'endpoint
             SparqlQueryClient sparqlQueryClient = new(httpClient, endpointUri);
 
+            string graphUri = $"FROM <{graph.BaseUri.AbsoluteUri}{Uri.EscapeDataString(storageName)}>";
+            int selectIndex = query.IndexOf("SELECT", StringComparison.OrdinalIgnoreCase);
+            if (selectIndex == -1) throw new Exception("Query must contain a SELECT statement.");
+            int insertIndex = query.IndexOf('\n', selectIndex) + 1;
+            string graphQuery = query.Insert(insertIndex, $"{graphUri}\n");
+
             // Exécutez la requête SPARQL
-            SparqlResultSet results = await sparqlQueryClient.QueryWithResultSetAsync(query).ConfigureAwait(false);
+            SparqlResultSet results = await sparqlQueryClient.QueryWithResultSetAsync(graphQuery).ConfigureAwait(false);
 
             return results;
         }

@@ -19,7 +19,6 @@ using UnityEditor;
 
 namespace RDF
 {
-    [DisallowMultipleComponent]
     public class GraphBuffer : GraphBehaviour
     {
         #region Flags
@@ -34,12 +33,6 @@ namespace RDF
         #region Fields & Properties
 
         /// <summary>
-        /// Graph configuration.
-        /// </summary>
-        [SerializeField, HideIf("IsStarted")]
-        private GraphConfig graphConfig;
-
-        /// <summary>
         /// Name of the graph.
         /// </summary>
         [SerializeField, DisableIf("IsStarted"), ShowIf("IsStarted"), HideIf("HasGraphConfig")]
@@ -49,11 +42,6 @@ namespace RDF
         /// Name of the graph.
         /// </summary>
         public string GraphName => graphName;
-
-        /// <summary>
-        /// Storage name of the graph.
-        /// </summary>
-        public string storageName = "Scene 1";
 
         /// <summary>
         /// Base URI for the graph.
@@ -77,6 +65,11 @@ namespace RDF
             new Namespace { Name = "owl", Uri = "http://www.w3.org/2002/07/owl#" },
             new Namespace { Name = "xsd", Uri = "http://www.w3.org/2001/XMLSchema#" },
         };
+
+        /// <summary>
+        /// Storage name of the graph.
+        /// </summary>
+        public string storageName = "Scene 1";
 
         /// <summary>
         /// Number of instant created per second.
@@ -168,7 +161,7 @@ namespace RDF
                 MimeTypeDefinition writerMimeTypeDefinition = MimeTypesHelper.GetDefinitions("application/x-turtle").First();
                 string turtle = DecodeGraph(graph);
                 string serviceUri = endpoint;
-                serviceUri = (!(graph.BaseUri != null)) ? (serviceUri + "?default") : (serviceUri + "?graph=" + Uri.EscapeDataString($"{graph.BaseUri.AbsoluteUri}{storageName}"));
+                serviceUri = (!(graph.BaseUri != null)) ? (serviceUri + "?default") : (serviceUri + "?graph=" + Uri.EscapeDataString($"{graph.BaseUri.AbsoluteUri}{Uri.EscapeDataString(storageName)}"));
                 // decode
                 string decodedServiceUri = Uri.UnescapeDataString(serviceUri);
 
@@ -218,10 +211,9 @@ namespace RDF
         /// <returns>Graph.</returns>
         public Graph CreateNewGraph()
         {
-            graph = new Graph() { BaseUri = UriFactory.Create(baseUri) };
-            foreach (Namespace ns in namespaces)
-                graph.NamespaceMap.AddNamespace(ns.Name, UriFactory.Create(ns.Uri));
-            return graph;
+            Graph schema = new();
+            schema.LoadFromFile(AssetDatabase.GetAssetPath(graphConfig.OntologyFile));
+            return CreateNewGraph(baseUri, namespaces, schema);
         }
 
         #endregion

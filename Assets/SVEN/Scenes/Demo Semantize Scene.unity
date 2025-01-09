@@ -552,7 +552,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   graphConfig: {fileID: 11400000, guid: 35749ed3a41188e43a34910d5069cfe6, type: 2}
   graphName: default
-  storageName: Scene1
   baseUri: http://www.example.com#
   endpoint: http://localhost:7200/repositories/Demo-Scene/rdf-graphs/service
   namespaces:
@@ -564,6 +563,7 @@ MonoBehaviour:
     <Uri>k__BackingField: http://www.w3.org/2002/07/owl#
   - <Name>k__BackingField: xsd
     <Uri>k__BackingField: http://www.w3.org/2001/XMLSchema#
+  storageName: Scene1
   instantPerSecond: 30
 --- !u!1 &216645333
 GameObject:

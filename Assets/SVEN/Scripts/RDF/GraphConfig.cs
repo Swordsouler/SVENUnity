@@ -28,5 +28,11 @@ namespace RDF
             new Namespace { Name = "owl", Uri = "http://www.w3.org/2002/07/owl#" },
             new Namespace { Name = "xsd", Uri = "http://www.w3.org/2001/XMLSchema#" },
         };
+
+        /// <summary>
+        /// Ontology file to add to the graph.
+        /// </summary>
+        [field: SerializeField, Tooltip("Ontology file to add to the graph.")]
+        public Object OntologyFile { get; private set; }
     }
 }

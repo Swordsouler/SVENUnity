@@ -5,6 +5,8 @@ using UnityEngine;
 using VDS.RDF;
 using VDS.RDF.Writing;
 using VDS.RDF.Parsing;
+using System.Collections.Generic;
+using VDS.RDF.Query.Inference;
 
 namespace RDF
 {
@@ -31,6 +33,12 @@ namespace RDF
         /// </summary>
         public Graph Graph => graph;
 
+        /// <summary>
+        /// Graph configuration.
+        /// </summary>
+        [SerializeField, HideIf("IsStarted")]
+        protected GraphConfig graphConfig;
+
         #endregion
 
         #region Graph Actions
@@ -56,6 +64,19 @@ namespace RDF
         private void Print()
         {
             Debug.Log(DecodeGraph(Graph));
+        }
+
+        /// <summary>
+        /// Initialize a new graph with the base URI and prefixes.
+        /// </summary>
+        /// <returns>Graph.</returns>
+        public Graph CreateNewGraph(string baseUri, List<Namespace> namespaces, Graph schema)
+        {
+            graph = new Graph() { BaseUri = UriFactory.Create(baseUri) };
+            foreach (Namespace ns in namespaces)
+                graph.NamespaceMap.AddNamespace(ns.Name, UriFactory.Create(ns.Uri));
+            graph.Merge(schema);
+            return graph;
         }
 
         #endregion

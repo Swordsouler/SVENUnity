@@ -14,7 +14,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   <Name>k__BackingField: sven
   <BaseUri>k__BackingField: http://www.sven.fr#
-  <Endpoint>k__BackingField: http://VEN-MOUSSAILLON:7200/repositories/Demo-Scene/rdf-graphs/service
   <Namespaces>k__BackingField:
   - <Name>k__BackingField: rdf
     <Uri>k__BackingField: http://www.w3.org/1999/02/22-rdf-syntax-ns#
@@ -28,4 +27,4 @@ MonoBehaviour:
     <Uri>k__BackingField: http://www.sven.fr/ontology#
   - <Name>k__BackingField: time
     <Uri>k__BackingField: http://www.w3.org/2006/time#
-  <InstantPerSecond>k__BackingField: 10
+  <OntologyFile>k__BackingField: {fileID: 102900000, guid: 97570f68d960d9046a36fec21bfbf79b, type: 3}
