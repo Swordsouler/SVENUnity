@@ -10,7 +10,8 @@
         "virtual",
         "environment",
         "logging",
-        "graph"
+        "graph",
+        "replay"
     ],
     "category": "Tools",
     "dependencies": {
