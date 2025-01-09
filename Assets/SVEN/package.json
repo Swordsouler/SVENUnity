@@ -1,0 +1,30 @@
+{
+    "name": "com.nsaintl.semantizedvirtualenvironment",
+    "displayName": "Semantized Virtual ENvironment",
+    "version": "0.1.0",
+    "unity": "6000.0",
+    "description": "NaughtyAttributes is an extension for the Unity Inspector.",
+    "keywords": [
+        "unity",
+        "semantic",
+        "virtual",
+        "environment",
+        "logging",
+        "graph"
+    ],
+    "category": "Tools",
+    "dependencies": {
+        "com.dbrizov.naughtyattributes": "https://github.com/dbrizov/NaughtyAttributes.git#upm"
+    },
+    "samples": [
+        {
+            "displayName": "Demo Semantization of a Virtual Environment",
+            "description": "A simple example of how to semantize a virtual environment.",
+            "path": "Samples"
+        }
+    ],
+    "author": {
+        "name": "Nicolas Saint-Léger",
+        "url": "https://perso.lisn.upsaclay.fr/nsaintl"
+    }
+}
