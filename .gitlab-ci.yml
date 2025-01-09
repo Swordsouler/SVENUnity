@@ -13,7 +13,7 @@ update_upm_branch:
         - echo '### split upm branch'
         - git subtree split -P "$PKG_ROOT" -b upm
         - echo '### update remote upm branch'
-        - git push git@gitlab.lisn.upsaclay.fr:${CI_PROJECT_PATH}.git upm
+        - git push https://$PERSONAL_ACCESS_TOKEN@${CI_SERVER_HOST}/${CI_PROJECT_PATH}.git upm
     only:
         - main
     variables:
