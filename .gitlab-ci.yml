@@ -11,6 +11,6 @@ update_upm_branch:
         - echo '### update remote upm branch'
         - git push origin upm
     only:
-        - master
+        - main
     variables:
         PKG_ROOT: "Assets/com.nsaintl.sven"
