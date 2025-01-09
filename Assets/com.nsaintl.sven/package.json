@@ -15,7 +15,7 @@
     ],
     "category": "Tools",
     "dependencies": {
-        "com.dbrizov.naughtyattributes": "1.4.0"
+        "com.dbrizov.naughtyattributes": "2.1.4"
     },
     "samples": [
         {
