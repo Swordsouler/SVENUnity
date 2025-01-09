@@ -3,9 +3,10 @@ stages:
 
 update_upm_branch:
     stage: update_upm
-    image: alpine:latest
+    image: debian:latest
     before_script:
-        - apk add --no-cache git
+        - apt-get update
+        - apt-get install -y git
     script:
         - echo '### head info'
         - git log -1
