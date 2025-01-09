@@ -3,14 +3,15 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using OWLTime;
-using RDF;
+using Sven.GraphManagement;
+using Sven.OwlTime;
+using Sven.Utils;
 using UnityEngine;
 using VDS.RDF;
 using VDS.RDF.Nodes;
 using VDS.RDF.Parsing;
 
-namespace SVEN.Content
+namespace Sven.Content
 {
     /// <summary>
     /// Semantization extensions for Unity components.
@@ -185,7 +186,7 @@ namespace SVEN.Content
             foreach (Property property in properties)
             {
                 property.SemanticObserve(graphBuffer, component);
-                if (Settings.Debug)
+                if (SvenDebugger.Debug)
                     Debug.Log("Observing property (" + semantizationCore.name + ")." + component.GetType().Name + "." + property.Name);
             }
 

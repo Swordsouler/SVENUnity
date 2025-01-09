@@ -1,33 +1,31 @@
-#if UNITY_EDITOR
 using UnityEditor;
 
-namespace SVEN.Editor
+namespace Sven.Editor
 {
     /// <summary>
     /// Editor window to configure SVEN settings.
     /// </summary>
-    public class SettingsWindow : EditorWindow
+    public class SvenDebuggerWindow : EditorWindow
     {
-        private const string DebugKey = "SVEN_Debug";
+        private const string _debugKey = "SVEN_Debug";
 
         [MenuItem("Window/SVEN Settings")]
         public static void ShowWindow()
         {
-            GetWindow<SettingsWindow>("SVEN Settings");
+            GetWindow<SvenDebuggerWindow>("SVEN Settings");
         }
 
         private void OnGUI()
         {
             EditorGUILayout.LabelField("SVEN Settings", EditorStyles.boldLabel);
 
-            bool debug = EditorPrefs.GetBool(DebugKey, false);
+            bool debug = EditorPrefs.GetBool(_debugKey, false);
             bool newDebug = EditorGUILayout.Toggle("Debug", debug);
 
             if (newDebug != debug)
             {
-                EditorPrefs.SetBool(DebugKey, newDebug);
+                EditorPrefs.SetBool(_debugKey, newDebug);
             }
         }
     }
 }
-#endif

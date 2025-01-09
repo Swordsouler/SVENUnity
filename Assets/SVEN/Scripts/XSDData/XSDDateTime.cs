@@ -1,9 +1,8 @@
 using System;
-using System.Diagnostics;
 using VDS.RDF;
 using VDS.RDF.Parsing;
 
-namespace OWLTime
+namespace Sven.XsdData
 {
     /// <summary>
     /// Represents a date in the XSD format

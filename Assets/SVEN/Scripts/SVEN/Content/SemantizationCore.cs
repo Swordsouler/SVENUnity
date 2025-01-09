@@ -1,13 +1,13 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using OWLTime;
-using RDF;
-using SVEN.Content;
+using Sven.GraphManagement;
+using Sven.OwlTime;
+using Sven.Utils;
 using UnityEngine;
 using VDS.RDF;
 
-namespace SVEN
+namespace Sven.Content
 {
     /// <summary>
     /// Core component to semantize content.
@@ -61,9 +61,6 @@ namespace SVEN
         /// Properties of the each Component to semantize.
         /// </summary>
         private readonly Dictionary<Component, SemanticComponent> componentsProperties = new();
-
-        //[SerializeField]
-        //private GraphBuffer graphBuffer;
 
         /// <summary>
         /// The graph buffer to semantize the GameObject.
@@ -168,7 +165,7 @@ namespace SVEN
             foreach (Property property in properties)
             {
                 property.SemanticObserve(graphBuffer, this);
-                if (Settings.Debug)
+                if (SvenDebugger.Debug)
                     Debug.Log("Observing property (" + name + ")." + GetType().Name + "." + property.Name);
             }
 
@@ -200,7 +197,7 @@ namespace SVEN
                 }
                 catch
                 {
-                    if (Settings.Debug) Debug.LogWarning("Component " + componentProperties.Key.GetType().Name + " has been destroyed. Removing from semantization.");
+                    if (SvenDebugger.Debug) Debug.LogWarning("Component " + componentProperties.Key.GetType().Name + " has been destroyed. Removing from semantization.");
                     toRemove.Add(componentProperties.Key);
                 }
             }

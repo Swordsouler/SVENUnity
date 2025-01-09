@@ -2,7 +2,7 @@ using System;
 using VDS.RDF;
 using VDS.RDF.Parsing;
 
-namespace OWLTime
+namespace Sven.XsdData
 {
     /// <summary>
     /// Represents an XSD duration.

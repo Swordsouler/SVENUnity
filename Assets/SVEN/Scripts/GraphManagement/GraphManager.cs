@@ -1,10 +1,10 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace RDF
+namespace Sven.GraphManagement
 {
     /// <summary>
-    /// GraphBuffer class to store the RDF data.
+    /// GraphManager class to manage the graph buffers.
     /// </summary>
     public class GraphManager
     {

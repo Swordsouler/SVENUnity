@@ -4,7 +4,7 @@ using System.Linq;
 using DG.Tweening;
 using UnityEngine;
 
-namespace SVEN.Content
+namespace Sven.Content
 {
     /// <summary>
     /// Mapped component to semantize.

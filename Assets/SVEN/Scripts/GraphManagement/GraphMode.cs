@@ -1,7 +1,7 @@
-namespace SVEN
+namespace Sven.GraphManagement
 {
     /// <summary>
-    /// Graph mode.
+    /// Graph mode enumeration.
     /// </summary>
     public enum GraphStorageMode
     {

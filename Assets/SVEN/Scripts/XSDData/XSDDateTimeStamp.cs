@@ -2,7 +2,7 @@ using System;
 using VDS.RDF;
 using VDS.RDF.Parsing;
 
-namespace OWLTime
+namespace Sven.XsdData
 {
     /// <summary>
     /// Represents a date and time in the XSD format
@@ -20,7 +20,7 @@ namespace OWLTime
         /// <param name="date">The date and time.</param>
         public XSDDateTimeStamp(DateTime date)
         {
-            Value = date.ToString("yyyy-MM-ddTHH:mm:ssZ");
+            Value = date.ToString("yyyy-MM-ddTHH:mm:sszzz");
         }
 
         /// <summary>

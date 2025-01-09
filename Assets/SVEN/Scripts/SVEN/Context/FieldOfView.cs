@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace SVEN.Context
+namespace Sven.Content
 {
     [DisallowMultipleComponent, RequireComponent(typeof(Camera))]
     public class FieldOfView : MonoBehaviour

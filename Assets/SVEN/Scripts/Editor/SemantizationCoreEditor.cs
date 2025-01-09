@@ -1,12 +1,11 @@
-#if UNITY_EDITOR
 using UnityEditor;
 using UnityEngine;
 using NaughtyAttributes.Editor;
-using SVEN.Content;
 using System;
-using static SVEN.SemantizationCore;
+using Sven.Content;
+using static Sven.Content.SemantizationCore;
 
-namespace SVEN.Editor
+namespace Sven.Editor
 {
     /// <summary>
     /// Custom editor for the SemantizationCore component.
@@ -127,4 +126,3 @@ namespace SVEN.Editor
         }
     }
 }
-#endif

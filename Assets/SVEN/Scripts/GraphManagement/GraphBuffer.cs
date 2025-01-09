@@ -2,23 +2,27 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using NaughtyAttributes;
-using OWLTime;
 using UnityEngine;
 using VDS.RDF;
 using System.Net.Http;
-using SVEN;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Threading;
 using System.IO;
+using Sven.Content;
+using Sven.OwlTime;
+
 
 
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
 
-namespace RDF
+namespace Sven.GraphManagement
 {
+    /// <summary>
+    /// GraphBuffer class to store the RDF data and semantize it.
+    /// </summary>
     public class GraphBuffer : GraphBehaviour
     {
         #region Flags
@@ -59,11 +63,11 @@ namespace RDF
         /// List of prefixes to add to the graph.
         /// </summary>
         [SerializeField, DisableIf("IsStarted"), HideIf("HasGraphConfig")]
-        private List<Namespace> namespaces = new() {
-            new Namespace { Name = "rdf", Uri = "http://www.w3.org/1999/02/22-rdf-syntax-ns#" },
-            new Namespace { Name = "rdfs", Uri = "http://www.w3.org/2000/01/rdf-schema#" },
-            new Namespace { Name = "owl", Uri = "http://www.w3.org/2002/07/owl#" },
-            new Namespace { Name = "xsd", Uri = "http://www.w3.org/2001/XMLSchema#" },
+        private List<GraphNamespace> namespaces = new() {
+            new GraphNamespace { Name = "rdf", Uri = "http://www.w3.org/1999/02/22-rdf-syntax-ns#" },
+            new GraphNamespace { Name = "rdfs", Uri = "http://www.w3.org/2000/01/rdf-schema#" },
+            new GraphNamespace { Name = "owl", Uri = "http://www.w3.org/2002/07/owl#" },
+            new GraphNamespace { Name = "xsd", Uri = "http://www.w3.org/2001/XMLSchema#" },
         };
 
         /// <summary>

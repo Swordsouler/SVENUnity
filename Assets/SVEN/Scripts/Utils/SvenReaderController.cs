@@ -2,19 +2,28 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using NaughtyAttributes;
-using OWLTime;
-using Sven.Utils;
+using Sven.GraphManagement;
+using Sven.OwlTime;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
-using static SVEN.GraphReader;
+using static Sven.GraphManagement.GraphReader;
 
-namespace SVEN.Tools
+namespace Sven.Utils
 {
-    public class ReaderController : MonoBehaviour
+    /// <summary>
+    /// Controller to manage the SvenReader.
+    /// </summary>
+    public class SvenReaderController : MonoBehaviour
     {
+        /// <summary>
+        /// GraphReader to read the graph.
+        /// </summary>
         [SerializeField, OnValueChanged("ResetController")]
         private GraphReader _graphReader;
+        /// <summary>
+        /// GraphReader to read the graph.
+        /// </summary>
         private GraphReader GraphReader
         {
             get => _graphReader;
@@ -31,30 +40,67 @@ namespace SVEN.Tools
             }
         }
 
+        /// <summary>
+        /// Slider to control the time.
+        /// </summary>
         [SerializeField]
-        private Slider timeSlider;
-        [SerializeField]
-        private TextMeshProUGUI timeText;
-        [SerializeField]
-        private Toggle playPauseButton;
-        [SerializeField]
-        private Sprite playSprite;
-        [SerializeField]
-        private Sprite pauseSprite;
+        private Slider _timeSlider;
 
+        /// <summary>
+        /// Text to show the time.
+        /// </summary>
         [SerializeField]
-        private Button backwardButton;
+        private TextMeshProUGUI _timeText;
+
+        /// <summary>
+        /// Toggle to play or pause the time.
+        /// </summary>
         [SerializeField]
-        private Button forwardButton;
+        private Toggle _playPauseButton;
 
+        /// <summary>
+        /// Sprites for the play and pause buttons.
+        /// </summary>
         [SerializeField]
-        private TMP_Dropdown speedDropdown;
+        private Sprite _playSprite;
 
+        /// <summary>
+        /// Sprites for the play and pause buttons.
+        /// </summary>
         [SerializeField]
-        private UILineRenderer contentLine;
+        private Sprite _pauseSprite;
 
+        /// <summary>
+        /// Button to step backward in time.
+        /// </summary>
+        [SerializeField]
+        private Button _backwardButton;
 
+        /// <summary>
+        /// Button to step forward in time.
+        /// </summary>
+        [SerializeField]
+        private Button _forwardButton;
+
+        /// <summary>
+        /// Dropdown to select the speed of the time.
+        /// </summary>
+        [SerializeField]
+        private TMP_Dropdown _speedDropdown;
+
+        /// <summary>
+        /// LineRenderer to draw the content line.
+        /// </summary>
+        [SerializeField]
+        private UILineRenderer _contentLine;
+
+        /// <summary>
+        /// Flag to check if the time is playing.
+        /// </summary>
         private bool _isPlaying;
+        /// <summary>
+        /// Flag to check if the time is playing.
+        /// </summary>
         private bool IsPlaying
         {
             get => _isPlaying;
@@ -62,7 +108,7 @@ namespace SVEN.Tools
             {
                 _isPlaying = value;
                 // get first component in childs with image and change sprite
-                playPauseButton.GetComponentInChildren<Image>().sprite = _isPlaying ? pauseSprite : playSprite;
+                _playPauseButton.GetComponentInChildren<Image>().sprite = _isPlaying ? _pauseSprite : _playSprite;
             }
         }
 
@@ -80,10 +126,9 @@ namespace SVEN.Tools
             float seconds = value % 60;
 
             if (hours > 0)
-                timeText.text = string.Format(CultureInfo.InvariantCulture, "{0}:{1:D2}:{2:D2}", hours, minutes, (int)seconds);
+                _timeText.text = string.Format(CultureInfo.InvariantCulture, "{0}:{1:D2}:{2:D2}", hours, minutes, (int)seconds);
             else
-                timeText.text = string.Format(CultureInfo.InvariantCulture, "{0}:{1:D2}", minutes, (int)seconds);
-
+                _timeText.text = string.Format(CultureInfo.InvariantCulture, "{0}:{1:D2}", minutes, (int)seconds);
         }
 
         /// <summary>
@@ -92,17 +137,17 @@ namespace SVEN.Tools
         private void ResetController()
         {
             if (GraphReader == null || !GraphReader.IsGraphLoaded) return;
-            timeSlider.minValue = 0;
-            timeSlider.maxValue = GraphReader.Duration;
-            timeSlider.value = 0;
-            timeSlider.onValueChanged.RemoveListener(OnSliderValueChanged);
-            timeSlider.onValueChanged.AddListener(OnSliderValueChanged);
-            playPauseButton.onValueChanged.RemoveListener(OnPlayValueChanged);
-            playPauseButton.onValueChanged.AddListener(OnPlayValueChanged);
-            backwardButton.onClick.RemoveListener(StepBackward);
-            backwardButton.onClick.AddListener(StepBackward);
-            forwardButton.onClick.RemoveListener(StepForward);
-            forwardButton.onClick.AddListener(StepForward);
+            _timeSlider.minValue = 0;
+            _timeSlider.maxValue = GraphReader.Duration;
+            _timeSlider.value = 0;
+            _timeSlider.onValueChanged.RemoveListener(OnSliderValueChanged);
+            _timeSlider.onValueChanged.AddListener(OnSliderValueChanged);
+            _playPauseButton.onValueChanged.RemoveListener(OnPlayValueChanged);
+            _playPauseButton.onValueChanged.AddListener(OnPlayValueChanged);
+            _backwardButton.onClick.RemoveListener(StepBackward);
+            _backwardButton.onClick.AddListener(StepBackward);
+            _forwardButton.onClick.RemoveListener(StepForward);
+            _forwardButton.onClick.AddListener(StepForward);
 
             DrawContentLine();
         }
@@ -120,7 +165,7 @@ namespace SVEN.Tools
             float timeThreshold = 1.0f; // Adjust this value as needed
 
             // Get the RectTransform of the slider
-            RectTransform sliderRect = timeSlider.GetComponent<RectTransform>();
+            RectTransform sliderRect = _timeSlider.GetComponent<RectTransform>();
 
             // Calculate the positions for the LineRenderer
             List<Vector2> positions = new();
@@ -132,7 +177,7 @@ namespace SVEN.Tools
                 float height = Mathf.Lerp(10, 50, importance); // Adjust the range as needed
 
                 // Calculate the position relative to the slider's dimensions and position
-                float normalizedX = x / timeSlider.maxValue;
+                float normalizedX = x / _timeSlider.maxValue;
                 float posX = normalizedX * sliderRect.rect.width; // Calculate the x position
                 float posY = height + sliderRect.rect.height / 2; // Calculate the y position above the slider
 
@@ -147,7 +192,7 @@ namespace SVEN.Tools
                     {
                         // Add a point at 0 if the gap exceeds the threshold
                         positions.Add(new Vector2(posX, 0));
-                        float nextNormalizedX = nextX / timeSlider.maxValue;
+                        float nextNormalizedX = nextX / _timeSlider.maxValue;
                         float nextPosX = nextNormalizedX * sliderRect.rect.width;
                         positions.Add(new Vector2(nextPosX, 0));
                     }
@@ -155,8 +200,8 @@ namespace SVEN.Tools
             }
 
             // Assign the positions to the LineRenderer
-            contentLine.points = positions.ToArray();
-            contentLine.SetAllDirty();
+            _contentLine.points = positions.ToArray();
+            _contentLine.SetAllDirty();
         }
 
         private void OnPlayValueChanged(bool value)
@@ -166,7 +211,7 @@ namespace SVEN.Tools
 
         private void Update()
         {
-            float speed = speedDropdown.value switch
+            float speed = _speedDropdown.value switch
             {
                 0 => 8,
                 1 => 4,
@@ -179,8 +224,8 @@ namespace SVEN.Tools
             };
             if (IsPlaying)
             {
-                timeSlider.value += Time.deltaTime * speed;
-                if (timeSlider.value >= timeSlider.maxValue)
+                _timeSlider.value += Time.deltaTime * speed;
+                if (_timeSlider.value >= _timeSlider.maxValue)
                 {
                     IsPlaying = false;
                 }
@@ -203,7 +248,7 @@ namespace SVEN.Tools
         private void StepForward()
         {
             Instant instant = GraphReader.NextInstant();
-            if (instant != null) timeSlider.value = (float)(instant.inXSDDateTime - GraphReader.StartedAt).TotalSeconds;
+            if (instant != null) _timeSlider.value = (float)(instant.inXSDDateTime - GraphReader.StartedAt).TotalSeconds;
         }
 
         /// <summary>
@@ -212,7 +257,7 @@ namespace SVEN.Tools
         private void StepBackward()
         {
             Instant instant = GraphReader.PreviousInstant();
-            if (instant != null) timeSlider.value = (float)(instant.inXSDDateTime - GraphReader.StartedAt).TotalSeconds;
+            if (instant != null) _timeSlider.value = (float)(instant.inXSDDateTime - GraphReader.StartedAt).TotalSeconds;
         }
     }
 }

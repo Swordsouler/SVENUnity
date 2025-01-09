@@ -2,13 +2,14 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using OWLTime;
-using RDF;
+using Sven.GraphManagement;
+using Sven.OwlTime;
+using Sven.Utils;
 using UnityEngine;
 using VDS.RDF;
 using VDS.RDF.Parsing;
 
-namespace SVEN.Content
+namespace Sven.Content
 {
     /// <summary>
     /// Observes changes in a single property and triggers multiple callbacks when the property changes.
@@ -170,7 +171,7 @@ namespace SVEN.Content
                 return;
             }
 
-            if (Settings.Debug)
+            if (SvenDebugger.Debug)
                 Debug.Log("Semantizing property (" + parentComponent.name + ")." + parentComponent.GetType().Name + "." + Name + " with value " + observedProperty.LastValue);
             DestroyUUID();
 

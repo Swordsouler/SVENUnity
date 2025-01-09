@@ -1,4 +1,4 @@
-namespace OWLTime
+namespace Sven.OwlTime
 {
     /// <summary>
     /// Represents a proper interval in time with various temporal relationships.

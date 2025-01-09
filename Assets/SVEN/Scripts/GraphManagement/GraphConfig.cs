@@ -1,8 +1,11 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace RDF
+namespace Sven.GraphManagement
 {
+    /// <summary>
+    /// GraphConfig class to store the graph configuration.
+    /// </summary>
     [CreateAssetMenu(fileName = "GraphConfig", menuName = "RDF/GraphConfig")]
     public class GraphConfig : ScriptableObject
     {
@@ -22,11 +25,11 @@ namespace RDF
         /// List of namespaces to add to the graph.
         /// </summary>
         [field: SerializeField, Tooltip("List of namespaces to add to the graph.")]
-        public List<Namespace> Namespaces { get; private set; } = new() {
-            new Namespace { Name = "rdf", Uri = "http://www.w3.org/1999/02/22-rdf-syntax-ns#" },
-            new Namespace { Name = "rdfs", Uri = "http://www.w3.org/2000/01/rdf-schema#" },
-            new Namespace { Name = "owl", Uri = "http://www.w3.org/2002/07/owl#" },
-            new Namespace { Name = "xsd", Uri = "http://www.w3.org/2001/XMLSchema#" },
+        public List<GraphNamespace> Namespaces { get; private set; } = new() {
+            new GraphNamespace { Name = "rdf", Uri = "http://www.w3.org/1999/02/22-rdf-syntax-ns#" },
+            new GraphNamespace { Name = "rdfs", Uri = "http://www.w3.org/2000/01/rdf-schema#" },
+            new GraphNamespace { Name = "owl", Uri = "http://www.w3.org/2002/07/owl#" },
+            new GraphNamespace { Name = "xsd", Uri = "http://www.w3.org/2001/XMLSchema#" },
         };
 
         /// <summary>

@@ -1,8 +1,9 @@
 using System;
 using System.Collections.Generic;
+using Sven.XsdData;
 using VDS.RDF;
 
-namespace OWLTime
+namespace Sven.OwlTime
 {
     /// <summary>
     /// Represents a temporal entity with a beginning and an end.

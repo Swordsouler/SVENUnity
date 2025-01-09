@@ -1,13 +1,13 @@
 using System;
 using UnityEngine;
 
-namespace RDF
+namespace Sven.GraphManagement
 {
     /// <summary>
-    /// Namespace class to store the prefix name and uri.
+    /// GraphNamespace class to store the prefix name and uri.
     /// </summary>
     [Serializable]
-    public class Namespace
+    public class GraphNamespace
     {
         /// <summary>
         /// Name of the prefix.

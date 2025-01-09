@@ -1,9 +1,7 @@
 using System;
-using System.Collections.Generic;
-using System.Diagnostics;
 using VDS.RDF;
 
-namespace OWLTime
+namespace Sven.OwlTime
 {
     /// <summary>
     /// Represents a time interval with a specific instant inside it.

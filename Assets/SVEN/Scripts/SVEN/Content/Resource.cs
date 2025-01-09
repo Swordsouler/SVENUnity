@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace SVEN
+namespace Sven.Content
 {
     /// <summary>
     /// Represents a resource that can be uniquely identified.

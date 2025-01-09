@@ -1,7 +1,8 @@
 using System;
+using Sven.XsdData;
 using VDS.RDF;
 
-namespace OWLTime
+namespace Sven.OwlTime
 {
     /// <summary>
     /// Represents an instant in time.

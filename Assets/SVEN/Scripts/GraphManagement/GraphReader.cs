@@ -3,13 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Reflection;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using DG.Tweening;
 using NaughtyAttributes;
-using OWLTime;
-using RDF;
-using SVEN.Content;
+using Sven.OwlTime;
+using Sven.Content;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.UI;
@@ -20,8 +18,9 @@ using VDS.RDF.Query;
 using VDS.RDF.Query.Datasets;
 using VDS.RDF.Query.Inference;
 using VDS.RDF.Update;
+using Sven.Utils;
 
-namespace SVEN
+namespace Sven.GraphManagement
 {
     /// <summary>
     /// Graph reader to load the scene content from the graph.
@@ -577,12 +576,12 @@ namespace SVEN
                     }
                     return targetSceneContent;
                 });
-                if (Settings.Debug) Debug.Log(targetSceneContent);
+                if (SvenDebugger.Debug) Debug.Log(targetSceneContent);
                 UpdateContent(targetSceneContent);
 
                 DateTime endProcessing = DateTime.Now;
                 double sceneUpdateTime = (endProcessing - startProcessing).TotalMilliseconds - queryTime;
-                if (Settings.Debug)
+                if (SvenDebugger.Debug)
                 {
                     Debug.Log($"Query Time: {queryTime} ms");
                     Debug.Log($"Scene Update Time: {sceneUpdateTime} ms");

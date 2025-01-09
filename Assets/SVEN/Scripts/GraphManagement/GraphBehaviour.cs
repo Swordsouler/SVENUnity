@@ -6,10 +6,12 @@ using VDS.RDF;
 using VDS.RDF.Writing;
 using VDS.RDF.Parsing;
 using System.Collections.Generic;
-using VDS.RDF.Query.Inference;
 
-namespace RDF
+namespace Sven.GraphManagement
 {
+    /// <summary>
+    /// GraphBehaviour class to store the RDF data.
+    /// </summary>
     [DisallowMultipleComponent]
     public class GraphBehaviour : MonoBehaviour
     {
@@ -70,10 +72,10 @@ namespace RDF
         /// Initialize a new graph with the base URI and prefixes.
         /// </summary>
         /// <returns>Graph.</returns>
-        public Graph CreateNewGraph(string baseUri, List<Namespace> namespaces, Graph schema)
+        public Graph CreateNewGraph(string baseUri, List<GraphNamespace> namespaces, Graph schema)
         {
             graph = new Graph() { BaseUri = UriFactory.Create(baseUri) };
-            foreach (Namespace ns in namespaces)
+            foreach (GraphNamespace ns in namespaces)
                 graph.NamespaceMap.AddNamespace(ns.Name, UriFactory.Create(ns.Uri));
             graph.Merge(schema);
             return graph;
