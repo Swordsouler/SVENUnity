@@ -1,0 +1,16 @@
+stages:
+    - update_upm
+
+update_upm_branch:
+    stage: update_upm
+    script:
+        - echo '### head info'
+        - git log -1
+        - echo '### split upm branch'
+        - git subtree split -P "$PKG_ROOT" -b upm
+        - echo '### update remote upm branch'
+        - git push origin upm
+    only:
+        - master
+    variables:
+        PKG_ROOT: "Assets/com.nsaintl.sven"
