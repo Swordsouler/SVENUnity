@@ -3,6 +3,9 @@ stages:
 
 update_upm_branch:
     stage: update_upm
+    image: alpine:latest
+    before_script:
+        - apk add --no-cache git
     script:
         - echo '### head info'
         - git log -1
