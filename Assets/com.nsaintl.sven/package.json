@@ -1,6 +1,6 @@
 {
     "name": "com.nsaintl.sven",
-    "version": "0.1.0",
+    "version": "0.1.1",
     "description": "NaughtyAttributes is an extension for the Unity Inspector.",
     "displayName": "Semantized Virtual ENvironment",
     "unity": "6000.0",
