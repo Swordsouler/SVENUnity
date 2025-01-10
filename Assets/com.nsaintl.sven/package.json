@@ -14,7 +14,9 @@
         "replay"
     ],
     "category": "Tools",
-    "dependencies": {},
+    "dependencies": {
+        "com.dbrizov.naughtyattributes": "2.1.4"
+    },
     "samples": [
         {
             "displayName": "Demo",
