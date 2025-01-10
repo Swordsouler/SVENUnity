@@ -11,7 +11,7 @@ update_upm_branch:
         - echo '### head info'
         - git log -1
         - echo '### create upm branch if not exists'
-        - git branch -f upm || true
+        - if git show-ref --quiet refs/heads/upm; then git branch -D upm; fi
         - echo '### split upm branch'
         - git subtree split -P "$PKG_ROOT" -b upm
         - echo '### update remote upm branch'
