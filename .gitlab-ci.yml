@@ -10,6 +10,8 @@ update_upm_branch:
     script:
         - echo '### head info'
         - git log -1
+        - echo '### create upm branch if not exists'
+        - git branch -f upm || true
         - echo '### split upm branch'
         - git subtree split -P "$PKG_ROOT" -b upm
         - echo '### update remote upm branch'
