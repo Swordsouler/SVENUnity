@@ -27,7 +27,7 @@ namespace Sven.Editor
             // Display default inspector elements with NaughtyAttributes
             base.OnInspectorGUI();
 
-            // Get the instance of RDFCore
+            // Get the instance of SemantizationCore
             SemantizationCore core = (SemantizationCore)target;
 
             // Display the foldout for semantization
@@ -46,7 +46,7 @@ namespace Sven.Editor
                 // Display checkboxes and dropdowns for each component
                 foreach (Component component in allComponents)
                 {
-                    // Exclude the RDFCore component from the list
+                    // Exclude the SemantizationCore component from the list
                     if (component is SemantizationCore) continue;
 
                     // Check if the component has the Semantize method
