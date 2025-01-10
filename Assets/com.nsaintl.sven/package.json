@@ -16,7 +16,6 @@
     "category": "Tools",
     "dependencies": {
         "com.dbrizov.naughtyattributes": "2.1.4",
-        "com.github-glitchenzo.nugetforunity": "4.2.0",
         "com.gamesoft.dotween": "1.0.0"
     },
     "samples": [
