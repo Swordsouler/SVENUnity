@@ -15,7 +15,7 @@
     ],
     "category": "Tools",
     "dependencies": {
-        "com.dbrizov.naughtyattributes": "com.dbrizov.naughtyattributes@2.1.4"
+        "com.dbrizov.naughtyattributes": "https://github.com/dbrizov/NaughtyAttributes.git#2.1.4"
     },
     "samples": [
         {
