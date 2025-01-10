@@ -19,6 +19,7 @@ using VDS.RDF.Query.Datasets;
 using VDS.RDF.Query.Inference;
 using VDS.RDF.Update;
 using Sven.Utils;
+using System.IO;
 
 namespace Sven.GraphManagement
 {
@@ -362,24 +363,19 @@ namespace Sven.GraphManagement
         /// </summary>
         private bool _gameHasStarted = false;
 
-        /// <summary>
-        /// Name of the graph.
-        /// </summary>
-        [SerializeField, DisableIf("IsStarted"), ShowIf("IsStarted"), HideIf("HasGraphConfig")]
-        private UnityEngine.Object ontologyFile;
-
         private void Awake()
         {
             _gameHasStarted = true;
             if (graphConfig != null)
             {
                 schema = new Graph();
-                schema.LoadFromFile(AssetDatabase.GetAssetPath(graphConfig.OntologyFile));
+                string content = graphConfig.OntologyContent;
+                if (!string.IsNullOrEmpty(content))
+                {
+                    TurtleParser turtleParser = new();
+                    turtleParser.Load(schema, new StringReader(content));
+                }
                 CreateNewGraph(graphConfig.BaseUri, graphConfig.Namespaces, schema);
-            }
-            else if (ontologyFile != null)
-            {
-                LoadSchema(AssetDatabase.GetAssetPath(ontologyFile));
             }
             if (IsRemote) LoadFromEndpoint();
         }

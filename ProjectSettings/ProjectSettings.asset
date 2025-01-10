@@ -12,7 +12,7 @@ PlayerSettings:
   targetDevice: 2
   useOnDemandResources: 0
   accelerometerFrequency: 60
-  companyName: DefaultCompany
+  companyName: LISN
   productName: SVENUnity
   defaultCursor: {fileID: 0}
   cursorHotspot: {x: 0, y: 0}
@@ -166,7 +166,7 @@ PlayerSettings:
   androidMinAspectRatio: 1
   applicationIdentifier:
     Android: com.unity.vrtemplate
-    Standalone: com.Unity-Technologies.VR-Template
+    Standalone: com.nsaintl.sven
   buildNumber:
     Standalone: 0
     VisionOS: 0

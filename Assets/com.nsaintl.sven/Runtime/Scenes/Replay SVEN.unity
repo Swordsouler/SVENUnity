@@ -240,8 +240,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   graphConfig: {fileID: 11400000, guid: 35749ed3a41188e43a34910d5069cfe6, type: 2}
   _readingMode: 1
-  ontologyFile: {fileID: 102900000, guid: 97570f68d960d9046a36fec21bfbf79b, type: 3}
-  _endpoint: http://VEN-MOUSSAILLON:7200/repositories/Demo-Scene
+  _endpoint: http://localhost:7200/repositories/Demo-Scene
   storageName: Scene1
   _currentInstantIndex: 0
 --- !u!1 &109644543
@@ -965,15 +964,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _graphReader: {fileID: 66225919}
-  timeSlider: {fileID: 214848327}
-  timeText: {fileID: 1480581148}
-  playPauseButton: {fileID: 109644548}
-  playSprite: {fileID: 21300000, guid: d5112726802ca0b44825796ad6ce1092, type: 3}
-  pauseSprite: {fileID: 21300000, guid: 604fe0a7a3fb3d441b1199a97ad0d330, type: 3}
-  backwardButton: {fileID: 2105312982}
-  forwardButton: {fileID: 1270276931}
-  speedDropdown: {fileID: 1242897260}
-  contentLine: {fileID: 747384471}
+  _timeSlider: {fileID: 214848327}
+  _timeText: {fileID: 1480581148}
+  _playPauseButton: {fileID: 109644548}
+  _playSprite: {fileID: 21300000, guid: d5112726802ca0b44825796ad6ce1092, type: 3}
+  _pauseSprite: {fileID: 21300000, guid: 604fe0a7a3fb3d441b1199a97ad0d330, type: 3}
+  _backwardButton: {fileID: 2105312982}
+  _forwardButton: {fileID: 1270276931}
+  _speedDropdown: {fileID: 1242897260}
+  _contentLine: {fileID: 747384471}
 --- !u!1 &486474403
 GameObject:
   m_ObjectHideFlags: 0

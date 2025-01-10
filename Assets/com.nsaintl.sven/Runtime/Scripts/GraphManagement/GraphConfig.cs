@@ -1,5 +1,12 @@
 using System.Collections.Generic;
+using System.IO;
 using UnityEngine;
+using NaughtyAttributes;
+
+
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
 
 namespace Sven.GraphManagement
 {
@@ -35,7 +42,33 @@ namespace Sven.GraphManagement
         /// <summary>
         /// Ontology file to add to the graph.
         /// </summary>
-        [field: SerializeField, Tooltip("Ontology file to add to the graph.")]
-        public Object OntologyFile { get; private set; }
+        [SerializeField, Tooltip("Ontology file to add to the graph."), OnValueChanged("RefreshOntologyContent")]
+        public Object _ontologyFile;
+        public Object OntologyFile
+        {
+            get => _ontologyFile;
+            private set
+            {
+                _ontologyFile = value;
+                RefreshOntologyContent();
+            }
+        }
+
+        /// <summary>
+        /// Refresh the ontology content.
+        /// </summary>
+        [Button("Refresh Ontology Content")]
+        public void RefreshOntologyContent()
+        {
+#if UNITY_EDITOR
+            OntologyContent = File.ReadAllText(AssetDatabase.GetAssetPath(_ontologyFile));
+#endif
+        }
+
+        /// <summary>
+        /// Ontology content to add to the graph.
+        /// </summary>
+        [field: SerializeField, TextArea, ReadOnly, Tooltip("Ontology content to add to the graph.")]
+        public string OntologyContent { get; private set; }
     }
 }

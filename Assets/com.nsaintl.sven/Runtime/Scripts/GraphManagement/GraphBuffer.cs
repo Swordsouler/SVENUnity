@@ -11,7 +11,7 @@ using System.Threading;
 using System.IO;
 using Sven.Content;
 using Sven.OwlTime;
-
+using VDS.RDF.Parsing;
 
 
 #if UNITY_EDITOR
@@ -121,27 +121,26 @@ namespace Sven.GraphManagement
         private void SaveToFile(Graph graph, string path = null)
         {
             string turtle = DecodeGraph(graph);
-            string savePath;
+            string savePath = path;
 
 #if UNITY_EDITOR
-            savePath = path ?? EditorUtility.SaveFilePanel(
+            savePath ??= EditorUtility.SaveFilePanel(
                 "Save Turtle File",
                 "Assets/Resources",
                 "graph",
                 "ttl");
 #endif
             // Save to the specified path
-            if (!string.IsNullOrEmpty(path))
+            if (!string.IsNullOrEmpty(savePath))
             {
                 // Create the directory if it does not exist
-                string directoryPath = Path.GetDirectoryName(path);
+                string directoryPath = Path.GetDirectoryName(savePath);
                 if (!Directory.Exists(directoryPath))
                 {
                     Directory.CreateDirectory(directoryPath);
                 }
 
-                Debug.Log("Saving the graph to " + savePath);
-                File.WriteAllText(path, turtle);
+                File.WriteAllText(savePath, turtle);
             }
         }
 
@@ -193,8 +192,10 @@ namespace Sven.GraphManagement
             });
         }
 
-
-        private async void OnApplicationQuit()
+        /// <summary>
+        /// Save the experiment.
+        /// </summary>
+        public async void SaveExperiment()
         {
             Debug.Log("Destroying the semantization cores...");
             SemantizationCore[] semantizationCores = FindObjectsByType<SemantizationCore>(FindObjectsSortMode.None);
@@ -206,7 +207,17 @@ namespace Sven.GraphManagement
             });
             await SaveToEndpoint();
             SaveToFile(graph, $"{Application.dataPath}/../SVENs/{storageName}_{DateTime.Now:yyyy-MM-dd_HH-mm-ss}.ttl");
+
+#if UNITY_EDITOR
+            EditorApplication.isPlaying = false;
+#else
             Application.Quit();
+#endif
+        }
+
+        private void OnApplicationQuit()
+        {
+            SaveExperiment();
         }
 
         /// <summary>
@@ -216,7 +227,12 @@ namespace Sven.GraphManagement
         public Graph CreateNewGraph()
         {
             Graph schema = new();
-            schema.LoadFromFile(AssetDatabase.GetAssetPath(graphConfig.OntologyFile));
+            string content = graphConfig.OntologyContent;
+            if (!string.IsNullOrEmpty(content))
+            {
+                TurtleParser turtleParser = new();
+                turtleParser.Load(schema, new StringReader(content));
+            }
             return CreateNewGraph(baseUri, namespaces, schema);
         }
 
