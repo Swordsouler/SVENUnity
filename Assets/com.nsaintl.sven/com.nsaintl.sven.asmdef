@@ -1,7 +1,15 @@
 {
     "name": "com.nsaintl.sven",
     "rootNamespace": "com.nsaintl.sven",
-    "references": [],
+    "references": [
+        "NaughtyAttributes.Core",
+        "NaughtyAttributes.Editor",
+        "NaughtyAttributes.Test",
+        "Unity.TextMeshPro",
+        "Unity.TextMeshPro.Editor",
+        "Unity.TextMeshPro.Editor.Tests",
+        "Unity.TextMeshPro.Tests"
+    ],
     "includePlatforms": [],
     "excludePlatforms": [],
     "allowUnsafeCode": false,
