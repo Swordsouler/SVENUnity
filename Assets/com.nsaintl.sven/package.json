@@ -17,7 +17,7 @@
     "dependencies": {},
     "samples": [
         {
-            "displayName": "Demo Semantization of a Virtual Environment",
+            "displayName": "Demo",
             "description": "A simple example of how to semantize a virtual environment.",
             "path": "Samples"
         }
