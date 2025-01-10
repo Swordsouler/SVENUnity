@@ -14,10 +14,9 @@
         "replay"
     ],
     "category": "Tools",
-    "git-dependencies": [
-        "https://github.com/dbrizov/NaughtyAttributes.git#upm"
-    ],
-    "dependencies": {},
+    "dependencies": {
+        "com.dbrizov.naughtyattributes": "2.1.4"
+    },
     "samples": [
         {
             "displayName": "Demo Semantization of a Virtual Environment",
