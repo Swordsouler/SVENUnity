@@ -22,42 +22,6 @@ namespace Sven.Content
         public List<SemanticComponent> componentsToSemantize = new();
 
         /// <summary>
-        /// Description of the component to semantize.
-        /// </summary>
-        [Serializable]
-        public class SemanticComponent
-        {
-            /// <summary>
-            /// The component to semantize.
-            /// </summary>
-            [field: SerializeField]
-            public Component Component { get; set; }
-            /// <summary>
-            /// The semantic processing mode of the GameObject.
-            /// </summary>
-            [field: SerializeField]
-            public SemanticProcessingMode ProcessingMode { get; set; }
-
-            /// <summary>
-            /// Properties of the component to semantize.
-            /// </summary>
-            public List<Property> Properties { get; set; }
-            /// <summary>
-            /// Flag to check if the component has been semantized atleast once.
-            /// </summary>
-            public bool IsSemantized { get; set; }
-        }
-
-        /// <summary>
-        /// The semantic processing mode of the GameObject.
-        /// </summary>
-        public enum SemanticProcessingMode
-        {
-            Dynamic,
-            Static
-        }
-
-        /// <summary>
         /// Properties of the each Component to semantize.
         /// </summary>
         private readonly Dictionary<Component, SemanticComponent> componentsProperties = new();

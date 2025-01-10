@@ -3,7 +3,6 @@ using UnityEngine;
 using NaughtyAttributes.Editor;
 using System;
 using Sven.Content;
-using static Sven.Content.SemantizationCore;
 
 namespace Sven.Editor
 {
