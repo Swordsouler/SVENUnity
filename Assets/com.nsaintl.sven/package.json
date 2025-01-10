@@ -14,9 +14,7 @@
         "replay"
     ],
     "category": "Tools",
-    "dependencies": {
-        "com.dbrizov.naughtyattributes": "2.1.4"
-    },
+    "dependencies": {},
     "samples": [
         {
             "displayName": "Demo Semantization of a Virtual Environment",
