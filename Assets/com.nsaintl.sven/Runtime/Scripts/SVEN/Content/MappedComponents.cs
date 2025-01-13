@@ -208,15 +208,49 @@ namespace Sven.Content
             },
         };
 
+        /// <summary>
+        /// Adds a new component description to the dictionary.
+        /// </summary>
+        /// <param name="type">The type of the component.</param>
+        /// <param name="description">The component description.</param>
+        public static void AddComponentDescription(Type type, ComponentDescription description)
+        {
+            if (!Value.ContainsKey(type))
+            {
+                Value[type] = description;
+            }
+        }
+
+        /// <summary>
+        /// Update check for mesh filters.
+        /// </summary>
         private static readonly Dictionary<MeshFilter, MeshFilterUpdate> _meshFilterUpdates = new();
 
+        /// <summary>
+        /// Mesh filter update.
+        /// </summary>
         private class MeshFilterUpdate
         {
+            /// <summary>
+            /// Check if the vertices were updated.
+            /// </summary>
             public bool Vertices { get; set; } = false;
+            /// <summary>
+            /// Check if the triangles were updated.
+            /// </summary>
             public bool Triangles { get; set; } = false;
+            /// <summary>
+            /// Check if the normals were updated.
+            /// </summary>
             public bool Normals { get; set; } = false;
+            /// <summary>
+            /// Check if the UVs were updated.
+            /// </summary>
             public bool UVs { get; set; } = false;
 
+            /// <summary>
+            /// Check if the mesh filter update is complete.
+            /// </summary>
             public bool IsComplete => Vertices && Triangles && Normals && UVs;
         }
 
