@@ -572,12 +572,12 @@ namespace Sven.GraphManagement
                     }
                     return targetSceneContent;
                 });
-                if (SvenDebugger.Debug) Debug.Log(targetSceneContent);
+                if (SvenHelper.Debug) Debug.Log(targetSceneContent);
                 UpdateContent(targetSceneContent);
 
                 DateTime endProcessing = DateTime.Now;
                 double sceneUpdateTime = (endProcessing - startProcessing).TotalMilliseconds - queryTime;
-                if (SvenDebugger.Debug)
+                if (SvenHelper.Debug)
                 {
                     Debug.Log($"Query Time: {queryTime} ms");
                     Debug.Log($"Scene Update Time: {sceneUpdateTime} ms");

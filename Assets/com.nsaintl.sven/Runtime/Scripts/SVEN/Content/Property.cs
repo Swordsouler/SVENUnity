@@ -171,7 +171,7 @@ namespace Sven.Content
                 return;
             }
 
-            if (SvenDebugger.Debug)
+            if (SvenHelper.Debug)
                 Debug.Log("Semantizing property (" + parentComponent.name + ")." + parentComponent.GetType().Name + "." + Name + " with value " + observedProperty.LastValue);
             DestroyUUID();
 

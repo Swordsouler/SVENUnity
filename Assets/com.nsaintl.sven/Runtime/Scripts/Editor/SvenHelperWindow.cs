@@ -3,21 +3,21 @@ using UnityEditor;
 namespace Sven.Editor
 {
     /// <summary>
-    /// Editor window to configure SVEN settings.
+    /// Helper window to manage SVEN more easily.
     /// </summary>
-    public class SvenDebuggerWindow : EditorWindow
+    public class SvenHelperWindow : EditorWindow
     {
         private const string _debugKey = "SVEN_Debug";
 
-        [MenuItem("Window/SVEN Settings")]
+        [MenuItem("Tools/SVEN Helper")]
         public static void ShowWindow()
         {
-            GetWindow<SvenDebuggerWindow>("SVEN Settings");
+            GetWindow<SvenHelperWindow>("SVEN Helper");
         }
 
         private void OnGUI()
         {
-            EditorGUILayout.LabelField("SVEN Settings", EditorStyles.boldLabel);
+            EditorGUILayout.LabelField("SVEN Helper", EditorStyles.boldLabel);
 
             bool debug = EditorPrefs.GetBool(_debugKey, false);
             bool newDebug = EditorGUILayout.Toggle("Debug", debug);

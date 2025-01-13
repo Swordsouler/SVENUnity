@@ -186,7 +186,7 @@ namespace Sven.Content
             foreach (Property property in properties)
             {
                 property.SemanticObserve(graphBuffer, component);
-                if (SvenDebugger.Debug)
+                if (SvenHelper.Debug)
                     Debug.Log("Observing property (" + semantizationCore.name + ")." + component.GetType().Name + "." + property.Name);
             }
 

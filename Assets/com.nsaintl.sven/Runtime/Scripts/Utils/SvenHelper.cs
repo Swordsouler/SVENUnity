@@ -5,9 +5,9 @@ using UnityEditor;
 namespace Sven.Utils
 {
         /// <summary>
-        /// Settings for SVEN.
+        /// Helper class to manage SVEN settings.
         /// </summary>
-        public static class SvenDebugger
+        public static class SvenHelper
         {
                 private const string _debugKey = "SVEN_Debug";
 

@@ -129,7 +129,7 @@ namespace Sven.Content
             foreach (Property property in properties)
             {
                 property.SemanticObserve(graphBuffer, this);
-                if (SvenDebugger.Debug)
+                if (SvenHelper.Debug)
                     Debug.Log("Observing property (" + name + ")." + GetType().Name + "." + property.Name);
             }
 
@@ -161,7 +161,7 @@ namespace Sven.Content
                 }
                 catch
                 {
-                    if (SvenDebugger.Debug) Debug.LogWarning("Component " + componentProperties.Key.GetType().Name + " has been destroyed. Removing from semantization.");
+                    if (SvenHelper.Debug) Debug.LogWarning("Component " + componentProperties.Key.GetType().Name + " has been destroyed. Removing from semantization.");
                     toRemove.Add(componentProperties.Key);
                 }
             }
