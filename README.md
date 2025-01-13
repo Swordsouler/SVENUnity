@@ -74,6 +74,17 @@ This project is developed as part of a PhD thesis at the LISN laboratory of the 
 
 ### Remote
 
-// toucher au composant **GraphReader** mettre en remote -> binder un endpoint
+# How to support new components ?
 
-## Analyze your Semantize Virtual ENvironment (SVEN)
+To support non-generic components, you can add their descriptions to the `MapppedComponents` dictionary. For example, to add a description for the `Atom` component, you can use the following code:
+
+```csharp
+MapppedComponents.AddComponentDescription(typeof(Atom), new("Atom",
+    new List<Delegate>
+    {
+        (Func<Atom, PropertyDescription>)(atom => new PropertyDescription("enabled", () => atom, value => atom.enabled = value.ToString() == "true", 1)),
+        (Func<Atom, PropertyDescription>)(atom => new PropertyDescription("atomType", () => atom, value => atom.type = value.ToString(), 1)),
+    }));
+```
+
+This code snippet maps the `Atom` component to its properties, allowing SVEN to semantize and interact with it properly. Make sure to call this at the beginning of the scene to ensure everything works correctly.
