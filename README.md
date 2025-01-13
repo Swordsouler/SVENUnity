@@ -50,7 +50,14 @@ This project is developed as part of a PhD thesis at the LISN laboratory of the 
 
 ## Semantize your Virtual ENvironment (VE) _(write your knowledge graph)_
 
+Pour créer un environnement virtuel semantisé, il suffit de suivre les étapes suivantes :
+
+1. Ajouter dans votre scène un composant **GraphBuffer** (GameObject > SVEN > GraphBuffer) qui permet de stocker les données de votre environnement virtuel sous forme de graphe de connaissance et de les envoyer à un serveur distant (ou un fichier local) pour pouvoir l'analyser ou le rejouer plus tard.
+
 ![Instantiate GraphBuffer](./Assets/com.nsaintl.sven/Documentation~/instantiate_graphbuffer.png)
+
+2.
+
 ![GraphBuffer](./Assets/com.nsaintl.sven/Documentation~/graphbuffer.png)
 
 ![Instantiate OntologyDescription](./Assets/com.nsaintl.sven/Documentation~/instantiate_ontologydescription.png)
@@ -101,3 +108,10 @@ MapppedComponents.AddComponentDescription(typeof(Atom), new("Atom",
 ```
 
 This code snippet maps the `Atom` component to its properties, allowing SVEN to semantize and interact with it properly. It also enables custom getters and setters for observing their properties. Make sure to call this at the beginning of the scene to ensure everything works correctly.
+
+<style>
+img {
+    display: block;
+    margin: auto;
+}
+</style>
