@@ -367,16 +367,16 @@ namespace Sven.GraphManagement
         private void Awake()
         {
             _gameHasStarted = true;
-            if (graphConfig != null)
+            if (ontologyDescription != null)
             {
                 schema = new Graph();
-                string content = graphConfig.OntologyContent;
+                string content = ontologyDescription.OntologyContent;
                 if (!string.IsNullOrEmpty(content))
                 {
                     TurtleParser turtleParser = new();
                     turtleParser.Load(schema, new StringReader(content));
                 }
-                CreateNewGraph(graphConfig.BaseUri, graphConfig.Namespaces, schema);
+                CreateNewGraph(ontologyDescription.BaseUri, ontologyDescription.Namespaces, schema);
             }
             if (IsRemote) LoadFromEndpoint();
         }

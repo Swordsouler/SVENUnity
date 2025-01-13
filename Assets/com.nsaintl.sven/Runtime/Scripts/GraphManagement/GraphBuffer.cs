@@ -31,7 +31,7 @@ namespace Sven.GraphManagement
         /// <summary>
         /// Flag to check if the graph has a configuration.
         /// </summary>
-        protected bool HasGraphConfig => graphConfig != null;
+        protected bool HasGraphConfig => ontologyDescription != null;
 
         #endregion
 
@@ -40,7 +40,7 @@ namespace Sven.GraphManagement
         /// <summary>
         /// Name of the graph.
         /// </summary>
-        public string GraphName => graphConfig?.Name ?? "";
+        public string GraphName => ontologyDescription?.Name ?? "";
 
         /// <summary>
         /// Endpoint to send the RDF data.
@@ -198,13 +198,13 @@ namespace Sven.GraphManagement
         public Graph CreateNewGraph()
         {
             Graph schema = new();
-            string content = graphConfig.OntologyContent;
+            string content = ontologyDescription.OntologyContent;
             if (!string.IsNullOrEmpty(content))
             {
                 TurtleParser turtleParser = new();
                 turtleParser.Load(schema, new StringReader(content));
             }
-            return CreateNewGraph(graphConfig.BaseUri, graphConfig.Namespaces, schema);
+            return CreateNewGraph(ontologyDescription.BaseUri, ontologyDescription.Namespaces, schema);
         }
 
         #endregion
