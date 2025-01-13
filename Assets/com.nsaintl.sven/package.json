@@ -20,9 +20,14 @@
     },
     "samples": [
         {
-            "displayName": "Demo",
+            "displayName": "Semantize Virtual ENvironment",
             "description": "A simple example of how to semantize a virtual environment.",
-            "path": "Samples"
+            "path": "Samples/Writing"
+        },
+        {
+            "displayName": "Replay Semantized Virtual ENvironment",
+            "description": "A simple example of how to replay user interactions.",
+            "path": "Samples/Reading"
         }
     ],
     "author": {

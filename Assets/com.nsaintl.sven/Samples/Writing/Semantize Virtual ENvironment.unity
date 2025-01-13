@@ -602,8 +602,8 @@ MonoBehaviour:
     <Uri>k__BackingField: http://www.w3.org/2002/07/owl#
   - <Name>k__BackingField: xsd
     <Uri>k__BackingField: http://www.w3.org/2001/XMLSchema#
-  storageName: Scene1
-  instantPerSecond: 30
+  storageName: Ouai Ouai Ouai
+  instantPerSecond: 5
 --- !u!1 &216645333
 GameObject:
   m_ObjectHideFlags: 0

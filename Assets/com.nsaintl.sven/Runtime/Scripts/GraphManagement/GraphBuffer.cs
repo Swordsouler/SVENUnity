@@ -205,8 +205,8 @@ namespace Sven.GraphManagement
                 foreach (SemantizationCore semantizationCore in semantizationCores)
                     context.Send(_ => semantizationCore.OnDestroy(), null);
             });
-            await SaveToEndpoint();
             SaveToFile(graph, $"{Application.dataPath}/../SVENs/{storageName}_{DateTime.Now:yyyy-MM-dd_HH-mm-ss}.ttl");
+            await SaveToEndpoint();
 
 #if UNITY_EDITOR
             EditorApplication.isPlaying = false;
