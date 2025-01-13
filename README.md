@@ -48,7 +48,9 @@ This project is developed as part of a PhD thesis at the LISN laboratory of the 
 
 # Overview
 
-## Semantize your Virtual ENvironment (VE)
+## Semantize your Virtual ENvironment (VE) _(write your knowledge graph)_
+
+![SVEN Overview](./Assets/com.nsaintl.sven/Documentation~/instantiate_graphbuffer.png)
 
 // explication du graph buffer et de toute ses propriétés (référencé au différentes sections ci-dessous enfonction de local/remote)
 
@@ -64,7 +66,7 @@ This project is developed as part of a PhD thesis at the LISN laboratory of the 
 
 // dire que ça envoie les données sur un serveur distant configurer dans le graphbuffer
 
-## Replay your Semantize Virtual ENvironment (SVEN)
+## Replay your Semantize Virtual ENvironment (SVEN) _(read your knowledge graph)_
 
 // lancer la scene **Scene Reader**
 
@@ -74,7 +76,7 @@ This project is developed as part of a PhD thesis at the LISN laboratory of the 
 
 ### Remote
 
-# How to support new components ?
+## How to support new components ?
 
 To support non-generic components, you can add their descriptions to the `MapppedComponents` dictionary. For example, to add a description for the `Atom` component, you can use the following code:
 
@@ -87,4 +89,4 @@ MapppedComponents.AddComponentDescription(typeof(Atom), new("Atom",
     }));
 ```
 
-This code snippet maps the `Atom` component to its properties, allowing SVEN to semantize and interact with it properly. Make sure to call this at the beginning of the scene to ensure everything works correctly.
+This code snippet maps the `Atom` component to its properties, allowing SVEN to semantize and interact with it properly. It also enables custom getters and setters for observing their properties. Make sure to call this at the beginning of the scene to ensure everything works correctly.
