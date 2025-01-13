@@ -15,22 +15,31 @@ It is based on [Semantic Web](https://en.wikipedia.org/wiki/Semantic_Web) and [L
 
 ## System Requirements
 
-Unity **6000.0** or later versions. Don't forget to include the Sven namespace.
+Unity **6000.0** or later versions.
 
 ## Installation
 
 1. The package is available in **Releases** section. You can download the latest version from [here](https://gitlab.lisn.upsaclay.fr/nsaintl/SVENUnity/-/releases/permalink/latest), then import it into your Unity project.
 
-2. The package is available on the [openupm registry](https://openupm.com). You can install it via [openupm-cli](https://github.com/openupm/openupm-cli).
-
-```
-openupm add com.***.***
-```
-
-3. Todo : You can also install via git url by adding this entry in your **manifest.json**
+2. You can also install via git url by adding this entry in your **manifest.json**
 
 ```
 "com.***.***": "https://gitlab.lisn.upsaclay.fr/nsaintl/SVENUnity.git#upm"
+```
+
+If you don't have openUPM CLI, you will need to install it first by following the instructions [here](https://openupm.com/docs/getting-started.html), or by adding this entry in your **manifest.json**. This step is important, otherwise the dependencies will not install properly.
+
+```json
+{
+    "scopedRegistries": [
+        {
+            "name": "package.openupm.com",
+            "url": "https://package.openupm.com",
+            "scopes": ["com.gamesoft.dotween", "com.dbrizov.naughtyattributes"],
+            "overrideBuiltIns": false
+        }
+    ]
+}
 ```
 
 ## Support
