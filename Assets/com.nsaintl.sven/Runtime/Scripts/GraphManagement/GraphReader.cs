@@ -26,6 +26,7 @@ namespace Sven.GraphManagement
     /// <summary>
     /// Graph reader to load the scene content from the graph.
     /// </summary>
+    [AddComponentMenu("Semantic/Graph Reader")]
     public class GraphReader : GraphBehaviour
     {
         #region Flags
@@ -779,7 +780,7 @@ namespace Sven.GraphManagement
         /// Storage name of the graph.
         /// </summary>
         [SerializeField, ShowIf("IsRemote")]
-        public string storageName = "Scene 1";
+        public string _storageName = "Scene 1";
 
         /// <summary>
         /// Loaded endpoint.
@@ -902,7 +903,7 @@ namespace Sven.GraphManagement
             // Créez une instance de SparqlQueryClient avec HttpClient et l'URI de l'endpoint
             SparqlQueryClient sparqlQueryClient = new(httpClient, endpointUri);
 
-            string graphUri = $"FROM <{graph.BaseUri.AbsoluteUri}{Uri.EscapeDataString(storageName)}>";
+            string graphUri = $"FROM <{graph.BaseUri.AbsoluteUri}{Uri.EscapeDataString(_storageName)}>";
             int selectIndex = query.IndexOf("SELECT", StringComparison.OrdinalIgnoreCase);
             if (selectIndex == -1) throw new Exception("Query must contain a SELECT statement.");
             int insertIndex = query.IndexOf('\n', selectIndex) + 1;

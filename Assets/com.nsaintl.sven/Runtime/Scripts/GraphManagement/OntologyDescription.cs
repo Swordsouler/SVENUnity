@@ -3,7 +3,6 @@ using System.IO;
 using UnityEngine;
 using NaughtyAttributes;
 
-
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
@@ -13,8 +12,8 @@ namespace Sven.GraphManagement
     /// <summary>
     /// GraphConfig class to store the graph configuration.
     /// </summary>
-    [CreateAssetMenu(fileName = "GraphConfig", menuName = "RDF/GraphConfig")]
-    public class GraphConfig : ScriptableObject
+    [CreateAssetMenu(fileName = "Ontology", menuName = "Semantic/Ontology")]
+    public class OntologyDescription : ScriptableObject
     {
         /// <summary>
         /// Name of the graph.
@@ -37,6 +36,8 @@ namespace Sven.GraphManagement
             new GraphNamespace { Name = "rdfs", Uri = "http://www.w3.org/2000/01/rdf-schema#" },
             new GraphNamespace { Name = "owl", Uri = "http://www.w3.org/2002/07/owl#" },
             new GraphNamespace { Name = "xsd", Uri = "http://www.w3.org/2001/XMLSchema#" },
+            new GraphNamespace { Name = "sven", Uri = "http://www.sven.fr/ontology#" },
+            new GraphNamespace { Name = "time", Uri = "http://www.w3.org/2006/time#" }
         };
 
         /// <summary>

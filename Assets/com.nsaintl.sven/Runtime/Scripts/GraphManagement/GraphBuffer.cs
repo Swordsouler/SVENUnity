@@ -23,6 +23,7 @@ namespace Sven.GraphManagement
     /// <summary>
     /// GraphBuffer class to store the RDF data and semantize it.
     /// </summary>
+    [AddComponentMenu("Semantic/Graph Buffer")]
     public class GraphBuffer : GraphBehaviour
     {
         #region Flags
@@ -39,49 +40,27 @@ namespace Sven.GraphManagement
         /// <summary>
         /// Name of the graph.
         /// </summary>
-        [SerializeField, DisableIf("IsStarted"), ShowIf("IsStarted"), HideIf("HasGraphConfig")]
-        private string graphName = "default";
-
-        /// <summary>
-        /// Name of the graph.
-        /// </summary>
-        public string GraphName => graphName;
-
-        /// <summary>
-        /// Base URI for the graph.
-        /// </summary>
-        [SerializeField, DisableIf("IsStarted"), HideIf("HasGraphConfig")]
-        private string baseUri = "http://www.example.com#";
+        public string GraphName => graphConfig?.Name ?? "";
 
         /// <summary>
         /// Endpoint to send the RDF data.
         /// </summary>
         [SerializeField, DisableIf("IsStarted")]
-        private string endpoint = "http://localhost:7200/repositories/Demo-Scene/rdf-graphs/service";
-
-        /// <summary>
-        /// List of prefixes to add to the graph.
-        /// </summary>
-        [SerializeField, DisableIf("IsStarted"), HideIf("HasGraphConfig")]
-        private List<GraphNamespace> namespaces = new() {
-            new GraphNamespace { Name = "rdf", Uri = "http://www.w3.org/1999/02/22-rdf-syntax-ns#" },
-            new GraphNamespace { Name = "rdfs", Uri = "http://www.w3.org/2000/01/rdf-schema#" },
-            new GraphNamespace { Name = "owl", Uri = "http://www.w3.org/2002/07/owl#" },
-            new GraphNamespace { Name = "xsd", Uri = "http://www.w3.org/2001/XMLSchema#" },
-        };
+        private string _endpoint = "http://localhost:7200/repositories/Demo-Scene/rdf-graphs/service";
 
         /// <summary>
         /// Storage name of the graph.
         /// </summary>
-        public string storageName = "Scene 1";
+        [SerializeField, DisableIf("IsStarted")]
+        private string _storageName = "Scene 1";
 
         /// <summary>
         /// Number of instant created per second.
         /// </summary>
         [SerializeField, DisableIf("IsStarted"), Range(1, 60)]
-        private int instantPerSecond = 10;
+        private int _instantPerSecond = 10;
 
-        public int InstantPerSecond => instantPerSecond;
+        public int InstantPerSecond => _instantPerSecond;
 
         #endregion
 
@@ -90,14 +69,6 @@ namespace Sven.GraphManagement
         /// </summary>
         private void Awake()
         {
-            // if using a graph configuration, forward the values to the graph properties
-            if (HasGraphConfig)
-            {
-                graphName = graphConfig.Name;
-                baseUri = graphConfig.BaseUri;
-                namespaces = graphConfig.Namespaces;
-            }
-
             // initialize the graph
             graph = CreateNewGraph();
         }
@@ -163,8 +134,8 @@ namespace Sven.GraphManagement
                 Debug.Log("Semantizing to the server... " + graph.Triples.Count + " triples in the graph.");
                 MimeTypeDefinition writerMimeTypeDefinition = MimeTypesHelper.GetDefinitions("application/x-turtle").First();
                 string turtle = DecodeGraph(graph);
-                string serviceUri = endpoint;
-                serviceUri = (!(graph.BaseUri != null)) ? (serviceUri + "?default") : (serviceUri + "?graph=" + Uri.EscapeDataString($"{graph.BaseUri.AbsoluteUri}{Uri.EscapeDataString(storageName)}"));
+                string serviceUri = _endpoint;
+                serviceUri = (!(graph.BaseUri != null)) ? (serviceUri + "?default") : (serviceUri + "?graph=" + Uri.EscapeDataString($"{graph.BaseUri.AbsoluteUri}{Uri.EscapeDataString(_storageName)}"));
                 // decode
                 string decodedServiceUri = Uri.UnescapeDataString(serviceUri);
 
@@ -205,7 +176,7 @@ namespace Sven.GraphManagement
                 foreach (SemantizationCore semantizationCore in semantizationCores)
                     context.Send(_ => semantizationCore.OnDestroy(), null);
             });
-            SaveToFile(graph, $"{Application.dataPath}/../SVENs/{storageName}_{DateTime.Now:yyyy-MM-dd_HH-mm-ss}.ttl");
+            SaveToFile(graph, $"{Application.dataPath}/../SVENs/{_storageName}_{DateTime.Now:yyyy-MM-dd_HH-mm-ss}.ttl");
             await SaveToEndpoint();
 
 #if UNITY_EDITOR
@@ -233,7 +204,7 @@ namespace Sven.GraphManagement
                 TurtleParser turtleParser = new();
                 turtleParser.Load(schema, new StringReader(content));
             }
-            return CreateNewGraph(baseUri, namespaces, schema);
+            return CreateNewGraph(graphConfig.BaseUri, graphConfig.Namespaces, schema);
         }
 
         #endregion
@@ -268,7 +239,7 @@ namespace Sven.GraphManagement
         /// <returns>DateTime.</returns>
         public DateTime FormatDateTime(DateTime dateTime)
         {
-            return new(dateTime.Year, dateTime.Month, dateTime.Day, dateTime.Hour, dateTime.Minute, dateTime.Second, dateTime.Millisecond / (1000 / instantPerSecond) * (1000 / instantPerSecond));
+            return new(dateTime.Year, dateTime.Month, dateTime.Day, dateTime.Hour, dateTime.Minute, dateTime.Second, dateTime.Millisecond / (1000 / _instantPerSecond) * (1000 / _instantPerSecond));
         }
 
         #endregion

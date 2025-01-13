@@ -39,7 +39,7 @@ namespace Sven.GraphManagement
         /// Graph configuration.
         /// </summary>
         [SerializeField, HideIf("IsStarted")]
-        protected GraphConfig graphConfig;
+        protected OntologyDescription graphConfig;
 
         #endregion
 

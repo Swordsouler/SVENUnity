@@ -20,7 +20,7 @@ namespace Sven.Editor
             EditorGUILayout.LabelField("SVEN Helper", EditorStyles.boldLabel);
 
             bool debug = EditorPrefs.GetBool(_debugKey, false);
-            bool newDebug = EditorGUILayout.Toggle("Debug", debug);
+            bool newDebug = EditorGUILayout.Toggle("Show debug logs", debug);
 
             if (newDebug != debug)
             {
