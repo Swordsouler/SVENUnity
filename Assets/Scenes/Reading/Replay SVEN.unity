@@ -163,10 +163,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2329338d9657a9943b9c5743f53961b1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  graphConfig: {fileID: 11400000, guid: 35749ed3a41188e43a34910d5069cfe6, type: 2}
+  graphConfig: {fileID: 11400000, guid: e4ebe9b8c0b8b584f96fb2290bdbeaf3, type: 2}
   _readingMode: 1
   _endpoint: http://localhost:7200/repositories/Demo-Scene
-  _storageName: Atom
+  _storageName: Scene 1
   _currentInstantIndex: 0
 --- !u!1 &331900381
 GameObject:

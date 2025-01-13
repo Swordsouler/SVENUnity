@@ -50,7 +50,18 @@ This project is developed as part of a PhD thesis at the LISN laboratory of the 
 
 ## Semantize your Virtual ENvironment (VE) _(write your knowledge graph)_
 
-![SVEN Overview](./Assets/com.nsaintl.sven/Documentation~/instantiate_graphbuffer.png)
+![Instantiate GraphBuffer](./Assets/com.nsaintl.sven/Documentation~/instantiate_graphbuffer.png)
+![GraphBuffer](./Assets/com.nsaintl.sven/Documentation~/graphbuffer.png)
+
+![Instantiate OntologyDescription](./Assets/com.nsaintl.sven/Documentation~/instantiate_ontologydescription.png)
+![OntologyDescription](./Assets/com.nsaintl.sven/Documentation~/ontologydescription.png)
+
+![Semantization Core](./Assets/com.nsaintl.sven/Documentation~/semantizationcore.png)
+
+![GraphReader Remote](./Assets/com.nsaintl.sven/Documentation~/graphreader_remote.png)
+![GraphReader Local](./Assets/com.nsaintl.sven/Documentation~/graphreader_local.png)
+
+![Reader Scene](./Assets/com.nsaintl.sven/Documentation~/reader_scene.png)
 
 // explication du graph buffer et de toute ses propriétés (référencé au différentes sections ci-dessous enfonction de local/remote)
 
