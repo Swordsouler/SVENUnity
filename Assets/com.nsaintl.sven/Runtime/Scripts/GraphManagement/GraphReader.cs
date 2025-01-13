@@ -611,7 +611,15 @@ namespace Sven.GraphManagement
                 }
                 gameObjectDescription.GameObject.SetActive(gameObjectDescription.Active);
                 gameObjectDescription.GameObject.layer = LayerMask.NameToLayer(gameObjectDescription.Layer);
-                gameObjectDescription.GameObject.tag = gameObjectDescription.Tag ?? "Untagged";
+                try
+                {
+                    bool isTagExist = GameObject.FindGameObjectsWithTag(gameObjectDescription.Tag).Length == 0;
+                    gameObjectDescription.GameObject.tag = isTagExist ? gameObjectDescription.Tag ?? "Untagged" : "Untagged";
+                }
+                catch (Exception)
+                {
+                    gameObjectDescription.GameObject.tag = "Untagged";
+                }
                 gameObjectDescription.GameObject.name = gameObjectDescription.Name;
 
                 foreach (ComponentDescription componentDescription in gameObjectDescription.Components.Values)

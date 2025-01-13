@@ -166,7 +166,7 @@ MonoBehaviour:
   graphConfig: {fileID: 11400000, guid: 35749ed3a41188e43a34910d5069cfe6, type: 2}
   _readingMode: 1
   _endpoint: http://localhost:7200/repositories/Demo-Scene
-  storageName: Scene1
+  _storageName: Atom
   _currentInstantIndex: 0
 --- !u!1 &331900381
 GameObject:
