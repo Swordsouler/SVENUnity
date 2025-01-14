@@ -21,13 +21,13 @@ Unity **6000.0** or later versions.
 
 1. The package is available in **Releases** section. You can download the latest version from [here](https://gitlab.lisn.upsaclay.fr/nsaintl/SVENUnity/-/releases/permalink/latest), then import it into your Unity project.
 
-2. You can also install via git url by adding this entry in your **manifest.json**
+2. You can also install via git url by adding this entry in your **Packages/manifest.json**
 
 ```
-"com.***.***": "https://gitlab.lisn.upsaclay.fr/nsaintl/SVENUnity.git#upm"
+"com.nsaintl.sven": "https://gitlab.lisn.upsaclay.fr/nsaintl/SVENUnity.git#upm"
 ```
 
-If you don't have openUPM CLI, you will need to install it first by following the instructions [here](https://openupm.com/docs/getting-started.html), or by adding this entry in your **manifest.json**. This step is important, otherwise the dependencies will not install properly.
+If you don't have openUPM CLI, you will need to install it first by following the instructions [here](https://openupm.com/docs/getting-started.html), or by adding this entry in your **Packages/manifest.json**. This step is important, otherwise the dependencies will not install properly.
 
 ```json
 {
@@ -50,58 +50,71 @@ This project is developed as part of a PhD thesis at the LISN laboratory of the 
 
 ## Semantize your Virtual ENvironment (VE) _(write your knowledge graph)_
 
-Pour créer un environnement virtuel semantisé, il suffit de suivre les étapes suivantes :
+To create a semantized virtual environment, follow these steps:
 
-1. Ajouter dans votre scène un composant **GraphBuffer** (GameObject > Semantic > GraphBuffer) qui permet de stocker les données de votre environnement virtuel sous forme de graphe de connaissance et de les envoyer à un serveur distant (ou un fichier local) pour pouvoir l'analyser ou le rejouer plus tard.
+1. Add a **GraphBuffer** component to your scene (GameObject > Semantic > GraphBuffer). This component stores your virtual environment data as a knowledge graph and sends it to a remote server (or a local file) for later analysis or replay.
 
 ![Instantiate GraphBuffer](./Assets/com.nsaintl.sven/Documentation~/instantiate_graphbuffer.png)
 
-2. Configurer le composant **GraphBuffer** en fonction de vos besoins :
+2. Configure the **GraphBuffer** component according to your needs:
 
-| Propriété                | Description                                                                                                                           |
-| ------------------------ | ------------------------------------------------------------------------------------------------------------------------------------- |
-| **Endpoint**             | L'URL du serveur distant où les données seront envoyées (ou le chemin du fichier local où les données seront sauvegardées)            |
-| **Storage Name**         | Le nom du graphe de connaissance qui sera créé sur le serveur distant (ou le nom du fichier local où les données seront sauvegardées) |
-| **Instant Per Second**   | La fréquence à laquelle les données de l'environnement virtuel seront vérifiées et sauvegardées dans le graphe de connaissance        |
-| **Ontology Description** | La description de l'ontologie utilisée pour décrire les données de l'environnement virtuel                                            |
+| Property                 | Description                                                                                                                            |
+| ------------------------ | -------------------------------------------------------------------------------------------------------------------------------------- |
+| **Endpoint**             | The URL of the remote server where the data will be sent (or the path of the local file where the data will be saved)                  |
+| **Storage Name**         | The name of the knowledge graph that will be created on the remote server (or the name of the local file where the data will be saved) |
+| **Instant Per Second**   | The frequency at which the virtual environment data will be checked and saved in the knowledge graph                                   |
+| **Ontology Description** | The description of the ontology used to describe the virtual environment data                                                          |
 
 ![GraphBuffer](./Assets/com.nsaintl.sven/Documentation~/graphbuffer.png)
 
-3. Créer dans votre projet une ressource **OntologyDescription** (Create > Semantic > OntologyDescription) qui décrit permet de décrire la configuration de l'ontologie utilisée pour décrire les données de l'environnement virtuel.
+3. Create an **OntologyDescription** resource in your project (Create > Semantic > OntologyDescription) to describe the ontology configuration used for your virtual environment data.
 
 ![Instantiate OntologyDescription](./Assets/com.nsaintl.sven/Documentation~/instantiate_ontologydescription.png)
 
-4. Configurer la ressource **OntologyDescription** en fonction de vos besoins :
+4. Configure the **OntologyDescription** resource according to your needs:
 
-| Propriété         | Description                                                                                                                |
-| ----------------- | -------------------------------------------------------------------------------------------------------------------------- |
-| **Name**          | Nom de l'ontologie utilisée pour décrire les données de l'environnement virtuel                                            |
-| **Base Uri**      | L'URI de base utilisée pour décrire les données de l'environnement virtuel                                                 |
-| **Namespaces**    | Les espaces de noms utilisés pour décrire les données de l'environnement virtuel                                           |
-| **Ontology File** | Le fichier **_.ttl_** contenant la description de l'ontologie utilisée pour décrire les données de l'environnement virtuel |
+| Property          | Description                                                                                           |
+| ----------------- | ----------------------------------------------------------------------------------------------------- |
+| **Name**          | The name of the ontology used to describe the virtual environment data                                |
+| **Base Uri**      | The base URI used to describe the virtual environment data                                            |
+| **Namespaces**    | The namespaces used to describe the virtual environment data                                          |
+| **Ontology File** | The **_.ttl_** file containing the ontology description used to describe the virtual environment data |
 
 ![OntologyDescription](./Assets/com.nsaintl.sven/Documentation~/ontologydescription.png)
 
-5. Ajouter à chaque objet que vous souhaitez semantiser un composant **SemantizationCore** (GameObject > Semantic > SemantizationCore) qui permet de scanner les composants, vous permettant de choisir les propriétés à observer et à modifier. Vous pouvez également choisir si le composant doit être observé dynamiquement ou s'il est considéré comme statique et sémantisé uniquement à sa création.
+5. Add a **SemantizationCore** component to each object you want to semantize (GameObject > Semantic > SemantizationCore). This component scans the object's components, allowing you to select which properties to observe and modify. You can also choose whether the component should be dynamically observed or considered static and semantized only at creation.
 
 ![Semantization Core](./Assets/com.nsaintl.sven/Documentation~/semantizationcore.png)
 
-6. Votre scène est maintenant prête à être semantisée. Vous pouvez maintenant lancer votre application et observer les données de votre environnement virtuel être sauvegardées dans le graphe de connaissance à la fin de votre expérience.
+6. Your scene is now ready to be semantized. You can run your application and observe the data from your virtual environment being saved into the knowledge graph at the end of your experience.
 
-Les fichiers **_.ttl_** sont sauvegardés dans le dossier **SVENs** à la racine de votre projet.
+The **_.ttl_** files are saved in the **SVENs** folder at the root of your project.
 
 ## Replay your Semantize Virtual ENvironment (SVEN) _(read your knowledge graph)_
 
-![GraphReader Remote](./Assets/com.nsaintl.sven/Documentation~/graphreader_remote.png)
-![GraphReader Local](./Assets/com.nsaintl.sven/Documentation~/graphreader_local.png)
+To replay a semantized virtual environment, follow these steps:
 
-![Reader Scene](./Assets/com.nsaintl.sven/Documentation~/reader_scene.png)
+1. Download the **Replay Semantized Virtual Environment** sample and open the **Replay SVEN** scene.
+
+2. Select the **Reader** object in the scene hierarchy and configure the **GraphReader** component according to your needs. This component reads the knowledge graph data and applies it to your virtual environment, allowing you to fully recreate a previously recorded experience. The component can read data from a local file or a remote server depending on the chosen configuration:
+
+### Remote
+
+| Property         | Description                                                       |
+| ---------------- | ----------------------------------------------------------------- |
+| **Endpoint**     | The URL of the remote server where the data will be read          |
+| **Storage Name** | The name of the knowledge graph that will be read from the server |
+
+![GraphReader Remote](./Assets/com.nsaintl.sven/Documentation~/graphreader_remote.png)
 
 ### Local
 
-// toucher au composant **GraphReader** mettre en local -> charger un fichier **_.ttl_**
+In local mode, once the scene is launched, simply press the **Load Graph from file** button to load a **_.ttl_** file containing the knowledge graph data.
+![GraphReader Local](./Assets/com.nsaintl.sven/Documentation~/graphreader_local.png)
 
-### Remote
+3. And that's it! You can now navigate through your virtual environment as it was previously recorded.
+
+![Reader Scene](./Assets/com.nsaintl.sven/Documentation~/reader_scene.png)
 
 ## How to support new components ?
 
