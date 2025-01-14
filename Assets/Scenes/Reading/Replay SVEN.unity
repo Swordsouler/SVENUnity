@@ -163,7 +163,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2329338d9657a9943b9c5743f53961b1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ontologyDescription: {fileID: 11400000, guid: e4ebe9b8c0b8b584f96fb2290bdbeaf3, type: 2}
+  ontologyDescription: {fileID: 11400000, guid: 02dbca5f0b2f48945a6a733f130690f2, type: 2}
   _readingMode: 1
   _endpoint: http://localhost:7200/repositories/Demo-Scene
   _storageName: Scene 1
