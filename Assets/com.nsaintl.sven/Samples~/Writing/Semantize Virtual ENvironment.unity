@@ -589,7 +589,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5d6e04c6dbdbcc34599fc0785c6bdffd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  graphConfig: {fileID: 11400000, guid: 35749ed3a41188e43a34910d5069cfe6, type: 2}
+  ontologyDescription: {fileID: 11400000, guid: 35749ed3a41188e43a34910d5069cfe6, type: 2}
   _endpoint: http://localhost:7200/repositories/Demo-Scene/rdf-graphs/service
   _storageName: Scene 1
   _instantPerSecond: 10
