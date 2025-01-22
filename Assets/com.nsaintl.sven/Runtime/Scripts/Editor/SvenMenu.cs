@@ -1,3 +1,4 @@
+#if UNITY_EDITOR
 using Sven.Content;
 using Sven.GraphManagement;
 using UnityEditor;
@@ -41,3 +42,4 @@ namespace Sven.Editor
         }
     }
 }
+#endif

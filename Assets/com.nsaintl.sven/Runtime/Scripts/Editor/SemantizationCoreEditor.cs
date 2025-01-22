@@ -1,3 +1,4 @@
+#if UNITY_EDITOR
 using UnityEditor;
 using UnityEngine;
 using NaughtyAttributes.Editor;
@@ -125,3 +126,4 @@ namespace Sven.Editor
         }
     }
 }
+#endif

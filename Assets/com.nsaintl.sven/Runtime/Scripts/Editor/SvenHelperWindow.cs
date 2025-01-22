@@ -1,3 +1,4 @@
+#if UNITY_EDITOR
 using UnityEditor;
 
 namespace Sven.Editor
@@ -29,3 +30,4 @@ namespace Sven.Editor
         }
     }
 }
+#endif
