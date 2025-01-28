@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Sven.GeoData;
 using UnityEngine;
 
 namespace Sven.Content
@@ -43,6 +44,7 @@ namespace Sven.Content
             { typeof(Vector2), new PropertyDescription("Vector2", new List<string> { "x", "y" }) },
             { typeof(Color), new PropertyDescription("Color", new List<string> { "r", "g", "b", "a"}) },
             { typeof(object), new PropertyDescription("Primitive", new List<string> { "value" }) },
+            { typeof(GeoWKT), new PropertyDescription("geo:Geometry", new List<string> { "geo:asWKT" }) },
         };
 
         /// <summary>

@@ -3,6 +3,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using Sven.GeoData;
 using Sven.GraphManagement;
 using Sven.OwlTime;
 using Sven.Utils;
@@ -205,7 +206,8 @@ namespace Sven.Content
         /// <returns>RDF type of the component.</returns>
         public static string GetRdfType(this Component component)
         {
-            if (MapppedComponents.ContainsKey(component.GetType())) return "sven:" + MapppedComponents.GetValue(component.GetType()).TypeName;
+            if (MapppedComponents.TryGetValue(component.GetType(), out var value))
+                return value.TypeName.Contains(":") ? value.TypeName : "sven:" + value.TypeName;
             else return "sven:" + component.GetType().Name;
         }
 
@@ -240,6 +242,7 @@ namespace Sven.Content
                 Type t when t == typeof(bool) => XmlSpecsHelper.XmlSchemaDataTypeBoolean,
                 Type t when t == typeof(int) => XmlSpecsHelper.XmlSchemaDataTypeInt,
                 Type t when t == typeof(float) => XmlSpecsHelper.XmlSchemaDataTypeFloat,
+                Type t when t == typeof(GeoWKT) => "http://www.opengis.net/ont/geosparql#wktLiteral",
                 _ => XmlSpecsHelper.XmlSchemaDataTypeString,
             };
         }
@@ -270,7 +273,12 @@ namespace Sven.Content
             }
             else
             {
-                if (!MapppedProperties.ContainsKey(type))
+                if (type == typeof(GeoWKT))
+                {
+                    values.Add("geo:asWKT", obj);
+                    return values;
+                }
+                else if (!MapppedProperties.ContainsKey(type))
                 {
                     Debug.LogWarning($"Type {type} is not supported for nested values. Returning the object as a string.");
                     values.Add("value", obj.ToString());

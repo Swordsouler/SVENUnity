@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using DG.Tweening;
+using Sven.GeoData;
 using UnityEngine;
 
 namespace Sven.Content
@@ -106,6 +107,14 @@ namespace Sven.Content
         /// </summary>
         private static readonly Dictionary<Type, ComponentDescription> Value = new()
         {
+            {
+                typeof(Collider), new("geo:Feature",
+                new List<Delegate>
+                {
+                    (Func<Collider, PropertyDescription>)(collider => new PropertyDescription("enabled", () => collider.enabled, value => collider.enabled = value.ToString().ToLower() == "true", 1)),
+                    (Func<Collider, PropertyDescription>)(collider => new PropertyDescription("geo:hasGeometry", () => new GeoWKT(collider.bounds), value => {}, 1)),
+                })
+            },
             {
                 typeof(Transform), new("Transform",
                 new List<Delegate>

@@ -178,9 +178,11 @@ namespace Sven.Content
             IGraph graph = graphBuffer.Graph;
 
             IUriNode propertyNode = graph.CreateUriNode("sven:" + GetUUID());
-            IUriNode propertyTypeNode = graph.CreateUriNode("sven:" + MapppedProperties.GetValue(observedProperty.LastValue.GetType()).TypeName);
+            string propertyTypeName = MapppedProperties.GetValue(observedProperty.LastValue.GetType()).TypeName;
+            IUriNode propertyTypeNode = graph.CreateUriNode(propertyTypeName.Contains(":") ? propertyTypeName : "sven:" + propertyTypeName);
 
-            graph.Assert(new Triple(ParentComponentNode, graph.CreateUriNode("sven:" + name), propertyNode));
+            string propertyName = name.Contains(":") ? name : "sven:" + name;
+            graph.Assert(new Triple(ParentComponentNode, graph.CreateUriNode(propertyName), propertyNode));
             graph.Assert(new Triple(propertyNode, graph.CreateUriNode("rdf:type"), propertyTypeNode));
             graph.Assert(new Triple(propertyNode, graph.CreateUriNode("sven:exactType"), propertyTypeNode));
 
@@ -200,7 +202,7 @@ namespace Sven.Content
                 string XmlSchemaDataType = value.Value.GetXmlSchemaTypes();
                 if (XmlSchemaDataType == XmlSpecsHelper.XmlSchemaDataTypeBoolean) stringValue = stringValue.ToLower();
                 ILiteralNode literalNode = graph.CreateLiteralNode(stringValue, new Uri(XmlSchemaDataType));
-                graph.Assert(new Triple(propertyNode, graph.CreateUriNode("sven:" + value.Key), literalNode));
+                graph.Assert(new Triple(propertyNode, graph.CreateUriNode(value.Key.Contains(":") ? value.Key : "sven:" + value.Key), literalNode));
 
                 if (simplifiedName != "")
                 {
@@ -216,10 +218,8 @@ namespace Sven.Content
         public void Destroy()
         {
             IGraph graph = graphBuffer.Graph;
-            Interval oldInterval = interval;
-            interval = new Interval("sven:", GetUUID());
-            oldInterval?.End(graphBuffer.CurrentInstant, interval);
-            oldInterval?.Semantize(graph);
+            interval?.End(graphBuffer.CurrentInstant);
+            interval?.Semantize(graph);
             DestroyUUID();
         }
     }

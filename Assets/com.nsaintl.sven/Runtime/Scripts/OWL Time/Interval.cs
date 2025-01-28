@@ -32,6 +32,7 @@ namespace Sven.OwlTime
         /// <param name="previous">The interval that occurs before this one.</param>
         public new void Start(Instant instant, TemporalEntity previous = null)
         {
+            if (intervals.Contains(this)) return;
             intervals.Add(this);
             base.Start(instant, previous);
         }
@@ -42,6 +43,7 @@ namespace Sven.OwlTime
         /// <param name="next">The interval that occurs after this one.</param>
         public new void End(Instant instant, TemporalEntity next = null)
         {
+            if (!intervals.Contains(this)) return;
             intervals.Remove(this);
             base.End(instant, next);
         }

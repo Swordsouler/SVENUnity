@@ -27,6 +27,10 @@ MonoBehaviour:
     <Uri>k__BackingField: http://www.sven.fr/ontology#
   - <Name>k__BackingField: time
     <Uri>k__BackingField: http://www.w3.org/2006/time#
+  - <Name>k__BackingField: geo
+    <Uri>k__BackingField: http://www.opengis.net/ont/geosparql#
+  - <Name>k__BackingField: geof
+    <Uri>k__BackingField: http://www.opengis.net/def/function/geosparql/
   _ontologyFile: {fileID: 102900000, guid: 97570f68d960d9046a36fec21bfbf79b, type: 3}
   <OntologyContent>k__BackingField: "@prefix : <http://www.sven.fr/ontology#> .\n@prefix
     owl: <http://www.w3.org/2002/07/owl#> .\n@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
