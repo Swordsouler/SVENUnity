@@ -31,27 +31,27 @@ namespace Sven.Content
         /// The graph buffer to semantize the GameObject.
         /// </summary>
         [SerializeField]
-        private GraphBuffer graphBuffer;
+        private GraphBuffer _graphBuffer;
         /// <summary>
         /// The graph buffer to semantize the GameObject.
         /// </summary>
-        public GraphBuffer GraphBuffer => graphBuffer;
+        public GraphBuffer GraphBuffer => _graphBuffer;
 
         /// <summary>
         /// Coroutine to check for changes in the properties of the GameObject.
         /// </summary>
-        private Coroutine checkForChangesCoroutine;
+        private Coroutine _checkForChangesCoroutine;
 
         /// <summary>
         /// Start is called before the first frame update.
         /// </summary>
         private void Start()
         {
-            if (graphBuffer == null) graphBuffer = GraphManager.Get("sven");
+            if (_graphBuffer == null) _graphBuffer = GraphManager.Get("sven");
             Component component = GetComponent<Component>();
             componentsToSemantize.RemoveAll(c => c == null || c.Component == null || !component.gameObject.Equals(c.Component.gameObject));
             Initialize();
-            checkForChangesCoroutine = StartCoroutine(LoopCheckForChanges(1.0f / graphBuffer.InstantPerSecond));
+            _checkForChangesCoroutine = StartCoroutine(LoopCheckForChanges(1.0f / _graphBuffer.InstantPerSecond));
         }
 
         /// <summary>
@@ -66,7 +66,7 @@ namespace Sven.Content
                 {
                     Component = this,
                     ProcessingMode = SemanticProcessingMode.Dynamic,
-                    Properties = SemanticObserve(graphBuffer)
+                    Properties = SemanticObserve(_graphBuffer)
                 });
 
                 // foreach component in the GameObject, semantize the component and his properties
@@ -75,7 +75,7 @@ namespace Sven.Content
                     {
                         Component = component.Component,
                         ProcessingMode = component.ProcessingMode,
-                        Properties = component.Component.SemanticObserve(graphBuffer)
+                        Properties = component.Component.SemanticObserve(_graphBuffer)
                     });
 
             }
@@ -98,7 +98,7 @@ namespace Sven.Content
             }
 
             componentsToSemantize.Add(new SemanticComponent { Component = component, ProcessingMode = mode });
-            List<Property> properties = component.SemanticObserve(graphBuffer);
+            List<Property> properties = component.SemanticObserve(_graphBuffer);
             componentsProperties.Add(component, new SemanticComponent
             {
                 Component = component,
@@ -173,8 +173,8 @@ namespace Sven.Content
                     property.Destroy();
 
                 Interval interval = component.GetInterval();
-                interval.End(graphBuffer.CurrentInstant);
-                interval.Semantize(graphBuffer.Graph);
+                interval.End(_graphBuffer.CurrentInstant);
+                interval.Semantize(_graphBuffer.Graph);
                 component.DestroyUUID();
 
                 componentsProperties.Remove(component);
@@ -199,7 +199,7 @@ namespace Sven.Content
         private void OnDisable()
         {
             CheckForChanges();
-            if (checkForChangesCoroutine != null) StopCoroutine(checkForChangesCoroutine);
+            if (_checkForChangesCoroutine != null) StopCoroutine(_checkForChangesCoroutine);
         }
 
         /// <summary>
@@ -207,9 +207,9 @@ namespace Sven.Content
         /// </summary>
         private void OnEnable()
         {
-            if (graphBuffer == null) return;
-            if (checkForChangesCoroutine != null) StopCoroutine(checkForChangesCoroutine);
-            StartCoroutine(LoopCheckForChanges(1.0f / graphBuffer.InstantPerSecond));
+            if (_graphBuffer == null) return;
+            if (_checkForChangesCoroutine != null) StopCoroutine(_checkForChangesCoroutine);
+            StartCoroutine(LoopCheckForChanges(1.0f / _graphBuffer.InstantPerSecond));
         }
 
         /// <summary>
@@ -223,8 +223,8 @@ namespace Sven.Content
                     property.Destroy();
 
                 Interval interval = componentProperties.Key.GetInterval();
-                interval.End(graphBuffer.CurrentInstant);
-                interval.Semantize(graphBuffer.Graph);
+                interval.End(_graphBuffer.CurrentInstant);
+                interval.Semantize(_graphBuffer.Graph);
                 componentProperties.Key.DestroyUUID();
             }
         }
