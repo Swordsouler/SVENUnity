@@ -76,6 +76,7 @@ namespace Sven.Context
 
         protected new void OnDrawGizmos()
         {
+            if (!_debug) return;
             Gizmos.color = SvenHelper.GraspAreaDebugColor;
             base.OnDrawGizmos();
 

@@ -41,6 +41,12 @@ namespace Sven.Context
         private bool _isInitialized = false;
 
         /// <summary>
+        /// The debug mode.
+        /// </summary>
+        [SerializeField]
+        protected bool _debug = true;
+
+        /// <summary>
         /// Called when the script instance is being loaded.
         /// </summary>
         protected void Awake()
@@ -88,6 +94,7 @@ namespace Sven.Context
 
         protected void OnDrawGizmos()
         {
+            if (!_debug) return;
             // Draw the visible objects
             foreach (var obj in _currentInteractedObjects)
             {

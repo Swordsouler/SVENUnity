@@ -3,6 +3,7 @@ using UnityEditor;
 using UnityEngine;
 using NaughtyAttributes.Editor;
 using System;
+using System.Collections.Generic;
 using Sven.Content;
 
 namespace Sven.Editor
@@ -11,7 +12,7 @@ namespace Sven.Editor
     /// Custom editor for the SemantizationCore component.
     /// </summary>
     [CustomEditor(typeof(SemantizationCore))]
-    //[CanEditMultipleObjects]
+    [CanEditMultipleObjects]
     public class SemantizationCoreEditor : NaughtyInspector
     {
         /// <summary>
@@ -22,21 +23,39 @@ namespace Sven.Editor
         /// <summary>
         /// Override the default inspector GUI to display the semantization foldout.
         /// </summary>
-
         public override void OnInspectorGUI()
         {
             // Display default inspector elements with NaughtyAttributes
             base.OnInspectorGUI();
 
-            // Get the instance of SemantizationCore
-            SemantizationCore core = (SemantizationCore)target;
-
             // Display the foldout for semantization
             showSemantization = EditorGUILayout.Foldout(showSemantization, "Semantization", true);
             if (showSemantization)
             {
-                // Get all components of the GameObject
-                Component[] allComponents = core.GetComponents<Component>();
+                // Get the serialized property for componentsToSemantize
+                SerializedProperty componentsToSemantizeProperty = serializedObject.FindProperty("componentsToSemantize");
+
+                // Dictionary to group components by type
+                Dictionary<Type, List<Component>> groupedComponents = new Dictionary<Type, List<Component>>();
+
+                // Get all components of the GameObject and group them by type
+                foreach (UnityEngine.Object targetObject in serializedObject.targetObjects)
+                {
+                    SemantizationCore core = (SemantizationCore)targetObject;
+                    Component[] allComponents = core.GetComponents<Component>();
+
+                    foreach (Component component in allComponents)
+                    {
+                        if (component is SemantizationCore) continue;
+
+                        Type componentType = component.GetType();
+                        if (!groupedComponents.ContainsKey(componentType))
+                        {
+                            groupedComponents[componentType] = new List<Component>();
+                        }
+                        groupedComponents[componentType].Add(component);
+                    }
+                }
 
                 // Disable GUI if the editor is in play mode
                 EditorGUI.BeginDisabledGroup(EditorApplication.isPlaying);
@@ -44,22 +63,19 @@ namespace Sven.Editor
                 // Get the names of the SemanticProcessingMode enum values
                 string[] processingModeOptions = Enum.GetNames(typeof(SemanticProcessingMode));
 
-                // Display checkboxes and dropdowns for each component
-                foreach (Component component in allComponents)
+                // Display checkboxes and dropdowns for each group of components
+                foreach (var group in groupedComponents)
                 {
-                    // Exclude the SemantizationCore component from the list
-                    if (component is SemantizationCore) continue;
+                    Type componentType = group.Key;
+                    List<Component> components = group.Value;
 
                     // Check if the component has the Semantize method
-                    bool hasGetProperties = MapppedComponents.ContainsKey(component.GetType());
-                    bool isHidden = MapppedComponents.ContainsKey(component.GetType()) && MapppedComponents.GetValue(component.GetType()) == null;
+                    bool hasGetProperties = MapppedComponents.ContainsKey(componentType);
+                    bool isHidden = MapppedComponents.ContainsKey(componentType) && MapppedComponents.GetValue(componentType) == null;
 
                     if (isHidden) continue;
 
-                    // Check if the component is in the componentsToSemantize list
-                    bool isSemantized = core.componentsToSemantize.Find(c => c.Component == component) != null;
-
-                    string label = component.GetType().Name;
+                    string label = componentType.Name;
 
                     // Create a GUIStyle for the label
                     GUIStyle labelStyle = new(EditorStyles.label);
@@ -70,9 +86,9 @@ namespace Sven.Editor
                     }
                     else
                     {
-                        string rdfType = MapppedComponents.GetValue(component.GetType()).TypeName;
+                        string rdfType = MapppedComponents.GetValue(componentType).TypeName;
                         if (rdfType != null && rdfType != label)
-                            label = $"{label} ({MapppedComponents.GetValue(component.GetType()).TypeName})";
+                            label = $"{label} ({MapppedComponents.GetValue(componentType).TypeName})";
                     }
 
                     // Begin horizontal layout
@@ -80,13 +96,13 @@ namespace Sven.Editor
 
                     // Display a checkbox for the component with "(ALL)" and a tooltip if it doesn't have GetProperties
                     GUIContent content = new("", "The component will be fully semantized, which may cause performance issues. To fix this, declare a GetProperties function for this component in SemantizationExtensions.");
-                    bool newIsSemantized = EditorGUILayout.Toggle(isSemantized, GUILayout.Width(20));
+                    bool newIsSemantized = EditorGUILayout.Toggle(components.Exists(c => ((SemantizationCore)c.gameObject.GetComponent<SemantizationCore>()).componentsToSemantize.Exists(sc => sc.Component == c)), GUILayout.Width(20));
 
                     // Disable the dropdown if the checkbox is not checked
                     EditorGUI.BeginDisabledGroup(!newIsSemantized);
 
                     // Display a dropdown for the component with the options from SemanticProcessingMode
-                    int selectedIndex = EditorGUILayout.Popup(newIsSemantized ? core.componentsToSemantize.Find(c => c.Component == component)?.ProcessingMode == SemanticProcessingMode.Static ? 1 : 0 : 0, newIsSemantized ? processingModeOptions : new string[] { "" }, GUILayout.Width(80));
+                    int selectedIndex = EditorGUILayout.Popup(newIsSemantized ? ((SemantizationCore)components[0].gameObject.GetComponent<SemantizationCore>()).componentsToSemantize.Find(sc => sc.Component == components[0])?.ProcessingMode == SemanticProcessingMode.Static ? 1 : 0 : 0, newIsSemantized ? processingModeOptions : new string[] { "" }, GUILayout.Width(80));
 
                     // End disabled group for dropdown
                     EditorGUI.EndDisabledGroup();
@@ -98,33 +114,42 @@ namespace Sven.Editor
                     EditorGUILayout.EndHorizontal();
 
                     // Update the componentsToSemantize list based on the checkbox state
-                    if (newIsSemantized && !isSemantized)
+                    foreach (Component component in components)
                     {
-                        core.componentsToSemantize.Add(new SemanticComponent { Component = component, ProcessingMode = (SemanticProcessingMode)selectedIndex });
-                        core.componentsToSemantize.RemoveAll(c => c == null || c.Component == null || !component.gameObject.Equals(c.Component.gameObject));
-                    }
-                    else if (!newIsSemantized && isSemantized)
-                    {
-                        core.componentsToSemantize.Remove(core.componentsToSemantize.Find(c => c.Component == component));
-                        core.componentsToSemantize.RemoveAll(c => c == null || c.Component == null || !component.gameObject.Equals(c.Component.gameObject));
-                    }
+                        SemantizationCore core = (SemantizationCore)component.gameObject.GetComponent<SemantizationCore>();
+                        bool isSemantized = core.componentsToSemantize.Find(c => c.Component == component) != null;
 
-                    // Handle the dropdown selection (you can add your logic here)
-                    if (newIsSemantized)
-                    {
-                        core.componentsToSemantize.Find(c => c.Component == component).ProcessingMode = (SemanticProcessingMode)selectedIndex;
+                        if (newIsSemantized && !isSemantized)
+                        {
+                            core.componentsToSemantize.Add(new SemanticComponent { Component = component, ProcessingMode = (SemanticProcessingMode)selectedIndex });
+                            core.componentsToSemantize.RemoveAll(c => c == null || c.Component == null || !component.gameObject.Equals(c.Component.gameObject));
+                        }
+                        else if (!newIsSemantized && isSemantized)
+                        {
+                            core.componentsToSemantize.Remove(core.componentsToSemantize.Find(c => c.Component == component));
+                            core.componentsToSemantize.RemoveAll(c => c == null || c.Component == null || !component.gameObject.Equals(c.Component.gameObject));
+                        }
+
+                        // Handle the dropdown selection (you can add your logic here)
+                        if (newIsSemantized)
+                        {
+                            core.componentsToSemantize.Find(c => c.Component == component).ProcessingMode = (SemanticProcessingMode)selectedIndex;
+                        }
                     }
                 }
 
                 // Re-enable GUI
                 EditorGUI.EndDisabledGroup();
-            }
 
-            // Apply changes
-            if (GUI.changed)
-            {
-                serializedObject.ApplyModifiedProperties();
-                EditorUtility.SetDirty(core);
+                // Apply changes
+                if (GUI.changed)
+                {
+                    serializedObject.ApplyModifiedProperties();
+                    foreach (UnityEngine.Object targetObject in serializedObject.targetObjects)
+                    {
+                        EditorUtility.SetDirty(targetObject);
+                    }
+                }
             }
         }
     }

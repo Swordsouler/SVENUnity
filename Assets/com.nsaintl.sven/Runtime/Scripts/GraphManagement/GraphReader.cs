@@ -614,7 +614,7 @@ namespace Sven.GraphManagement
                 gameObjectDescription.GameObject.layer = LayerMask.NameToLayer(gameObjectDescription.Layer);
                 try
                 {
-                    bool isTagExist = GameObject.FindGameObjectsWithTag(gameObjectDescription.Tag).Length == 0;
+                    bool isTagExist = !string.IsNullOrEmpty(gameObjectDescription.Tag);
                     gameObjectDescription.GameObject.tag = isTagExist ? gameObjectDescription.Tag ?? "Untagged" : "Untagged";
                 }
                 catch (Exception)
@@ -662,7 +662,7 @@ namespace Sven.GraphManagement
 
                     foreach (PropertyDescription propertyDescription in componentDescription.Properties.Values)
                     {
-                        // check if the property exists in the current scene content (by checking the uuid)
+                        // check if the property state exists in the current scene content (by checking the uuid)
                         bool propertyExist = componentExist && currentSceneContent.GameObjects[gameObjectDescription.UUID].Components[componentDescription.UUID].Properties.TryGetValue(propertyDescription.Name, out var currentPropertyDescription) && currentPropertyDescription.UUID == propertyDescription.UUID;
                         if (propertyExist) continue;
 
@@ -675,12 +675,16 @@ namespace Sven.GraphManagement
                         //if (componentDescription.Component.GetType() == typeof(MeshRenderer))
                         //    Debug.Log($"Property: {propertyDescription.Name} {propertyDescription.Type} {propertyValue.GetType()}  {propertyValue}");
 
-                        if (setters.TryGetValue(propertyDescription.Name, out var setter) && setter.Item2 != null) setter.Item2(propertyValue);
+                        if (setters.TryGetValue(propertyDescription.Name, out var setter) && setter.Item2 != null)
+                        {
+                            setter.Item2(propertyValue);
+                        }
                         //else Debug.LogWarning($"Setter not found for {propertyDescription.Type} in {componentDescription.Type} of {gameObjectDescription.UUID}");
                     }
                 }
             }
 
+            // remove the gameobjects and components that are not in the target scene content
             foreach (GameObjectDescription gameObjectDescription in currentSceneContent.GameObjects.Values)
             {
                 if (!targetSceneContent.GameObjects.ContainsKey(gameObjectDescription.UUID))
