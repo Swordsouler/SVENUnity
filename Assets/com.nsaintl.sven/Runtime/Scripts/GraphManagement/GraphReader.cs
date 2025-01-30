@@ -482,7 +482,7 @@ namespace Sven.GraphManagement
                                         sven:component ?component .
                                 ?component sven:exactType ?componentType ;
                                         ?propertyName ?property .
-                                ?propertyName rdfs:subPropertyOf* sven:componentProperties ;
+                                ?propertyName rdfs:subPropertyOf* sven:componentProperty ;
                                             rdfs:range ?propertyRange .
                                 ?property sven:exactType ?propertyType ;
                                         ?propertyNestedName ?propertyValue ;
