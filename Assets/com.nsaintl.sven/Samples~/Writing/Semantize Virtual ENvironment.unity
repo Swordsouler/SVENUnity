@@ -532,6 +532,10 @@ MonoBehaviour:
     <ProcessingMode>k__BackingField: 1
   - <Component>k__BackingField: {fileID: 98621459}
     <ProcessingMode>k__BackingField: 0
+  - <Component>k__BackingField: {fileID: 98621463}
+    <ProcessingMode>k__BackingField: 1
+  - <Component>k__BackingField: {fileID: 98621458}
+    <ProcessingMode>k__BackingField: 0
   _graphBuffer: {fileID: 0}
 --- !u!114 &98621463
 MonoBehaviour:
@@ -3437,7 +3441,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7e518ae278ae889448712861370435c0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  componentsToSemantize: []
+  componentsToSemantize:
+  - <Component>k__BackingField: {fileID: 938404640}
+    <ProcessingMode>k__BackingField: 0
   _graphBuffer: {fileID: 0}
 --- !u!114 &938404644
 MonoBehaviour:
@@ -3737,6 +3743,69 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4727f174807448b43b2e4357632ef9c7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!1 &1011916313
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1011916314}
+  - component: {fileID: 1011916316}
+  - component: {fileID: 1011916315}
+  m_Layer: 0
+  m_Name: GraspArea
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1011916314
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1011916313}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1942567333}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1011916315
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1011916313}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3a78211476281d04c9197c7d4ddaf2fd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _graphBuffer: {fileID: 0}
+  _sphereRadius: 10
+--- !u!114 &1011916316
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1011916313}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7e518ae278ae889448712861370435c0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  componentsToSemantize:
+  - <Component>k__BackingField: {fileID: 1011916314}
+    <ProcessingMode>k__BackingField: 0
+  _graphBuffer: {fileID: 0}
 --- !u!1 &1031309578
 GameObject:
   m_ObjectHideFlags: 0
@@ -4193,7 +4262,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _pointOfView: {fileID: 1942567336}
-  _pointers: []
+  _pointers:
+  - {fileID: 938404644}
   _graspArea: {fileID: 0}
   _graphBuffer: {fileID: 0}
 --- !u!4 &1127875387
@@ -6901,6 +6971,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 938404640}
+  - {fileID: 1011916314}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1942567334
@@ -6959,7 +7030,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7e518ae278ae889448712861370435c0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  componentsToSemantize: []
+  componentsToSemantize:
+  - <Component>k__BackingField: {fileID: 1942567332}
+    <ProcessingMode>k__BackingField: 0
+  - <Component>k__BackingField: {fileID: 1942567333}
+    <ProcessingMode>k__BackingField: 0
   _graphBuffer: {fileID: 0}
 --- !u!114 &1942567336
 MonoBehaviour:
@@ -6968,7 +7043,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1942567330}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fc0275620122f9a43b37534676c6031c, type: 3}
   m_Name: 

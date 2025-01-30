@@ -6,7 +6,9 @@ using UnityEngine;
 
 namespace Sven.Context
 {
-    [DisallowMultipleComponent, RequireComponent(typeof(SemantizationCore))]
+    /// <summary>
+    /// Represents the pointer in the scene.
+    /// </summary>
     public class Pointer : Interactor
     {
         /// <summary>

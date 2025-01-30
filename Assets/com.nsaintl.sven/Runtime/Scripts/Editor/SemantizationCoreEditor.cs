@@ -52,6 +52,9 @@ namespace Sven.Editor
 
                     // Check if the component has the Semantize method
                     bool hasGetProperties = MapppedComponents.ContainsKey(component.GetType());
+                    bool isHidden = MapppedComponents.ContainsKey(component.GetType()) && MapppedComponents.GetValue(component.GetType()) == null;
+
+                    if (isHidden) continue;
 
                     // Check if the component is in the componentsToSemantize list
                     bool isSemantized = core.componentsToSemantize.Find(c => c.Component == component) != null;
@@ -63,7 +66,7 @@ namespace Sven.Editor
                     if (!hasGetProperties)
                     {
                         labelStyle.normal.textColor = Color.yellow;
-                        label = $"{label} (All properties will be semantized)";
+                        label = $"{label} (All properties will be semantized and not be replayed)";
                     }
                     else
                     {

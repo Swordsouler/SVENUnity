@@ -5,18 +5,12 @@ namespace Sven.Utils
     /// <summary>
     /// ManipulableObject class to control the object.
     /// </summary>
-    [RequireComponent(typeof(Collider)), DisallowMultipleComponent]
+    [DisallowMultipleComponent]
     public class ManipulableObject : MonoBehaviour
     {
         private Vector3 offset;
         private float zCoord;
         private bool isDragging = false;
-        private Renderer objectRenderer;
-
-        void Start()
-        {
-            objectRenderer = GetComponent<Renderer>();
-        }
 
         void Update()
         {
@@ -72,7 +66,7 @@ namespace Sven.Utils
                 }
             }
 
-            if (objectRenderer != null && IsMouseOverObject())
+            if (GetComponent<Renderer>() != null && IsMouseOverObject())
             {
                 if (Input.GetKeyDown(KeyCode.Keypad1)) ChangeColor(Color.red);
                 if (Input.GetKeyDown(KeyCode.Keypad2)) ChangeColor(Color.green);
@@ -88,7 +82,7 @@ namespace Sven.Utils
 
         private void ChangeColor(Color color)
         {
-            objectRenderer.material.color = color;
+            GetComponent<Renderer>().material.color = color;
         }
 
         private Vector3 GetMouseWorldPos()
@@ -100,9 +94,9 @@ namespace Sven.Utils
 
         private bool IsMouseOverObject()
         {
+            if (Camera.main == null || Input.mousePosition == null) return false;
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-            RaycastHit hit;
-            if (Physics.Raycast(ray, out hit))
+            if (Physics.Raycast(ray, out RaycastHit hit))
             {
                 return hit.collider != null && hit.collider.gameObject == gameObject;
             }

@@ -457,7 +457,7 @@ namespace Sven.GraphManagement
                     PREFIX sven: <http://www.sven.fr/ontology#>
                     PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
 
-                    SELECT ?object ?component ?componentType ?property ?propertyName ?propertyNestedName ?propertyValue ?propertyType
+                    SELECT DISTINCT ?object ?component ?componentType ?property ?propertyName ?propertyNestedName ?propertyValue ?propertyType
                     WHERE {{
                         {{
                             SELECT *
@@ -547,8 +547,9 @@ namespace Sven.GraphManagement
                         }
 
 
-                        Type componentType = MapppedComponents.GetType(componentStringType) ?? Type.GetType(componentStringType);
-                        if (!MapppedComponents.HasProperty(componentType, propertyName)) continue;
+                        Type componentType = MapppedComponents.GetType(componentStringType);// ?? Type.GetType(componentStringType);
+                        if (componentType == null || !MapppedComponents.HasProperty(componentType, propertyName)) continue;
+                        //Debug.Log($"Component: {componentType} {propertyName}");
 
                         Type propertyType = MapppedProperties.GetType(propertyStringType) ?? Type.GetType(propertyStringType);
                         if (!MapppedProperties.HasNestedProperty(propertyType, propertyNestedName)) continue;
@@ -637,6 +638,7 @@ namespace Sven.GraphManagement
                         {
                             try
                             {
+                                //Debug.Log(componentDescription.Type);
                                 componentDescription.Component = gameObjectDescription.GameObject.AddComponent(componentDescription.Type);
 
                                 // Default initialization

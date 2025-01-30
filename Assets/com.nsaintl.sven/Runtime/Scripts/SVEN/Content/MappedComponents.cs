@@ -2,7 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using DG.Tweening;
+using Sven.Context;
 using Sven.GeoData;
+using Sven.Utils;
 using UnityEngine;
 
 namespace Sven.Content
@@ -105,14 +107,17 @@ namespace Sven.Content
         /// <summary>
         /// Values of the properties of the components.
         /// </summary>
-        private static readonly Dictionary<Type, ComponentDescription> Value = new()
+        private static readonly Dictionary<Type, ComponentDescription> Values = new()
         {
             {
-                typeof(Collider), new("geo:Feature",
+                typeof(BoxCollider), new("geo:Feature",
                 new List<Delegate>
                 {
-                    (Func<Collider, PropertyDescription>)(collider => new PropertyDescription("enabled", () => collider.enabled, value => collider.enabled = value.ToString().ToLower() == "true", 1)),
-                    (Func<Collider, PropertyDescription>)(collider => new PropertyDescription("geo:hasGeometry", () => new GeoWKT(collider.bounds), value => {}, 1)),
+                    (Func<BoxCollider, PropertyDescription>)(collider => new PropertyDescription("enabled", () => collider.enabled, value => collider.enabled = value.ToString().ToLower() == "true", 1)),
+                    (Func<BoxCollider, PropertyDescription>)(collider => new PropertyDescription("size", () => collider.size, value => collider.size = (Vector3)value, 1)),
+                    (Func<BoxCollider, PropertyDescription>)(collider => new PropertyDescription("center", () => collider.center, value => collider.center = (Vector3)value, 1)),
+                    (Func<BoxCollider, PropertyDescription>)(collider => new PropertyDescription("isTrigger", () => collider.isTrigger, value => collider.isTrigger = value.ToString().ToLower() == "true", 1)),
+                    (Func<BoxCollider, PropertyDescription>)(collider => new PropertyDescription("geo:hasGeometry", () => new GeoWKT(collider.bounds), value => {}, 1)),
                 })
             },
             {
@@ -215,6 +220,16 @@ namespace Sven.Content
                         }, 2)),
                 })
             },
+            {typeof(ManipulableObject), new("ManipulableObject",
+                new List<Delegate>
+                {
+                    (Func<ManipulableObject, PropertyDescription>)(manipulableObject => new PropertyDescription("enabled", () => manipulableObject.enabled, value => manipulableObject.enabled = value.ToString().ToLower() == "true", 1)),
+                })},
+
+            // Ignore the following components
+            {typeof(PointOfView), null},
+            {typeof(GraspArea), null},
+            {typeof(Pointer), null},
         };
 
         /// <summary>
@@ -224,9 +239,9 @@ namespace Sven.Content
         /// <param name="description">The component description.</param>
         public static void AddComponentDescription(Type type, ComponentDescription description)
         {
-            if (!Value.ContainsKey(type))
+            if (!Values.ContainsKey(type))
             {
-                Value[type] = description;
+                Values[type] = description;
             }
         }
 
@@ -297,7 +312,7 @@ namespace Sven.Content
         public static Dictionary<string, Tuple<int, Action<object>>> GetSetters(Component component)
         {
             Dictionary<string, Tuple<int, Action<object>>> setters = new();
-            if (Value.TryGetValue(component.GetType(), out var componentDescription))
+            if (Values.TryGetValue(component.GetType(), out var componentDescription))
                 foreach (Delegate del in componentDescription.Properties)
                     if (del.DynamicInvoke(component) is PropertyDescription propertyDescription)
                         setters.Add(propertyDescription.PredicateName, new(propertyDescription.Priority, propertyDescription.Setter));
@@ -311,9 +326,9 @@ namespace Sven.Content
         /// <returns>True if the component is mapped, false otherwise.</returns>
         public static bool ContainsKey(Type type)
         {
-            if (Value.ContainsKey(type))
+            if (Values.ContainsKey(type))
                 return true;
-            else foreach (var key in Value.Keys)
+            else foreach (var key in Values.Keys)
                     if (key.IsAssignableFrom(type))
                         return true;
             return false;
@@ -326,11 +341,11 @@ namespace Sven.Content
         /// <returns>List of properties of the component.</returns>
         public static ComponentDescription GetValue(Type type)
         {
-            if (Value.TryGetValue(type, out var value))
+            if (Values.TryGetValue(type, out var value))
                 return value;
-            else foreach (Type key in Value.Keys)
+            else foreach (Type key in Values.Keys)
                     if (key.IsAssignableFrom(type))
-                        return Value[key];
+                        return Values[key];
             return null;
         }
 
@@ -342,12 +357,12 @@ namespace Sven.Content
         /// <returns>True if the component was found, false otherwise.</returns> 
         public static bool TryGetValue(Type type, out ComponentDescription componentDescription)
         {
-            if (Value.TryGetValue(type, out componentDescription))
+            if (Values.TryGetValue(type, out componentDescription))
                 return true;
-            else foreach (Type key in Value.Keys)
+            else foreach (Type key in Values.Keys)
                     if (key.IsAssignableFrom(type))
                     {
-                        componentDescription = Value[key];
+                        componentDescription = Values[key];
                         return true;
                     }
             return false;
@@ -361,11 +376,11 @@ namespace Sven.Content
         /// <returns>True if the component has the property, false otherwise.</returns>
         public static bool HasProperty(Type type, string propertyName)
         {
-            if (Value.TryGetValue(type, out var componentDescription))
+            if (Values.TryGetValue(type, out var componentDescription))
                 return componentDescription.CachedProperties.ContainsKey(propertyName);
-            else foreach (Type key in Value.Keys)
+            else foreach (Type key in Values.Keys)
                     if (key.IsAssignableFrom(type))
-                        return Value[key].CachedProperties.ContainsKey(propertyName);
+                        return Values[key].CachedProperties.ContainsKey(propertyName);
             return false;
         }
 
@@ -376,10 +391,20 @@ namespace Sven.Content
         /// <returns>Type of the component.</returns>
         public static Type GetType(string typeName)
         {
-            foreach (var key in Value.Keys)
-                if (Value[key].TypeName == typeName)
-                    return key;
-            return null;
+            try
+            {
+                foreach (var key in Values.Keys)
+                {
+                    string typeNameKey = Values[key].TypeName.Contains(":") ? Values[key].TypeName.Split(':')[1] : Values[key].TypeName;
+                    if (typeNameKey == typeName)
+                        return key;
+                }
+                return null;
+            }
+            catch
+            {
+                return null;
+            }
         }
     }
 }

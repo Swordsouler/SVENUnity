@@ -6,6 +6,9 @@ using UnityEngine;
 
 namespace Sven.Context
 {
+    /// <summary>
+    /// Represents the point of view in the scene.
+    /// </summary>
     [RequireComponent(typeof(Camera))]
     public class PointOfView : Interactor
     {
