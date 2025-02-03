@@ -37,7 +37,9 @@ namespace Sven.GraphManagement
             new GraphNamespace { Name = "owl", Uri = "http://www.w3.org/2002/07/owl#" },
             new GraphNamespace { Name = "xsd", Uri = "http://www.w3.org/2001/XMLSchema#" },
             new GraphNamespace { Name = "sven", Uri = "http://www.sven.fr/ontology#" },
-            new GraphNamespace { Name = "time", Uri = "http://www.w3.org/2006/time#" }
+            new GraphNamespace { Name = "time", Uri = "http://www.w3.org/2006/time#" },
+            new GraphNamespace { Name = "geo", Uri = "http://www.opengis.net/ont/geosparql#" },
+            new GraphNamespace { Name = "geof", Uri = "http://www.opengis.net/def/function/geosparql/" }
         };
 
         /// <summary>
