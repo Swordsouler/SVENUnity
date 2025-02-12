@@ -9,16 +9,20 @@ namespace Sven.Context
         /// The object that collided.
         /// </summary>
         private SemantizationCore _sender;
+        private string _senderUUID;
 
         /// <summary>
         /// The object that was collided.
         /// </summary>
         private SemantizationCore _receiver;
+        private string _receiverUUID;
 
         public CollisionEvent(SemantizationCore sender, SemantizationCore receiver) : base(null)
         {
             _sender = sender;
+            _senderUUID = sender.GetUUID();
             _receiver = receiver;
+            _receiverUUID = receiver.GetUUID();
         }
 
         /// <summary>
@@ -28,8 +32,8 @@ namespace Sven.Context
         public new IUriNode Semantize(IGraph graph)
         {
             IUriNode eventNode = base.Semantize(graph);
-            graph.Assert(new Triple(eventNode, graph.CreateUriNode("sven:sender"), graph.CreateUriNode("sven:" + _sender.GetUUID())));
-            graph.Assert(new Triple(eventNode, graph.CreateUriNode("sven:receiver"), graph.CreateUriNode("sven:" + _receiver.GetUUID())));
+            graph.Assert(new Triple(eventNode, graph.CreateUriNode("sven:sender"), graph.CreateUriNode("sven:" + _senderUUID)));
+            graph.Assert(new Triple(eventNode, graph.CreateUriNode("sven:receiver"), graph.CreateUriNode("sven:" + _receiverUUID)));
             return eventNode;
         }
     }

@@ -25,7 +25,7 @@ namespace Sven.Context
                 Vector3 pointerDirection = transform.forward;
                 float visionDistance = _pointerRange;
 
-                Ray ray = new Ray(pointerPosition, pointerDirection);
+                Ray ray = new(pointerPosition, pointerDirection);
                 RaycastHit[] hits = Physics.RaycastAll(ray, visionDistance);
                 HashSet<SemantizationCore> newVisibleObjects = new();
 
