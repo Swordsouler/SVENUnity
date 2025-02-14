@@ -393,7 +393,7 @@ namespace Sven.GraphManagement
             ISparqlUpdateProcessor updateProcessor = new LeviathanUpdateProcessor(dataset);
             SparqlUpdateCommandSet updateCommandSet = new SparqlUpdateParser().ParseFromString($@"
                 PREFIX time: <http://www.w3.org/2006/time#>
-                PREFIX sven: <http://www.sven.fr/ontology#>
+                PREFIX sven: <http://www.sven.fr/>
 
                 DELETE {{
                     ?object sven:component ?shape .
@@ -454,7 +454,7 @@ namespace Sven.GraphManagement
                 string query = $@"
                     PREFIX time: <http://www.w3.org/2006/time#>
                     PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
-                    PREFIX sven: <http://www.sven.fr/ontology#>
+                    PREFIX sven: <http://www.sven.fr/>
                     PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
 
                     SELECT DISTINCT ?object ?component ?componentType ?property ?propertyName ?propertyNestedName ?propertyValue ?propertyType
@@ -494,6 +494,7 @@ namespace Sven.GraphManagement
                         {intervalProcessing}
                     }}";
 
+                Debug.Log(query);
                 // Execute the query
                 SparqlResultSet results = await Request(query);
                 double queryTime = (DateTime.Now - startProcessing).TotalMilliseconds;
@@ -506,22 +507,22 @@ namespace Sven.GraphManagement
                     foreach (SparqlResult result in results.Cast<SparqlResult>())
                     {
                         // get uuids
-                        string objectUUID = result["object"].ToString().Split('#')[1];
+                        string objectUUID = result["object"].ToString()[(result["object"].ToString().LastIndexOf("/") + 1)..];
 
                         string propertyName = result["propertyName"].NodeType switch
                         {
-                            NodeType.Uri => result["propertyName"].ToString().Split('#')[1],
+                            NodeType.Uri => result["propertyName"].ToString()[(result["propertyName"].ToString().LastIndexOf("/") + 1)..],
                             _ => result["propertyName"].AsValuedNode().AsString()
                         };
                         string componentUUID, componentStringType, propertyStringType, propertyNestedName;
                         try
                         {
-                            componentUUID = result["component"].ToString().Split('#')[1];
+                            componentUUID = result["component"].ToString()[(result["component"].ToString().LastIndexOf("/") + 1)..];
 
                             // get types
-                            componentStringType = result["componentType"]?.ToString().Split("#")[1];
-                            propertyStringType = result["propertyType"].ToString().Split("#")[1];
-                            propertyNestedName = result["propertyNestedName"].ToString().Split('#')[1];
+                            componentStringType = result["componentType"]?.ToString()[(result["componentType"].ToString().LastIndexOf("/") + 1)..];
+                            propertyStringType = result["propertyType"].ToString()[(result["propertyType"].ToString().LastIndexOf("/") + 1)..];
+                            propertyNestedName = result["propertyNestedName"].ToString()[(result["propertyNestedName"].ToString().LastIndexOf("/") + 1)..];
                         }
                         catch
                         {
@@ -554,7 +555,7 @@ namespace Sven.GraphManagement
                         Type propertyType = MapppedProperties.GetType(propertyStringType) ?? Type.GetType(propertyStringType);
                         if (!MapppedProperties.HasNestedProperty(propertyType, propertyNestedName)) continue;
 
-                        string propertyUUID = result["property"].ToString().Split('#')[1];
+                        string propertyUUID = result["property"].ToString()[(result["property"].ToString().LastIndexOf("/") + 1)..];
                         object propertyValue = result["propertyValue"].AsValuedNode().ToValue();
                         //if (propertyName == "position")
                         //Debug.Log(propertyName + " " + propertyNestedName + " " + propertyValue + " " + result["propertyValue"].AsValuedNode());

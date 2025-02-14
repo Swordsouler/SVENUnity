@@ -603,7 +603,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ontologyDescription: {fileID: 11400000, guid: 02dbca5f0b2f48945a6a733f130690f2, type: 2}
   _endpoint: http://localhost:7200/repositories/Demo-Scene/rdf-graphs/service
-  _storageName: Scene 1
+  _storageName: DemoScene
   _instantPerSecond: 10
 --- !u!1 &216645333
 GameObject:
