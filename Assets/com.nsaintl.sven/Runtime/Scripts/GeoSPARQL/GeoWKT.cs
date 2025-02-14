@@ -1,7 +1,6 @@
 using System;
 using UnityEngine;
 using VDS.RDF;
-using VDS.RDF.Parsing;
 
 namespace Sven.GeoData
 {
