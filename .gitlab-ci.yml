@@ -22,3 +22,17 @@ update_upm_branch:
         PKG_ROOT: "Assets/com.nsaintl.sven"
         CI_SERVER_HOST: "gitlab.lisn.upsaclay.fr"
         CI_PROJECT_PATH: "nsaintl/SVENUnity"
+
+create_unitypackage:
+    stage: create_release
+    image: unityci/editor:latest
+    script:
+        - echo '### Exporting Unity package'
+        - /opt/unity/Editor/Unity -quit -batchmode -projectPath . -exportPackage "$PKG_ROOT" "SVENUnity.unitypackage"
+        - echo '### Creating release'
+        - git tag -a "v$(date +%Y%m%d%H%M%S)" -m "Automated release"
+        - git push --tags
+        - echo '### Uploading Unity package'
+        - curl --header "PRIVATE-TOKEN: ${GITLAB_PRIVATE_TOKEN}" --upload-file "SVENUnity.unitypackage" "https://${CI_SERVER_HOST}/api/v4/projects/${CI_PROJECT_ID}/packages/generic/SVENUnity/$(date +%Y%m%d%H%M%S)/SVENUnity.unitypackage"
+    only:
+        - main
