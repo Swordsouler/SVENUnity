@@ -24,16 +24,16 @@ update_upm_branch:
         CI_SERVER_HOST: "gitlab.lisn.upsaclay.fr"
         CI_PROJECT_PATH: "nsaintl/SVENUnity"
 
-create_unitypackage:
+create_release:
     stage: create_release
     image: unityci/editor:latest
     script:
-        - echo '### Exporting Unity package'
-        - /opt/unity/Editor/Unity -quit -batchmode -projectPath . -exportPackage "$PKG_ROOT" "SVENUnity.unitypackage"
+        - echo '### Exporting package to .unitypackage'
+        - /opt/unity/Editor/Unity -quit -batchmode -nographics -projectPath . -exportPackage "$PKG_ROOT" "build/SVENUnity.unitypackage"
         - echo '### Creating release'
-        - git tag -a "v$(date +%Y%m%d%H%M%S)" -m "Automated release"
-        - git push --tags
-        - echo '### Uploading Unity package'
-        - curl --header "PRIVATE-TOKEN: ${GITLAB_PRIVATE_TOKEN}" --upload-file "SVENUnity.unitypackage" "https://${CI_SERVER_HOST}/api/v4/projects/${CI_PROJECT_ID}/packages/generic/SVENUnity/$(date +%Y%m%d%H%M%S)/SVENUnity.unitypackage"
+        - curl --header "PRIVATE-TOKEN: ${GITLAB_PRIVATE_TOKEN}" --data "name=Release $(date +%Y%m%d%H%M%S)&tag_name=$(date +%Y%m%d%H%M%S)&description=Automated release&assets[links][][name]=SVENUnity.unitypackage&assets[links][][url]=${CI_PROJECT_URL}/-/jobs/${CI_JOB_ID}/artifacts/raw/build/SVENUnity.unitypackage" "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/releases"
+    artifacts:
+        paths:
+            - build/SVENUnity.unitypackage
     only:
         - main
