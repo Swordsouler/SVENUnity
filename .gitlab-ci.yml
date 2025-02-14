@@ -1,5 +1,6 @@
 stages:
     - update_upm
+    - release
 
 update_upm_branch:
     stage: update_upm
@@ -22,3 +23,11 @@ update_upm_branch:
         PKG_ROOT: "Assets/com.nsaintl.sven"
         CI_SERVER_HOST: "gitlab.lisn.upsaclay.fr"
         CI_PROJECT_PATH: "nsaintl/SVENUnity"
+
+create_release:
+    stage: release
+    image: registry.gitlab.com/gitlab-org/release-cli:latest
+    script:
+        - release-cli create --name "Release $CI_COMMIT_TAG" --tag-name "$CI_COMMIT_TAG" --description "Release description"
+    only:
+        - tags
