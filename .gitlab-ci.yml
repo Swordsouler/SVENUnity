@@ -1,6 +1,5 @@
 stages:
     - update_upm
-    - create_release
 
 update_upm_branch:
     stage: update_upm
@@ -23,17 +22,3 @@ update_upm_branch:
         PKG_ROOT: "Assets/com.nsaintl.sven"
         CI_SERVER_HOST: "gitlab.lisn.upsaclay.fr"
         CI_PROJECT_PATH: "nsaintl/SVENUnity"
-
-create_release:
-    stage: create_release
-    image: unityci/editor:latest
-    script:
-        - echo '### Exporting package to .unitypackage'
-        - /opt/unity/Editor/Unity -quit -batchmode -nographics -projectPath . -exportPackage "$PKG_ROOT" "build/SVENUnity.unitypackage"
-        - echo '### Creating release'
-        - curl --header "PRIVATE-TOKEN: ${GITLAB_PRIVATE_TOKEN}" --data "name=Release $(date +%Y%m%d%H%M%S)&tag_name=$(date +%Y%m%d%H%M%S)&description=Automated release&assets[links][][name]=SVENUnity.unitypackage&assets[links][][url]=${CI_PROJECT_URL}/-/jobs/${CI_JOB_ID}/artifacts/raw/build/SVENUnity.unitypackage" "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/releases"
-    artifacts:
-        paths:
-            - build/SVENUnity.unitypackage
-    only:
-        - main
