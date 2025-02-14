@@ -1,5 +1,6 @@
 stages:
     - update_upm
+    - create_release
 
 update_upm_branch:
     stage: update_upm
