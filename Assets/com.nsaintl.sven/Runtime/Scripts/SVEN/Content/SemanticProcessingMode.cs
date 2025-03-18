@@ -1,6 +1,5 @@
 namespace Sven.Content
 {
-
     /// <summary>
     /// The semantic processing mode of the GameObject.
     /// </summary>

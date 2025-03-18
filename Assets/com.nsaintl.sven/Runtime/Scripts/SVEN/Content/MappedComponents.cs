@@ -124,9 +124,9 @@ namespace Sven.Content
                 typeof(Transform), new("Transform",
                 new List<Delegate>
                 {
-                    (Func<Transform, PropertyDescription>)(transform => new PropertyDescription("position", () => transform.position, value => transform.DOMove((Vector3)value, lerpSpeed), 1, "virtualPosition")),
-                    (Func<Transform, PropertyDescription>)(transform => new PropertyDescription("rotation", () => transform.rotation, value => transform.DORotateQuaternion((Quaternion)value, lerpSpeed), 1, "virtualRotation")),
-                    (Func<Transform, PropertyDescription>)(transform => new PropertyDescription("scale", () => transform.localScale, value => transform.DOScale((Vector3)value, lerpSpeed), 1, "virtualSize")),
+                    (Func<Transform, PropertyDescription>)(transform => new PropertyDescription("position", () => transform.position, value => transform.DOMove((Vector3)value, lerpSpeed), 1/*, "virtualPosition"*/)),
+                    (Func<Transform, PropertyDescription>)(transform => new PropertyDescription("rotation", () => transform.rotation, value => transform.DORotateQuaternion((Quaternion)value, lerpSpeed), 1/*, "virtualRotation"*/)),
+                    (Func<Transform, PropertyDescription>)(transform => new PropertyDescription("scale", () => transform.localScale, value => transform.DOScale((Vector3)value, lerpSpeed), 1/*, "virtualSize"*/)),
                 })
             },
             {
@@ -134,8 +134,8 @@ namespace Sven.Content
                 new List<Delegate>
                 {
                     (Func<AudioSource, PropertyDescription>)(audioSource => new PropertyDescription("enabled", () => audioSource.enabled, value => audioSource.enabled = value.ToString().ToLower() == "true", 1)),
-                    (Func<AudioSource, PropertyDescription>)(audioSource => new PropertyDescription("minAudioDistance", () => audioSource.minDistance, value => audioSource.minDistance = (float)value, 1, "minSoundDistance")),
-                    (Func<AudioSource, PropertyDescription>)(audioSource => new PropertyDescription("maxAudioDistance", () => audioSource.maxDistance, value => audioSource.maxDistance = (float)value, 1, "maxSoundDistance")),
+                    (Func<AudioSource, PropertyDescription>)(audioSource => new PropertyDescription("minAudioDistance", () => audioSource.minDistance, value => audioSource.minDistance = (float)value, 1/*, "minSoundDistance"*/)),
+                    (Func<AudioSource, PropertyDescription>)(audioSource => new PropertyDescription("maxAudioDistance", () => audioSource.maxDistance, value => audioSource.maxDistance = (float)value, 1/*, "maxSoundDistance"*/)),
                 })
             },
             {
@@ -143,9 +143,9 @@ namespace Sven.Content
                 new List<Delegate>
                 {
                     (Func<Camera, PropertyDescription>)(camera => new PropertyDescription("enabled", () => camera.enabled, value => camera.enabled = value.ToString().ToLower() == "true", 1)),
-                    (Func<Camera, PropertyDescription>)(camera => new PropertyDescription("nearClipPlane", () => camera.nearClipPlane, value => camera.nearClipPlane = (float)value, 1, "POVNear")),
-                    (Func<Camera, PropertyDescription>)(camera => new PropertyDescription("farClipPlane", () => camera.farClipPlane, value => camera.farClipPlane = (float)value, 1, "POVFar")),
-                    (Func<Camera, PropertyDescription>)(camera => new PropertyDescription("fieldOfView", () => camera.fieldOfView, value => camera.fieldOfView = (float)value, 1, "POVFOV")),
+                    (Func<Camera, PropertyDescription>)(camera => new PropertyDescription("nearClipPlane", () => camera.nearClipPlane, value => camera.nearClipPlane = (float)value, 1/*, "POVNear"*/)),
+                    (Func<Camera, PropertyDescription>)(camera => new PropertyDescription("farClipPlane", () => camera.farClipPlane, value => camera.farClipPlane = (float)value, 1/*, "POVFar"*/)),
+                    (Func<Camera, PropertyDescription>)(camera => new PropertyDescription("fieldOfView", () => camera.fieldOfView, value => camera.fieldOfView = (float)value, 1/*, "POVFOV"*/)),
                     (Func<Camera, PropertyDescription>)(camera => new PropertyDescription("orthographic", () => camera.orthographic, value => camera.orthographic = value.ToString() == "true", 1)),
                     (Func<Camera, PropertyDescription>)(camera => new PropertyDescription("orthographicSize", () => camera.orthographicSize, value => camera.orthographicSize = (float)value, 1)),
                     (Func<Camera, PropertyDescription>)(camera => new PropertyDescription("clearFlags", () => camera.clearFlags.ToString(), value => camera.clearFlags = (CameraClearFlags)Enum.Parse(typeof(CameraClearFlags), (string)value), 1)),
@@ -157,7 +157,7 @@ namespace Sven.Content
                 new List<Delegate>
                 {
                     (Func<MeshRenderer, PropertyDescription>)(meshRenderer => new PropertyDescription("enabled", () => meshRenderer.enabled, value => meshRenderer.enabled = value.ToString().ToLower() == "true", 1)),
-                    (Func<MeshRenderer, PropertyDescription>)(meshRenderer => new PropertyDescription("color", () => meshRenderer.material.color, value => meshRenderer.material.DOColor((Color)value, lerpSpeed), 1, "virtualColor")),
+                    (Func<MeshRenderer, PropertyDescription>)(meshRenderer => new PropertyDescription("color", () => meshRenderer.material.color, value => meshRenderer.material.DOColor((Color)value, lerpSpeed), 1/*, "virtualColor"*/)),
                     (Func<MeshRenderer, PropertyDescription>)(meshRenderer => new PropertyDescription("shader", () => meshRenderer.material.shader.name, value => meshRenderer.material.shader = Shader.Find((string)value), 1)),
                 })
             },
@@ -166,7 +166,7 @@ namespace Sven.Content
                 new List<Delegate>
                 {
                     (Func<SpriteRenderer, PropertyDescription>)(spriteRenderer => new PropertyDescription("enabled", () => spriteRenderer.enabled, value => spriteRenderer.enabled = value.ToString().ToLower() == "true", 1)),
-                    (Func<SpriteRenderer, PropertyDescription>)(spriteRenderer => new PropertyDescription("color", () => spriteRenderer.color, value => spriteRenderer.color = (Color)value, 1, "virtualColor")),
+                    (Func<SpriteRenderer, PropertyDescription>)(spriteRenderer => new PropertyDescription("color", () => spriteRenderer.color, value => spriteRenderer.color = (Color)value, 1/*, "virtualColor"*/)),
                     (Func<SpriteRenderer, PropertyDescription>)(spriteRenderer => new PropertyDescription("sprite", () => spriteRenderer.sprite.name, value => spriteRenderer.sprite = Resources.Load<Sprite>((string)value), 1)),
                 })
             },
