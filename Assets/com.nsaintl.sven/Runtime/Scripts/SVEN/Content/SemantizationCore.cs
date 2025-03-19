@@ -125,7 +125,7 @@ namespace Sven.Content
 
             IUriNode gameObjectNode = graph.CreateUriNode("sven:" + this.GetUUID());
 
-            graph.Assert(new Triple(gameObjectNode, graph.CreateUriNode("rdf:type"), graph.CreateUriNode("sven:VirtualObject")));
+            graph.Assert(new Triple(gameObjectNode, graph.CreateUriNode("rdf:type"), graph.CreateUriNode("sven:Object")));
             graph.Assert(new Triple(gameObjectNode, graph.CreateUriNode("rdfs:label"), graph.CreateLiteralNode(name)));
             foreach (Property property in properties)
             {

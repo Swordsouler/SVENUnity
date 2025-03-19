@@ -14,8 +14,8 @@ namespace Sven.Context
         /// <summary>
         /// The maximum distance for the pointer.
         /// </summary>
-        [SerializeField]
-        private float _pointerRange = 20f;
+        [field: SerializeField]
+        public float PointerDistance { get; set; } = 20f;
 
         protected override IEnumerator CheckInteractor(float i)
         {
@@ -23,7 +23,7 @@ namespace Sven.Context
             {
                 Vector3 pointerPosition = transform.position;
                 Vector3 pointerDirection = transform.forward;
-                float visionDistance = _pointerRange;
+                float visionDistance = PointerDistance;
 
                 Ray ray = new(pointerPosition, pointerDirection);
                 RaycastHit[] hits = Physics.RaycastAll(ray, visionDistance);
@@ -85,7 +85,7 @@ namespace Sven.Context
 
             Vector3 direction = transform.forward;
             Vector3 origin = transform.position;
-            Vector3 destination = origin + direction * _pointerRange;
+            Vector3 destination = origin + direction * PointerDistance;
 
             Gizmos.DrawLine(origin, destination);
         }

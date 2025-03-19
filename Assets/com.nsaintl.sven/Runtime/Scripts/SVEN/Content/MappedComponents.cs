@@ -228,8 +228,16 @@ namespace Sven.Content
 
             // Ignore the following components
             {typeof(PointOfView), null},
-            {typeof(GraspArea), null},
-            {typeof(Pointer), null},
+            {typeof(GraspArea), new("GraspArea", new List<Delegate>
+            {
+                (Func<GraspArea, PropertyDescription>)(graspArea => new PropertyDescription("enabled", () => graspArea.enabled, value => graspArea.enabled = value.ToString().ToLower() == "true", 1)),
+                (Func<GraspArea, PropertyDescription>)(graspArea => new PropertyDescription("graspDistance", () => graspArea.GraspDistance, value => graspArea.GraspDistance = (float)value, 1)),
+            })},
+            {typeof(Pointer), new("Pointer", new List<Delegate>
+            {
+                (Func<Pointer, PropertyDescription>)(pointer => new PropertyDescription("enabled", () => pointer.enabled, value => pointer.enabled = value.ToString().ToLower() == "true", 1)),
+                (Func<Pointer, PropertyDescription>)(pointer => new PropertyDescription("pointerDistance", () => pointer.PointerDistance, value => pointer.PointerDistance = (float)value, 1)),
+            })},
         };
 
         /// <summary>

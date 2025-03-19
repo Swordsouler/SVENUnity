@@ -3516,6 +3516,8 @@ MonoBehaviour:
   componentsToSemantize:
   - <Component>k__BackingField: {fileID: 938404640}
     <ProcessingMode>k__BackingField: 0
+  - <Component>k__BackingField: {fileID: 938404644}
+    <ProcessingMode>k__BackingField: 1
   _graphBuffer: {fileID: 0}
 --- !u!114 &938404644
 MonoBehaviour:
@@ -3531,7 +3533,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _graphBuffer: {fileID: 0}
   _debug: 1
-  _pointerRange: 20
+  <PointerDistance>k__BackingField: 20
 --- !u!1 &943934300
 GameObject:
   m_ObjectHideFlags: 0
@@ -3871,7 +3873,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _graphBuffer: {fileID: 0}
   _debug: 1
-  _sphereRadius: 10
+  <GraspDistance>k__BackingField: 10
 --- !u!114 &1011916316
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3887,6 +3889,8 @@ MonoBehaviour:
   componentsToSemantize:
   - <Component>k__BackingField: {fileID: 1011916314}
     <ProcessingMode>k__BackingField: 0
+  - <Component>k__BackingField: {fileID: 1011916315}
+    <ProcessingMode>k__BackingField: 1
   _graphBuffer: {fileID: 0}
 --- !u!1 &1031309578
 GameObject:

@@ -64,7 +64,16 @@ namespace Sven.GraphManagement
         public void RefreshOntologyContent()
         {
 #if UNITY_EDITOR
-            OntologyContent = File.ReadAllText(AssetDatabase.GetAssetPath(_ontologyFile));
+            if (_ontologyFile == null)
+            {
+                OntologyContent = "";
+            }
+            else
+            {
+                OntologyContent = File.ReadAllText(AssetDatabase.GetAssetPath(_ontologyFile));
+            }
+            EditorUtility.SetDirty(this);
+            Debug.Log("Ontology content refreshed.");
 #endif
         }
 

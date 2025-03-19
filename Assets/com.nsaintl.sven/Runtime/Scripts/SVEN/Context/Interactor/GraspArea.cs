@@ -14,15 +14,15 @@ namespace Sven.Context
         /// <summary>
         /// The radius of the sphere.
         /// </summary>
-        [SerializeField]
-        private float _sphereRadius = 10f;
+        [field: SerializeField]
+        public float GraspDistance { get; set; } = 10f;
 
         protected override IEnumerator CheckInteractor(float i)
         {
             while (true)
             {
                 Vector3 sphereCenter = transform.position;
-                float radius = _sphereRadius;
+                float radius = GraspDistance;
 
                 Collider[] colliders = Physics.OverlapSphere(sphereCenter, radius);
                 HashSet<SemantizationCore> newVisibleObjects = new();
@@ -81,7 +81,7 @@ namespace Sven.Context
             base.OnDrawGizmos();
 
             Vector3 center = transform.position;
-            Gizmos.DrawWireSphere(center, _sphereRadius);
+            Gizmos.DrawWireSphere(center, GraspDistance);
         }
     }
 }

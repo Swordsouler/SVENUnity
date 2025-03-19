@@ -21,403 +21,657 @@ geo:hasGeometry rdf:type owl:ObjectProperty ;
                 rdfs:subPropertyOf sven:componentProperty ;
                 rdfs:domain geo:Feature ;
                 rdfs:range geo:Geometry ;
-                rdfs:label "has geometry"@en , "a pour géométrie"@fr ;
-                rdfs:comment "Relates a feature to its geometry."@en , "Relie une entité à sa géométrie."@fr .
+                rdfs:comment "Relates a feature to its geometry."@en ,
+                             "Relie une entité à sa géométrie."@fr ;
+                rdfs:label "a pour géométrie"@fr ,
+                           "has geometry"@en .
+
+
+###  http://www.sven.fr/POVFOV
+sven:POVFOV rdf:type owl:ObjectProperty ;
+            rdfs:subPropertyOf sven:philosophicalProperty ;
+            rdfs:domain sven:PointOfView ;
+            rdfs:range sven:Primitive ;
+            owl:propertyChainAxiom ( sven:component
+                                     sven:fieldOfView
+                                   ) ;
+            rdfs:comment "Le champ de vision du point de vue."@fr ,
+                         "The field of view of the point of view."@en ;
+            rdfs:label "Champ de vision du point de vue"@fr ,
+                       "Point of view field of view"@en .
+
+
+###  http://www.sven.fr/POVFar
+sven:POVFar rdf:type owl:ObjectProperty ;
+            rdfs:subPropertyOf sven:philosophicalProperty ;
+            rdfs:domain sven:PointOfView ;
+            rdfs:range sven:Primitive ;
+            owl:propertyChainAxiom ( sven:component
+                                     sven:farClipPlane
+                                   ) ;
+            rdfs:comment "La distance loin du point de vue."@fr ,
+                         "The far distance of the point of view."@en ;
+            rdfs:label "Point de vue loin"@fr ,
+                       "Point of view far"@en .
+
+
+###  http://www.sven.fr/POVNear
+sven:POVNear rdf:type owl:ObjectProperty ;
+             rdfs:subPropertyOf sven:philosophicalProperty ;
+             rdfs:domain sven:PointOfView ;
+             rdfs:range sven:Primitive ;
+             owl:propertyChainAxiom ( sven:component
+                                      sven:nearClipPlane
+                                    ) ;
+             rdfs:comment "La distance près du point de vue."@fr ,
+                          "The near distance of the point of view."@en ;
+             rdfs:label "Point de vue près"@fr ,
+                        "Point of view near"@en .
 
 
 ###  http://www.sven.fr/active
 sven:active rdf:type owl:ObjectProperty ;
             rdfs:subPropertyOf sven:objectProperty ;
             rdfs:range sven:Primitive ;
-            rdfs:label "active"@en , "actif"@fr ;
-            rdfs:comment "Indicates if the object is active."@en , "Indique si l'objet est actif."@fr .
+            rdfs:comment "Indicates if the object is active."@en ,
+                         "Indique si l'objet est actif."@fr ;
+            rdfs:label "actif"@fr ,
+                       "active"@en .
 
 
 ###  http://www.sven.fr/audioProperty
 sven:audioProperty rdf:type owl:ObjectProperty ;
-                     rdfs:subPropertyOf sven:componentProperty ;
-                     rdfs:domain sven:Audio ;
-                     rdfs:label "audio Property"@en , "propriétés audio"@fr ;
-                     rdfs:comment "Relates an audio object to its properties."@en , "Relie un objet audio à ses propriétés."@fr .
+                   rdfs:subPropertyOf sven:componentProperty ;
+                   rdfs:domain sven:Audio ;
+                   rdfs:comment "Relates an audio object to its properties."@en ,
+                                "Relie un objet audio à ses propriétés."@fr ;
+                   rdfs:label "audio Property"@en ,
+                              "propriétés audio"@fr .
 
 
 ###  http://www.sven.fr/backgroundColor
 sven:backgroundColor rdf:type owl:ObjectProperty ;
                      rdfs:subPropertyOf sven:cameraProperty ;
                      rdfs:range sven:Color ;
-                     rdfs:label "background color"@en , "couleur de fond"@fr ;
-                     rdfs:comment "Relates a camera to its background color."@en , "Relie une caméra à sa couleur de fond."@fr .
+                     rdfs:comment "Relates a camera to its background color."@en ,
+                                  "Relie une caméra à sa couleur de fond."@fr ;
+                     rdfs:label "background color"@en ,
+                                "couleur de fond"@fr .
 
 
 ###  http://www.sven.fr/cameraProperty
 sven:cameraProperty rdf:type owl:ObjectProperty ;
                     rdfs:subPropertyOf sven:componentProperty ;
                     rdfs:domain sven:Camera ;
-                    rdfs:label "camera property"@en , "propriétés de la caméra"@fr ;
-                    rdfs:comment "Relates a camera to its properties."@en , "Relie une caméra à ses propriétés."@fr .
+                    rdfs:comment "Relates a camera to its properties."@en ,
+                                 "Relie une caméra à ses propriétés."@fr ;
+                    rdfs:label "camera property"@en ,
+                               "propriétés de la caméra"@fr .
 
 
 ###  http://www.sven.fr/clearFlags
 sven:clearFlags rdf:type owl:ObjectProperty ;
                 rdfs:subPropertyOf sven:cameraProperty ;
                 rdfs:range sven:Primitive ;
-                rdfs:label "clear flags"@en , "drapeaux de nettoyage"@fr ;
-                rdfs:comment "Relates a camera to its clear flags."@en , "Relie une caméra à ses drapeaux de nettoyage."@fr .
+                rdfs:comment "Relates a camera to its clear flags."@en ,
+                             "Relie une caméra à ses drapeaux de nettoyage."@fr ;
+                rdfs:label "clear flags"@en ,
+                           "drapeaux de nettoyage"@fr .
 
 
 ###  http://www.sven.fr/color
 sven:color rdf:type owl:ObjectProperty ;
            rdfs:subPropertyOf sven:renderProperty ;
            rdfs:range sven:Color ;
-           rdfs:label "color"@en , "couleur"@fr ;
-           rdfs:comment "Relates a render object to its color."@en , "Relie un objet de rendu à sa couleur."@fr .
+           rdfs:comment "Relates a render object to its color."@en ,
+                        "Relie un objet de rendu à sa couleur."@fr ;
+           rdfs:label "color"@en ,
+                      "couleur"@fr .
 
 
 ###  http://www.sven.fr/component
 sven:component rdf:type owl:ObjectProperty ;
                rdfs:subPropertyOf sven:objectProperty ;
                rdfs:range sven:Component ;
-               rdfs:label "component"@en , "composant"@fr ;
-               rdfs:comment "Relates an object to its component."@en , "Relie un objet à son composant."@fr .
+               rdfs:comment "Relates an object to its component."@en ,
+                            "Relie un objet à son composant."@fr ;
+               rdfs:label "component"@en ,
+                          "composant"@fr .
 
 
 ###  http://www.sven.fr/componentProperty
 sven:componentProperty rdf:type owl:ObjectProperty ;
                        rdfs:domain sven:Component ;
-                       rdfs:label "component property"@en , "propriétés du composant"@fr ;
-                       rdfs:comment "Relates a component to its properties."@en , "Relie un composant à ses propriétés."@fr .
+                       rdfs:comment "Relates a component to its properties."@en ,
+                                    "Relie un composant à ses propriétés."@fr ;
+                       rdfs:label "component property"@en ,
+                                  "propriétés du composant"@fr .
 
 
 ###  http://www.sven.fr/enabled
 sven:enabled rdf:type owl:ObjectProperty ;
              rdfs:subPropertyOf sven:componentProperty ;
              rdfs:range sven:Primitive ;
-             rdfs:label "enabled"@en , "activé"@fr ;
-             rdfs:comment "Indicates if the object is enabled."@en , "Indique si l'objet est activé."@fr .
+             rdfs:comment "Indicates if the object is enabled."@en ,
+                          "Indique si l'objet est activé."@fr ;
+             rdfs:label "activé"@fr ,
+                        "enabled"@en .
 
 
 ###  http://www.sven.fr/farClipPlane
 sven:farClipPlane rdf:type owl:ObjectProperty ;
                   rdfs:subPropertyOf sven:cameraProperty ;
                   rdfs:range sven:Primitive ;
-                  rdfs:label "far clip plane"@en , "plan de clip loin"@fr ;
-                  rdfs:comment "Relates a camera to its far clip plane."@en , "Relie une caméra à son plan de clip loin."@fr .
+                  rdfs:comment "Relates a camera to its far clip plane."@en ,
+                               "Relie une caméra à son plan de clip loin."@fr ;
+                  rdfs:label "far clip plane"@en ,
+                             "plan de clip loin"@fr .
 
 
 ###  http://www.sven.fr/fieldOfView
 sven:fieldOfView rdf:type owl:ObjectProperty ;
                  rdfs:subPropertyOf sven:cameraProperty ;
                  rdfs:range sven:Primitive ;
-                 rdfs:label "field of view"@en , "champ de vision"@fr ;
-                 rdfs:comment "Relates a camera to its field of view."@en , "Relie une caméra à son champ de vision."@fr .
+                 rdfs:comment "Relates a camera to its field of view."@en ,
+                              "Relie une caméra à son champ de vision."@fr ;
+                 rdfs:label "champ de vision"@fr ,
+                            "field of view"@en .
 
 
 ###  http://www.sven.fr/graspAreaObject
 sven:graspAreaObject rdf:type owl:ObjectProperty ;
                      rdfs:subPropertyOf sven:own ;
                      rdfs:range sven:GraspAreaObject ;
-                     rdfs:label "grasp area object"@en , "objet de zone de préhension"@fr ;
-                     rdfs:comment "Relates a user to its grasp area object."@en , "Relie un utilisateur à son objet de zone de préhension."@fr .
+                     rdfs:comment "Relates a user to its grasp area object."@en ,
+                                  "Relie un utilisateur à son objet de zone de préhension."@fr ;
+                     rdfs:label "grasp area object"@en ,
+                                "objet de zone de préhension"@fr .
+
+
+###  http://www.sven.fr/graspAreaProperty
+sven:graspAreaProperty rdf:type owl:ObjectProperty ;
+                       rdfs:subPropertyOf sven:componentProperty ;
+                       rdfs:domain sven:GraspArea ;
+                       rdfs:comment "Relates a grasp area to its properties."@en ,
+                                    "Relie une zone de préhension à ses propriétés."@fr ;
+                       rdfs:label "grasp area property"@en ,
+                                  "propriétés de la zone de préhension"@fr .
+
+
+###  http://www.sven.fr/graspDistance
+sven:graspDistance rdf:type owl:ObjectProperty ;
+                   rdfs:subPropertyOf sven:graspAreaProperty ;
+                   rdfs:range sven:Primitive ;
+                   rdfs:comment "La distance de la zone de préhension."@fr ,
+                                "The distance of the grasp area."@en ;
+                   rdfs:label "distance de préhension"@fr ,
+                              "grasp distance"@en .
+
+
+###  http://www.sven.fr/graspRange
+sven:graspRange rdf:type owl:ObjectProperty ;
+                rdfs:subPropertyOf sven:philosophicalProperty ;
+                rdfs:domain sven:GraspAreaObject ;
+                rdfs:range sven:Primitive ;
+                owl:propertyChainAxiom ( sven:component
+                                         sven:graspDistance
+                                       ) ;
+                rdfs:comment "Le rayon de la zone de préhension."@fr ,
+                             "The radius of the grasp area."@en ;
+                rdfs:label "grasp radius"@en ,
+                           "rayon de préhension"@fr .
 
 
 ###  http://www.sven.fr/layer
 sven:layer rdf:type owl:ObjectProperty ;
            rdfs:subPropertyOf sven:objectProperty ;
            rdfs:range sven:Primitive ;
-           rdfs:label "layer"@en , "couche"@fr ;
-           rdfs:comment "Relates an object to its layer."@en , "Relie un objet à sa couche."@fr .
+           rdfs:comment "Relates an object to its layer."@en ,
+                        "Relie un objet à sa couche."@fr ;
+           rdfs:label "couche"@fr ,
+                      "layer"@en .
 
 
 ###  http://www.sven.fr/maxAudioDistance
 sven:maxAudioDistance rdf:type owl:ObjectProperty ;
                       rdfs:subPropertyOf sven:audioProperty ;
                       rdfs:range sven:Primitive ;
-                      rdfs:label "max audio distance"@en , "distance audio max"@fr ;
-                      rdfs:comment "Relates an audio object to its maximum distance."@en , "Relie un objet audio à sa distance maximale."@fr .
+                      rdfs:comment "Relates an audio object to its maximum distance."@en ,
+                                   "Relie un objet audio à sa distance maximale."@fr ;
+                      rdfs:label "distance audio max"@fr ,
+                                 "max audio distance"@en .
+
+
+###  http://www.sven.fr/maxSoundDistance
+sven:maxSoundDistance rdf:type owl:ObjectProperty ;
+                      rdfs:subPropertyOf sven:philosophicalProperty ;
+                      rdfs:domain sven:AudioObject ;
+                      rdfs:range sven:Primitive ;
+                      rdfs:comment "La distance maximale du son."@fr ,
+                                   "The maximum distance of the sound."@en ;
+                      rdfs:label "distance sonore max"@fr ,
+                                 "max sound distance"@en .
 
 
 ###  http://www.sven.fr/minAudioDistance
 sven:minAudioDistance rdf:type owl:ObjectProperty ;
                       rdfs:subPropertyOf sven:audioProperty ;
                       rdfs:range sven:Primitive ;
-                      rdfs:label "min audio distance"@en , "distance audio min"@fr ;
-                      rdfs:comment "Relates an audio object to its minimum distance."@en , "Relie un objet audio à sa distance minimale."@fr .
+                      rdfs:comment "Relates an audio object to its minimum distance."@en ,
+                                   "Relie un objet audio à sa distance minimale."@fr ;
+                      rdfs:label "distance audio min"@fr ,
+                                 "min audio distance"@en .
+
+
+###  http://www.sven.fr/minSoundDistance
+sven:minSoundDistance rdf:type owl:ObjectProperty ;
+                      rdfs:subPropertyOf sven:philosophicalProperty ;
+                      rdfs:domain sven:AudioObject ;
+                      rdfs:range sven:Primitive ;
+                      rdfs:comment "La distance minimale du son."@fr ,
+                                   "The minimum distance of the sound."@en ;
+                      rdfs:label "distance sonore min"@fr ,
+                                 "min sound distance"@en .
 
 
 ###  http://www.sven.fr/name
 sven:name rdf:type owl:ObjectProperty ;
           rdfs:subPropertyOf sven:objectProperty ;
           rdfs:range sven:Primitive ;
-          rdfs:label "name"@en , "nom"@fr ;
-          rdfs:comment "Relates an object to its name."@en , "Relie un objet à son nom."@fr .
+          rdfs:comment "Relates an object to its name."@en ,
+                       "Relie un objet à son nom."@fr ;
+          rdfs:label "name"@en ,
+                     "nom"@fr .
 
 
 ###  http://www.sven.fr/nearClipPlane
 sven:nearClipPlane rdf:type owl:ObjectProperty ;
                    rdfs:subPropertyOf sven:cameraProperty ;
                    rdfs:range sven:Primitive ;
-                   rdfs:label "near clip plane"@en , "plan de clip près"@fr ;
-                   rdfs:comment "Relates a camera to its near clip plane."@en , "Relie une caméra à son plan de clip près."@fr .
+                   rdfs:comment "Relates a camera to its near clip plane."@en ,
+                                "Relie une caméra à son plan de clip près."@fr ;
+                   rdfs:label "near clip plane"@en ,
+                              "plan de clip près"@fr .
 
 
 ###  http://www.sven.fr/normals
 sven:normals rdf:type owl:ObjectProperty ;
              rdfs:subPropertyOf sven:shapeProperty ;
              rdfs:range sven:Primitive ;
-             rdfs:label "normals"@en , "normales"@fr ;
-             rdfs:comment "Relates a shape to its normals."@en , "Relie une forme à ses normales."@fr .
+             rdfs:comment "Relates a shape to its normals."@en ,
+                          "Relie une forme à ses normales."@fr ;
+             rdfs:label "normales"@fr ,
+                        "normals"@en .
 
 
 ###  http://www.sven.fr/objectProperty
 sven:objectProperty rdf:type owl:ObjectProperty ;
                     rdfs:subPropertyOf sven:componentProperty ;
                     rdfs:domain sven:Object ;
-                    rdfs:label "object property"@en , "propriétés de l'objet"@fr ;
-                    rdfs:comment "Relates an object to its properties."@en , "Relie un objet à ses propriétés."@fr .
+                    rdfs:comment "Relates an object to its properties."@en ,
+                                 "Relie un objet à ses propriétés."@fr ;
+                    rdfs:label "object property"@en ,
+                               "propriétés de l'objet"@fr .
 
 
 ###  http://www.sven.fr/orthographic
 sven:orthographic rdf:type owl:ObjectProperty ;
                   rdfs:subPropertyOf sven:cameraProperty ;
                   rdfs:range sven:Primitive ;
-                  rdfs:label "orthographic"@en , "orthographique"@fr ;
-                  rdfs:comment "Relates a camera to its orthographic."@en , "Relie une caméra à son orthographique."@fr .
+                  rdfs:comment "Relates a camera to its orthographic."@en ,
+                               "Relie une caméra à son orthographique."@fr ;
+                  rdfs:label "orthographic"@en ,
+                             "orthographique"@fr .
 
 
 ###  http://www.sven.fr/orthographicSize
 sven:orthographicSize rdf:type owl:ObjectProperty ;
                       rdfs:subPropertyOf sven:cameraProperty ;
                       rdfs:range sven:Primitive ;
-                      rdfs:label "orthographic size"@en , "taille orthographique"@fr ;
-                      rdfs:comment "Relates a camera to its orthographic size."@en , "Relie une caméra à sa taille orthographique."@fr .
+                      rdfs:comment "Relates a camera to its orthographic size."@en ,
+                                   "Relie une caméra à sa taille orthographique."@fr ;
+                      rdfs:label "orthographic size"@en ,
+                                 "taille orthographique"@fr .
 
 
 ###  http://www.sven.fr/own
 sven:own rdf:type owl:ObjectProperty ;
-         owl:inverseOf sven:ownBy ;
          rdfs:domain sven:User ;
          rdfs:range sven:Interactor ;
-         rdfs:label "own"@en , "posséder"@fr ;
-         rdfs:comment "Relates a user to its owned object."@en , "Relie un utilisateur à son objet possédé."@fr .
-
-
-###  http://www.sven.fr/ownBy
-sven:ownBy rdf:type owl:ObjectProperty ;
-           rdfs:domain sven:Interactor ;
-           rdfs:range sven:User ;
-           rdfs:label "own by"@en , "possédé par"@fr ;
-           rdfs:comment "Relates an interactor to its owner."@en , "Relie un interactor à son propriétaire."@fr .
+         rdfs:comment "Relates a user to its owned object."@en ,
+                      "Relie un utilisateur à son objet possédé."@fr ;
+         rdfs:label "own"@en ,
+                    "posséder"@fr .
 
 
 ###  http://www.sven.fr/perform
 sven:perform rdf:type owl:ObjectProperty ;
-             owl:inverseOf sven:performBy ;
              rdfs:domain sven:User ;
              rdfs:range sven:Event ;
-             rdfs:label "perform"@en , "effectuer"@fr ;
-             rdfs:comment "Relates a user to its performed event."@en , "Relie un utilisateur à son événement effectué."@fr .
+             owl:propertyChainAxiom ( sven:sender
+                                      [ owl:inverseOf sven:own
+                                      ]
+                                    ) ;
+             rdfs:comment "Relates a user to its performed event."@en ,
+                          "Relie un utilisateur à son événement effectué."@fr ;
+             rdfs:label "effectuer"@fr ,
+                        "perform"@en .
 
 
-###  http://www.sven.fr/performBy
-sven:performBy rdf:type owl:ObjectProperty ;
-               rdfs:domain sven:Event ;
-               rdfs:range sven:User ;
-               owl:propertyChainAxiom ( sven:sender
-                                        sven:ownBy
-                                      ) ;
-               rdfs:label "perform by"@en , "effectué par"@fr ;
-               rdfs:comment "Relates an event to its performer."@en , "Relie un événement à son exécutant."@fr .
+###  http://www.sven.fr/philosophicalProperty
+sven:philosophicalProperty rdf:type owl:ObjectProperty ;
+                           rdfs:comment "Relates a philosophical object to its properties."@en ,
+                                        "Relie un objet philosophique à ses propriétés."@fr ;
+                           rdfs:label "philosophical property"@en ,
+                                      "propriétés philosophiques"@fr .
 
 
 ###  http://www.sven.fr/pointOfView
 sven:pointOfView rdf:type owl:ObjectProperty ;
                  rdfs:subPropertyOf sven:own ;
                  rdfs:range sven:PointOfView ;
-                 rdfs:label "point of view"@en , "point de vue"@fr ;
-                 rdfs:comment "Relates a user to its point of view."@en , "Relie un utilisateur à son point de vue."@fr .
+                 rdfs:comment "Relates a user to its point of view."@en ,
+                              "Relie un utilisateur à son point de vue."@fr ;
+                 rdfs:label "point de vue"@fr ,
+                            "point of view"@en .
 
 
 ###  http://www.sven.fr/pointer
 sven:pointer rdf:type owl:ObjectProperty ;
              rdfs:subPropertyOf sven:own ;
              rdfs:range sven:PointerObject ;
-             rdfs:label "pointer"@en , "pointeur"@fr ;
-             rdfs:comment "Relates a user to its pointer."@en , "Relie un utilisateur à son pointeur."@fr .
+             rdfs:comment "Relates a user to its pointer."@en ,
+                          "Relie un utilisateur à son pointeur."@fr ;
+             rdfs:label "pointer"@en ,
+                        "pointeur"@fr .
+
+
+###  http://www.sven.fr/pointerDistance
+sven:pointerDistance rdf:type owl:ObjectProperty ;
+                     rdfs:subPropertyOf sven:pointerProperty ;
+                     rdfs:range sven:Primitive ;
+                     rdfs:comment "La distance du pointeur."@fr ,
+                                  "The distance of the pointer."@en ;
+                     rdfs:label "distance du pointeur"@fr ,
+                                "pointer distance"@en .
+
+
+###  http://www.sven.fr/pointerProperty
+sven:pointerProperty rdf:type owl:ObjectProperty ;
+                     rdfs:subPropertyOf sven:componentProperty ;
+                     rdfs:domain sven:Pointer ;
+                     rdfs:comment "Relates a pointer to its properties."@en ,
+                                  "Relie un pointeur à ses propriétés."@fr ;
+                     rdfs:label "pointer property"@en ,
+                                "propriétés du pointeur"@fr .
+
+
+###  http://www.sven.fr/pointerRange
+sven:pointerRange rdf:type owl:ObjectProperty ;
+                  rdfs:subPropertyOf sven:philosophicalProperty ;
+                  rdfs:domain sven:PointerObject ;
+                  rdfs:range sven:Primitive ;
+                  owl:propertyChainAxiom ( sven:component
+                                           sven:pointerDistance
+                                         ) ;
+                  rdfs:comment "La portée du pointeur."@fr ,
+                               "The range of the pointer."@en ;
+                  rdfs:label "pointer range"@en ,
+                             "portée du pointeur"@fr .
 
 
 ###  http://www.sven.fr/position
 sven:position rdf:type owl:ObjectProperty ;
               rdfs:subPropertyOf sven:transformProperty ;
               rdfs:range sven:Vector3 ;
-              rdfs:label "position"@en , "position"@fr ;
-              rdfs:comment "Relates a transform to its position."@en , "Relie une transformation à sa position."@fr .
+              rdfs:comment "Relates a transform to its position."@en ,
+                           "Relie une transformation à sa position."@fr ;
+              rdfs:label "position"@en ,
+                         "position"@fr .
+
+
+###  http://www.sven.fr/realPosition
+sven:realPosition rdf:type owl:ObjectProperty ;
+                  rdfs:subPropertyOf sven:philosophicalProperty ;
+                  rdfs:domain sven:PhysicalObject ;
+                  rdfs:range sven:Vector3 .
+
+
+###  http://www.sven.fr/realSize
+sven:realSize rdf:type owl:ObjectProperty ;
+              rdfs:subPropertyOf sven:philosophicalProperty ;
+              rdfs:domain sven:PhysicalObject ;
+              rdfs:range sven:Vector2 .
 
 
 ###  http://www.sven.fr/receiver
 sven:receiver rdf:type owl:ObjectProperty ;
               rdfs:domain sven:CollisionEvent ;
               rdfs:range sven:Object ;
-              rdfs:label "receiver"@en , "récepteur"@fr ;
-              rdfs:comment "Relates a collision event to its receiver."@en , "Relie un événement de collision à son récepteur."@fr .
+              rdfs:comment "Relates a collision event to its receiver."@en ,
+                           "Relie un événement de collision à son récepteur."@fr ;
+              rdfs:label "receiver"@en ,
+                         "récepteur"@fr .
 
 
 ###  http://www.sven.fr/renderProperty
 sven:renderProperty rdf:type owl:ObjectProperty ;
                     rdfs:subPropertyOf sven:componentProperty ;
                     rdfs:domain sven:Render ;
-                    rdfs:label "render property"@en , "propriétés de rendu"@fr ;
-                    rdfs:comment "Relates a render to its properties."@en , "Relie un rendu à ses propriétés."@fr .
+                    rdfs:comment "Relates a render to its properties."@en ,
+                                 "Relie un rendu à ses propriétés."@fr ;
+                    rdfs:label "propriétés de rendu"@fr ,
+                               "render property"@en .
 
 
 ###  http://www.sven.fr/rotation
 sven:rotation rdf:type owl:ObjectProperty ;
               rdfs:subPropertyOf sven:transformProperty ;
               rdfs:range sven:Quaternion ;
-              rdfs:label "rotation"@en , "rotation"@fr ;
-              rdfs:comment "Relates a transform to its rotation."@en , "Relie une transformation à sa rotation."@fr .
+              rdfs:comment "Relates a transform to its rotation."@en ,
+                           "Relie une transformation à sa rotation."@fr ;
+              rdfs:label "rotation"@en ,
+                         "rotation"@fr .
 
 
 ###  http://www.sven.fr/scale
 sven:scale rdf:type owl:ObjectProperty ;
            rdfs:subPropertyOf sven:transformProperty ;
            rdfs:range sven:Vector3 ;
-           rdfs:label "scale"@en , "échelle"@fr ;
-           rdfs:comment "Relates a transform to its scale."@en , "Relie une transformation à son échelle."@fr .
+           rdfs:comment "Relates a transform to its scale."@en ,
+                        "Relie une transformation à son échelle."@fr ;
+           rdfs:label "scale"@en ,
+                      "échelle"@fr .
 
 
 ###  http://www.sven.fr/sender
 sven:sender rdf:type owl:ObjectProperty ;
             rdfs:domain sven:CollisionEvent ;
             rdfs:range sven:Object ;
-            rdfs:label "sender"@en , "expéditeur"@fr ;
-            rdfs:comment "Relates a collision event to its sender."@en , "Relie un événement de collision à son expéditeur."@fr .
+            rdfs:comment "Relates a collision event to its sender."@en ,
+                         "Relie un événement de collision à son expéditeur."@fr ;
+            rdfs:label "expéditeur"@fr ,
+                       "sender"@en .
 
 
 ###  http://www.sven.fr/shader
 sven:shader rdf:type owl:ObjectProperty ;
             rdfs:subPropertyOf <http://www.sven.fr/3DRenderProperty> ;
             rdfs:range sven:Primitive ;
-            rdfs:label "shader"@en , "ombrageur"@fr ;
-            rdfs:comment "Relates a 3D render to its shader."@en , "Relie un rendu 3D à son ombrageur."@fr .
+            rdfs:comment "Relates a 3D render to its shader."@en ,
+                         "Relie un rendu 3D à son ombrageur."@fr ;
+            rdfs:label "ombrageur"@fr ,
+                       "shader"@en .
 
 
 ###  http://www.sven.fr/shapeProperty
 sven:shapeProperty rdf:type owl:ObjectProperty ;
                    rdfs:subPropertyOf sven:componentProperty ;
                    rdfs:domain sven:Shape ;
-                   rdfs:label "shape property"@en , "propriétés de forme"@fr ;
-                   rdfs:comment "Relates a shape to its properties."@en , "Relie une forme à ses propriétés."@fr .
+                   rdfs:comment "Relates a shape to its properties."@en ,
+                                "Relie une forme à ses propriétés."@fr ;
+                   rdfs:label "propriétés de forme"@fr ,
+                              "shape property"@en .
 
 
 ###  http://www.sven.fr/sprite
 sven:sprite rdf:type owl:ObjectProperty ;
             rdfs:subPropertyOf <http://www.sven.fr/2DRenderProperty> ;
             rdfs:range sven:Primitive ;
-            rdfs:label "sprite"@en , "sprite"@fr ;
-            rdfs:comment "Relates a 2D render to its sprite."@en , "Relie un rendu 2D à son sprite."@fr .
+            rdfs:comment "Relates a 2D render to its sprite."@en ,
+                         "Relie un rendu 2D à son sprite."@fr ;
+            rdfs:label "sprite"@en ,
+                       "sprite"@fr .
 
 
 ###  http://www.sven.fr/tag
 sven:tag rdf:type owl:ObjectProperty ;
          rdfs:subPropertyOf sven:objectProperty ;
          rdfs:range sven:Primitive ;
-         rdfs:label "tag"@en , "étiquette"@fr ;
-         rdfs:comment "Relates an object to its tag."@en , "Relie un objet à son étiquette."@fr .
+         rdfs:comment "Relates an object to its tag."@en ,
+                      "Relie un objet à son étiquette."@fr ;
+         rdfs:label "tag"@en ,
+                    "étiquette"@fr .
 
 
 ###  http://www.sven.fr/transformProperty
 sven:transformProperty rdf:type owl:ObjectProperty ;
                        rdfs:subPropertyOf sven:componentProperty ;
                        rdfs:domain sven:Transform ;
-                       rdfs:label "transform property"@en , "propriétés de transformation"@fr ;
-                       rdfs:comment "Relates a transform to its properties."@en , "Relie une transformation à ses propriétés."@fr .
+                       rdfs:comment "Relates a transform to its properties."@en ,
+                                    "Relie une transformation à ses propriétés."@fr ;
+                       rdfs:label "propriétés de transformation"@fr ,
+                                  "transform property"@en .
 
 
 ###  http://www.sven.fr/triangles
 sven:triangles rdf:type owl:ObjectProperty ;
                rdfs:subPropertyOf sven:shapeProperty ;
                rdfs:range sven:Primitive ;
-               rdfs:label "triangles"@en , "triangles"@fr ;
-               rdfs:comment "Relates a shape to its triangles."@en , "Relie une forme à ses triangles."@fr .
+               rdfs:comment "Relates a shape to its triangles."@en ,
+                            "Relie une forme à ses triangles."@fr ;
+               rdfs:label "triangles"@en ,
+                          "triangles"@fr .
 
 
 ###  http://www.sven.fr/uvs
 sven:uvs rdf:type owl:ObjectProperty ;
          rdfs:subPropertyOf sven:shapeProperty ;
          rdfs:range sven:Primitive ;
-         rdfs:label "uvs"@en , "uvs"@fr ;
-         rdfs:comment "Relates a shape to its UVs."@en , "Relie une forme à ses UVs."@fr .
+         rdfs:comment "Relates a shape to its UVs."@en ,
+                      "Relie une forme à ses UVs."@fr ;
+         rdfs:label "uvs"@en ,
+                    "uvs"@fr .
 
 
 ###  http://www.sven.fr/vertices
 sven:vertices rdf:type owl:ObjectProperty ;
               rdfs:subPropertyOf sven:shapeProperty ;
               rdfs:range sven:Primitive ;
-              rdfs:label "vertices"@en , "sommet"@fr  ;
-              rdfs:comment "Relates a shape to its vertices."@en , "Relie une forme à ses sommets."@fr .
+              rdfs:comment "Relates a shape to its vertices."@en ,
+                           "Relie une forme à ses sommets."@fr ;
+              rdfs:label "sommet"@fr ,
+                         "vertices"@en .
+
+
+###  http://www.sven.fr/virtualColor
+sven:virtualColor rdf:type owl:ObjectProperty ;
+                  rdfs:subPropertyOf sven:philosophicalProperty ;
+                  rdfs:domain sven:RenderObject ;
+                  rdfs:range sven:Color ;
+                  owl:propertyChainAxiom ( sven:component
+                                           sven:color
+                                         ) ;
+                  rdfs:comment "La couleur virtuelle de l'objet."@fr ,
+                               "The virtual color of the object."@en ;
+                  rdfs:label "couleur virtuelle"@fr ,
+                             "virtual color"@en .
+
+
+###  http://www.sven.fr/virtualPosition
+sven:virtualPosition rdf:type owl:ObjectProperty ;
+                     rdfs:subPropertyOf sven:philosophicalProperty ;
+                     rdfs:domain sven:VirtualObject ;
+                     rdfs:range sven:Vector3 ;
+                     owl:propertyChainAxiom ( sven:component
+                                              sven:position
+                                            ) ;
+                     rdfs:comment "La position virtuelle de l'objet."@fr ,
+                                  "The virtual position of the object."@en ;
+                     rdfs:label "position virtuelle"@fr ,
+                                "virtual position"@en .
+
+
+###  http://www.sven.fr/virtualRotation
+sven:virtualRotation rdf:type owl:ObjectProperty ;
+                     rdfs:subPropertyOf sven:philosophicalProperty ;
+                     rdfs:domain sven:VirtualObject ;
+                     rdfs:range sven:Quaternion ;
+                     owl:propertyChainAxiom ( sven:component
+                                              sven:rotation
+                                            ) ;
+                     rdfs:comment "La rotation virtuelle de l'objet."@fr ,
+                                  "The virtual rotation of the object."@en ;
+                     rdfs:label "rotation virtuelle"@fr ,
+                                "virtual rotation"@en .
+
+
+###  http://www.sven.fr/virtualSize
+sven:virtualSize rdf:type owl:ObjectProperty ;
+                 rdfs:subPropertyOf sven:philosophicalProperty ;
+                 rdfs:domain sven:VirtualObject ;
+                 rdfs:range sven:Vector3 ;
+                 owl:propertyChainAxiom ( sven:component
+                                          sven:scale
+                                        ) ;
+                 rdfs:comment "La taille virtuelle de l'objet."@fr ,
+                              "The virtual size of the object."@en ;
+                 rdfs:label "taille virtuelle"@fr ,
+                            "virtual size"@en .
 
 
 ###  http://www.sven.fr/2DRenderProperty
 <http://www.sven.fr/2DRenderProperty> rdf:type owl:ObjectProperty ;
-                                               rdfs:subPropertyOf sven:renderProperty ;
-                                               rdfs:domain <http://www.sven.fr/2DRender> ;
-                                               rdfs:label "2D render property"@en , "propriétés de rendu 2D"@fr ;
-                                               rdfs:comment "Relates a 2D render to its properties."@en , "Relie un rendu 2D à ses propriétés."@fr .
+                                      rdfs:subPropertyOf sven:renderProperty ;
+                                      rdfs:domain <http://www.sven.fr/2DRender> ;
+                                      rdfs:comment "Relates a 2D render to its properties."@en ,
+                                                   "Relie un rendu 2D à ses propriétés."@fr ;
+                                      rdfs:label "2D render property"@en ,
+                                                 "propriétés de rendu 2D"@fr .
 
 
 ###  http://www.sven.fr/3DRenderProperty
 <http://www.sven.fr/3DRenderProperty> rdf:type owl:ObjectProperty ;
-                                               rdfs:subPropertyOf sven:renderProperty ;
-                                               rdfs:domain <http://www.sven.fr/3DRender> ;
-                                               rdfs:label "3D render property"@en , "propriétés de rendu 3D"@fr ;
-                                               rdfs:comment "Relates a 3D render to its properties."@en , "Relie un rendu 3D à ses propriétés."@fr .
+                                      rdfs:subPropertyOf sven:renderProperty ;
+                                      rdfs:domain <http://www.sven.fr/3DRender> ;
+                                      rdfs:comment "Relates a 3D render to its properties."@en ,
+                                                   "Relie un rendu 3D à ses propriétés."@fr ;
+                                      rdfs:label "3D render property"@en ,
+                                                 "propriétés de rendu 3D"@fr .
 
 
 ###  http://www.w3.org/2006/time#hasTemporalExtent
 time:hasTemporalExtent rdf:type owl:ObjectProperty ;
                        rdfs:range time:Interval ;
-                       rdfs:label "has temporal extent"@en , "a une étendue temporelle"@fr ;
-                       rdfs:comment "Relates a temporal entity to its temporal extent."@en , "Relie une entité temporelle à son étendue temporelle."@fr .
+                       rdfs:comment "Relates a temporal entity to its temporal extent."@en ,
+                                    "Relie une entité temporelle à son étendue temporelle."@fr ;
+                       rdfs:label "a une étendue temporelle"@fr ,
+                                  "has temporal extent"@en .
 
 
 #################################################################
 #    Data properties
 #################################################################
 
-###  http://www.sven.fr/POVFOV
-sven:POVFOV rdf:type owl:DatatypeProperty ;
-            rdfs:subPropertyOf owl:topDataProperty ;
-            rdfs:domain sven:PointOfView ;
-            rdfs:range xsd:float ;
-            rdfs:label "Point of view field of view"@en , "Champ de vision du point de vue"@fr ;
-            rdfs:comment "The field of view of the point of view."@en , "Le champ de vision du point de vue."@fr .
-
-
-###  http://www.sven.fr/POVFar
-sven:POVFar rdf:type owl:DatatypeProperty ;
-            rdfs:subPropertyOf owl:topDataProperty ;
-            rdfs:domain sven:PointOfView ;
-            rdfs:range xsd:float ;
-            rdfs:label "Point of view far"@en , "Point de vue loin"@fr ;
-            rdfs:comment "The far distance of the point of view."@en , "La distance loin du point de vue."@fr .
-
-
-###  http://www.sven.fr/POVNear
-sven:POVNear rdf:type owl:DatatypeProperty ;
-             rdfs:subPropertyOf owl:topDataProperty ;
-             rdfs:domain sven:PointOfView ;
-             rdfs:range xsd:float ;
-             rdfs:label "Point of view near"@en , "Point de vue près"@fr ;
-             rdfs:comment "The near distance of the point of view."@en , "La distance près du point de vue."@fr .
-
-
 ###  http://www.sven.fr/a
 sven:a rdf:type owl:DatatypeProperty ;
        rdfs:subPropertyOf sven:propertyData ;
        rdfs:domain sven:Color ;
        rdfs:range xsd:float ;
-       rdfs:label "alpha"@en , "alpha"@fr ;
-       rdfs:comment "The alpha value of the color."@en , "La valeur alpha de la couleur."@fr .
+       rdfs:comment "La valeur alpha de la couleur."@fr ,
+                    "The alpha value of the color."@en ;
+       rdfs:label "alpha"@en ,
+                  "alpha"@fr .
 
 
 ###  http://www.sven.fr/b
@@ -425,8 +679,10 @@ sven:b rdf:type owl:DatatypeProperty ;
        rdfs:subPropertyOf sven:propertyData ;
        rdfs:domain sven:Color ;
        rdfs:range xsd:float ;
-       rdfs:label "blue"@en , "bleu"@fr ;
-       rdfs:comment "The blue value of the color."@en , "La valeur bleue de la couleur."@fr .
+       rdfs:comment "La valeur bleue de la couleur."@fr ,
+                    "The blue value of the color."@en ;
+       rdfs:label "bleu"@fr ,
+                  "blue"@en .
 
 
 ###  http://www.sven.fr/g
@@ -434,52 +690,20 @@ sven:g rdf:type owl:DatatypeProperty ;
        rdfs:subPropertyOf sven:propertyData ;
        rdfs:domain sven:Color ;
        rdfs:range xsd:float ;
-       rdfs:label "green"@en , "vert"@fr ;
-       rdfs:comment "The green value of the color."@en , "La valeur verte de la couleur."@fr .
-
-
-###  http://www.sven.fr/graspRadius
-sven:graspRadius rdf:type owl:DatatypeProperty ;
-                 rdfs:subPropertyOf owl:topDataProperty ;
-                 rdfs:domain sven:GraspAreaObject ;
-                 rdfs:range xsd:float ;
-                 rdfs:label "grasp radius"@en , "rayon de préhension"@fr ;
-                 rdfs:comment "The radius of the grasp area."@en , "Le rayon de la zone de préhension."@fr .
-
-
-###  http://www.sven.fr/maxSoundDistance
-sven:maxSoundDistance rdf:type owl:DatatypeProperty ;
-                      rdfs:subPropertyOf owl:topDataProperty ;
-                      rdfs:domain sven:AudioObject ;
-                      rdfs:range xsd:float ;
-                      rdfs:label "max sound distance"@en , "distance sonore max"@fr ;
-                      rdfs:comment "The maximum distance of the sound."@en , "La distance maximale du son."@fr .
-
-
-###  http://www.sven.fr/minSoundDistance
-sven:minSoundDistance rdf:type owl:DatatypeProperty ;
-                      rdfs:subPropertyOf owl:topDataProperty ;
-                      rdfs:domain sven:AudioObject ;
-                      rdfs:range xsd:float ;
-                      rdfs:label "min sound distance"@en , "distance sonore min"@fr ;
-                      rdfs:comment "The minimum distance of the sound."@en , "La distance minimale du son."@fr .
-
-
-###  http://www.sven.fr/pointerDistance
-sven:pointerDistance rdf:type owl:DatatypeProperty ;
-                     rdfs:subPropertyOf owl:topDataProperty ;
-                     rdfs:domain sven:PointerObject ;
-                     rdfs:range xsd:float ;
-                     rdfs:label "pointer distance"@en , "distance du pointeur"@fr ;
-                     rdfs:comment "The distance of the pointer."@en , "La distance du pointeur."@fr .
+       rdfs:comment "La valeur verte de la couleur."@fr ,
+                    "The green value of the color."@en ;
+       rdfs:label "green"@en ,
+                  "vert"@fr .
 
 
 ###  http://www.sven.fr/propertyData
 sven:propertyData rdf:type owl:DatatypeProperty ,
                            owl:FunctionalProperty ;
                   rdfs:domain sven:Property ;
-                  rdfs:label "property data"@en , "données de propriété"@fr ;
-                  rdfs:comment "The data of the property."@en , "Les données de la propriété."@fr .
+                  rdfs:comment "Les données de la propriété."@fr ,
+                               "The data of the property."@en ;
+                  rdfs:label "données de propriété"@fr ,
+                             "property data"@en .
 
 
 ###  http://www.sven.fr/r
@@ -487,8 +711,10 @@ sven:r rdf:type owl:DatatypeProperty ;
        rdfs:subPropertyOf sven:propertyData ;
        rdfs:domain sven:Color ;
        rdfs:range xsd:float ;
-       rdfs:label "red"@en , "rouge"@fr ;
-       rdfs:comment "The red value of the color."@en , "La valeur rouge de la couleur."@fr .
+       rdfs:comment "La valeur rouge de la couleur."@fr ,
+                    "The red value of the color."@en ;
+       rdfs:label "red"@en ,
+                  "rouge"@fr .
 
 
 ###  http://www.sven.fr/realPositionX
@@ -496,8 +722,10 @@ sven:realPositionX rdf:type owl:DatatypeProperty ;
                    rdfs:subPropertyOf owl:topDataProperty ;
                    rdfs:domain sven:PhysicalObject ;
                    rdfs:range xsd:float ;
-                   rdfs:label "real position X"@en , "position réelle X"@fr ;
-                   rdfs:comment "The real position X of the object."@en , "La position réelle X de l'objet."@fr .
+                   rdfs:comment "La position réelle X de l'objet."@fr ,
+                                "The real position X of the object."@en ;
+                   rdfs:label "position réelle X"@fr ,
+                              "real position X"@en .
 
 
 ###  http://www.sven.fr/realPositionY
@@ -505,8 +733,10 @@ sven:realPositionY rdf:type owl:DatatypeProperty ;
                    rdfs:subPropertyOf owl:topDataProperty ;
                    rdfs:domain sven:PhysicalObject ;
                    rdfs:range xsd:float ;
-                   rdfs:label "real position Y"@en , "position réelle Y"@fr ;
-                   rdfs:comment "The real position Y of the object."@en , "La position réelle Y de l'objet."@fr .
+                   rdfs:comment "La position réelle Y de l'objet."@fr ,
+                                "The real position Y of the object."@en ;
+                   rdfs:label "position réelle Y"@fr ,
+                              "real position Y"@en .
 
 
 ###  http://www.sven.fr/realPositionZ
@@ -514,8 +744,10 @@ sven:realPositionZ rdf:type owl:DatatypeProperty ;
                    rdfs:subPropertyOf owl:topDataProperty ;
                    rdfs:domain sven:PhysicalObject ;
                    rdfs:range xsd:float ;
-                   rdfs:label "real position Z"@en , "position réelle Z"@fr ;
-                   rdfs:comment "The real position Z of the object."@en , "La position réelle Z de l'objet."@fr .
+                   rdfs:comment "La position réelle Z de l'objet."@fr ,
+                                "The real position Z of the object."@en ;
+                   rdfs:label "position réelle Z"@fr ,
+                              "real position Z"@en .
 
 
 ###  http://www.sven.fr/realSizeX
@@ -523,8 +755,10 @@ sven:realSizeX rdf:type owl:DatatypeProperty ;
                rdfs:subPropertyOf owl:topDataProperty ;
                rdfs:domain sven:PhysicalObject ;
                rdfs:range xsd:float ;
-               rdfs:label "real size X"@en , "taille réelle X"@fr ;
-               rdfs:comment "The real size X of the object."@en , "La taille réelle X de l'objet."@fr .
+               rdfs:comment "La taille réelle X de l'objet."@fr ,
+                            "The real size X of the object."@en ;
+               rdfs:label "real size X"@en ,
+                          "taille réelle X"@fr .
 
 
 ###  http://www.sven.fr/realSizeY
@@ -532,174 +766,60 @@ sven:realSizeY rdf:type owl:DatatypeProperty ;
                rdfs:subPropertyOf owl:topDataProperty ;
                rdfs:domain sven:PhysicalObject ;
                rdfs:range xsd:float ;
-               rdfs:label "real size Y"@en , "taille réelle Y"@fr ;
-               rdfs:comment "The real size Y of the object."@en , "La taille réelle Y de l'objet."@fr .
+               rdfs:comment "La taille réelle Y de l'objet."@fr ,
+                            "The real size Y of the object."@en ;
+               rdfs:label "real size Y"@en ,
+                          "taille réelle Y"@fr .
 
 
 ###  http://www.sven.fr/value
 sven:value rdf:type owl:DatatypeProperty ;
            rdfs:subPropertyOf sven:propertyData ;
            rdfs:domain sven:Primitive ;
-           rdfs:label "value"@en , "valeur"@fr ;
-           rdfs:comment "The value of the property."@en , "La valeur de la propriété."@fr .
-
-
-###  http://www.sven.fr/virtualColorA
-sven:virtualColorA rdf:type owl:DatatypeProperty ;
-                   rdfs:subPropertyOf owl:topDataProperty ;
-                   rdfs:domain sven:RenderObject ;
-                   rdfs:range xsd:float ;
-                   rdfs:label "virtual color alpha"@en , "couleur virtuelle alpha"@fr ;
-                   rdfs:comment "The virtual color alpha of the object."@en , "La couleur virtuelle alpha de l'objet."@fr .
-
-
-###  http://www.sven.fr/virtualColorB
-sven:virtualColorB rdf:type owl:DatatypeProperty ;
-                   rdfs:subPropertyOf owl:topDataProperty ;
-                   rdfs:domain sven:RenderObject ;
-                   rdfs:range xsd:float ;
-                   rdfs:label "virtual color blue"@en , "couleur virtuelle bleue"@fr ;
-                   rdfs:comment "The virtual color blue of the object."@en , "La couleur virtuelle bleue de l'objet."@fr .
-
-
-###  http://www.sven.fr/virtualColorG
-sven:virtualColorG rdf:type owl:DatatypeProperty ;
-                   rdfs:subPropertyOf owl:topDataProperty ;
-                   rdfs:domain sven:RenderObject ;
-                   rdfs:range xsd:float ;
-                   rdfs:label "virtual color green"@en , "couleur virtuelle verte"@fr ;
-                   rdfs:comment "The virtual color green of the object."@en , "La couleur virtuelle verte de l'objet."@fr .
-
-
-###  http://www.sven.fr/virtualColorR
-sven:virtualColorR rdf:type owl:DatatypeProperty ;
-                   rdfs:subPropertyOf owl:topDataProperty ;
-                   rdfs:domain sven:RenderObject ;
-                   rdfs:range xsd:float ;
-                   rdfs:label "virtual color red"@en , "couleur virtuelle rouge"@fr ;
-                   rdfs:comment "The virtual color red of the object."@en , "La couleur virtuelle rouge de l'objet."@fr .
-
-
-###  http://www.sven.fr/virtualPositionX
-sven:virtualPositionX rdf:type owl:DatatypeProperty ;
-                      rdfs:subPropertyOf owl:topDataProperty ;
-                      rdfs:domain sven:VirtualObject ;
-                      rdfs:range xsd:float ;
-                      rdfs:label "virtual position X"@en , "position virtuelle X"@fr ;
-                      rdfs:comment "The virtual position X of the object."@en , "La position virtuelle X de l'objet."@fr .
-
-
-###  http://www.sven.fr/virtualPositionY
-sven:virtualPositionY rdf:type owl:DatatypeProperty ;
-                      rdfs:subPropertyOf owl:topDataProperty ;
-                      rdfs:domain sven:VirtualObject ;
-                      rdfs:range xsd:float ;
-                      rdfs:label "virtual position Y"@en , "position virtuelle Y"@fr ;
-                      rdfs:comment "The virtual position Y of the object."@en , "La position virtuelle Y de l'objet."@fr .
-
-
-###  http://www.sven.fr/virtualPositionZ
-sven:virtualPositionZ rdf:type owl:DatatypeProperty ;
-                      rdfs:subPropertyOf owl:topDataProperty ;
-                      rdfs:domain sven:VirtualObject ;
-                      rdfs:range xsd:float ;
-                      rdfs:label "virtual position Z"@en , "position virtuelle Z"@fr ;
-                      rdfs:comment "The virtual position Z of the object."@en , "La position virtuelle Z de l'objet."@fr .
-
-
-###  http://www.sven.fr/virtualRotationW
-sven:virtualRotationW rdf:type owl:DatatypeProperty ;
-                      rdfs:subPropertyOf owl:topDataProperty ;
-                      rdfs:domain sven:VirtualObject ;
-                      rdfs:range xsd:float ;
-                      rdfs:label "virtual rotation W"@en , "rotation virtuelle W"@fr ;
-                      rdfs:comment "The virtual rotation W of the object."@en , "La rotation virtuelle W de l'objet."@fr .
-
-
-###  http://www.sven.fr/virtualRotationX
-sven:virtualRotationX rdf:type owl:DatatypeProperty ;
-                      rdfs:subPropertyOf owl:topDataProperty ;
-                      rdfs:domain sven:VirtualObject ;
-                      rdfs:range xsd:float ;
-                      rdfs:label "virtual rotation X"@en , "rotation virtuelle X"@fr ;
-                      rdfs:comment "The virtual rotation X of the object."@en , "La rotation virtuelle X de l'objet."@fr .
-
-
-###  http://www.sven.fr/virtualRotationY
-sven:virtualRotationY rdf:type owl:DatatypeProperty ;
-                      rdfs:subPropertyOf owl:topDataProperty ;
-                      rdfs:domain sven:VirtualObject ;
-                      rdfs:range xsd:float ;
-                      rdfs:label "virtual rotation Y"@en , "rotation virtuelle Y"@fr ;
-                      rdfs:comment "The virtual rotation Y of the object."@en , "La rotation virtuelle Y de l'objet."@fr .
-
-
-###  http://www.sven.fr/virtualRotationZ
-sven:virtualRotationZ rdf:type owl:DatatypeProperty ;
-                      rdfs:subPropertyOf owl:topDataProperty ;
-                      rdfs:domain sven:VirtualObject ;
-                      rdfs:range xsd:float ;
-                      rdfs:label "virtual rotation Z"@en , "rotation virtuelle Z"@fr ;
-                      rdfs:comment "The virtual rotation Z of the object."@en , "La rotation virtuelle Z de l'objet."@fr .
-
-
-###  http://www.sven.fr/virtualSizeX
-sven:virtualSizeX rdf:type owl:DatatypeProperty ;
-                  rdfs:subPropertyOf owl:topDataProperty ;
-                  rdfs:domain sven:VirtualObject ;
-                  rdfs:range xsd:float ;
-                  rdfs:label "virtual size X"@en , "taille virtuelle X"@fr ;
-                  rdfs:comment "The virtual size X of the object."@en , "La taille virtuelle X de l'objet."@fr .
-
-
-###  http://www.sven.fr/virtualSizeY
-sven:virtualSizeY rdf:type owl:DatatypeProperty ;
-                  rdfs:subPropertyOf owl:topDataProperty ;
-                  rdfs:domain sven:VirtualObject ;
-                  rdfs:range xsd:float ;
-                  rdfs:label "virtual size Y"@en , "taille virtuelle Y"@fr ;
-                  rdfs:comment "The virtual size Y of the object."@en , "La taille virtuelle Y de l'objet."@fr .
-
-
-###  http://www.sven.fr/virtualSizeZ
-sven:virtualSizeZ rdf:type owl:DatatypeProperty ;
-                  rdfs:subPropertyOf owl:topDataProperty ;
-                  rdfs:domain sven:VirtualObject ;
-                  rdfs:range xsd:float ;
-                  rdfs:label "virtual size Z"@en , "taille virtuelle Z"@fr ;
-                  rdfs:comment "The virtual size Z of the object."@en , "La taille virtuelle Z de l'objet."@fr .
+           rdfs:comment "La valeur de la propriété."@fr ,
+                        "The value of the property."@en ;
+           rdfs:label "valeur"@fr ,
+                      "value"@en .
 
 
 ###  http://www.sven.fr/w
 sven:w rdf:type owl:DatatypeProperty ;
        rdfs:subPropertyOf sven:propertyData ;
        rdfs:range xsd:float ;
-       rdfs:label "w"@en , "w"@fr ;
-       rdfs:comment "The w value of the quaternion."@en , "La valeur w du quaternion."@fr .
+       rdfs:comment "La valeur w du quaternion."@fr ,
+                    "The w value of the quaternion."@en ;
+       rdfs:label "w"@en ,
+                  "w"@fr .
 
 
 ###  http://www.sven.fr/x
 sven:x rdf:type owl:DatatypeProperty ;
        rdfs:subPropertyOf sven:propertyData ;
        rdfs:range xsd:float ;
-       rdfs:label "x"@en , "x"@fr ;
-       rdfs:comment "The x value of the vector."@en , "La valeur x du vecteur."@fr .
+       rdfs:comment "La valeur x du vecteur."@fr ,
+                    "The x value of the vector."@en ;
+       rdfs:label "x"@en ,
+                  "x"@fr .
 
 
 ###  http://www.sven.fr/y
 sven:y rdf:type owl:DatatypeProperty ;
        rdfs:subPropertyOf sven:propertyData ;
        rdfs:range xsd:float ;
-       rdfs:label "y"@en , "y"@fr ;
-       rdfs:comment "The y value of the vector."@en , "La valeur y du vecteur."@fr .
+       rdfs:comment "La valeur y du vecteur."@fr ,
+                    "The y value of the vector."@en ;
+       rdfs:label "y"@en ,
+                  "y"@fr .
 
 
 ###  http://www.sven.fr/z
 sven:z rdf:type owl:DatatypeProperty ;
        rdfs:subPropertyOf sven:propertyData ;
        rdfs:range xsd:float ;
-       rdfs:label "z"@en , "z"@fr ;
-       rdfs:comment "The z value of the vector."@en , "La valeur z du vecteur."@fr .
+       rdfs:comment "La valeur z du vecteur."@fr ,
+                    "The z value of the vector."@en ;
+       rdfs:label "z"@en ,
+                  "z"@fr .
 
 
 #################################################################
@@ -709,280 +829,356 @@ sven:z rdf:type owl:DatatypeProperty ;
 ###  http://www.opengis.net/ont/geosparql#Feature
 geo:Feature rdf:type owl:Class ;
             rdfs:subClassOf sven:Component ;
-            rdfs:label "Geometry feature"@en , "Entité géométrique"@fr ;
-                rdfs:comment "A feature is a spatial object."@en , "Une entité est un objet spatial."@fr .
+            rdfs:comment "A feature is a spatial object."@en ,
+                         "Une entité est un objet spatial."@fr ;
+            rdfs:label "Entité géométrique"@fr ,
+                       "Geometry feature"@en .
 
 
 ###  http://www.opengis.net/ont/geosparql#Geometry
 geo:Geometry rdf:type owl:Class ;
              rdfs:subClassOf sven:Property ;
-             rdfs:label "Geometry"@en , "Géométrie"@fr ;
-             rdfs:comment "A geometry is a spatial representation."@en , "Une géométrie est une représentation spatiale."@fr .
+             rdfs:comment "A geometry is a spatial representation."@en ,
+                          "Une géométrie est une représentation spatiale."@fr ;
+             rdfs:label "Geometry"@en ,
+                        "Géométrie"@fr .
 
 
 ###  http://www.sven.fr/Actor
 sven:Actor rdf:type owl:Class ;
            owl:equivalentClass sven:Object ;
-           rdfs:subClassOf sven:Component ;
-           rdfs:label "Actor"@en , "Acteur"@fr ;
-           rdfs:comment "An actor is a object from Unreal Engine that can interact with the user."@en , "Un acteur est un objet d'Unreal Engine qui peut interagir avec l'utilisateur."@fr .
+           rdfs:comment "An actor is a object from Unreal Engine that can interact with the user."@en ,
+                        "Un acteur est un objet d'Unreal Engine qui peut interagir avec l'utilisateur."@fr ;
+           rdfs:label "Acteur"@fr ,
+                      "Actor"@en .
 
 
 ###  http://www.sven.fr/ActorComponent
 sven:ActorComponent rdf:type owl:Class ;
                     owl:equivalentClass sven:Component ;
-                    rdfs:label "Actor component"@en , "Composant acteur"@fr ;
-                    rdfs:comment "An actor component is a component from Unreal Engine that can interact with the user."@en , "Un composant acteur est un composant d'Unreal Engine qui peut interagir avec l'utilisateur."@fr .
+                    rdfs:comment "An actor component is a component from Unreal Engine that can interact with the user."@en ,
+                                 "Un composant acteur est un composant d'Unreal Engine qui peut interagir avec l'utilisateur."@fr ;
+                    rdfs:label "Actor component"@en ,
+                               "Composant acteur"@fr .
 
 
 ###  http://www.sven.fr/Audio
 sven:Audio rdf:type owl:Class ;
            rdfs:subClassOf sven:Component ;
-           rdfs:label "Audio"@en , "Audio"@fr ;
-           rdfs:comment "An audio component."@en , "Un composant audio."@fr .
+           rdfs:comment "An audio component."@en ,
+                        "Un composant audio."@fr ;
+           rdfs:label "Audio"@en ,
+                      "Audio"@fr .
 
 
 ###  http://www.sven.fr/AudioObject
 sven:AudioObject rdf:type owl:Class ;
                  rdfs:subClassOf sven:VirtualObject ;
-                 rdfs:label "Audio object"@en , "Objet audio"@fr ;
-                 rdfs:comment "An audio object."@en , "Un objet audio."@fr .
+                 rdfs:comment "An audio object."@en ,
+                              "Un objet audio."@fr ;
+                 rdfs:label "Audio object"@en ,
+                            "Objet audio"@fr .
 
 
 ###  http://www.sven.fr/Camera
 sven:Camera rdf:type owl:Class ;
             rdfs:subClassOf sven:Component ;
-            rdfs:label "Camera"@en , "Caméra"@fr ;
-            rdfs:comment "A camera component."@en , "Un composant caméra."@fr .
+            rdfs:comment "A camera component."@en ,
+                         "Un composant caméra."@fr ;
+            rdfs:label "Camera"@en ,
+                       "Caméra"@fr .
 
 
 ###  http://www.sven.fr/CollisionEvent
 sven:CollisionEvent rdf:type owl:Class ;
                     rdfs:subClassOf sven:Event ;
-                    rdfs:label "Collision event"@en , "Événement de collision"@fr ;
-                    rdfs:comment "A collision event between two objects."@en , "Un événement de collision entre deux objets."@fr .
+                    rdfs:comment "A collision event between two objects."@en ,
+                                 "Un événement de collision entre deux objets."@fr ;
+                    rdfs:label "Collision event"@en ,
+                               "Événement de collision"@fr .
 
 
 ###  http://www.sven.fr/Color
 sven:Color rdf:type owl:Class ;
            rdfs:subClassOf sven:Property ;
-           rdfs:label "Color"@en , "Couleur"@fr ;
-           rdfs:comment "A color property."@en , "Une propriété de couleur."@fr .
+           rdfs:comment "A color property."@en ,
+                        "Une propriété de couleur."@fr ;
+           rdfs:label "Color"@en ,
+                      "Couleur"@fr .
 
 
 ###  http://www.sven.fr/Component
 sven:Component rdf:type owl:Class ;
                owl:equivalentClass sven:Node ;
-               rdfs:label "Component"@en , "Composant"@fr ;
-               rdfs:comment "A component is a part of an object."@en , "Un composant est une partie d'un objet."@fr .
+               rdfs:comment "A component is a part of an object."@en ,
+                            "Un composant est une partie d'un objet."@fr ;
+               rdfs:label "Component"@en ,
+                          "Composant"@fr .
 
 
 ###  http://www.sven.fr/Event
 sven:Event rdf:type owl:Class ;
-           rdfs:label "Event"@en , "Événement"@fr ;
-           rdfs:comment "An event is an action that occurs during the simulation."@en , "Un événement est une action qui se produit pendant la simulation."@fr .
+           rdfs:comment "An event is an action that occurs during the simulation."@en ,
+                        "Un événement est une action qui se produit pendant la simulation."@fr ;
+           rdfs:label "Event"@en ,
+                      "Événement"@fr .
 
 
 ###  http://www.sven.fr/GameObject
 sven:GameObject rdf:type owl:Class ;
                 owl:equivalentClass sven:Object ;
-                rdfs:subClassOf sven:Component ;
-                rdfs:label "Game object"@en , "Objet de jeu"@fr ;
-                rdfs:comment "A game object is an object from Unity that can interact with the user."@en , "Un objet de jeu est un objet d'Unity qui peut interagir avec l'utilisateur."@fr .
-
+                rdfs:comment "A game object is an object from Unity that can interact with the user."@en ,
+                             "Un objet de jeu est un objet d'Unity qui peut interagir avec l'utilisateur."@fr ;
+                rdfs:label "Game object"@en ,
+                           "Objet de jeu"@fr .
 
 
 ###  http://www.sven.fr/GraspArea
 sven:GraspArea rdf:type owl:Class ;
                rdfs:subClassOf sven:Component ;
-               rdfs:label "Grasp area"@en , "Zone de préhension"@fr ;
-               rdfs:comment "A grasp area component that represents the area where the user can interact with the object."@en , "Un composant de zone de préhension qui représente la zone où l'utilisateur peut interagir avec l'objet."@fr .
+               rdfs:comment "A grasp area component that represents the area where the user can interact with the object."@en ,
+                            "Un composant de zone de préhension qui représente la zone où l'utilisateur peut interagir avec l'objet."@fr ;
+               rdfs:label "Grasp area"@en ,
+                          "Zone de préhension"@fr .
 
 
 ###  http://www.sven.fr/GraspAreaObject
 sven:GraspAreaObject rdf:type owl:Class ;
                      rdfs:subClassOf sven:Interactor ;
-                     rdfs:label "Grasp area object"@en , "Objet de zone de préhension"@fr  ;
-                     rdfs:comment "A grasp area object that represents the area where the user can interact with the object."@en , "Un objet de zone de préhension qui représente la zone où l'utilisateur peut interagir avec l'objet."@fr .
+                     rdfs:comment "A grasp area object that represents the area where the user can interact with the object."@en ,
+                                  "Un objet de zone de préhension qui représente la zone où l'utilisateur peut interagir avec l'objet."@fr ;
+                     rdfs:label "Grasp area object"@en ,
+                                "Objet de zone de préhension"@fr .
 
 
 ###  http://www.sven.fr/InputEvent
 sven:InputEvent rdf:type owl:Class ;
                 rdfs:subClassOf sven:Event ;
-                rdfs:label "Input event"@en , "Événement d'entrée"@fr ;
-                rdfs:comment "An input event from the user."@en , "Un événement d'entrée de l'utilisateur."@fr .
+                rdfs:comment "An input event from the user."@en ,
+                             "Un événement d'entrée de l'utilisateur."@fr ;
+                rdfs:label "Input event"@en ,
+                           "Événement d'entrée"@fr .
 
 
 ###  http://www.sven.fr/Interactor
 sven:Interactor rdf:type owl:Class ;
                 rdfs:subClassOf sven:VirtualObject ;
-                rdfs:label "Interactor"@en , "Interacteur"@fr ;
-                rdfs:comment "An interactor is an object that represents a modality of interaction of the user with the system."@en , "Un interacteur est un objet qui représente une modalité d'interaction de l'utilisateur avec le système."@fr .
+                rdfs:comment "An interactor is an object that represents a modality of interaction of the user with the system."@en ,
+                             "Un interacteur est un objet qui représente une modalité d'interaction de l'utilisateur avec le système."@fr ;
+                rdfs:label "Interacteur"@fr ,
+                           "Interactor"@en .
 
 
 ###  http://www.sven.fr/Node
 sven:Node rdf:type owl:Class ;
-          rdfs:label "Node"@en , "Noeud"@fr ;
-          rdfs:comment "A node is a component from Godot Engine."@en , "Un noeud est un composant de Godot Engine."@fr .
+          rdfs:comment "A node is a component from Godot Engine."@en ,
+                       "Un noeud est un composant de Godot Engine."@fr ;
+          rdfs:label "Node"@en ,
+                     "Noeud"@fr .
 
 
 ###  http://www.sven.fr/Object
 sven:Object rdf:type owl:Class ;
-            rdfs:subClassOf sven:Component ;
-            rdfs:label "Object"@en , "Objet"@fr ;
-            rdfs:comment "An object is a component that represents an entity in the simulation."@en , "Un objet est un composant qui représente une entité dans la simulation."@fr .
+            rdfs:comment "An object is a component that represents an entity in the simulation."@en ,
+                         "Un objet est un composant qui représente une entité dans la simulation."@fr ;
+            rdfs:label "Object"@en ,
+                       "Objet"@fr .
 
 
 ###  http://www.sven.fr/PhysicalObject
 sven:PhysicalObject rdf:type owl:Class ;
-                    rdfs:label "Physical object"@en , "Objet physique"@fr ;
-                    rdfs:comment "A physical object is an object that has a physical representation."@en , "Un objet physique est un objet qui a une représentation physique."@fr .
+                    rdfs:comment "A physical object is an object that has a physical representation."@en ,
+                                 "Un objet physique est un objet qui a une représentation physique."@fr ;
+                    rdfs:label "Objet physique"@fr ,
+                               "Physical object"@en .
 
 
 ###  http://www.sven.fr/PointOfView
 sven:PointOfView rdf:type owl:Class ;
                  rdfs:subClassOf sven:Interactor ;
-                 rdfs:label "Point of view"@en , "Point de vue"@fr ;
-                 rdfs:comment "A point of view object that represents the point of view of the user."@en , "Un objet de point de vue qui représente le point de vue de l'utilisateur."@fr .
+                 rdfs:comment "A point of view object that represents the point of view of the user."@en ,
+                              "Un objet de point de vue qui représente le point de vue de l'utilisateur."@fr ;
+                 rdfs:label "Point de vue"@fr ,
+                            "Point of view"@en .
 
 
 ###  http://www.sven.fr/Pointer
 sven:Pointer rdf:type owl:Class ;
              rdfs:subClassOf sven:Component ;
-             rdfs:label "Pointer"@en , "Pointeur"@fr ;
-             rdfs:comment "A pointer component that represents the pointer of the user."@en , "Un composant de pointeur qui représente le pointeur de l'utilisateur."@fr .
+             rdfs:comment "A pointer component that represents the pointer of the user."@en ,
+                          "Un composant de pointeur qui représente le pointeur de l'utilisateur."@fr ;
+             rdfs:label "Pointer"@en ,
+                        "Pointeur"@fr .
 
 
 ###  http://www.sven.fr/PointerObject
 sven:PointerObject rdf:type owl:Class ;
                    rdfs:subClassOf sven:Interactor ;
-                   rdfs:label "Pointer object"@en , "Objet pointeur"@fr ;
-                   rdfs:comment "A pointer object that represents the pointer of the user."@en , "Un objet pointeur qui représente le pointeur de l'utilisateur."@fr .
+                   rdfs:comment "A pointer object that represents the pointer of the user."@en ,
+                                "Un objet pointeur qui représente le pointeur de l'utilisateur."@fr ;
+                   rdfs:label "Objet pointeur"@fr ,
+                              "Pointer object"@en .
 
 
 ###  http://www.sven.fr/Primitive
 sven:Primitive rdf:type owl:Class ;
                rdfs:subClassOf sven:Property ;
-               rdfs:label "Primitive"@en , "Primitif"@fr ;
-               rdfs:comment "A primitive property."@en , "Une propriété primitive."@fr .
+               rdfs:comment "A primitive property."@en ,
+                            "Une propriété primitive."@fr ;
+               rdfs:label "Primitif"@fr ,
+                          "Primitive"@en .
 
 
 ###  http://www.sven.fr/Property
 sven:Property rdf:type owl:Class ;
-              rdfs:label "Property"@en , "Propriété"@fr ;
-              rdfs:comment "A property is a characteristic of an object."@en , "Une propriété est une caractéristique d'un objet."@fr .
+              rdfs:comment "A property is a characteristic of an object."@en ,
+                           "Une propriété est une caractéristique d'un objet."@fr ;
+              rdfs:label "Property"@en ,
+                         "Propriété"@fr .
 
 
 ###  http://www.sven.fr/Quaternion
 sven:Quaternion rdf:type owl:Class ;
                 owl:equivalentClass sven:Vector4 ;
                 rdfs:subClassOf sven:Property ;
-                rdfs:label "Quaternion"@en , "Quaternion"@fr ;
-                rdfs:comment "A quaternion property."@en , "Une propriété de quaternion."@fr .
+                rdfs:comment "A quaternion property."@en ,
+                             "Une propriété de quaternion."@fr ;
+                rdfs:label "Quaternion"@en ,
+                           "Quaternion"@fr .
 
 
 ###  http://www.sven.fr/Reference
 sven:Reference rdf:type owl:Class ;
                rdfs:subClassOf sven:Property ;
-               rdfs:label "Reference"@en , "Référence"@fr ;
-               rdfs:comment "A reference property."@en , "Une propriété de référence."@fr .
+               rdfs:comment "A reference property."@en ,
+                            "Une propriété de référence."@fr ;
+               rdfs:label "Reference"@en ,
+                          "Référence"@fr .
 
 
 ###  http://www.sven.fr/Render
 sven:Render rdf:type owl:Class ;
             rdfs:subClassOf sven:Component ;
-            rdfs:label "Render"@en , "Rendu"@fr ;
-            rdfs:comment "A render component."@en , "Un composant de rendu."@fr .
+            rdfs:comment "A render component."@en ,
+                         "Un composant de rendu."@fr ;
+            rdfs:label "Render"@en ,
+                       "Rendu"@fr .
 
 
 ###  http://www.sven.fr/RenderObject
 sven:RenderObject rdf:type owl:Class ;
                   rdfs:subClassOf sven:VirtualObject ;
-                  rdfs:label "Render object"@en , "Objet de rendu"@fr ;
-                  rdfs:comment "A render object."@en , "Un objet de rendu."@fr .
+                  rdfs:comment "A render object."@en ,
+                               "Un objet de rendu."@fr ;
+                  rdfs:label "Objet de rendu"@fr ,
+                             "Render object"@en .
 
 
 ###  http://www.sven.fr/Shape
 sven:Shape rdf:type owl:Class ;
            rdfs:subClassOf sven:Component ;
-           rdfs:label "Shape"@en , "Forme"@fr ;
-           rdfs:comment "A shape is a component that represents a geometric shape."@en , "Une forme est un composant qui représente une forme géométrique."@fr .
+           rdfs:comment "A shape is a component that represents a geometric shape."@en ,
+                        "Une forme est un composant qui représente une forme géométrique."@fr ;
+           rdfs:label "Forme"@fr ,
+                      "Shape"@en .
 
 
 ###  http://www.sven.fr/TangibleObject
 sven:TangibleObject rdf:type owl:Class ;
                     rdfs:subClassOf sven:PhysicalObject ,
                                     sven:VirtualObject ;
-                    rdfs:label "Tangible object"@en , "Objet tangible"@fr ;
-                    rdfs:comment "A tangible object is an object that can be touched by the user."@en , "Un objet tangible est un objet qui peut être touché par l'utilisateur."@fr .
+                    rdfs:comment "A tangible object is an object that can be touched by the user."@en ,
+                                 "Un objet tangible est un objet qui peut être touché par l'utilisateur."@fr ;
+                    rdfs:label "Objet tangible"@fr ,
+                               "Tangible object"@en .
 
 
 ###  http://www.sven.fr/Transform
 sven:Transform rdf:type owl:Class ;
                rdfs:subClassOf sven:Component ;
-               rdfs:label "Transform"@en , "Transformation"@fr ;
-               rdfs:comment "A transform component."@en , "Un composant de transformation."@fr .
+               rdfs:comment "A transform component."@en ,
+                            "Un composant de transformation."@fr ;
+               rdfs:label "Transform"@en ,
+                          "Transformation"@fr .
 
 
 ###  http://www.sven.fr/User
 sven:User rdf:type owl:Class ;
-          rdfs:label "User"@en , "Utilisateur"@fr ;
-          rdfs:comment "A user is a person who interacts with the system."@en , "Un utilisateur est une personne qui interagit avec le système."@fr .
+          rdfs:comment "A user is a person who interacts with the system."@en ,
+                       "Un utilisateur est une personne qui interagit avec le système."@fr ;
+          rdfs:label "User"@en ,
+                     "Utilisateur"@fr .
 
 
 ###  http://www.sven.fr/Vector1
 sven:Vector1 rdf:type owl:Class ;
              rdfs:subClassOf sven:Property ;
-             rdfs:label "Vector1"@en , "Vecteur1"@fr ;
-             rdfs:comment "A 1D vector property."@en , "Une propriété de vecteur 1D."@fr .
+             rdfs:comment "A 1D vector property."@en ,
+                          "Une propriété de vecteur 1D."@fr ;
+             rdfs:label "Vecteur1"@fr ,
+                        "Vector1"@en .
 
 
 ###  http://www.sven.fr/Vector2
 sven:Vector2 rdf:type owl:Class ;
              rdfs:subClassOf sven:Property ;
-             rdfs:label "Vector2"@en , "Vecteur2"@fr ;
-             rdfs:comment "A 2D vector property."@en , "Une propriété de vecteur 2D."@fr .
+             rdfs:comment "A 2D vector property."@en ,
+                          "Une propriété de vecteur 2D."@fr ;
+             rdfs:label "Vecteur2"@fr ,
+                        "Vector2"@en .
 
 
 ###  http://www.sven.fr/Vector3
 sven:Vector3 rdf:type owl:Class ;
              rdfs:subClassOf sven:Property ;
-             rdfs:label "Vector3"@en , "Vecteur3"@fr ;
-             rdfs:comment "A 3D vector property."@en , "Une propriété de vecteur 3D."@fr .
+             rdfs:comment "A 3D vector property."@en ,
+                          "Une propriété de vecteur 3D."@fr ;
+             rdfs:label "Vecteur3"@fr ,
+                        "Vector3"@en .
 
 
 ###  http://www.sven.fr/Vector4
 sven:Vector4 rdf:type owl:Class ;
              rdfs:subClassOf sven:Property ;
-             rdfs:label "Vector4"@en , "Vecteur4"@fr ;
-             rdfs:comment "A 4D vector property."@en , "Une propriété de vecteur 4D."@fr .
+             rdfs:comment "A 4D vector property."@en ,
+                          "Une propriété de vecteur 4D."@fr ;
+             rdfs:label "Vecteur4"@fr ,
+                        "Vector4"@en .
 
 
 ###  http://www.sven.fr/VirtualObject
 sven:VirtualObject rdf:type owl:Class ;
                    rdfs:subClassOf sven:Object ;
-                   rdfs:label "Virtual object"@en , "Objet virtuel"@fr ;
-                   rdfs:comment "A virtual object is an object that has a virtual representation."@en , "Un objet virtuel est un objet qui a une représentation virtuelle."@fr .
+                   rdfs:comment "A virtual object is an object that has a virtual representation."@en ,
+                                "Un objet virtuel est un objet qui a une représentation virtuelle."@fr ;
+                   rdfs:label "Objet virtuel"@fr ,
+                              "Virtual object"@en .
 
 
 ###  http://www.sven.fr/2DRender
 <http://www.sven.fr/2DRender> rdf:type owl:Class ;
-                                       rdfs:subClassOf sven:Render ;
-                                       rdfs:label "2DRender"@en , "Rendu 2D"@fr ;
-                                       rdfs:comment "A 2D render component."@en , "Un composant de rendu 2D."@fr .
+                              rdfs:subClassOf sven:Render ;
+                              rdfs:comment "A 2D render component."@en ,
+                                           "Un composant de rendu 2D."@fr ;
+                              rdfs:label "2DRender"@en ,
+                                         "Rendu 2D"@fr .
 
 
 ###  http://www.sven.fr/3DRender
 <http://www.sven.fr/3DRender> rdf:type owl:Class ;
-                                       rdfs:subClassOf sven:Render ;
-                                       rdfs:label "3DRender"@en , "Rendu 3D"@fr ;
-                                       rdfs:comment "A 3D render component."@en , "Un composant de rendu 3D."@fr .
+                              rdfs:subClassOf sven:Render ;
+                              rdfs:comment "A 3D render component."@en ,
+                                           "Un composant de rendu 3D."@fr ;
+                              rdfs:label "3DRender"@en ,
+                                         "Rendu 3D"@fr .
 
 
 ###  http://www.w3.org/2006/time#Interval
 time:Interval rdf:type owl:Class ;
-              rdfs:label "Interval"@en , "Intervalle"@fr ;
-              rdfs:comment "An interval is a temporal extent."@en , "Un intervalle est une étendue temporelle."@fr .
+              rdfs:comment "An interval is a temporal extent."@en ,
+                           "Un intervalle est une étendue temporelle."@fr ;
+              rdfs:label "Interval"@en ,
+                         "Intervalle"@fr .
 
 
 ###  Generated by the OWL API (version 4.5.26.2023-07-17T20:34:13Z) https://github.com/owlcs/owlapi
