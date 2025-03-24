@@ -12,6 +12,8 @@ using System.IO;
 using Sven.Content;
 using Sven.OwlTime;
 using VDS.RDF.Parsing;
+using VDS.RDF.Query.Inference;
+
 
 
 #if UNITY_EDITOR
@@ -176,6 +178,10 @@ namespace Sven.GraphManagement
                 foreach (SemantizationCore semantizationCore in semantizationCores)
                     context.Send(_ => semantizationCore.OnDestroy(), null);
             });
+
+            // apply rule ontology to the graph
+            ApplyRuleOntology();
+
             SaveToFile(graph, $"{Application.dataPath}/../SVENs/{_storageName}_{DateTime.Now:yyyy-MM-dd_HH-mm-ss}.ttl");
             await SaveToEndpoint();
 
@@ -184,6 +190,21 @@ namespace Sven.GraphManagement
 #else
             Application.Quit();
 #endif
+        }
+
+        private void ApplyRuleOntology()
+        {
+            StaticRdfsReasoner reasoner = new();
+            Graph schema = new();
+            string content = ontologyDescription.OntologyContent;
+            if (!string.IsNullOrEmpty(content))
+            {
+                TurtleParser turtleParser = new();
+                turtleParser.Load(schema, new StringReader(content));
+            }
+            graph.Merge(schema);
+            reasoner.Initialise(schema);
+            reasoner.Apply(graph);
         }
 
         private void OnApplicationQuit()

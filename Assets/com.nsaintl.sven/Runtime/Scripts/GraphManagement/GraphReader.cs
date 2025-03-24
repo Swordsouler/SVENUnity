@@ -494,7 +494,6 @@ namespace Sven.GraphManagement
                         {intervalProcessing}
                     }}";
 
-                Debug.Log(query);
                 // Execute the query
                 SparqlResultSet results = await Request(query);
                 double queryTime = (DateTime.Now - startProcessing).TotalMilliseconds;
