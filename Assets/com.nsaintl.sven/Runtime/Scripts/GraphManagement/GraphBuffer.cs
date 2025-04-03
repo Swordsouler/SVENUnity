@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.Text;
 using NaughtyAttributes;
 using UnityEngine;
@@ -42,7 +41,7 @@ namespace Sven.GraphManagement
         /// <summary>
         /// Name of the graph.
         /// </summary>
-        public string GraphName => ontologyDescription?.Name ?? "";
+        public string GraphName => ontologyDescription != null ? ontologyDescription.Name : "";
 
         /// <summary>
         /// Endpoint to send the RDF data.
@@ -53,8 +52,8 @@ namespace Sven.GraphManagement
         /// <summary>
         /// Storage name of the graph.
         /// </summary>
-        [SerializeField, DisableIf("IsStarted")]
-        private string _storageName = "Scene 1";
+        [DisableIf("IsStarted")]
+        public string graphName = "GraphName";
 
         /// <summary>
         /// Number of instant created per second.
@@ -69,7 +68,7 @@ namespace Sven.GraphManagement
         /// <summary>
         /// Awake is called when the script instance is being loaded.
         /// </summary>
-        private void Awake()
+        public void Awake()
         {
             // initialize the graph
             graph = CreateNewGraph();
@@ -137,7 +136,7 @@ namespace Sven.GraphManagement
                 MimeTypeDefinition writerMimeTypeDefinition = MimeTypesHelper.GetDefinitions("application/x-turtle").First();
                 string turtle = DecodeGraph(graph);
                 string serviceUri = _endpoint;
-                serviceUri = (!(graph.BaseUri != null)) ? (serviceUri + "?default") : (serviceUri + "?graph=" + Uri.EscapeDataString($"{graph.BaseUri.AbsoluteUri}{Uri.EscapeDataString(_storageName)}"));
+                serviceUri = (!(graph.BaseUri != null)) ? (serviceUri + "?default") : (serviceUri + "?graph=" + Uri.EscapeDataString($"{graph.BaseUri.AbsoluteUri}{Uri.EscapeDataString(graphName)}"));
                 // decode
                 string decodedServiceUri = Uri.UnescapeDataString(serviceUri);
 
@@ -182,7 +181,7 @@ namespace Sven.GraphManagement
             // apply rule ontology to the graph
             ApplyRuleOntology();
 
-            SaveToFile(graph, $"{Application.dataPath}/../SVENs/{_storageName}_{DateTime.Now:yyyy-MM-dd_HH-mm-ss}.ttl");
+            SaveToFile(graph, $"{Application.dataPath}/../SVENs/{graphName}_{DateTime.Now:yyyy-MM-dd_HH-mm-ss}.ttl");
             await SaveToEndpoint();
 
 #if UNITY_EDITOR

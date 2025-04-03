@@ -794,7 +794,7 @@ namespace Sven.GraphManagement
         /// Storage name of the graph.
         /// </summary>
         [SerializeField, ShowIf("IsRemote")]
-        public string _storageName = "Scene 1";
+        public string graphName = "GraphName";
 
         /// <summary>
         /// Loaded endpoint.
@@ -917,7 +917,7 @@ namespace Sven.GraphManagement
             // Créez une instance de SparqlQueryClient avec HttpClient et l'URI de l'endpoint
             SparqlQueryClient sparqlQueryClient = new(httpClient, endpointUri);
 
-            string graphUri = $"FROM <{graph.BaseUri.AbsoluteUri}{Uri.EscapeDataString(_storageName)}>";
+            string graphUri = $"FROM <{graph.BaseUri.AbsoluteUri}{Uri.EscapeDataString(graphName)}>";
             int selectIndex = query.IndexOf("SELECT", StringComparison.OrdinalIgnoreCase);
             if (selectIndex == -1) throw new Exception("Query must contain a SELECT statement.");
             int insertIndex = query.IndexOf('\n', selectIndex) + 1;

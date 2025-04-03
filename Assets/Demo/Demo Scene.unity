@@ -603,7 +603,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ontologyDescription: {fileID: 11400000, guid: 02dbca5f0b2f48945a6a733f130690f2, type: 2}
   _endpoint: http://localhost:7200/repositories/Demo-Scene/rdf-graphs/service
-  graphName: DemoScene
+  _storageName: DemoScene
   _instantPerSecond: 10
 --- !u!1 &216645333
 GameObject:
@@ -2069,7 +2069,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &510031584
 MonoBehaviour:
   m_ObjectHideFlags: 0

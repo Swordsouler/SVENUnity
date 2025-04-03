@@ -21,11 +21,12 @@ namespace Sven.Utils
         public static Color GraspAreaDebugColor => _graspAreaDebugColor;
 
 
-#if UNITY_EDITOR
         private static bool _debug = false;
         private static Color _pointOfViewDebugColor = Color.red;
         private static Color _pointerDebugColor = Color.blue;
         private static Color _graspAreaDebugColor = Color.green;
+
+#if UNITY_EDITOR
 
         public static void RefreshHelper()
         {
