@@ -130,7 +130,7 @@ GameObject:
   - component: {fileID: 66225918}
   - component: {fileID: 66225919}
   m_Layer: 0
-  m_Name: Reader
+  m_Name: Graph Reader
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -164,8 +164,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ontologyDescription: {fileID: 11400000, guid: 02dbca5f0b2f48945a6a733f130690f2, type: 2}
-  _readingMode: 1
-  _endpoint: http://localhost:7200/repositories/Demo-Scene
+  readingMode: 1
+  endpoint: http://localhost:7200/repositories/Demo-Scene
   graphName: DemoScene
   _currentInstantIndex: 0
 --- !u!1 &331900381

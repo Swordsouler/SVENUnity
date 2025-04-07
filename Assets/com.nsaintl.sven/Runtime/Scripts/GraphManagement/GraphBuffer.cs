@@ -46,8 +46,8 @@ namespace Sven.GraphManagement
         /// <summary>
         /// Endpoint to send the RDF data.
         /// </summary>
-        [SerializeField, DisableIf("IsStarted")]
-        private string _endpoint = "http://localhost:7200/repositories/Demo-Scene/rdf-graphs/service";
+        [DisableIf("IsStarted")]
+        public string endpoint = "http://localhost:7200/repositories/Demo-Scene/rdf-graphs/service";
 
         /// <summary>
         /// Storage name of the graph.
@@ -135,7 +135,7 @@ namespace Sven.GraphManagement
                 Debug.Log("Semantizing to the server... " + graph.Triples.Count + " triples in the graph.");
                 MimeTypeDefinition writerMimeTypeDefinition = MimeTypesHelper.GetDefinitions("application/x-turtle").First();
                 string turtle = DecodeGraph(graph);
-                string serviceUri = _endpoint;
+                string serviceUri = endpoint;
                 serviceUri = (!(graph.BaseUri != null)) ? (serviceUri + "?default") : (serviceUri + "?graph=" + Uri.EscapeDataString($"{graph.BaseUri.AbsoluteUri}{Uri.EscapeDataString(graphName)}"));
                 // decode
                 string decodedServiceUri = Uri.UnescapeDataString(serviceUri);

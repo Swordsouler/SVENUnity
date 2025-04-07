@@ -40,16 +40,16 @@ namespace Sven.GraphManagement
         /// Reading mode of the graph.
         /// </summary>
         [SerializeField, DisableIf("IsGraphLoaded")]
-        protected GraphStorageMode _readingMode = GraphStorageMode.Local;
+        public GraphStorageMode readingMode = GraphStorageMode.Remote;
 
         /// <summary>
         /// Graph that contains the scene content.
         /// </summary>
-        protected bool IsLocal => _readingMode == GraphStorageMode.Local;
+        protected bool IsLocal => readingMode == GraphStorageMode.Local;
         /// <summary>
         /// Graph that contains the scene content.
         /// </summary>
-        protected bool IsRemote => _readingMode == GraphStorageMode.Remote;
+        protected bool IsRemote => readingMode == GraphStorageMode.Remote;
 
         /// <summary>
         /// Game has started.
@@ -364,7 +364,7 @@ namespace Sven.GraphManagement
         /// </summary>
         private bool _gameHasStarted = false;
 
-        private void Awake()
+        public void Awake()
         {
             _gameHasStarted = true;
             if (ontologyDescription != null)
@@ -787,8 +787,8 @@ namespace Sven.GraphManagement
         /// <summary>
         /// Endpoint of the graph.
         /// </summary>
-        [SerializeField, ShowIf("IsRemote")]
-        private string _endpoint;
+        [ShowIf("IsRemote")]
+        public string endpoint = "http://localhost:7200/repositories/Demo-Scene";
 
         /// <summary>
         /// Storage name of the graph.
@@ -805,7 +805,7 @@ namespace Sven.GraphManagement
         private void LoadFromEndpoint(string url)
         {
             if (string.IsNullOrEmpty(url)) return;
-            _loadedEndpoint = _endpoint = url;
+            _loadedEndpoint = endpoint = url;
             LoadInstants();
         }
 
@@ -815,7 +815,7 @@ namespace Sven.GraphManagement
         [Button("Load from Endpoint"), ShowIf("IsRemote")]
         private void LoadFromEndpoint()
         {
-            LoadFromEndpoint(_endpoint);
+            LoadFromEndpoint(endpoint);
         }
 
         /// <summary>
@@ -925,6 +925,8 @@ namespace Sven.GraphManagement
 
             // Exécutez la requête SPARQL
             SparqlResultSet results = await sparqlQueryClient.QueryWithResultSetAsync(graphQuery).ConfigureAwait(false);
+            Debug.Log(graphQuery);
+            Debug.Log(_loadedEndpoint);
 
             return results;
         }
