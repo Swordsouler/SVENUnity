@@ -1920,7 +1920,7 @@ GameObject:
   - component: {fileID: 3866208149563144935}
   - component: {fileID: 8760090630067480173}
   m_Layer: 5
-  m_Name: UI Reader Controller
+  m_Name: UI Replay Controller
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

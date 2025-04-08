@@ -10,7 +10,6 @@ using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using VDS.RDF;
 using VDS.RDF.Query;
-using VDS.RDF.Query.Algebra;
 
 namespace Sven.Demo
 {
@@ -32,6 +31,7 @@ namespace Sven.Demo
         [BoxGroup("View")] public GameObject dropdownLoadingIndicator;
 
         private DemoMenuPage _currentPage = null;
+        private Dictionary<string, string> _dropdownOptions = new();
 
         private void Awake()
         {
@@ -86,7 +86,8 @@ namespace Sven.Demo
 
         private void OnReplayButtonClicked()
         {
-            DemoManager.graphName = string.IsNullOrEmpty(graphNameDropdown.options[graphNameDropdown.value].text) ? "default" : graphNameDropdown.options[graphNameDropdown.value].text;
+            if (!_dropdownOptions.TryGetValue(graphNameDropdown.options[graphNameDropdown.value].text, out string graphName)) return;
+            DemoManager.graphName = string.IsNullOrEmpty(graphName) ? "default" : graphName;
             SceneManager.LoadScene("Demo Replay", LoadSceneMode.Single);
         }
 
@@ -108,20 +109,23 @@ namespace Sven.Demo
                 SparqlResultSet results = await client.QueryWithResultSetAsync(query).ConfigureAwait(false);
 
                 graphNameDropdown.options.Clear();
+                _dropdownOptions.Clear();
                 foreach (SparqlResult result in results.Cast<SparqlResult>())
                 {
                     string optionContent = "";
 
-                    if (result["minInstant"] is ILiteralNode instantNode)
-                        optionContent += $"[{FormatDate(instantNode.Value)}]";
+                    if (result["minInstant"] is not ILiteralNode instantNode) continue;
+                    if (result["graphName"] is not IUriNode graphNameNode) continue;
+                    if (result["duration"] is not ILiteralNode durationNode) continue;
 
-                    if (result["graphName"] is IUriNode graphNameNode)
-                        optionContent += $" <b>{graphNameNode.Uri.ToString().Split("/").LastOrDefault()}</b>";
+                    string graphName = graphNameNode.Uri.ToString().Split("/").LastOrDefault();
 
-                    if (result["duration"] is ILiteralNode durationNode)
-                        optionContent += $" | {FormatDuration(durationNode.Value)}</b>";
+                    optionContent += $"[{FormatDate(instantNode.Value)}]";
+                    optionContent += $" <b>{graphName}</b>";
+                    optionContent += $" | {FormatDuration(durationNode.Value)}";
 
                     graphNameDropdown.options.Add(new TMP_Dropdown.OptionData(optionContent));
+                    _dropdownOptions.Add(optionContent, graphName);
                 }
             }
             catch (Exception e)

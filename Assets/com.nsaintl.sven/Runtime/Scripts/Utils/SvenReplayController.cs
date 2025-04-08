@@ -14,7 +14,7 @@ namespace Sven.Utils
     /// <summary>
     /// Controller to manage the SvenReader.
     /// </summary>
-    public class SvenReaderController : MonoBehaviour
+    public class SvenReplayController : MonoBehaviour
     {
         /// <summary>
         /// GraphReader to read the graph.
