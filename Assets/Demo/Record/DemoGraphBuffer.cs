@@ -1,5 +1,4 @@
 using Sven.GraphManagement;
-using UnityEngine;
 
 namespace Sven.Demo
 {
@@ -9,6 +8,7 @@ namespace Sven.Demo
         {
             graphName = DemoManager.graphName;
             endpoint = DemoManager.EndpointUri.ToString() + "/rdf-graphs/service";
+            instantPerSecond = DemoManager.semantisationFrequency;
             base.Awake();
         }
     }

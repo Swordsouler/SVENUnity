@@ -65,7 +65,7 @@ namespace Sven.Context
         private void Start()
         {
             if (_checkInteractorCoroutine != null) StopCoroutine(_checkInteractorCoroutine);
-            _checkInteractorCoroutine = StartCoroutine(CheckInteractor(1.0f / _graphBuffer.InstantPerSecond));
+            _checkInteractorCoroutine = StartCoroutine(CheckInteractor(1.0f / _graphBuffer.instantPerSecond));
             _isInitialized = true;
         }
 
@@ -73,8 +73,8 @@ namespace Sven.Context
         {
             if (!_isInitialized) return;
             if (_checkInteractorCoroutine != null) StopCoroutine(_checkInteractorCoroutine);
-            Debug.LogWarning("Interactor OnEnable " + _graphBuffer.name + " " + (1.0f / _graphBuffer.InstantPerSecond));
-            _checkInteractorCoroutine = StartCoroutine(CheckInteractor(1.0f / _graphBuffer.InstantPerSecond));
+            Debug.LogWarning("Interactor OnEnable " + _graphBuffer.name + " " + (1.0f / _graphBuffer.instantPerSecond));
+            _checkInteractorCoroutine = StartCoroutine(CheckInteractor(1.0f / _graphBuffer.instantPerSecond));
         }
 
         private void OnDisable()

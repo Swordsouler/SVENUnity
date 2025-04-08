@@ -13,28 +13,31 @@ using VDS.RDF.Query;
 
 namespace Sven.Demo
 {
-    public class DemoController : MonoBehaviour
+    [Serializable]
+    public class DemoMenuPage
     {
-        [Serializable]
-        public class DemoMenuPage
-        {
-            public string title;
-            public GameObject form;
-            public List<Button> buttons = new();
-        }
+        public string title;
+        public GameObject form;
+        public List<Button> buttons = new();
+    }
+
+    public class DemoMenuController : MonoBehaviour
+    {
         [BoxGroup("Model")] public List<DemoMenuPage> pages = new();
 
-        [BoxGroup("View")] public TMP_InputField graphNameInputField;
-        [BoxGroup("View")] public TMP_Dropdown graphNameDropdown;
+        [BoxGroup("View")] public TMP_InputField VENameInputField;
+        [BoxGroup("View")] public TMP_Dropdown VENameDropdown;
         [BoxGroup("View")] public Button playButton, replayButton;
         [BoxGroup("View")] public TextMeshProUGUI subTitleText;
-        [BoxGroup("View")] public GameObject dropdownLoadingIndicator;
+        [BoxGroup("View")] public GameObject dropdownActivityIndicator;
+        [BoxGroup("View")] public Slider semantisationFrequencySlider;
 
         private DemoMenuPage _currentPage = null;
         private Dictionary<string, string> _dropdownOptions = new();
 
         private void Awake()
         {
+            if (semantisationFrequencySlider != null) semantisationFrequencySlider.value = DemoManager.semantisationFrequency;
             InitializeButtons();
             InitializeDropdownAsync();
             // load main menu form
@@ -50,11 +53,16 @@ namespace Sven.Demo
             if (replayButton != null) replayButton.onClick.AddListener(OnReplayButtonClicked);
         }
 
+        public void RefreshExistentVEs()
+        {
+            InitializeDropdownAsync();
+        }
+
         private async void InitializeDropdownAsync()
         {
             SetDropdownLoadingState(true);
 
-            await LoadExistentGraphs();
+            await LoadExistentVEs();
 
             SetDropdownLoadingState(false);
             UpdateDropdownSelection();
@@ -62,16 +70,18 @@ namespace Sven.Demo
 
         private void SetDropdownLoadingState(bool isLoading)
         {
-            dropdownLoadingIndicator.SetActive(isLoading);
-            if (isLoading) graphNameDropdown.ClearOptions();
+            dropdownActivityIndicator.SetActive(isLoading);
+            if (isLoading) VENameDropdown.ClearOptions();
         }
 
         private void UpdateDropdownSelection()
         {
-            if (graphNameDropdown.options.Count > 0)
+            if (VENameDropdown.options.Count > 0)
             {
-                graphNameDropdown.value = 0;
-                graphNameDropdown.RefreshShownValue();
+                string graphName = DemoManager.graphName;
+                int index = VENameDropdown.options.FindIndex(option => _dropdownOptions.TryGetValue(option.text, out string name) && name == graphName);
+                VENameDropdown.value = index != -1 ? index : 0;
+                VENameDropdown.RefreshShownValue();
             }
         }
 
@@ -86,29 +96,30 @@ namespace Sven.Demo
 
         private void OnReplayButtonClicked()
         {
-            if (!_dropdownOptions.TryGetValue(graphNameDropdown.options[graphNameDropdown.value].text, out string graphName)) return;
+            if (!_dropdownOptions.TryGetValue(VENameDropdown.options[VENameDropdown.value].text, out string graphName)) return;
             DemoManager.graphName = string.IsNullOrEmpty(graphName) ? "default" : graphName;
             SceneManager.LoadScene("Demo Replay", LoadSceneMode.Single);
         }
 
         private void OnPlayButtonClicked()
         {
-            DemoManager.graphName = string.IsNullOrEmpty(graphNameInputField.text) ? "default" : graphNameInputField.text;
+            DemoManager.semantisationFrequency = (int)semantisationFrequencySlider.value;
+            DemoManager.graphName = string.IsNullOrEmpty(VENameInputField.text) ? "default" : VENameInputField.text;
             SceneManager.LoadScene("Demo Record", LoadSceneMode.Single);
         }
 
-        private async Task LoadExistentGraphs()
+        private async Task LoadExistentVEs()
         {
             try
             {
                 HttpClient httpClient = new();
                 SparqlQueryClient client = new(httpClient, DemoManager.EndpointUri);
-                string queryFilePath = System.IO.Path.Combine(Application.dataPath, "Demo", "Menu", "ListExistentGraphs.sparql");
+                string queryFilePath = System.IO.Path.Combine(Application.dataPath, "Demo", "Menu", "ListExistentVEs.sparql");
                 string query = System.IO.File.ReadAllText(queryFilePath);
 
                 SparqlResultSet results = await client.QueryWithResultSetAsync(query).ConfigureAwait(false);
 
-                graphNameDropdown.options.Clear();
+                VENameDropdown.options.Clear();
                 _dropdownOptions.Clear();
                 foreach (SparqlResult result in results.Cast<SparqlResult>())
                 {
@@ -124,7 +135,7 @@ namespace Sven.Demo
                     optionContent += $" <b>{graphName}</b>";
                     optionContent += $" | {FormatDuration(durationNode.Value)}";
 
-                    graphNameDropdown.options.Add(new TMP_Dropdown.OptionData(optionContent));
+                    VENameDropdown.options.Add(new TMP_Dropdown.OptionData(optionContent));
                     _dropdownOptions.Add(optionContent, graphName);
                 }
             }

@@ -58,10 +58,8 @@ namespace Sven.GraphManagement
         /// <summary>
         /// Number of instant created per second.
         /// </summary>
-        [SerializeField, DisableIf("IsStarted"), Range(1, 60)]
-        private int _instantPerSecond = 10;
-
-        public int InstantPerSecond => _instantPerSecond;
+        [DisableIf("IsStarted"), Range(1, 60)]
+        public int instantPerSecond = 10;
 
         #endregion
 
@@ -167,7 +165,7 @@ namespace Sven.GraphManagement
         /// <summary>
         /// Save the experiment.
         /// </summary>
-        public async void SaveExperiment()
+        public async Task SaveExperiment()
         {
             Debug.Log("Destroying the semantization cores...");
             SemantizationCore[] semantizationCores = FindObjectsByType<SemantizationCore>(FindObjectsSortMode.None);
@@ -183,12 +181,12 @@ namespace Sven.GraphManagement
 
             SaveToFile(graph, $"{Application.dataPath}/../SVENs/{graphName}_{DateTime.Now:yyyy-MM-dd_HH-mm-ss}.ttl");
             await SaveToEndpoint();
-
-#if UNITY_EDITOR
-            EditorApplication.isPlaying = false;
-#else
-            Application.Quit();
-#endif
+            /*
+            #if UNITY_EDITOR
+                        EditorApplication.isPlaying = false;
+            #else
+                        Application.Quit();
+            #endif*/
         }
 
         private void ApplyRuleOntology()
@@ -208,7 +206,7 @@ namespace Sven.GraphManagement
 
         private void OnApplicationQuit()
         {
-            SaveExperiment();
+            _ = SaveExperiment();
         }
 
         /// <summary>
@@ -259,7 +257,7 @@ namespace Sven.GraphManagement
         /// <returns>DateTime.</returns>
         public DateTime FormatDateTime(DateTime dateTime)
         {
-            return new(dateTime.Year, dateTime.Month, dateTime.Day, dateTime.Hour, dateTime.Minute, dateTime.Second, dateTime.Millisecond / (1000 / _instantPerSecond) * (1000 / _instantPerSecond));
+            return new(dateTime.Year, dateTime.Month, dateTime.Day, dateTime.Hour, dateTime.Minute, dateTime.Second, dateTime.Millisecond / (1000 / instantPerSecond) * (1000 / instantPerSecond));
         }
 
         #endregion

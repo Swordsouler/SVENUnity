@@ -6,6 +6,7 @@ namespace Sven.Demo
     public static class DemoManager
     {
         public static string graphName = "default";
+        public static int semantisationFrequency = 10;
         private static Uri _endpointUri;
         public static Uri EndpointUri
         {

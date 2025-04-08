@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 namespace Sven.Utils
 {
@@ -14,6 +15,12 @@ namespace Sven.Utils
 
         void Update()
         {
+            // Ignore input if the pointer is over a UI element
+            if (EventSystem.current != null && EventSystem.current.IsPointerOverGameObject())
+            {
+                return;
+            }
+
             if (Input.GetMouseButtonDown(0))
             {
                 if (IsMouseOverObject())

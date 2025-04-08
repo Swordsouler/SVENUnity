@@ -51,7 +51,7 @@ namespace Sven.Content
             Component component = GetComponent<Component>();
             componentsToSemantize.RemoveAll(c => c == null || c.Component == null || !component.gameObject.Equals(c.Component.gameObject));
             Initialize();
-            _checkForChangesCoroutine = StartCoroutine(LoopCheckForChanges(1.0f / _graphBuffer.InstantPerSecond));
+            _checkForChangesCoroutine = StartCoroutine(LoopCheckForChanges(1.0f / _graphBuffer.instantPerSecond));
         }
 
         /// <summary>
@@ -209,7 +209,7 @@ namespace Sven.Content
         {
             if (_graphBuffer == null) return;
             if (_checkForChangesCoroutine != null) StopCoroutine(_checkForChangesCoroutine);
-            StartCoroutine(LoopCheckForChanges(1.0f / _graphBuffer.InstantPerSecond));
+            StartCoroutine(LoopCheckForChanges(1.0f / _graphBuffer.instantPerSecond));
         }
 
         /// <summary>

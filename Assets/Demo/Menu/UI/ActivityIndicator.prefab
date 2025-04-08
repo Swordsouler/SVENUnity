@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 726803520392424042}
   - component: {fileID: 1912753585006175725}
   m_Layer: 5
-  m_Name: Loading Text
+  m_Name: ActivityIndicator Text
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -92,7 +92,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 38
+  m_fontSize: 100
   m_fontSizeBase: 14
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -150,7 +150,7 @@ GameObject:
   - component: {fileID: 4408333652929297895}
   - component: {fileID: 3097383268215488823}
   m_Layer: 5
-  m_Name: Loading Icon
+  m_Name: ActivityIndicator Icon
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -292,9 +292,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_IgnoreLayout: 0
-  m_MinWidth: -1
+  m_MinWidth: 35
   m_MinHeight: -1
-  m_PreferredWidth: 60
+  m_PreferredWidth: 35
   m_PreferredHeight: -1
   m_FlexibleWidth: -1
   m_FlexibleHeight: -1
@@ -309,8 +309,9 @@ GameObject:
   m_Component:
   - component: {fileID: 5416094737308037638}
   - component: {fileID: 6182974423597097435}
+  - component: {fileID: 8467587460186858839}
   m_Layer: 5
-  m_Name: LoadingIndcator
+  m_Name: ActivityIndicator
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -363,3 +364,23 @@ MonoBehaviour:
   m_ChildScaleWidth: 0
   m_ChildScaleHeight: 0
   m_ReverseArrangement: 0
+--- !u!114 &8467587460186858839
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7394518220285851415}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 306cc8c2b49d7114eaa3623786fc2126, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_IgnoreLayout: 0
+  m_MinWidth: -1
+  m_MinHeight: -1
+  m_PreferredWidth: -1
+  m_PreferredHeight: 62.5
+  m_FlexibleWidth: 1
+  m_FlexibleHeight: -1
+  m_LayoutPriority: 1

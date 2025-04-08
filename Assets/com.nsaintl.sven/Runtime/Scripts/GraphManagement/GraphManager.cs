@@ -20,7 +20,8 @@ namespace Sven.GraphManagement
         /// <returns>GraphBuffer instance.</returns>
         public static GraphBuffer Get(string graphName)
         {
-            if (cachedGraphBuffers.ContainsKey(graphName)) return cachedGraphBuffers[graphName];
+            if (cachedGraphBuffers.ContainsKey(graphName) && cachedGraphBuffers[graphName] != null)
+                return cachedGraphBuffers[graphName];
 
             // search in scene a graphBuffer with the same name
             GraphBuffer[] graphBuffers = Object.FindObjectsByType<GraphBuffer>(FindObjectsSortMode.None);
