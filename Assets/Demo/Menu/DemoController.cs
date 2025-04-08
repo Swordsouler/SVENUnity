@@ -103,7 +103,7 @@ namespace Sven.Demo
             {
                 HttpClient httpClient = new();
                 SparqlQueryClient client = new(httpClient, DemoManager.EndpointUri);
-                string queryFilePath = System.IO.Path.Combine(Application.dataPath, "Demo", "ListExistentGraphs.sparql");
+                string queryFilePath = System.IO.Path.Combine(Application.dataPath, "Demo", "Menu", "ListExistentGraphs.sparql");
                 string query = System.IO.File.ReadAllText(queryFilePath);
 
                 SparqlResultSet results = await client.QueryWithResultSetAsync(query).ConfigureAwait(false);
