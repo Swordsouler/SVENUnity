@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using NaughtyAttributes;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Networking;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using VDS.RDF;
@@ -112,14 +113,41 @@ namespace Sven.Demo
             SceneManager.LoadScene("Demo Record", LoadSceneMode.Single);
         }
 
+        // Méthode pour charger le fichier SPARQL
+        private async Task<string> LoadQueryFileAsync(string relativePath)
+        {
+            string queryFilePath = System.IO.Path.Combine(Application.streamingAssetsPath, relativePath);
+
+            if (Application.platform == RuntimePlatform.WebGLPlayer)
+            {
+                // Utiliser UnityWebRequest pour WebGL
+                UnityWebRequest request = UnityWebRequest.Get(queryFilePath);
+                await request.SendWebRequest();
+
+                if (request.result == UnityWebRequest.Result.Success)
+                {
+                    return request.downloadHandler.text;
+                }
+                else
+                {
+                    Debug.LogError($"Erreur lors du chargement du fichier SPARQL : {request.error}");
+                    return null;
+                }
+            }
+            else
+            {
+                // Lecture locale pour les autres plateformes
+                return System.IO.File.ReadAllText(queryFilePath);
+            }
+        }
+
         private async Task LoadExistentVEs()
         {
             try
             {
                 HttpClient httpClient = new();
                 SparqlQueryClient client = new(httpClient, DemoManager.EndpointUri);
-                string queryFilePath = System.IO.Path.Combine(Application.dataPath, "Demo", "Menu", "ListExistentVEs.sparql");
-                string query = System.IO.File.ReadAllText(queryFilePath);
+                string query = await LoadQueryFileAsync("SPARQL/ListExistentVEs.sparql");
 
                 SparqlResultSet results = await client.QueryWithResultSetAsync(query).ConfigureAwait(false);
 
