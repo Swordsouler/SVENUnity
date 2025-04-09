@@ -268,19 +268,19 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 403257235135404864, guid: 97ded2e0f0b7812489a982859e49c997, type: 3}
       propertyPath: m_AnchorMax.y
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 403257235135404864, guid: 97ded2e0f0b7812489a982859e49c997, type: 3}
       propertyPath: m_AnchorMin.y
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 403257235135404864, guid: 97ded2e0f0b7812489a982859e49c997, type: 3}
       propertyPath: m_SizeDelta.x
-      value: 35
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 403257235135404864, guid: 97ded2e0f0b7812489a982859e49c997, type: 3}
       propertyPath: m_SizeDelta.y
-      value: 42.5
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 403257235135404864, guid: 97ded2e0f0b7812489a982859e49c997, type: 3}
       propertyPath: m_LocalPosition.x
@@ -288,11 +288,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 403257235135404864, guid: 97ded2e0f0b7812489a982859e49c997, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 27.5
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 403257235135404864, guid: 97ded2e0f0b7812489a982859e49c997, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -31.25
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1912753585006175725, guid: 97ded2e0f0b7812489a982859e49c997, type: 3}
       propertyPath: m_text
@@ -308,19 +308,19 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4254479356694985856, guid: 97ded2e0f0b7812489a982859e49c997, type: 3}
       propertyPath: m_AnchorMax.y
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4254479356694985856, guid: 97ded2e0f0b7812489a982859e49c997, type: 3}
       propertyPath: m_AnchorMin.y
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4254479356694985856, guid: 97ded2e0f0b7812489a982859e49c997, type: 3}
       propertyPath: m_SizeDelta.x
-      value: 585
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4254479356694985856, guid: 97ded2e0f0b7812489a982859e49c997, type: 3}
       propertyPath: m_SizeDelta.y
-      value: 42.5
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4254479356694985856, guid: 97ded2e0f0b7812489a982859e49c997, type: 3}
       propertyPath: m_LocalPosition.x
@@ -328,11 +328,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4254479356694985856, guid: 97ded2e0f0b7812489a982859e49c997, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 347.5
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4254479356694985856, guid: 97ded2e0f0b7812489a982859e49c997, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -31.25
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5416094737308037638, guid: 97ded2e0f0b7812489a982859e49c997, type: 3}
       propertyPath: m_Pivot.x
@@ -545,11 +545,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   pages:
-  - title: Replay Mode
+  - title: Replay Scene
     form: {fileID: 1618297219}
     buttons:
     - {fileID: 1585519143748400592}
-  - title: Record Mode
+  - title: Record Scene
     form: {fileID: 877713857}
     buttons:
     - {fileID: 1585519143050466836}
@@ -878,7 +878,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1243843157927314224, guid: 8ce80709d58bad048b76e52ef920d5a5, type: 3}
       propertyPath: m_Name
-      value: RecordMode Form
+      value: RecordScene Form
       objectReference: {fileID: 0}
     - target: {fileID: 1243843157927314224, guid: 8ce80709d58bad048b76e52ef920d5a5, type: 3}
       propertyPath: m_IsActive
@@ -1872,7 +1872,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1243843157927314224, guid: 8ce80709d58bad048b76e52ef920d5a5, type: 3}
       propertyPath: m_Name
-      value: ReplayMode Form
+      value: ReplayScene Form
       objectReference: {fileID: 0}
     - target: {fileID: 1243843157927314224, guid: 8ce80709d58bad048b76e52ef920d5a5, type: 3}
       propertyPath: m_IsActive
@@ -2713,7 +2713,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Record mode
+  m_text: Record Scene
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -2804,7 +2804,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Replay mode
+  m_text: Replay Scene
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -3522,7 +3522,7 @@ GameObject:
   - component: {fileID: 1585519143050466836}
   - component: {fileID: 454428127574544035}
   m_Layer: 5
-  m_Name: Record Mode Button
+  m_Name: RecordScene Button
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3542,7 +3542,7 @@ GameObject:
   - component: {fileID: 1585519143748400592}
   - component: {fileID: 454428126393953639}
   m_Layer: 5
-  m_Name: Replay Mode Button
+  m_Name: ReplayScene Button
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

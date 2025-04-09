@@ -12,6 +12,8 @@ using Sven.Content;
 using Sven.OwlTime;
 using VDS.RDF.Parsing;
 using VDS.RDF.Query.Inference;
+using UnityEngine.Networking;
+
 
 
 
@@ -128,6 +130,7 @@ namespace Sven.GraphManagement
         /// </summary>
         private async Task SaveToEndpoint(Graph graph)
         {
+#if !UNITY_WEBGL || UNITY_EDITOR
             await Task.Run(() =>
             {
                 Debug.Log("Semantizing to the server... " + graph.Triples.Count + " triples in the graph.");
@@ -160,6 +163,46 @@ namespace Sven.GraphManagement
                     throw new Exception("Failed to save the graph to the endpoint. " + ex.Message);
                 }
             });
+#else
+            Debug.Log("Semantizing to the server... " + graph.Triples.Count + " triples in the graph.");
+            MimeTypeDefinition writerMimeTypeDefinition = MimeTypesHelper.GetDefinitions("application/x-turtle").First();
+            string turtle = DecodeGraph(graph);
+            string serviceUri = endpoint;
+            serviceUri = (!(graph.BaseUri != null)) ? (serviceUri + "?default") : (serviceUri + "?graph=" + Uri.EscapeDataString($"{graph.BaseUri.AbsoluteUri}{Uri.EscapeDataString(graphName)}"));
+            // decode
+            string decodedServiceUri = Uri.UnescapeDataString(serviceUri);
+
+            Debug.Log("Saving the graph to the endpoint " + serviceUri + " " + decodedServiceUri);
+            try
+            {
+                using UnityWebRequest request = new UnityWebRequest(serviceUri, UnityWebRequest.kHttpVerbPUT)
+                {
+                    uploadHandler = new UploadHandlerRaw(Encoding.UTF8.GetBytes(turtle))
+                    {
+                        contentType = writerMimeTypeDefinition.CanonicalMimeType
+                    },
+                    downloadHandler = new DownloadHandlerBuffer()
+                };
+
+                UnityWebRequestAsyncOperation operation = request.SendWebRequest();
+                while (!operation.isDone)
+                {
+                    await Task.Yield();
+                }
+
+                if (request.result == UnityWebRequest.Result.Success)
+                {
+                    Debug.Log("Graph saved to endpoint.");
+                    return;
+                }
+
+                throw new Exception("Failed to save the graph to the endpoint. " + request.error);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Failed to save the graph to the endpoint. " + ex.Message);
+            }
+#endif
         }
 
         /// <summary>
@@ -170,11 +213,15 @@ namespace Sven.GraphManagement
             Debug.Log("Destroying the semantization cores...");
             SemantizationCore[] semantizationCores = FindObjectsByType<SemantizationCore>(FindObjectsSortMode.None);
             SynchronizationContext context = SynchronizationContext.Current;
+#if !UNITY_WEBGL || UNITY_EDITOR
             await Task.Run(() =>
             {
+#endif
                 foreach (SemantizationCore semantizationCore in semantizationCores)
                     context.Send(_ => semantizationCore.OnDestroy(), null);
+#if !UNITY_WEBGL || UNITY_EDITOR
             });
+#endif
 
             // apply rule ontology to the graph
             ApplyRuleOntology();

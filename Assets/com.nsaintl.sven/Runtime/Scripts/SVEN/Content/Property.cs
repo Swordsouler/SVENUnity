@@ -139,8 +139,10 @@ namespace Sven.Content
             if (_isCheckingForChanges) return;
             _isCheckingForChanges = true;
             SynchronizationContext context = SynchronizationContext.Current;
+#if !UNITY_WEBGL || UNITY_EDITOR
             await Task.Run(() =>
             {
+#endif
                 object currentValue = null;
                 context.Send(_ => { if (observedProperty != null && parentObject != null) currentValue = observedProperty.Getter(); }, null);
                 if (currentValue == null) return;
@@ -156,7 +158,9 @@ namespace Sven.Content
                     observedProperty.LastValue = currentValue;
                     if (graphBuffer != null) context.Send(_ => Semantize(currentInstant), null);
                 }
+#if !UNITY_WEBGL || UNITY_EDITOR
             });
+#endif
             _isCheckingForChanges = false;
         }
 

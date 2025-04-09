@@ -1,5 +1,9 @@
+using System;
+using System.Net.Http;
+using System.Threading.Tasks;
 using Sven.GraphManagement;
 using UnityEngine;
+using VDS.RDF.Query;
 
 namespace Sven.Demo
 {

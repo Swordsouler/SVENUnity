@@ -4,6 +4,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using NaughtyAttributes;
+using Sven.GraphManagement;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Networking;
@@ -148,8 +149,12 @@ namespace Sven.Demo
                 HttpClient httpClient = new();
                 SparqlQueryClient client = new(httpClient, DemoManager.EndpointUri);
                 string query = await LoadQueryFileAsync("SPARQL/ListExistentVEs.sparql");
+                Debug.Log($"Query: {query}");
+                Debug.Log($"endpointUri: {DemoManager.EndpointUri}");
 
-                SparqlResultSet results = await client.QueryWithResultSetAsync(query).ConfigureAwait(false);
+                SparqlResultSet results = await client.QueryWebGLWithResultSetAsync(query);
+
+                Debug.Log($"Results: {results.ToString()}");
 
                 VENameDropdown.options.Clear();
                 _dropdownOptions.Clear();

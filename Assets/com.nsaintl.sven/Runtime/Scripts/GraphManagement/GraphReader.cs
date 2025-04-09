@@ -499,8 +499,10 @@ namespace Sven.GraphManagement
                 double queryTime = (DateTime.Now - startProcessing).TotalMilliseconds;
 
                 // GameObject -> Component -> (ComponentType --- PropertyName -> PropertyIndex -> PropertyValue)
+#if !UNITY_WEBGL || UNITY_EDITOR
                 SceneContent targetSceneContent = await Task.Run(() =>
                 {
+#endif
                     SceneContent targetSceneContent = new(instant);
 
                     foreach (SparqlResult result in results.Cast<SparqlResult>())
@@ -572,8 +574,10 @@ namespace Sven.GraphManagement
                             targetSceneContent.GameObjects[objectUUID].Components[componentUUID].Properties[propertyName].Values[propertyNestedName] = propertyValue;
                         else Debug.LogWarning($"Property {propertyNestedName} already exists in {propertyName} of {componentType} in {objectUUID} at {instant.inXSDDateTime}");
                     }
+#if !UNITY_WEBGL || UNITY_EDITOR
                     return targetSceneContent;
                 });
+#endif
                 if (SvenHelper.Debug) Debug.Log(targetSceneContent);
                 UpdateContent(targetSceneContent);
 
@@ -799,7 +803,7 @@ namespace Sven.GraphManagement
         /// <summary>
         /// Loaded endpoint.
         /// </summary>
-        private string _loadedEndpoint;
+        protected string _loadedEndpoint;
 
         [SerializeField, ShowIf("IsRemote")]
         private void LoadFromEndpoint(string url)
@@ -890,23 +894,27 @@ namespace Sven.GraphManagement
             }
         }
 
-        private async Task<SparqlResultSet> Request(string query)
+        protected async Task<SparqlResultSet> Request(string query)
         {
+#if !UNITY_WEBGL || UNITY_EDITOR
             return await Task.Run(async () =>
             {
+#endif
                 if (IsLocal) return LocalRequest(query);
                 else if (IsRemote) return await RemoteRequest(query);
                 return null;
+#if !UNITY_WEBGL || UNITY_EDITOR
             });
+#endif
         }
 
-        private SparqlResultSet LocalRequest(string query)
+        protected SparqlResultSet LocalRequest(string query)
         {
             SparqlQuery sparqlQuery = new SparqlQueryParser().ParseFromString(query);
             return graph.ExecuteQuery(sparqlQuery) as SparqlResultSet;
         }
 
-        private async Task<SparqlResultSet> RemoteRequest(string query)
+        protected async Task<SparqlResultSet> RemoteRequest(string query)
         {
             // URL de votre endpoint GraphDB
             Uri endpointUri = new(_loadedEndpoint);
@@ -924,7 +932,11 @@ namespace Sven.GraphManagement
             string graphQuery = query.Insert(insertIndex, $"{graphUri}\n");
 
             // Exécutez la requête SPARQL
-            SparqlResultSet results = await sparqlQueryClient.QueryWithResultSetAsync(graphQuery).ConfigureAwait(false);
+#if UNITY_WEBGL
+            SparqlResultSet results = await sparqlQueryClient.QueryWebGLWithResultSetAsync(graphQuery);
+#else
+            SparqlResultSet results = await sparqlQueryClient.QueryWithResultSetAsync(graphQuery);
+#endif
 
             return results;
         }

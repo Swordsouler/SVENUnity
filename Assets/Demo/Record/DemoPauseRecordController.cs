@@ -28,6 +28,12 @@ namespace Sven.Demo
             triplesAmountText.text = graphBuffer.Graph.Triples.Count.ToString();
         }
 
+        public new void TogglePause()
+        {
+            if (_isSending) return;
+            base.TogglePause();
+        }
+
         private void InitializeButtons()
         {
             if (saveQuitButton != null) saveQuitButton.onClick.AddListener(OnSaveQuitButtonClicked);
