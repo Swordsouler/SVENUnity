@@ -925,8 +925,6 @@ namespace Sven.GraphManagement
 
             // Exécutez la requête SPARQL
             SparqlResultSet results = await sparqlQueryClient.QueryWithResultSetAsync(graphQuery).ConfigureAwait(false);
-            Debug.Log(graphQuery);
-            Debug.Log(_loadedEndpoint);
 
             return results;
         }

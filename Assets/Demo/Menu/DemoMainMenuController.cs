@@ -14,16 +14,16 @@ using VDS.RDF.Query;
 namespace Sven.Demo
 {
     [Serializable]
-    public class DemoMenuPage
+    public class DemoMainMenuPage
     {
         public string title;
         public GameObject form;
         public List<Button> buttons = new();
     }
 
-    public class DemoMenuController : MonoBehaviour
+    public class DemoMainMenuController : MonoBehaviour
     {
-        [BoxGroup("Model")] public List<DemoMenuPage> pages = new();
+        [BoxGroup("Model")] public List<DemoMainMenuPage> pages = new();
 
         [BoxGroup("View")] public TMP_InputField VENameInputField;
         [BoxGroup("View")] public TMP_Dropdown VENameDropdown;
@@ -32,7 +32,7 @@ namespace Sven.Demo
         [BoxGroup("View")] public GameObject dropdownActivityIndicator;
         [BoxGroup("View")] public Slider semantisationFrequencySlider;
 
-        private DemoMenuPage _currentPage = null;
+        private DemoMainMenuPage _currentPage = null;
         private Dictionary<string, string> _dropdownOptions = new();
 
         private void Awake()
@@ -46,7 +46,7 @@ namespace Sven.Demo
 
         private void InitializeButtons()
         {
-            foreach (DemoMenuPage menuPage in pages)
+            foreach (DemoMainMenuPage menuPage in pages)
                 foreach (Button button in menuPage.buttons)
                     if (button != null) button.onClick.AddListener(() => SetPage(menuPage));
             if (playButton != null) playButton.onClick.AddListener(OnPlayButtonClicked);
@@ -85,12 +85,16 @@ namespace Sven.Demo
             }
         }
 
-        private void SetPage(DemoMenuPage page)
+        private void SetPage(DemoMainMenuPage page)
         {
             if (_currentPage == page) return;
             _currentPage = page;
-            foreach (DemoMenuPage menuPage in pages)
+            foreach (DemoMainMenuPage menuPage in pages)
+            {
                 if (menuPage.form != null) menuPage.form.SetActive(menuPage == page);
+                foreach (Button button in menuPage.buttons)
+                    if (button != null) button.interactable = menuPage != page;
+            }
             if (subTitleText != null) subTitleText.text = page.title;
         }
 
