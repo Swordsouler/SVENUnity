@@ -15,7 +15,7 @@ namespace Sven.Context
         /// <summary>
         /// The camera component attached to this GameObject.
         /// </summary>
-        private Camera _cameraComponent;
+        public Camera cameraComponent;
 
         /// <summary>
         /// Called when the script instance is being loaded.
@@ -23,8 +23,8 @@ namespace Sven.Context
         protected new void Awake()
         {
             base.Awake();
-            _cameraComponent = GetComponent<Camera>();
-            if (_cameraComponent == null) Destroy(this);
+            cameraComponent = GetComponent<Camera>();
+            if (cameraComponent == null) Destroy(this);
         }
 
         /// <summary>
@@ -34,13 +34,13 @@ namespace Sven.Context
         {
             while (true)
             {
-                Vector3 cameraPosition = _cameraComponent.transform.position;
-                float visionDistance = _cameraComponent.farClipPlane;
+                Vector3 cameraPosition = cameraComponent.transform.position;
+                float visionDistance = cameraComponent.farClipPlane;
 
-                Collider[] colliders = Physics.OverlapSphere(cameraPosition, visionDistance, _cameraComponent.cullingMask);
+                Collider[] colliders = Physics.OverlapSphere(cameraPosition, visionDistance, cameraComponent.cullingMask);
                 HashSet<SemantizationCore> newVisibleObjects = new();
 
-                Plane[] frustumPlanes = GeometryUtility.CalculateFrustumPlanes(_cameraComponent);
+                Plane[] frustumPlanes = GeometryUtility.CalculateFrustumPlanes(cameraComponent);
 
                 for (int j = 0; j < colliders.Length; j++)
                 {
@@ -98,23 +98,23 @@ namespace Sven.Context
             Gizmos.color = SvenHelper.PointOfViewDebugColor;
             base.OnDrawGizmos();
 
-            if (_cameraComponent == null) return;
+            if (cameraComponent == null) return;
 
             // Get the corners of the frustum
             Vector3[] frustumCorners = new Vector3[4];
-            _cameraComponent.CalculateFrustumCorners(new Rect(0, 0, 1, 1), _cameraComponent.farClipPlane, Camera.MonoOrStereoscopicEye.Mono, frustumCorners);
+            cameraComponent.CalculateFrustumCorners(new Rect(0, 0, 1, 1), cameraComponent.farClipPlane, Camera.MonoOrStereoscopicEye.Mono, frustumCorners);
 
             // Convert the corners to world space
             for (int i = 0; i < frustumCorners.Length; i++)
             {
-                frustumCorners[i] = _cameraComponent.transform.TransformPoint(frustumCorners[i]);
+                frustumCorners[i] = cameraComponent.transform.TransformPoint(frustumCorners[i]);
             }
 
             // Draw the frustum
-            Gizmos.DrawLine(_cameraComponent.transform.position, frustumCorners[0]);
-            Gizmos.DrawLine(_cameraComponent.transform.position, frustumCorners[1]);
-            Gizmos.DrawLine(_cameraComponent.transform.position, frustumCorners[2]);
-            Gizmos.DrawLine(_cameraComponent.transform.position, frustumCorners[3]);
+            Gizmos.DrawLine(cameraComponent.transform.position, frustumCorners[0]);
+            Gizmos.DrawLine(cameraComponent.transform.position, frustumCorners[1]);
+            Gizmos.DrawLine(cameraComponent.transform.position, frustumCorners[2]);
+            Gizmos.DrawLine(cameraComponent.transform.position, frustumCorners[3]);
 
             Gizmos.DrawLine(frustumCorners[0], frustumCorners[1]);
             Gizmos.DrawLine(frustumCorners[1], frustumCorners[2]);

@@ -15,7 +15,7 @@ namespace Sven.Demo
             RefreshState();
         }
 
-        public void TogglePause()
+        public virtual void TogglePause()
         {
             isPaused = !isPaused;
             RefreshState();

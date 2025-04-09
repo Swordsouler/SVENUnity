@@ -1,3 +1,4 @@
+using System;
 using NaughtyAttributes;
 using TMPro;
 using UnityEngine;
@@ -11,8 +12,10 @@ namespace Sven.Demo
         [BoxGroup("View")] public TextMeshProUGUI triplesAmountText;
         [BoxGroup("View")] public Button saveQuitButton;
         [BoxGroup("View")] public GameObject sendingActivityIndicator;
+        [BoxGroup("View")] public Slider sensitivitySlider;
 
         [BoxGroup("Controller")] public DemoGraphBuffer graphBuffer;
+        [BoxGroup("Controller")] public DemoCharacterController demoCharacterController;
 
         private bool _isSending = false;
 
@@ -24,27 +27,36 @@ namespace Sven.Demo
 
         public void Start()
         {
-            sendingActivityIndicator.SetActive(_isSending);
-            triplesAmountText.text = graphBuffer.Graph.Triples.Count.ToString();
+            if (sendingActivityIndicator != null) sendingActivityIndicator.SetActive(_isSending);
+            if (triplesAmountText != null) triplesAmountText.text = graphBuffer.Graph.Triples.Count.ToString();
         }
 
-        public new void TogglePause()
+        public override void TogglePause()
         {
             if (_isSending) return;
             base.TogglePause();
+            if (demoCharacterController != null) demoCharacterController.enabled = !demoCharacterController.enabled;
+            Debug.Log("LockCharacterController: " + demoCharacterController.enabled);
+            Cursor.lockState = demoCharacterController.enabled ? CursorLockMode.Locked : CursorLockMode.None;
         }
 
         private void InitializeButtons()
         {
             if (saveQuitButton != null) saveQuitButton.onClick.AddListener(OnSaveQuitButtonClicked);
+            if (sensitivitySlider != null) sensitivitySlider.onValueChanged.AddListener(OnSensitivitySliderValueChanged);
+        }
+
+        private void OnSensitivitySliderValueChanged(float arg0)
+        {
+            if (demoCharacterController != null) demoCharacterController.mouseSensitivity = arg0;
         }
 
         private async void OnSaveQuitButtonClicked()
         {
             if (_isSending) return;
             _isSending = true;
-            saveQuitButton.gameObject.SetActive(false);
-            sendingActivityIndicator.SetActive(true);
+            if (saveQuitButton != null) saveQuitButton.gameObject.SetActive(false);
+            if (sendingActivityIndicator != null) sendingActivityIndicator.SetActive(true);
 
             await graphBuffer.SaveExperiment();
             SceneManager.LoadScene("Demo Menu", LoadSceneMode.Single);
