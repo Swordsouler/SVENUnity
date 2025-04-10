@@ -29,6 +29,9 @@ namespace Sven.Demo
         private void Start()
         {
             Cursor.lockState = CursorLockMode.Locked;
+
+            pointOfView.cameraComponent.transform.SetParent(transform, false);
+            pointOfView.cameraComponent.transform.localPosition = new Vector3(0, 0.5f, 0);
         }
 
         private void Update()

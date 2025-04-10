@@ -209,7 +209,6 @@ namespace Sven.Content
                         if (value == null) return;
                         if (meshFilter.mesh != null && meshFilter.mesh.name == (string)value && meshFilter.mesh.uv.Length > 0) return;
                         Mesh mesh = Resources.Load<Mesh>($"Meshes/{(string)value}");
-                        Debug.Log(mesh.name);
                         if (mesh == null) return;
                         meshFilter.mesh = mesh;
                     }, 1)),

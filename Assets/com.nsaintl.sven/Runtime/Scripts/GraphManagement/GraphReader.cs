@@ -917,13 +917,8 @@ namespace Sven.GraphManagement
 
         protected async Task<SparqlResultSet> RemoteRequest(string query)
         {
-            // URL de votre endpoint GraphDB
             Uri endpointUri = new(_loadedEndpoint);
-
-            // Créez une instance de HttpClient
             HttpClient httpClient = new();
-
-            // Créez une instance de SparqlQueryClient avec HttpClient et l'URI de l'endpoint
             SparqlQueryClient sparqlQueryClient = new(httpClient, endpointUri);
 
             string graphUri = $"FROM <{graph.BaseUri.AbsoluteUri}{Uri.EscapeDataString(graphName)}>";
