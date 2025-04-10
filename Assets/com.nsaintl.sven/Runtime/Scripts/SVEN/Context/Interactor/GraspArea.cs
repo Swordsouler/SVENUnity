@@ -33,7 +33,7 @@ namespace Sven.Context
                     if (collider.TryGetComponent(out SemantizationCore semantizationCore))
                     {
                         newVisibleObjects.Add(semantizationCore);
-                        if (!_currentInteractedObjects.Contains(semantizationCore))
+                        if (!currentInteractedObjects.Contains(semantizationCore))
                         {
                             // Object enters the sphere area, create interval for interaction and semantize the action
                             string dictionaryKey = $"{_semantizationCore.GetUUID()}-{semantizationCore.GetUUID()}";
@@ -51,7 +51,7 @@ namespace Sven.Context
                 }
 
                 // Detect objects that are no longer visible
-                foreach (SemantizationCore obj in _currentInteractedObjects)
+                foreach (SemantizationCore obj in currentInteractedObjects)
                 {
                     if (!newVisibleObjects.Contains(obj))
                     {
@@ -69,7 +69,7 @@ namespace Sven.Context
                 }
 
                 // Update the list of currently visible objects
-                _currentInteractedObjects = newVisibleObjects;
+                currentInteractedObjects = newVisibleObjects;
                 yield return new WaitForSeconds(i);
             }
         }

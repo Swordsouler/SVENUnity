@@ -1,3 +1,4 @@
+using Sven.Content;
 using Sven.Context;
 using UnityEngine;
 
@@ -19,6 +20,11 @@ namespace Sven.Demo
         private float horizontalInput;
         private float verticalInput;
         private bool jumpInput;
+
+        // Variables pour ramasser des objets
+        public Transform holdPosition; // Position où l'objet sera tenu
+        private GameObject heldObject; // Référence à l'objet tenu
+        public float pickupRange = 2f; // Distance pour ramasser un objet
 
         private void Awake()
         {
@@ -46,6 +52,18 @@ namespace Sven.Demo
             horizontalInput = Input.GetAxisRaw("Horizontal");
             verticalInput = Input.GetAxisRaw("Vertical");
             jumpInput = Input.GetButton("Jump");
+
+            if (Input.GetKeyDown(KeyCode.F))
+            {
+                if (heldObject == null)
+                {
+                    TryPickupObject();
+                }
+                else
+                {
+                    DropObject();
+                }
+            }
         }
 
         private void FixedUpdate()
@@ -77,6 +95,35 @@ namespace Sven.Demo
             if (collision.gameObject.CompareTag("Ground"))
             {
                 isGrounded = true;
+            }
+        }
+
+        private void TryPickupObject()
+        {
+            foreach (Pointer pointer in pointers)
+            {
+                foreach (SemantizationCore semanticObject in pointer.currentInteractedObjects)
+                {
+                    GameObject obj = semanticObject.gameObject;
+                    if (obj.CompareTag("Pickup"))
+                    {
+                        heldObject = obj;
+                        heldObject.GetComponent<Rigidbody>().isKinematic = true;
+                        heldObject.transform.SetParent(holdPosition);
+                        heldObject.transform.SetLocalPositionAndRotation(new Vector3(0, -0.2f, 1f), Quaternion.Euler(0, 180, 0));
+                        return;
+                    }
+                }
+            }
+        }
+
+        private void DropObject()
+        {
+            if (heldObject != null)
+            {
+                heldObject.GetComponent<Rigidbody>().isKinematic = false;
+                heldObject.transform.SetParent(null);
+                heldObject = null;
             }
         }
     }

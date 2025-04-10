@@ -17,7 +17,8 @@ namespace Sven.Context
         /// <summary>
         /// The set of currently interacted objects.
         /// </summary>
-        protected HashSet<SemantizationCore> _currentInteractedObjects = new();
+        [HideInInspector]
+        public HashSet<SemantizationCore> currentInteractedObjects = new();
 
         /// <summary>
         /// The semantization core attached.
@@ -96,7 +97,7 @@ namespace Sven.Context
         {
             if (!_debug) return;
             // Draw the visible objects
-            foreach (var obj in _currentInteractedObjects)
+            foreach (var obj in currentInteractedObjects)
             {
                 if (obj.TryGetComponent<MeshFilter>(out var meshFilter)) Gizmos.DrawWireMesh(meshFilter.sharedMesh, obj.transform.position, obj.transform.rotation, obj.transform.localScale);
             }

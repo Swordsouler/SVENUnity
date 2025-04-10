@@ -13,9 +13,10 @@ GameObject:
   - component: {fileID: 1732051794243332776}
   - component: {fileID: -3981490042333102946}
   - component: {fileID: -3805257594888761637}
+  - component: {fileID: -5292411258456019718}
   m_Layer: 7
   m_Name: Pumpkin_B
-  m_TagString: Untagged
+  m_TagString: Pickup
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -131,3 +132,30 @@ MonoBehaviour:
   - <Component>k__BackingField: {fileID: 4606492646823911010}
     <ProcessingMode>k__BackingField: 1
   _graphBuffer: {fileID: 0}
+--- !u!54 &-5292411258456019718
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 218855170364935037}
+  serializedVersion: 4
+  m_Mass: 1
+  m_Drag: 0
+  m_AngularDrag: 0.05
+  m_CenterOfMass: {x: 0, y: 0, z: 0}
+  m_InertiaTensor: {x: 1, y: 1, z: 1}
+  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ImplicitCom: 1
+  m_ImplicitTensor: 1
+  m_UseGravity: 1
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
