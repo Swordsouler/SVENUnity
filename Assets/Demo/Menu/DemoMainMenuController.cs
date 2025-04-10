@@ -113,15 +113,12 @@ namespace Sven.Demo
             DemoManager.graphName = string.IsNullOrEmpty(VENameInputField.text) ? "default" : VENameInputField.text;
             SceneManager.LoadScene("Demo Record", LoadSceneMode.Single);
         }
-
-        // Méthode pour charger le fichier SPARQL
         private async Task<string> LoadQueryFileAsync(string relativePath)
         {
             string queryFilePath = System.IO.Path.Combine(Application.streamingAssetsPath, relativePath);
 
             if (Application.platform == RuntimePlatform.WebGLPlayer)
             {
-                // Utiliser UnityWebRequest pour WebGL
                 UnityWebRequest request = UnityWebRequest.Get(queryFilePath);
                 await request.SendWebRequest();
 
@@ -137,7 +134,6 @@ namespace Sven.Demo
             }
             else
             {
-                // Lecture locale pour les autres plateformes
                 return System.IO.File.ReadAllText(queryFilePath);
             }
         }
