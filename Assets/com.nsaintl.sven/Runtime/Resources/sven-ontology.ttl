@@ -232,6 +232,36 @@ sven:layer rdf:type owl:ObjectProperty ;
                       "layer"@en .
 
 
+###  http://www.sven.fr/material
+sven:material rdf:type owl:ObjectProperty ;
+              rdfs:subPropertyOf <http://www.sven.fr/3DRenderProperty> ;
+              rdfs:range sven:Primitive .
+
+
+###  http://www.sven.fr/material1
+sven:material1 rdf:type owl:ObjectProperty ;
+               rdfs:subPropertyOf sven:material ;
+               rdfs:range sven:Primitive .
+
+
+###  http://www.sven.fr/material2
+sven:material2 rdf:type owl:ObjectProperty ;
+               rdfs:subPropertyOf sven:material ;
+               rdfs:range sven:Primitive .
+
+
+###  http://www.sven.fr/material3
+sven:material3 rdf:type owl:ObjectProperty ;
+               rdfs:subPropertyOf sven:material ;
+               rdfs:range sven:Primitive .
+
+
+###  http://www.sven.fr/material4
+sven:material4 rdf:type owl:ObjectProperty ;
+               rdfs:subPropertyOf sven:material ;
+               rdfs:range sven:Primitive .
+
+
 ###  http://www.sven.fr/maxAudioDistance
 sven:maxAudioDistance rdf:type owl:ObjectProperty ;
                       rdfs:subPropertyOf sven:audioProperty ;
@@ -251,6 +281,12 @@ sven:maxSoundDistance rdf:type owl:ObjectProperty ;
                                    "The maximum distance of the sound."@en ;
                       rdfs:label "distance sonore max"@fr ,
                                  "max sound distance"@en .
+
+
+###  http://www.sven.fr/mesh
+sven:mesh rdf:type owl:ObjectProperty ;
+          rdfs:subPropertyOf sven:shapeProperty ;
+          rdfs:range sven:Primitive .
 
 
 ###  http://www.sven.fr/minAudioDistance
@@ -492,16 +528,6 @@ sven:sender rdf:type owl:ObjectProperty ;
                          "Relie un événement de collision à son expéditeur."@fr ;
             rdfs:label "expéditeur"@fr ,
                        "sender"@en .
-
-
-###  http://www.sven.fr/shader
-sven:shader rdf:type owl:ObjectProperty ;
-            rdfs:subPropertyOf <http://www.sven.fr/3DRenderProperty> ;
-            rdfs:range sven:Primitive ;
-            rdfs:comment "Relates a 3D render to its shader."@en ,
-                         "Relie un rendu 3D à son ombrageur."@fr ;
-            rdfs:label "ombrageur"@fr ,
-                       "shader"@en .
 
 
 ###  http://www.sven.fr/shapeProperty

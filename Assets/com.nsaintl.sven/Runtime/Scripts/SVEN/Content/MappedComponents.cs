@@ -158,7 +158,38 @@ namespace Sven.Content
                 {
                     (Func<MeshRenderer, PropertyDescription>)(meshRenderer => new PropertyDescription("enabled", () => meshRenderer.enabled, value => meshRenderer.enabled = value.ToString().ToLower() == "true", 1)),
                     (Func<MeshRenderer, PropertyDescription>)(meshRenderer => new PropertyDescription("color", () => meshRenderer.material.color, value => meshRenderer.material.DOColor((Color)value, lerpSpeed), 1/*, "virtualColor"*/)),
-                    (Func<MeshRenderer, PropertyDescription>)(meshRenderer => new PropertyDescription("shader", () => meshRenderer.material.shader.name, value => meshRenderer.material.shader = Shader.Find((string)value), 1)),
+                    (Func<MeshRenderer, PropertyDescription>)(meshRenderer => new PropertyDescription("material1", () => meshRenderer.materials.Length > 0 ? meshRenderer.materials[0].name.Replace(" (Instance)", "") : null, value => {
+                        if (value == null) return;
+                        Material[] materials = meshRenderer.materials;
+                        if(materials.Length > 0 && materials[0] != null && materials[0].name == (string)value) return;
+                        if (materials.Length < 1) Array.Resize(ref materials, 1);
+                        materials[0] = Resources.Load<Material>($"Materials/{(string)value}");
+                        meshRenderer.materials = materials;
+                    }, 1)),
+                    (Func<MeshRenderer, PropertyDescription>)(meshRenderer => new PropertyDescription("material2", () => meshRenderer.materials.Length > 1 ? meshRenderer.materials[1].name.Replace(" (Instance)", "") : null, value => {
+                        if (value == null) return;
+                        Material[] materials = meshRenderer.materials;
+                        if (materials.Length > 1 && materials[1] != null && materials[1].name == (string)value) return;
+                        if (materials.Length < 2) Array.Resize(ref materials, 2);
+                        materials[1] = Resources.Load<Material>($"Materials/{(string)value}");
+                        meshRenderer.materials = materials;
+                    }, 1)),
+                    (Func<MeshRenderer, PropertyDescription>)(meshRenderer => new PropertyDescription("material3", () => meshRenderer.materials.Length > 2 ? meshRenderer.materials[2].name.Replace(" (Instance)", "") : null, value => {
+                        if (value == null) return;
+                        Material[] materials = meshRenderer.materials;
+                        if (materials.Length > 2 && materials[2] != null && materials[2].name == (string)value) return;
+                        if (materials.Length < 3) Array.Resize(ref materials, 3);
+                        materials[2] = Resources.Load<Material>($"Materials/{(string)value}");
+                        meshRenderer.materials = materials;
+                    }, 1)),
+                    (Func<MeshRenderer, PropertyDescription>)(meshRenderer => new PropertyDescription("material4", () => meshRenderer.materials.Length > 3 ? meshRenderer.materials[3].name.Replace(" (Instance)", "") : null, value => {
+                        if (value == null) return;
+                        Material[] materials = meshRenderer.materials;
+                        if (materials.Length > 3 && materials[3] != null && materials[3].name == (string)value) return;
+                        if (materials.Length < 4) Array.Resize(ref materials, 4);
+                        materials[3] = Resources.Load<Material>($"Materials/{(string)value}");
+                        meshRenderer.materials = materials;
+                    }, 1)),
                 })
             },
             {
@@ -174,7 +205,15 @@ namespace Sven.Content
                 typeof(MeshFilter), new("Shape",
                 new List<Delegate>
                 {
-                    (Func<MeshFilter, PropertyDescription>)(meshFilter => new PropertyDescription("vertices", () => string.Join("|", meshFilter.mesh.vertices.Select(v => v.ToString())), value => {
+                    (Func<MeshFilter, PropertyDescription>)(meshFilter => new PropertyDescription("mesh", () => meshFilter.mesh.name.Replace(" Instance", ""), value => {
+                        if (value == null) return;
+                        if (meshFilter.mesh != null && meshFilter.mesh.name == (string)value && meshFilter.mesh.uv.Length > 0) return;
+                        Mesh mesh = Resources.Load<Mesh>($"Meshes/{(string)value}");
+                        Debug.Log(mesh.name);
+                        if (mesh == null) return;
+                        meshFilter.mesh = mesh;
+                    }, 1)),
+                    /*(Func<MeshFilter, PropertyDescription>)(meshFilter => new PropertyDescription("vertices", () => string.Join("|", meshFilter.mesh.vertices.Select(v => v.ToString())), value => {
                             try {
                                 Vector3[] vertices = ((string)value).Split('|').Select(ParseVector3).ToArray();
                                 if (vertices.Length == meshFilter.mesh.vertexCount) return;
@@ -217,7 +256,7 @@ namespace Sven.Content
                                 update.UVs = true;
                                 if(update.IsComplete) _meshFilterUpdates.Remove(meshFilter);
                             } catch {}
-                        }, 2)),
+                        }, 2)),*/
                 })
             },
             {typeof(ManipulableObject), new("ManipulableObject",

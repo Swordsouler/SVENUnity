@@ -155,7 +155,17 @@ MonoBehaviour:
     ;\n           rdfs:range sven:Primitive ;\n           rdfs:comment \"Relates
     an object to its layer.\"@en ,\n                        \"Relie un objet \xE0
     sa couche.\"@fr ;\n           rdfs:label \"couche\"@fr ,\n                     
-    \"layer\"@en .\n\n\n###  http://www.sven.fr/maxAudioDistance\nsven:maxAudioDistance
+    \"layer\"@en .\n\n\n###  http://www.sven.fr/material\nsven:material rdf:type
+    owl:ObjectProperty ;\n              rdfs:subPropertyOf <http://www.sven.fr/3DRenderProperty>
+    ;\n              rdfs:range sven:Primitive .\n\n\n###  http://www.sven.fr/material1\nsven:material1
+    rdf:type owl:ObjectProperty ;\n               rdfs:subPropertyOf sven:material
+    ;\n               rdfs:range sven:Primitive .\n\n\n###  http://www.sven.fr/material2\nsven:material2
+    rdf:type owl:ObjectProperty ;\n               rdfs:subPropertyOf sven:material
+    ;\n               rdfs:range sven:Primitive .\n\n\n###  http://www.sven.fr/material3\nsven:material3
+    rdf:type owl:ObjectProperty ;\n               rdfs:subPropertyOf sven:material
+    ;\n               rdfs:range sven:Primitive .\n\n\n###  http://www.sven.fr/material4\nsven:material4
+    rdf:type owl:ObjectProperty ;\n               rdfs:subPropertyOf sven:material
+    ;\n               rdfs:range sven:Primitive .\n\n\n###  http://www.sven.fr/maxAudioDistance\nsven:maxAudioDistance
     rdf:type owl:ObjectProperty ;\n                      rdfs:subPropertyOf sven:audioProperty
     ;\n                      rdfs:range sven:Primitive ;\n                      rdfs:comment
     \"Relates an audio object to its maximum distance.\"@en ,\n                                  
@@ -167,7 +177,9 @@ MonoBehaviour:
     rdfs:range sven:Primitive ;\n                      rdfs:comment \"La distance
     maximale du son.\"@fr ,\n                                   \"The maximum distance
     of the sound.\"@en ;\n                      rdfs:label \"distance sonore max\"@fr
-    ,\n                                 \"max sound distance\"@en .\n\n\n###  http://www.sven.fr/minAudioDistance\nsven:minAudioDistance
+    ,\n                                 \"max sound distance\"@en .\n\n\n###  http://www.sven.fr/mesh\nsven:mesh
+    rdf:type owl:ObjectProperty ;\n          rdfs:subPropertyOf sven:shapeProperty
+    ;\n          rdfs:range sven:Primitive .\n\n\n###  http://www.sven.fr/minAudioDistance\nsven:minAudioDistance
     rdf:type owl:ObjectProperty ;\n                      rdfs:subPropertyOf sven:audioProperty
     ;\n                      rdfs:range sven:Primitive ;\n                      rdfs:comment
     \"Relates an audio object to its minimum distance.\"@en ,\n                                  
@@ -293,11 +305,6 @@ MonoBehaviour:
     ;\n            rdfs:comment \"Relates a collision event to its sender.\"@en ,\n                        
     \"Relie un \xE9v\xE9nement de collision \xE0 son exp\xE9diteur.\"@fr ;\n           
     rdfs:label \"exp\xE9diteur\"@fr ,\n                       \"sender\"@en .\n\n\n### 
-    http://www.sven.fr/shader\nsven:shader rdf:type owl:ObjectProperty ;\n           
-    rdfs:subPropertyOf <http://www.sven.fr/3DRenderProperty> ;\n            rdfs:range
-    sven:Primitive ;\n            rdfs:comment \"Relates a 3D render to its shader.\"@en
-    ,\n                         \"Relie un rendu 3D \xE0 son ombrageur.\"@fr ;\n           
-    rdfs:label \"ombrageur\"@fr ,\n                       \"shader\"@en .\n\n\n### 
     http://www.sven.fr/shapeProperty\nsven:shapeProperty rdf:type owl:ObjectProperty
     ;\n                   rdfs:subPropertyOf sven:componentProperty ;\n                  
     rdfs:domain sven:Shape ;\n                   rdfs:comment \"Relates a shape to

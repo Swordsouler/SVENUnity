@@ -585,6 +585,7 @@ namespace Sven.GraphManagement
                 double sceneUpdateTime = (endProcessing - startProcessing).TotalMilliseconds - queryTime;
                 if (SvenHelper.Debug)
                 {
+                    Debug.Log($"Amount of data: {targetSceneContent.GameObjects.Count} GameObjects, {targetSceneContent.GameObjects.Sum(x => x.Value.Components.Count)} Components, {targetSceneContent.GameObjects.Sum(x => x.Value.Components.Sum(y => y.Value.Properties.Count))} Properties");
                     Debug.Log($"Query Time: {queryTime} ms");
                     Debug.Log($"Scene Update Time: {sceneUpdateTime} ms");
                     Debug.Log($"Processing Time: {(endProcessing - startProcessing).TotalMilliseconds} ms");
@@ -930,7 +931,7 @@ namespace Sven.GraphManagement
             if (selectIndex == -1) throw new Exception("Query must contain a SELECT statement.");
             int insertIndex = query.IndexOf('\n', selectIndex) + 1;
             string graphQuery = query.Insert(insertIndex, $"{graphUri}\n");
-            Debug.Log($"Graph query: {graphQuery}");
+            //Debug.Log($"Graph query: {graphQuery}");
 
             // Exécutez la requête SPARQL
 #if UNITY_WEBGL

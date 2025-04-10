@@ -149,12 +149,8 @@ namespace Sven.Demo
                 HttpClient httpClient = new();
                 SparqlQueryClient client = new(httpClient, DemoManager.EndpointUri);
                 string query = await LoadQueryFileAsync("SPARQL/ListExistentVEs.sparql");
-                Debug.Log($"Query: {query}");
-                Debug.Log($"endpointUri: {DemoManager.EndpointUri}");
 
                 SparqlResultSet results = await client.QueryWebGLWithResultSetAsync(query);
-
-                Debug.Log($"Results: {results.ToString()}");
 
                 VENameDropdown.options.Clear();
                 _dropdownOptions.Clear();
