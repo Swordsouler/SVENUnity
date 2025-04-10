@@ -12,7 +12,6 @@ GameObject:
   - component: {fileID: 6819173007762174318}
   - component: {fileID: 8738785314371814820}
   - component: {fileID: -8718295239668625222}
-  - component: {fileID: -5360158698941004844}
   m_Layer: 0
   m_Name: Fence_wall_corner_C
   m_TagString: Untagged
@@ -110,23 +109,3 @@ MeshCollider:
   m_Convex: 1
   m_CookingOptions: 30
   m_Mesh: {fileID: 8289074277057341340, guid: e862a25f1b51db04d8fa649763c478cd, type: 3}
---- !u!114 &-5360158698941004844
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7081517344155493489}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7e518ae278ae889448712861370435c0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  componentsToSemantize:
-  - <Component>k__BackingField: {fileID: 7569788109363592907}
-    <ProcessingMode>k__BackingField: 0
-  - <Component>k__BackingField: {fileID: 8738785314371814820}
-    <ProcessingMode>k__BackingField: 1
-  - <Component>k__BackingField: {fileID: 6819173007762174318}
-    <ProcessingMode>k__BackingField: 1
-  _graphBuffer: {fileID: 0}

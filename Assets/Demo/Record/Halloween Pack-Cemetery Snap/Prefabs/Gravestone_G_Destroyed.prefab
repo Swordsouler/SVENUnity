@@ -12,7 +12,6 @@ GameObject:
   - component: {fileID: 7478176996475927976}
   - component: {fileID: 4621578404408396130}
   - component: {fileID: 8761210789178629111}
-  - component: {fileID: -2785141924117507134}
   m_Layer: 0
   m_Name: Gravestone_G_Destroyed
   m_TagString: Untagged
@@ -110,23 +109,3 @@ MeshCollider:
   m_Convex: 1
   m_CookingOptions: 30
   m_Mesh: {fileID: -5299976283832695752, guid: b85c74d64fb13594e81f4a99777fb687, type: 3}
---- !u!114 &-2785141924117507134
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6567331699499116727}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7e518ae278ae889448712861370435c0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  componentsToSemantize:
-  - <Component>k__BackingField: {fileID: 5793891701860790797}
-    <ProcessingMode>k__BackingField: 0
-  - <Component>k__BackingField: {fileID: 4621578404408396130}
-    <ProcessingMode>k__BackingField: 1
-  - <Component>k__BackingField: {fileID: 7478176996475927976}
-    <ProcessingMode>k__BackingField: 1
-  _graphBuffer: {fileID: 0}

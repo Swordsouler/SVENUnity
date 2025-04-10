@@ -12,7 +12,6 @@ GameObject:
   - component: {fileID: 3985356165007373048}
   - component: {fileID: 1200810840874124850}
   - component: {fileID: 5583307242215419823}
-  - component: {fileID: 644014341508014179}
   m_Layer: 7
   m_Name: Skeleton_right_arm_B
   m_TagString: Untagged
@@ -110,23 +109,3 @@ MeshCollider:
   m_Convex: 1
   m_CookingOptions: 30
   m_Mesh: {fileID: -2692130760589574808, guid: 8ed97153a7c797f4f970803407f665ca, type: 3}
---- !u!114 &644014341508014179
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 840729921617799143}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7e518ae278ae889448712861370435c0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  componentsToSemantize:
-  - <Component>k__BackingField: {fileID: 63349205600730461}
-    <ProcessingMode>k__BackingField: 0
-  - <Component>k__BackingField: {fileID: 1200810840874124850}
-    <ProcessingMode>k__BackingField: 1
-  - <Component>k__BackingField: {fileID: 3985356165007373048}
-    <ProcessingMode>k__BackingField: 1
-  _graphBuffer: {fileID: 0}

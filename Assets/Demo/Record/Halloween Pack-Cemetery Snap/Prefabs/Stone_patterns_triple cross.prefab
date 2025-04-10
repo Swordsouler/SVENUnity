@@ -12,7 +12,6 @@ GameObject:
   - component: {fileID: 1657807144164156227}
   - component: {fileID: 3523294411088893833}
   - component: {fileID: -1849429094342163735}
-  - component: {fileID: -3371948590969203993}
   m_Layer: 0
   m_Name: Stone_patterns_triple cross
   m_TagString: Ground
@@ -110,23 +109,3 @@ MeshCollider:
   m_Convex: 1
   m_CookingOptions: 30
   m_Mesh: {fileID: -7030472977647789701, guid: b6185c7b444c7f540a0dd5c79a8a3ce9, type: 3}
---- !u!114 &-3371948590969203993
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3163143124721415772}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7e518ae278ae889448712861370435c0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  componentsToSemantize:
-  - <Component>k__BackingField: {fileID: 2354939798953487590}
-    <ProcessingMode>k__BackingField: 0
-  - <Component>k__BackingField: {fileID: 3523294411088893833}
-    <ProcessingMode>k__BackingField: 1
-  - <Component>k__BackingField: {fileID: 1657807144164156227}
-    <ProcessingMode>k__BackingField: 1
-  _graphBuffer: {fileID: 0}

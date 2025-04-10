@@ -12,7 +12,6 @@ GameObject:
   - component: {fileID: 4286761063613513268}
   - component: {fileID: 2060771970415872766}
   - component: {fileID: 542470637721695658}
-  - component: {fileID: 3048223174776718290}
   m_Layer: 0
   m_Name: Gravestone S3
   m_TagString: Untagged
@@ -110,23 +109,3 @@ MeshCollider:
   m_Convex: 1
   m_CookingOptions: 30
   m_Mesh: {fileID: 7222302398427772858, guid: 40db040c054ba95409dd00e9927b98d5, type: 3}
---- !u!114 &3048223174776718290
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 547654924143946539}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7e518ae278ae889448712861370435c0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  componentsToSemantize:
-  - <Component>k__BackingField: {fileID: 923934931970142609}
-    <ProcessingMode>k__BackingField: 0
-  - <Component>k__BackingField: {fileID: 2060771970415872766}
-    <ProcessingMode>k__BackingField: 1
-  - <Component>k__BackingField: {fileID: 4286761063613513268}
-    <ProcessingMode>k__BackingField: 1
-  _graphBuffer: {fileID: 0}

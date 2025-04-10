@@ -12,7 +12,6 @@ GameObject:
   - component: {fileID: 3884904560840225507}
   - component: {fileID: 1300699528927495721}
   - component: {fileID: -4982897274912744244}
-  - component: {fileID: 2298443712743513152}
   m_Layer: 7
   m_Name: Skeleton
   m_TagString: Untagged
@@ -110,23 +109,3 @@ MeshCollider:
   m_Convex: 1
   m_CookingOptions: 30
   m_Mesh: {fileID: -5273605855520333666, guid: 5bb0d159e73682446843c0262bf7727c, type: 3}
---- !u!114 &2298443712743513152
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 652458054135212028}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7e518ae278ae889448712861370435c0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  componentsToSemantize:
-  - <Component>k__BackingField: {fileID: 163870698297769286}
-    <ProcessingMode>k__BackingField: 0
-  - <Component>k__BackingField: {fileID: 1300699528927495721}
-    <ProcessingMode>k__BackingField: 1
-  - <Component>k__BackingField: {fileID: 3884904560840225507}
-    <ProcessingMode>k__BackingField: 1
-  _graphBuffer: {fileID: 0}

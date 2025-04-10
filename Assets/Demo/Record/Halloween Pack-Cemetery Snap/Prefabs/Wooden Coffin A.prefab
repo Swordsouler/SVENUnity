@@ -12,7 +12,6 @@ GameObject:
   - component: {fileID: 5014617582771664982}
   - component: {fileID: 7094145051765804188}
   - component: {fileID: 8442418733610126782}
-  - component: {fileID: -8360914170932907808}
   m_Layer: 0
   m_Name: Wooden Coffin A
   m_TagString: Untagged
@@ -110,23 +109,3 @@ MeshCollider:
   m_Convex: 1
   m_CookingOptions: 30
   m_Mesh: {fileID: 8600758274669733032, guid: cd5bf43ad0b1eaa41b3513e7a7b6c8e5, type: 3}
---- !u!114 &-8360914170932907808
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8751491499007880521}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7e518ae278ae889448712861370435c0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  componentsToSemantize:
-  - <Component>k__BackingField: {fileID: 8230428968349038579}
-    <ProcessingMode>k__BackingField: 0
-  - <Component>k__BackingField: {fileID: 7094145051765804188}
-    <ProcessingMode>k__BackingField: 1
-  - <Component>k__BackingField: {fileID: 5014617582771664982}
-    <ProcessingMode>k__BackingField: 1
-  _graphBuffer: {fileID: 0}

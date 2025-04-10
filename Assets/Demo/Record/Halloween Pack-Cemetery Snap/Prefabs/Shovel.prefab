@@ -12,7 +12,6 @@ GameObject:
   - component: {fileID: 6951930067019539200}
   - component: {fileID: 5160774264711698378}
   - component: {fileID: 4117941126134065675}
-  - component: {fileID: 1314953101843926090}
   m_Layer: 0
   m_Name: Shovel
   m_TagString: Untagged
@@ -110,23 +109,3 @@ MeshCollider:
   m_Convex: 1
   m_CookingOptions: 30
   m_Mesh: {fileID: 8556253635750604653, guid: 6c3081e9e7953064f9947c93c8cb3428, type: 3}
---- !u!114 &1314953101843926090
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6673838398529205791}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7e518ae278ae889448712861370435c0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  componentsToSemantize:
-  - <Component>k__BackingField: {fileID: 6329224359202368677}
-    <ProcessingMode>k__BackingField: 0
-  - <Component>k__BackingField: {fileID: 5160774264711698378}
-    <ProcessingMode>k__BackingField: 1
-  - <Component>k__BackingField: {fileID: 6951930067019539200}
-    <ProcessingMode>k__BackingField: 1
-  _graphBuffer: {fileID: 0}

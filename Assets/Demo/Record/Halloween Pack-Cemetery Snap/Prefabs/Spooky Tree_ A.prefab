@@ -12,7 +12,6 @@ GameObject:
   - component: {fileID: 7315589256459000009}
   - component: {fileID: 4783604430936730627}
   - component: {fileID: 7210933181870480209}
-  - component: {fileID: -6013819231134511677}
   m_Layer: 0
   m_Name: Spooky Tree_ A
   m_TagString: Untagged
@@ -111,23 +110,3 @@ MeshCollider:
   m_Convex: 1
   m_CookingOptions: 30
   m_Mesh: {fileID: 731913819193630203, guid: ee60ebc17106e944c8e855951526f99e, type: 3}
---- !u!114 &-6013819231134511677
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6440774818338459094}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7e518ae278ae889448712861370435c0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  componentsToSemantize:
-  - <Component>k__BackingField: {fileID: 5920520737430968172}
-    <ProcessingMode>k__BackingField: 0
-  - <Component>k__BackingField: {fileID: 4783604430936730627}
-    <ProcessingMode>k__BackingField: 1
-  - <Component>k__BackingField: {fileID: 7315589256459000009}
-    <ProcessingMode>k__BackingField: 1
-  _graphBuffer: {fileID: 0}

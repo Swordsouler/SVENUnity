@@ -12,7 +12,6 @@ GameObject:
   - component: {fileID: 7293023755263418969}
   - component: {fileID: 4815176204311516819}
   - component: {fileID: -9121435252285808804}
-  - component: {fileID: 957726320514676126}
   m_Layer: 0
   m_Name: Large Crypt
   m_TagString: Untagged
@@ -110,23 +109,3 @@ MeshCollider:
   m_Convex: 1
   m_CookingOptions: 30
   m_Mesh: {fileID: -765754872854616792, guid: c4a029894ce749345b5dedcbed3e3f5f, type: 3}
---- !u!114 &957726320514676126
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6472250246403028806}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7e518ae278ae889448712861370435c0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  componentsToSemantize:
-  - <Component>k__BackingField: {fileID: 5952032346771893756}
-    <ProcessingMode>k__BackingField: 0
-  - <Component>k__BackingField: {fileID: 4815176204311516819}
-    <ProcessingMode>k__BackingField: 1
-  - <Component>k__BackingField: {fileID: 7293023755263418969}
-    <ProcessingMode>k__BackingField: 1
-  _graphBuffer: {fileID: 0}

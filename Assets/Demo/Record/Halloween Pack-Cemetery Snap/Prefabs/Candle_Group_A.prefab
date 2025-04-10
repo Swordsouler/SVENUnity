@@ -12,7 +12,6 @@ GameObject:
   - component: {fileID: 7781269104179747112}
   - component: {fileID: 5483247222257348066}
   - component: {fileID: 5918823020155941342}
-  - component: {fileID: 6193842805062968367}
   m_Layer: 7
   m_Name: Candle_Group_A
   m_TagString: Untagged
@@ -111,23 +110,3 @@ MeshCollider:
   m_Convex: 1
   m_CookingOptions: 30
   m_Mesh: {fileID: -8427456753255172235, guid: 6eea6b45ea3d3c24b9487c92e246942d, type: 3}
---- !u!114 &6193842805062968367
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6275929066778676279}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7e518ae278ae889448712861370435c0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  componentsToSemantize:
-  - <Component>k__BackingField: {fileID: 6652736463015515789}
-    <ProcessingMode>k__BackingField: 0
-  - <Component>k__BackingField: {fileID: 5483247222257348066}
-    <ProcessingMode>k__BackingField: 1
-  - <Component>k__BackingField: {fileID: 7781269104179747112}
-    <ProcessingMode>k__BackingField: 1
-  _graphBuffer: {fileID: 0}

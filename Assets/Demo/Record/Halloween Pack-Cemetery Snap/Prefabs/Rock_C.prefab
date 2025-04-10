@@ -12,7 +12,6 @@ GameObject:
   - component: {fileID: 3918907599184554534}
   - component: {fileID: 1262757198646845164}
   - component: {fileID: -346788626681359024}
-  - component: {fileID: 9052226320850065068}
   m_Layer: 0
   m_Name: Rock_C
   m_TagString: Untagged
@@ -110,23 +109,3 @@ MeshCollider:
   m_Convex: 1
   m_CookingOptions: 30
   m_Mesh: {fileID: -101496668972229048, guid: 9dc8d2e9a68a8c5428391bbb41276651, type: 3}
---- !u!114 &9052226320850065068
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 758516287222988601}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7e518ae278ae889448712861370435c0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  componentsToSemantize:
-  - <Component>k__BackingField: {fileID: 129788723280110979}
-    <ProcessingMode>k__BackingField: 0
-  - <Component>k__BackingField: {fileID: 1262757198646845164}
-    <ProcessingMode>k__BackingField: 1
-  - <Component>k__BackingField: {fileID: 3918907599184554534}
-    <ProcessingMode>k__BackingField: 1
-  _graphBuffer: {fileID: 0}

@@ -21,10 +21,9 @@ namespace Sven.Demo
         private float verticalInput;
         private bool jumpInput;
 
-        // Variables pour ramasser des objets
-        public Transform holdPosition; // Position où l'objet sera tenu
-        private GameObject heldObject; // Référence à l'objet tenu
-        public float pickupRange = 2f; // Distance pour ramasser un objet
+        public Transform holdPosition;
+        private GameObject heldObject;
+        public float pickupRange = 2f;
 
         private void Awake()
         {

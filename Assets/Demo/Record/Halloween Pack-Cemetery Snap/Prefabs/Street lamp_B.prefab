@@ -12,7 +12,6 @@ GameObject:
   - component: {fileID: 4945790860093812124}
   - component: {fileID: 7153420299878472022}
   - component: {fileID: -567494341881999426}
-  - component: {fileID: 31768027220088911}
   m_Layer: 0
   m_Name: Street lamp_B
   m_TagString: Untagged
@@ -111,23 +110,3 @@ MeshCollider:
   m_Convex: 1
   m_CookingOptions: 30
   m_Mesh: {fileID: 1724129915073168974, guid: 77bfaf9b9b1e26045a128ca6c4e0aa32, type: 3}
---- !u!114 &31768027220088911
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8666880256272808067}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7e518ae278ae889448712861370435c0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  componentsToSemantize:
-  - <Component>k__BackingField: {fileID: 8290318773266473529}
-    <ProcessingMode>k__BackingField: 0
-  - <Component>k__BackingField: {fileID: 7153420299878472022}
-    <ProcessingMode>k__BackingField: 1
-  - <Component>k__BackingField: {fileID: 4945790860093812124}
-    <ProcessingMode>k__BackingField: 1
-  _graphBuffer: {fileID: 0}

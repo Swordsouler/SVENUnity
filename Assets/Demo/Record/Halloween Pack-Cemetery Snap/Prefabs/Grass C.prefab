@@ -12,7 +12,6 @@ GameObject:
   - component: {fileID: 682698330929089021}
   - component: {fileID: 3359009990585564471}
   - component: {fileID: -6537634374150812244}
-  - component: {fileID: 6602643498402354832}
   m_Layer: 7
   m_Name: Grass C
   m_TagString: Untagged
@@ -110,23 +109,3 @@ MeshCollider:
   m_Convex: 1
   m_CookingOptions: 30
   m_Mesh: {fileID: 453103067193387650, guid: 1bc7e2ca9951f34489cca4d1c99cefc3, type: 3}
---- !u!114 &6602643498402354832
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3863355905218747618}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7e518ae278ae889448712861370435c0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  componentsToSemantize:
-  - <Component>k__BackingField: {fileID: 4528005583773156952}
-    <ProcessingMode>k__BackingField: 0
-  - <Component>k__BackingField: {fileID: 3359009990585564471}
-    <ProcessingMode>k__BackingField: 1
-  - <Component>k__BackingField: {fileID: 682698330929089021}
-    <ProcessingMode>k__BackingField: 1
-  _graphBuffer: {fileID: 0}

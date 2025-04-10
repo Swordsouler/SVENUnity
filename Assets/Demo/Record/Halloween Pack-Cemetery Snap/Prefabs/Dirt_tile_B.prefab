@@ -12,7 +12,6 @@ GameObject:
   - component: {fileID: 5357520702091501472}
   - component: {fileID: 7907560051922430826}
   - component: {fileID: 8228073776690971269}
-  - component: {fileID: 2119819198301568896}
   m_Layer: 0
   m_Name: Dirt_tile_B
   m_TagString: Ground
@@ -110,23 +109,3 @@ MeshCollider:
   m_Convex: 1
   m_CookingOptions: 30
   m_Mesh: {fileID: -6476390313089767225, guid: 60d65c8982f76334db78e1c68a2f015f, type: 3}
---- !u!114 &2119819198301568896
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8556196664640555711}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7e518ae278ae889448712861370435c0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  componentsToSemantize:
-  - <Component>k__BackingField: {fileID: 9076555504183414789}
-    <ProcessingMode>k__BackingField: 0
-  - <Component>k__BackingField: {fileID: 7907560051922430826}
-    <ProcessingMode>k__BackingField: 1
-  - <Component>k__BackingField: {fileID: 5357520702091501472}
-    <ProcessingMode>k__BackingField: 1
-  _graphBuffer: {fileID: 0}

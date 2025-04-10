@@ -12,7 +12,6 @@ GameObject:
   - component: {fileID: 4422981269186346244}
   - component: {fileID: 1911040605264153038}
   - component: {fileID: 1946358229010216459}
-  - component: {fileID: 7157692641282813716}
   m_Layer: 0
   m_Name: Cemetery_Pillar A
   m_TagString: Untagged
@@ -110,23 +109,3 @@ MeshCollider:
   m_Convex: 1
   m_CookingOptions: 30
   m_Mesh: {fileID: -2884142046732351915, guid: 834621841ecc23f41b44ab8b8b08b15f, type: 3}
---- !u!114 &7157692641282813716
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 109666656001828891}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7e518ae278ae889448712861370435c0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  componentsToSemantize:
-  - <Component>k__BackingField: {fileID: 778645077189849761}
-    <ProcessingMode>k__BackingField: 0
-  - <Component>k__BackingField: {fileID: 1911040605264153038}
-    <ProcessingMode>k__BackingField: 1
-  - <Component>k__BackingField: {fileID: 4422981269186346244}
-    <ProcessingMode>k__BackingField: 1
-  _graphBuffer: {fileID: 0}

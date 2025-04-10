@@ -12,7 +12,6 @@ GameObject:
   - component: {fileID: 7768793280471019706}
   - component: {fileID: 5491219566249526384}
   - component: {fileID: -3076350766559348153}
-  - component: {fileID: 223809812343604493}
   m_Layer: 7
   m_Name: Lantren_A
   m_TagString: Untagged
@@ -111,23 +110,3 @@ MeshCollider:
   m_Convex: 1
   m_CookingOptions: 30
   m_Mesh: {fileID: 4949566437650860612, guid: 8cac8602e2d1de245a7b87a73aa1b4dd, type: 3}
---- !u!114 &223809812343604493
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6283725901676275109}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7e518ae278ae889448712861370435c0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  componentsToSemantize:
-  - <Component>k__BackingField: {fileID: 6665212852907130655}
-    <ProcessingMode>k__BackingField: 0
-  - <Component>k__BackingField: {fileID: 5491219566249526384}
-    <ProcessingMode>k__BackingField: 1
-  - <Component>k__BackingField: {fileID: 7768793280471019706}
-    <ProcessingMode>k__BackingField: 1
-  _graphBuffer: {fileID: 0}

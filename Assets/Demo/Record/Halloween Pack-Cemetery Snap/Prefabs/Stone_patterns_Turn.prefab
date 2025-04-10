@@ -12,7 +12,6 @@ GameObject:
   - component: {fileID: 8629184332613243952}
   - component: {fileID: 5775288349524205818}
   - component: {fileID: 6418675839266577595}
-  - component: {fileID: 227187756753052840}
   m_Layer: 0
   m_Name: Stone_patterns_Turn
   m_TagString: Ground
@@ -110,23 +109,3 @@ MeshCollider:
   m_Convex: 1
   m_CookingOptions: 30
   m_Mesh: {fileID: -9203555720749229862, guid: 3a1bd70a808c6f44f91dbe7f25bea738, type: 3}
---- !u!114 &227187756753052840
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5414749895996735791}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7e518ae278ae889448712861370435c0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  componentsToSemantize:
-  - <Component>k__BackingField: {fileID: 4642893435899501461}
-    <ProcessingMode>k__BackingField: 0
-  - <Component>k__BackingField: {fileID: 5775288349524205818}
-    <ProcessingMode>k__BackingField: 1
-  - <Component>k__BackingField: {fileID: 8629184332613243952}
-    <ProcessingMode>k__BackingField: 1
-  _graphBuffer: {fileID: 0}

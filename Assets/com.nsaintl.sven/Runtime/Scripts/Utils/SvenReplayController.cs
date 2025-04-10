@@ -235,6 +235,8 @@ namespace Sven.Utils
             if (Input.GetKeyDown(KeyCode.Space)) IsPlaying = !IsPlaying;
             if (Input.GetKeyDown(KeyCode.LeftArrow)) StepBackward();
             if (Input.GetKeyDown(KeyCode.RightArrow)) StepForward();
+            if (Input.GetKeyDown(KeyCode.KeypadPlus)) _speedDropdown.value = Mathf.Clamp(_speedDropdown.value - 1, 0, _speedDropdown.options.Count - 1);
+            if (Input.GetKeyDown(KeyCode.KeypadMinus)) _speedDropdown.value = Mathf.Clamp(_speedDropdown.value + 1, 0, _speedDropdown.options.Count - 1);
         }
 
         private void OnDestroy()

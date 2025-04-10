@@ -12,7 +12,6 @@ GameObject:
   - component: {fileID: 2254454123740476561}
   - component: {fileID: 4084089063381385307}
   - component: {fileID: 5987430166436410008}
-  - component: {fileID: -2427338364487829478}
   m_Layer: 0
   m_Name: Grass_tile_in_A
   m_TagString: Ground
@@ -110,23 +109,3 @@ MeshCollider:
   m_Convex: 1
   m_CookingOptions: 30
   m_Mesh: {fileID: -8076610782554189672, guid: b4bdaf3221ec0ab4da6ae434c02d6c6d, type: 3}
---- !u!114 &-2427338364487829478
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2570822208046260622}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7e518ae278ae889448712861370435c0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  componentsToSemantize:
-  - <Component>k__BackingField: {fileID: 2947242575875554100}
-    <ProcessingMode>k__BackingField: 0
-  - <Component>k__BackingField: {fileID: 4084089063381385307}
-    <ProcessingMode>k__BackingField: 1
-  - <Component>k__BackingField: {fileID: 2254454123740476561}
-    <ProcessingMode>k__BackingField: 1
-  _graphBuffer: {fileID: 0}

@@ -12,7 +12,6 @@ GameObject:
   - component: {fileID: 6792634301131393837}
   - component: {fileID: 8764215575657512935}
   - component: {fileID: -7426733370637965073}
-  - component: {fileID: 3047551215627002650}
   m_Layer: 7
   m_Name: skeleton_left_leg_B
   m_TagString: Untagged
@@ -110,23 +109,3 @@ MeshCollider:
   m_Convex: 1
   m_CookingOptions: 30
   m_Mesh: {fileID: -2040729912827218823, guid: fda2b15b2cb217749a86dcdccb5f101a, type: 3}
---- !u!114 &3047551215627002650
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7106754779814911538}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7e518ae278ae889448712861370435c0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  componentsToSemantize:
-  - <Component>k__BackingField: {fileID: 7632356159497503880}
-    <ProcessingMode>k__BackingField: 0
-  - <Component>k__BackingField: {fileID: 8764215575657512935}
-    <ProcessingMode>k__BackingField: 1
-  - <Component>k__BackingField: {fileID: 6792634301131393837}
-    <ProcessingMode>k__BackingField: 1
-  _graphBuffer: {fileID: 0}

@@ -12,7 +12,6 @@ GameObject:
   - component: {fileID: 5660230745896339874}
   - component: {fileID: 7595842584886754664}
   - component: {fileID: -9059253911155832601}
-  - component: {fileID: 1278503750154677686}
   m_Layer: 0
   m_Name: Sarcophagus_A
   m_TagString: Untagged
@@ -110,23 +109,3 @@ MeshCollider:
   m_Convex: 1
   m_CookingOptions: 30
   m_Mesh: {fileID: -7019898775153754091, guid: 9b5cbf54f574b9741b8b8110d4c49efd, type: 3}
---- !u!114 &1278503750154677686
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8244163362554518717}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7e518ae278ae889448712861370435c0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  componentsToSemantize:
-  - <Component>k__BackingField: {fileID: 8728809827866396167}
-    <ProcessingMode>k__BackingField: 0
-  - <Component>k__BackingField: {fileID: 7595842584886754664}
-    <ProcessingMode>k__BackingField: 1
-  - <Component>k__BackingField: {fileID: 5660230745896339874}
-    <ProcessingMode>k__BackingField: 1
-  _graphBuffer: {fileID: 0}
