@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 7544038635187558344}
   - component: {fileID: 5118058987094557958}
   - component: {fileID: 4836636555433228924}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Skeleton_left_arm_B
   m_TagString: Untagged
   m_Icon: {fileID: 0}

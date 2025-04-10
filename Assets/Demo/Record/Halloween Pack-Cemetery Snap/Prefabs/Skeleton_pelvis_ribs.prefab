@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 153658373832451758}
   - component: {fileID: 11998771581852660}
   - component: {fileID: -8829648423915786008}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Skeleton_pelvis_ribs
   m_TagString: Untagged
   m_Icon: {fileID: 0}

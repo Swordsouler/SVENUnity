@@ -11,10 +11,14 @@ namespace Sven.Demo
         public float moveSpeed = 5f;
         private Rigidbody _rb;
 
-        private float xRotation = 0f;
+        private float yRotation = 0F;
 
         private bool isGrounded = true;
         public float jumpForce = 5f;
+
+        private float horizontalInput;
+        private float verticalInput;
+        private bool jumpInput;
 
         private void Awake()
         {
@@ -25,29 +29,24 @@ namespace Sven.Demo
         private void Start()
         {
             Cursor.lockState = CursorLockMode.Locked;
-
-            xRotation = pointOfView.cameraComponent.transform.localRotation.eulerAngles.x;
-
-            if (xRotation > 180f) xRotation -= 360f;
         }
 
         private void Update()
         {
-            float mouseX = Input.GetAxis("Mouse X") * mouseSensitivity * 250 * Time.deltaTime;
-            float mouseY = Input.GetAxis("Mouse Y") * mouseSensitivity * 250 * Time.deltaTime;
+            float xRotation = pointOfView.cameraComponent.transform.localEulerAngles.y + Input.GetAxis("Mouse X") * mouseSensitivity;
 
-            xRotation -= mouseY;
-            xRotation = Mathf.Clamp(xRotation, -90f, 90f);
+            yRotation += Input.GetAxis("Mouse Y") * mouseSensitivity;
+            yRotation = Mathf.Clamp(yRotation, -60f, 60f);
 
-            pointOfView.cameraComponent.transform.localRotation = Quaternion.Euler(xRotation, 0f, 0f);
-            transform.Rotate(Vector3.up * mouseX);
+            pointOfView.cameraComponent.transform.localEulerAngles = new Vector3(-yRotation, xRotation, 0);
+
+            horizontalInput = Input.GetAxisRaw("Horizontal");
+            verticalInput = Input.GetAxisRaw("Vertical");
+            jumpInput = Input.GetButton("Jump");
         }
 
         private void FixedUpdate()
         {
-            float horizontal = Input.GetAxis("Horizontal");
-            float vertical = Input.GetAxis("Vertical");
-
             Vector3 forward = pointOfView.cameraComponent.transform.forward;
             Vector3 right = pointOfView.cameraComponent.transform.right;
 
@@ -57,13 +56,15 @@ namespace Sven.Demo
             forward.Normalize();
             right.Normalize();
 
-            Vector3 moveDirection = (forward * vertical + right * horizontal).normalized;
+            Vector3 moveDirection = (forward * verticalInput + right * horizontalInput).normalized;
 
-            _rb.AddForce(moveDirection * moveSpeed, ForceMode.Force);
+            Vector3 targetVelocity = moveDirection * moveSpeed;
+            targetVelocity.y = _rb.linearVelocity.y;
+            _rb.linearVelocity = targetVelocity;
 
-            if (Input.GetButton("Jump") && isGrounded)
+            if (jumpInput && isGrounded)
             {
-                _rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
+                _rb.linearVelocity = new Vector3(_rb.linearVelocity.x, jumpForce, _rb.linearVelocity.z);
                 isGrounded = false;
             }
         }

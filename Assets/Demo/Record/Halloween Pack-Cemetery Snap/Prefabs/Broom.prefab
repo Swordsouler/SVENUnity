@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 4083004674964276210}
   - component: {fileID: 7709959926630978554}
   - component: {fileID: 2467527212177307038}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Broom
   m_TagString: Untagged
   m_Icon: {fileID: 0}

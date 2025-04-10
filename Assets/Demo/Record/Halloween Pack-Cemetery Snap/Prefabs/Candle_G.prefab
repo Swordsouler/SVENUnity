@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 7413058119143950269}
   - component: {fileID: 7091777205825768203}
   - component: {fileID: -8937212908750298419}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Candle_G
   m_TagString: Untagged
   m_Icon: {fileID: 0}

@@ -36,7 +36,6 @@ namespace Sven.Demo
             if (_isSending) return;
             base.TogglePause();
             if (demoCharacterController != null) demoCharacterController.enabled = !demoCharacterController.enabled;
-            Debug.Log("LockCharacterController: " + demoCharacterController.enabled);
             Cursor.lockState = demoCharacterController.enabled ? CursorLockMode.Locked : CursorLockMode.None;
         }
 

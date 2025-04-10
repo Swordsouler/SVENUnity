@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 8589897884537542369}
   - component: {fileID: -4166492609510388590}
   - component: {fileID: 2011142143180536557}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Spooky_Mushroom_C
   m_TagString: Untagged
   m_Icon: {fileID: 0}
