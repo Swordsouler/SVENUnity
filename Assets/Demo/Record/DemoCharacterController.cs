@@ -21,7 +21,7 @@ namespace Sven.Demo
         private float verticalInput;
         private bool jumpInput;
 
-        public Transform holdPosition;
+        public Transform holderTransform;
         private GameObject heldObject;
         public float pickupRange = 2f;
 
@@ -108,8 +108,8 @@ namespace Sven.Demo
                     {
                         heldObject = obj;
                         heldObject.GetComponent<Rigidbody>().isKinematic = true;
-                        heldObject.transform.SetParent(holdPosition);
-                        heldObject.transform.SetLocalPositionAndRotation(new Vector3(0, -0.2f, 1f), Quaternion.Euler(0, 180, 0));
+                        heldObject.transform.SetParent(holderTransform);
+                        heldObject.transform.SetLocalPositionAndRotation(Vector3.zero, Quaternion.identity);
                         return;
                     }
                 }
