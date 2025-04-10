@@ -36,7 +36,7 @@ namespace Sven.Demo
             float xRotation = pointOfView.cameraComponent.transform.localEulerAngles.y + Input.GetAxis("Mouse X") * mouseSensitivity;
 
             yRotation += Input.GetAxis("Mouse Y") * mouseSensitivity;
-            yRotation = Mathf.Clamp(yRotation, -60f, 60f);
+            yRotation = Mathf.Clamp(yRotation, -90f, 90f);
 
             pointOfView.cameraComponent.transform.localEulerAngles = new Vector3(-yRotation, xRotation, 0);
 
