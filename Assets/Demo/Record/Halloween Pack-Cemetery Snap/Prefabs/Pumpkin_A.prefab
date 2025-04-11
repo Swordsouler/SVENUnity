@@ -128,7 +128,7 @@ MonoBehaviour:
   - <Component>k__BackingField: {fileID: 7618593790986090385}
     <ProcessingMode>k__BackingField: 0
   - <Component>k__BackingField: {fileID: 8786947751492914430}
-    <ProcessingMode>k__BackingField: 1
+    <ProcessingMode>k__BackingField: 0
   - <Component>k__BackingField: {fileID: 6779453617221400628}
     <ProcessingMode>k__BackingField: 1
   - <Component>k__BackingField: {fileID: -5977668364426240361}

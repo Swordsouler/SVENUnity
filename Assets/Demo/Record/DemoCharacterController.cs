@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Sven.Content;
 using Sven.Context;
 using UnityEngine;
@@ -27,6 +28,11 @@ namespace Sven.Demo
         private GameObject heldObject;
         public float pickupRange = 2f;
 
+        private Material _baseMaterial, _focusMaterial;
+
+        private List<GameObject> _focusObjects = new();
+        private List<TextMesh> _textMeshes = new();
+
         private void Awake()
         {
             _rb = GetComponent<Rigidbody>();
@@ -39,6 +45,9 @@ namespace Sven.Demo
 
             pointOfView.cameraComponent.transform.SetParent(transform, false);
             pointOfView.cameraComponent.transform.localPosition = new Vector3(0, 0.5f, 0);
+
+            _baseMaterial = Resources.Load<Material>("Materials/Base");
+            _focusMaterial = Resources.Load<Material>("Materials/Focus");
         }
 
         private void Update()
@@ -65,6 +74,75 @@ namespace Sven.Demo
                     DropObject();
                 }
             }
+
+            // enter
+            List<GameObject> newFocusObjects = new();
+            foreach (Pointer pointer in pointers)
+            {
+                foreach (SemantizationCore semanticObject in pointer.currentInteractedObjects)
+                {
+                    if (semanticObject.gameObject != heldObject) newFocusObjects.Add(semanticObject.gameObject);
+                    break;
+                }
+            }
+
+            // enter if the object is not already in the list
+            foreach (GameObject obj in newFocusObjects)
+            {
+                if (!_focusObjects.Contains(obj))
+                {
+                    _focusObjects.Add(obj);
+                    obj.GetComponent<Renderer>().material = _focusMaterial;
+
+                    TextMesh textMesh = obj.GetComponentInChildren<TextMesh>();
+                    if (textMesh == null)
+                    {
+                        GameObject textObject = new("PickupText");
+                        textObject.transform.SetParent(obj.transform);
+                        textObject.transform.localPosition = new Vector3(0, 0.5f, 0);
+                        textObject.transform.localScale = new Vector3(0.01f, 0.01f, 0.01f);
+
+                        textMesh = textObject.AddComponent<TextMesh>();
+                        textMesh.anchor = TextAnchor.MiddleCenter;
+                        textMesh.text = "F to pickup";
+                        textMesh.fontSize = 100;
+                        textMesh.color = Color.white;
+                        textMesh.alignment = TextAlignment.Center;
+                        _textMeshes.Add(textMesh);
+                    }
+                }
+            }
+
+            // exit if the object is not in the new list
+            foreach (GameObject obj in _focusObjects)
+            {
+                if (!newFocusObjects.Contains(obj))
+                {
+                    obj.GetComponent<Renderer>().material = _baseMaterial;
+
+                    TextMesh textMesh = obj.GetComponentInChildren<TextMesh>();
+                    if (textMesh != null)
+                    {
+                        _textMeshes.Remove(textMesh);
+                        Destroy(textMesh.gameObject);
+                    }
+
+                    _focusObjects.Remove(obj);
+                    break;
+                }
+            }
+
+            // rotate text meshes to face the camera
+            foreach (TextMesh textMesh in _textMeshes)
+            {
+                if (textMesh != null)
+                {
+                    textMesh.transform.rotation = Quaternion.LookRotation(
+                        textMesh.transform.position - pointOfView.cameraComponent.transform.position
+                    );
+                }
+            }
+
         }
 
         private void FixedUpdate()
@@ -101,19 +179,15 @@ namespace Sven.Demo
 
         private void TryPickupObject()
         {
-            foreach (Pointer pointer in pointers)
+            foreach (GameObject obj in _focusObjects)
             {
-                foreach (SemantizationCore semanticObject in pointer.currentInteractedObjects)
+                if (obj.CompareTag("Pickup"))
                 {
-                    GameObject obj = semanticObject.gameObject;
-                    if (obj.CompareTag("Pickup"))
-                    {
-                        heldObject = obj;
-                        heldObject.GetComponent<Rigidbody>().isKinematic = true;
-                        heldObject.transform.SetParent(holderTransform);
-                        heldObject.transform.SetLocalPositionAndRotation(Vector3.zero, Quaternion.identity);
-                        return;
-                    }
+                    heldObject = obj;
+                    heldObject.GetComponent<Rigidbody>().isKinematic = true;
+                    heldObject.transform.SetParent(holderTransform);
+                    heldObject.transform.SetLocalPositionAndRotation(Vector3.zero, Quaternion.identity);
+                    return;
                 }
             }
         }

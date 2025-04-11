@@ -70,9 +70,13 @@ namespace Sven.Context
                         }
                     }
                 }
+                // sort the hashset by distance to the pointer
+                List<SemantizationCore> sortedVisibleObjects = new(newVisibleObjects);
+                sortedVisibleObjects.Sort((a, b) => Vector3.Distance(a.transform.position, pointerPosition).CompareTo(Vector3.Distance(b.transform.position, pointerPosition)));
+                // Update the list of currently interacted objects
+                currentInteractedObjects.Clear();
+                currentInteractedObjects.UnionWith(sortedVisibleObjects);
 
-                // Update the list of currently visible objects
-                currentInteractedObjects = newVisibleObjects;
                 yield return new WaitForSeconds(i);
             }
         }
