@@ -131,22 +131,6 @@ PrefabInstance:
       propertyPath: m_text
       value: Download turtle file
       objectReference: {fileID: 0}
-    - target: {fileID: 1585519144502191404, guid: 61c9fc94722252041860dbe7556f3e96, type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.size
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 1585519144502191404, guid: 61c9fc94722252041860dbe7556f3e96, type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 1585519144502191404, guid: 61c9fc94722252041860dbe7556f3e96, type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 1585519144502191404, guid: 61c9fc94722252041860dbe7556f3e96, type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
-      value: 2
-      objectReference: {fileID: 0}
     - target: {fileID: 6274635791047261032, guid: 61c9fc94722252041860dbe7556f3e96, type: 3}
       propertyPath: m_Pivot.x
       value: 0
@@ -542,22 +526,6 @@ PrefabInstance:
     - target: {fileID: 293514104611419392, guid: 61c9fc94722252041860dbe7556f3e96, type: 3}
       propertyPath: m_text
       value: Quit
-      objectReference: {fileID: 0}
-    - target: {fileID: 1585519144502191404, guid: 61c9fc94722252041860dbe7556f3e96, type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.size
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 1585519144502191404, guid: 61c9fc94722252041860dbe7556f3e96, type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 1585519144502191404, guid: 61c9fc94722252041860dbe7556f3e96, type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 1585519144502191404, guid: 61c9fc94722252041860dbe7556f3e96, type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
-      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 6274635791047261032, guid: 61c9fc94722252041860dbe7556f3e96, type: 3}
       propertyPath: m_Pivot.x
@@ -1182,7 +1150,7 @@ Transform:
   m_GameObject: {fileID: 1687001669}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 1, z: -10}
+  m_LocalPosition: {x: 0, y: 2, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
