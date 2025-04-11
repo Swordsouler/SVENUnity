@@ -167,7 +167,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _graphBuffer: {fileID: 0}
   _debug: 1
-  <PointerDistance>k__BackingField: 20
+  <PointerDistance>k__BackingField: 4
 --- !u!114 &11070136
 MonoBehaviour:
   m_ObjectHideFlags: 0
