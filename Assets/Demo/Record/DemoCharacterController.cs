@@ -66,7 +66,7 @@ namespace Sven.Demo
             jumpInput = Input.GetButton("Jump");
 
             // crouch
-            if (Input.GetKey(KeyCode.LeftShift))
+            if (Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.LeftShift))
                 pointOfView.cameraComponent.transform.DOLocalMove(new Vector3(0, 0.5f, 0), 0.2f);
             else
                 pointOfView.cameraComponent.transform.DOLocalMove(new Vector3(0, 1f, 0), 0.2f);
@@ -230,6 +230,8 @@ namespace Sven.Demo
         {
             if (heldObject != null)
             {
+                if (heldObject.name.Contains("Spray"))
+                    heldObject.GetComponent<ParticleSystem>().Stop();
                 heldObject.GetComponent<Rigidbody>().isKinematic = false;
                 heldObject.transform.SetParent(null);
                 heldObject = null;

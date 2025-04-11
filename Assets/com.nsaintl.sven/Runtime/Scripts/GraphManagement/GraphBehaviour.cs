@@ -50,7 +50,7 @@ namespace Sven.GraphManagement
         /// </summary>
         /// <param name="graph">The graph to decode.</param>
         /// <returns>Decoded graph in turtle format.</returns>
-        protected string DecodeGraph(Graph graph)
+        public string DecodeGraph(IGraph graph)
         {
             if (graph == null) throw new ArgumentNullException(nameof(graph) + " is null.");
             StringBuilder sb = new();

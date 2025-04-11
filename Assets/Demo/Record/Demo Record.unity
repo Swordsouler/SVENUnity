@@ -1364,9 +1364,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   pauseMenu: {fileID: 939447064}
   triplesAmountText: {fileID: 2220912181819048425}
+  sensitivitySlider: {fileID: 1505394491}
+  downloadButton: {fileID: 1586216635}
   saveQuitButton: {fileID: 1432198036}
   sendingActivityIndicator: {fileID: 946481031}
-  sensitivitySlider: {fileID: 1505394491}
   graphBuffer: {fileID: 1038150225}
   demoCharacterController: {fileID: 1166260532}
 --- !u!224 &524818015 stripped
@@ -4059,6 +4060,17 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 591600745194366970, guid: 539b32ce3edabfa4a83beed7678cc3c6, type: 3}
   m_PrefabInstance: {fileID: 1543333835}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &1586216635 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 1585519144502191404, guid: 61c9fc94722252041860dbe7556f3e96, type: 3}
+  m_PrefabInstance: {fileID: 1332633395}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1687359902
 GameObject:
   m_ObjectHideFlags: 0

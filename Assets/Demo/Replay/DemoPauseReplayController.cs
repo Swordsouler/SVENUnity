@@ -33,7 +33,7 @@ namespace Sven.Demo
         {
             IGraph graph = await graphReader.GetGraph();
             // convert to turtle content
-            string turtleContent = DecodeGraph(graph);
+            string turtleContent = graphReader.DecodeGraph(graph);
 
             // in webgl build, download the turtleContent ass txt file
 #if UNITY_WEBGL && !UNITY_EDITOR
@@ -51,20 +51,6 @@ namespace Sven.Demo
 #else
             Debug.Log("Graph content:\n" + turtleContent);
 #endif
-        }
-
-        /// <summary>
-        /// Decode the graph to a turtle string.
-        /// </summary>
-        /// <param name="graph">The graph to decode.</param>
-        /// <returns>Decoded graph in turtle format.</returns>
-        protected string DecodeGraph(IGraph graph)
-        {
-            if (graph == null) throw new ArgumentNullException(nameof(graph) + " is null.");
-            StringBuilder sb = new();
-            CompressingTurtleWriter writer = new(TurtleSyntax.Rdf11Star);
-            writer.Save(graph, new System.IO.StringWriter(sb));
-            return sb.ToString();
         }
 
         private void OnQuitButtonClicked()
