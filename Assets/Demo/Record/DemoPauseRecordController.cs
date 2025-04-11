@@ -36,7 +36,7 @@ namespace Sven.Demo
             if (_isSending) return;
             base.TogglePause();
             if (demoCharacterController != null) demoCharacterController.enabled = !demoCharacterController.enabled;
-            Cursor.lockState = demoCharacterController.enabled ? CursorLockMode.Locked : CursorLockMode.None;
+            Cursor.lockState = demoCharacterController.enabled && demoCharacterController.lockMouse ? CursorLockMode.Locked : CursorLockMode.None;
         }
 
         private void InitializeButtons()

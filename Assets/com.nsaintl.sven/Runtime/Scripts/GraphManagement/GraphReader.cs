@@ -926,7 +926,6 @@ namespace Sven.GraphManagement
             if (selectIndex == -1) throw new Exception("Query must contain a SELECT statement.");
             int insertIndex = query.IndexOf('\n', selectIndex) + 1;
             string graphQuery = query.Insert(insertIndex, $"{graphUri}\n");
-            //Debug.Log($"Graph query: {graphQuery}");
 
             // Exécutez la requête SPARQL
 #if UNITY_WEBGL

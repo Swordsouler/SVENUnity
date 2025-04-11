@@ -102,7 +102,7 @@ namespace Sven.Demo
 
         private void OnReplayButtonClicked()
         {
-            if (!_dropdownOptions.TryGetValue(VENameDropdown.options[VENameDropdown.value].text, out string graphName)) return;
+            if (_dropdownOptions.Count < 1 || !_dropdownOptions.TryGetValue(VENameDropdown.options[VENameDropdown.value].text, out string graphName)) return;
             DemoManager.graphName = string.IsNullOrEmpty(graphName) ? "default" : graphName;
             SceneManager.LoadScene("Demo Replay", LoadSceneMode.Single);
         }

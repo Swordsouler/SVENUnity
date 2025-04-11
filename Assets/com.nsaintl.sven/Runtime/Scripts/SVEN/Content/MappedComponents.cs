@@ -83,11 +83,12 @@ namespace Sven.Content
                 foreach (Delegate property in properties)
                 {
                     Type propertyType = property.GetType().GetGenericArguments().FirstOrDefault();
-                    if (propertyType != null)
+                    if (propertyType != null && !typeof(MonoBehaviour).IsAssignableFrom(propertyType))
                     {
                         object instance = null;
                         try
                         {
+                            Debug.Log("Creating instance of " + propertyType.Name);
                             instance = Activator.CreateInstance(propertyType, nonPublic: true);
                         }
                         catch

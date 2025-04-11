@@ -131,6 +131,8 @@ MonoBehaviour:
     <ProcessingMode>k__BackingField: 1
   - <Component>k__BackingField: {fileID: 4606492646823911010}
     <ProcessingMode>k__BackingField: 1
+  - <Component>k__BackingField: {fileID: -5292411258456019718}
+    <ProcessingMode>k__BackingField: 1
   _graphBuffer: {fileID: 0}
 --- !u!54 &-5292411258456019718
 Rigidbody:
@@ -155,7 +157,7 @@ Rigidbody:
   m_ImplicitCom: 1
   m_ImplicitTensor: 1
   m_UseGravity: 1
-  m_IsKinematic: 0
+  m_IsKinematic: 1
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0

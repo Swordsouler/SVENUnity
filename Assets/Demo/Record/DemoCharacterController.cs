@@ -7,6 +7,8 @@ namespace Sven.Demo
     [RequireComponent(typeof(Rigidbody))]
     public class DemoCharacterController : User
     {
+        public bool lockMouse = false;
+
         [Range(1, 10)]
         public float mouseSensitivity = 5;
         public float moveSpeed = 5f;
@@ -33,7 +35,7 @@ namespace Sven.Demo
 
         private void Start()
         {
-            Cursor.lockState = CursorLockMode.Locked;
+            if (lockMouse) Cursor.lockState = CursorLockMode.Locked;
 
             pointOfView.cameraComponent.transform.SetParent(transform, false);
             pointOfView.cameraComponent.transform.localPosition = new Vector3(0, 0.5f, 0);

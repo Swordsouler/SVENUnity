@@ -198,10 +198,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: Pumpkin_D (1)
       objectReference: {fileID: 0}
-    - target: {fileID: 8572962493446403098, guid: eafefd083173b65479b88f34a8130b5a, type: 3}
-      propertyPath: m_StaticEditorFlags
-      value: 2147483647
-      objectReference: {fileID: 0}
     - target: {fileID: 9057468220984716960, guid: eafefd083173b65479b88f34a8130b5a, type: 3}
       propertyPath: m_RootOrder
       value: 9
@@ -267,10 +263,6 @@ PrefabInstance:
     - target: {fileID: 99930277396905942, guid: cfc2c4ebb18c1654fb15374a115085e9, type: 3}
       propertyPath: m_Name
       value: Pumpkin_F (2)
-      objectReference: {fileID: 0}
-    - target: {fileID: 99930277396905942, guid: cfc2c4ebb18c1654fb15374a115085e9, type: 3}
-      propertyPath: m_StaticEditorFlags
-      value: 2147483647
       objectReference: {fileID: 0}
     - target: {fileID: 732070932133979500, guid: cfc2c4ebb18c1654fb15374a115085e9, type: 3}
       propertyPath: m_RootOrder
@@ -338,10 +330,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: Pumpkin_A (2)
       objectReference: {fileID: 0}
-    - target: {fileID: 7129618346194545963, guid: 2efd17ea6e088e4439727b6932594ef7, type: 3}
-      propertyPath: m_StaticEditorFlags
-      value: 2147483647
-      objectReference: {fileID: 0}
     - target: {fileID: 7618593790986090385, guid: 2efd17ea6e088e4439727b6932594ef7, type: 3}
       propertyPath: m_RootOrder
       value: 8
@@ -407,10 +395,6 @@ PrefabInstance:
     - target: {fileID: 218855170364935037, guid: fdf5bd1d78458b34eb35c5c6cc8dff33, type: 3}
       propertyPath: m_Name
       value: Pumpkin_B (1)
-      objectReference: {fileID: 0}
-    - target: {fileID: 218855170364935037, guid: fdf5bd1d78458b34eb35c5c6cc8dff33, type: 3}
-      propertyPath: m_StaticEditorFlags
-      value: 2147483647
       objectReference: {fileID: 0}
     - target: {fileID: 595133976053305799, guid: fdf5bd1d78458b34eb35c5c6cc8dff33, type: 3}
       propertyPath: m_RootOrder
@@ -522,10 +506,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: Pumpkin_G (5)
       objectReference: {fileID: 0}
-    - target: {fileID: 3381261350547148699, guid: db7b4988fff0e3d4fa56725f08a32fd1, type: 3}
-      propertyPath: m_StaticEditorFlags
-      value: 2147483647
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -547,10 +527,6 @@ PrefabInstance:
     - target: {fileID: 7129618346194545963, guid: 2efd17ea6e088e4439727b6932594ef7, type: 3}
       propertyPath: m_Name
       value: Pumpkin_A (3)
-      objectReference: {fileID: 0}
-    - target: {fileID: 7129618346194545963, guid: 2efd17ea6e088e4439727b6932594ef7, type: 3}
-      propertyPath: m_StaticEditorFlags
-      value: 2147483647
       objectReference: {fileID: 0}
     - target: {fileID: 7618593790986090385, guid: 2efd17ea6e088e4439727b6932594ef7, type: 3}
       propertyPath: m_RootOrder
@@ -806,10 +782,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: Pumpkin_A (1)
       objectReference: {fileID: 0}
-    - target: {fileID: 7129618346194545963, guid: 2efd17ea6e088e4439727b6932594ef7, type: 3}
-      propertyPath: m_StaticEditorFlags
-      value: 2147483647
-      objectReference: {fileID: 0}
     - target: {fileID: 7618593790986090385, guid: 2efd17ea6e088e4439727b6932594ef7, type: 3}
       propertyPath: m_RootOrder
       value: 3
@@ -1048,10 +1020,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: Pumpkin_G (4)
       objectReference: {fileID: 0}
-    - target: {fileID: 3381261350547148699, guid: db7b4988fff0e3d4fa56725f08a32fd1, type: 3}
-      propertyPath: m_StaticEditorFlags
-      value: 2147483647
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -1118,10 +1086,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: Pumpkin_C (2)
       objectReference: {fileID: 0}
-    - target: {fileID: 4467135361893618014, guid: bad15bf9648b35346a364933a7c3600b, type: 3}
-      propertyPath: m_StaticEditorFlags
-      value: 2147483647
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -1187,10 +1151,6 @@ PrefabInstance:
     - target: {fileID: 3381261350547148699, guid: db7b4988fff0e3d4fa56725f08a32fd1, type: 3}
       propertyPath: m_Name
       value: Pumpkin_G (3)
-      objectReference: {fileID: 0}
-    - target: {fileID: 3381261350547148699, guid: db7b4988fff0e3d4fa56725f08a32fd1, type: 3}
-      propertyPath: m_StaticEditorFlags
-      value: 2147483647
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -1585,10 +1545,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: Pumpkin_F (3)
       objectReference: {fileID: 0}
-    - target: {fileID: 99930277396905942, guid: cfc2c4ebb18c1654fb15374a115085e9, type: 3}
-      propertyPath: m_StaticEditorFlags
-      value: 2147483647
-      objectReference: {fileID: 0}
     - target: {fileID: 732070932133979500, guid: cfc2c4ebb18c1654fb15374a115085e9, type: 3}
       propertyPath: m_RootOrder
       value: 6
@@ -1946,6 +1902,7 @@ MonoBehaviour:
   - {fileID: 11070135}
   graspArea: {fileID: 0}
   graphBuffer: {fileID: 0}
+  lockMouse: 1
   mouseSensitivity: 5
   moveSpeed: 5
   jumpForce: 5
@@ -2236,10 +2193,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: Pumpkin_C (1)
       objectReference: {fileID: 0}
-    - target: {fileID: 4467135361893618014, guid: bad15bf9648b35346a364933a7c3600b, type: 3}
-      propertyPath: m_StaticEditorFlags
-      value: 2147483647
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -2305,10 +2258,6 @@ PrefabInstance:
     - target: {fileID: 3381261350547148699, guid: db7b4988fff0e3d4fa56725f08a32fd1, type: 3}
       propertyPath: m_Name
       value: Pumpkin_G (2)
-      objectReference: {fileID: 0}
-    - target: {fileID: 3381261350547148699, guid: db7b4988fff0e3d4fa56725f08a32fd1, type: 3}
-      propertyPath: m_StaticEditorFlags
-      value: 2147483647
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -2532,10 +2481,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: Pumpkin_E (2)
       objectReference: {fileID: 0}
-    - target: {fileID: 251666197779250496, guid: 539b32ce3edabfa4a83beed7678cc3c6, type: 3}
-      propertyPath: m_StaticEditorFlags
-      value: 2147483647
-      objectReference: {fileID: 0}
     - target: {fileID: 591600745194366970, guid: 539b32ce3edabfa4a83beed7678cc3c6, type: 3}
       propertyPath: m_RootOrder
       value: 13
@@ -2694,10 +2639,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: Pumpkin_G (1)
       objectReference: {fileID: 0}
-    - target: {fileID: 3381261350547148699, guid: db7b4988fff0e3d4fa56725f08a32fd1, type: 3}
-      propertyPath: m_StaticEditorFlags
-      value: 2147483647
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -2719,10 +2660,6 @@ PrefabInstance:
     - target: {fileID: 218855170364935037, guid: fdf5bd1d78458b34eb35c5c6cc8dff33, type: 3}
       propertyPath: m_Name
       value: Pumpkin_B (3)
-      objectReference: {fileID: 0}
-    - target: {fileID: 218855170364935037, guid: fdf5bd1d78458b34eb35c5c6cc8dff33, type: 3}
-      propertyPath: m_StaticEditorFlags
-      value: 2147483647
       objectReference: {fileID: 0}
     - target: {fileID: 595133976053305799, guid: fdf5bd1d78458b34eb35c5c6cc8dff33, type: 3}
       propertyPath: m_RootOrder
@@ -3032,10 +2969,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: Pumpkin_B (2)
       objectReference: {fileID: 0}
-    - target: {fileID: 218855170364935037, guid: fdf5bd1d78458b34eb35c5c6cc8dff33, type: 3}
-      propertyPath: m_StaticEditorFlags
-      value: 2147483647
-      objectReference: {fileID: 0}
     - target: {fileID: 595133976053305799, guid: fdf5bd1d78458b34eb35c5c6cc8dff33, type: 3}
       propertyPath: m_RootOrder
       value: 2
@@ -3050,7 +2983,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 595133976053305799, guid: fdf5bd1d78458b34eb35c5c6cc8dff33, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 3.2329998
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 595133976053305799, guid: fdf5bd1d78458b34eb35c5c6cc8dff33, type: 3}
       propertyPath: m_LocalRotation.w
