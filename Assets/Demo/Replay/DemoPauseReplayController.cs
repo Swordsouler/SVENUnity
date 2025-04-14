@@ -12,6 +12,7 @@ namespace Sven.Demo
 {
     public class DemoPauseReplayController : DemoPauseController
     {
+        [BoxGroup("View")] public Button printResultButton;
         [BoxGroup("View")] public Button downloadButton;
         [BoxGroup("View")] public Button quitButton;
 
@@ -25,6 +26,7 @@ namespace Sven.Demo
 
         private void InitializeButtons()
         {
+            if (printResultButton != null) printResultButton.onClick.AddListener(graphReader.PrintExperimentResults);
             if (downloadButton != null) downloadButton.onClick.AddListener(OnDownloadButtonClicked);
             if (quitButton != null) quitButton.onClick.AddListener(OnQuitButtonClicked);
         }

@@ -444,25 +444,25 @@ namespace Sven.GraphManagement
             {
                 DateTime startProcessing = DateTime.Now;
 
-                // with dateTime
-                string intervalProcessing = $@"{{
-                    SELECT DISTINCT ?interval
-                    WHERE {{
-                        VALUES ?instantTime {{ {$"\"{instant.inXSDDateTime:yyyy-MM-ddTHH:mm:ss.fffzzz}\""}^^xsd:dateTime }}
-                        ?interval a time:Interval ;
-                                time:hasBeginning ?start .
-                        ?start time:inXSDDateTime ?startTime .
-                        OPTIONAL {{
-                            ?interval time:hasEnd ?end .
-                            ?end time:inXSDDateTime ?_endTime .
-                        }}
-                        BIND(IF(BOUND(?_endTime), ?_endTime, NOW()) AS ?endTime)
-                        FILTER(?startTime <= ?instantTime && ?instantTime < ?endTime)
-                    }} ORDER BY ?startTime ?endTime limit 10000
-                }}";
-
-                // with inside
-                //string intervalProcessing = $@"?interval time:inside <{instant.GetUriNode(graph)}> .";
+                string intervalProcessing = "";
+                if (SvenHelper.UseInside)
+                    // with inside
+                    intervalProcessing = $@"?interval time:inside <{instant.GetUriNode(graph)}> .";
+                else
+                    // with dateTime
+                    intervalProcessing = $@"{{
+                        SELECT DISTINCT ?interval
+                        WHERE {{
+                            VALUES ?instantTime {{ {$"\"{instant.inXSDDateTime:yyyy-MM-ddTHH:mm:ss.fffzzz}\""}^^xsd:dateTime }}
+                            ?interval a time:Interval ;
+                                    time:hasBeginning/time:inXSDDateTime ?startTime .
+                            OPTIONAL {{
+                                ?interval time:hasEnd/time:inXSDDateTime ?_endTime .
+                            }}
+                            BIND(IF(BOUND(?_endTime), ?_endTime, NOW()) AS ?endTime)
+                            FILTER(?startTime <= ?instantTime && ?instantTime < ?endTime)
+                        }} ORDER BY ?startTime ?endTime limit 10000
+                    }}";
 
                 string query = $@"
                     PREFIX time: <http://www.w3.org/2006/time#>
@@ -473,36 +473,30 @@ namespace Sven.GraphManagement
                     SELECT DISTINCT ?object ?component ?componentType ?property ?propertyName ?propertyNestedName ?propertyValue ?propertyType
                     WHERE {{
                         {{
-                            SELECT *
-                            WHERE {{
-                                VALUES ?propertyName {{
-                                    sven:active
-                                    sven:layer
-                                    sven:tag
-                                    sven:name
-                                }}
-                                ?object a sven:VirtualObject ;
-                                        ?propertyName ?property .
-                                ?property sven:value ?propertyValue ;
-                                            time:hasTemporalExtent ?interval .
+                            VALUES ?propertyName {{
+                                sven:active
+                                sven:layer
+                                sven:tag
+                                sven:name
                             }}
+                            ?object a sven:VirtualObject ;
+                                    ?propertyName ?property .
+                            ?property sven:value ?propertyValue ;
+                                        time:hasTemporalExtent ?interval .
                         }}
                         UNION
                         {{
-                            SELECT *
-                            WHERE {{
-                                ?object a sven:VirtualObject ;
-                                        sven:component ?component .
-                                ?component sven:exactType ?componentType ;
-                                        ?propertyName ?property .
-                                ?propertyName rdfs:subPropertyOf* sven:componentProperty ;
-                                            rdfs:range ?propertyRange .
-                                ?property sven:exactType ?propertyType ;
-                                        ?propertyNestedName ?propertyValue ;
-                                        time:hasTemporalExtent ?interval .
-                                ?propertyNestedName rdfs:subPropertyOf sven:propertyData .
-                                FILTER(?propertyNestedName != sven:propertyData)
-                            }}
+                            ?object a sven:VirtualObject ;
+                                    sven:component ?component .
+                            ?component sven:exactType ?componentType ;
+                                    ?propertyName ?property .
+                            ?propertyName rdfs:subPropertyOf* sven:componentProperty ;
+                                        rdfs:range ?propertyRange .
+                            ?property sven:exactType ?propertyType ;
+                                    ?propertyNestedName ?propertyValue ;
+                                    time:hasTemporalExtent ?interval .
+                            ?propertyNestedName rdfs:subPropertyOf sven:propertyData .
+                            FILTER(?propertyNestedName != sven:propertyData)
                         }}
                         {intervalProcessing}
                     }}";
@@ -601,9 +595,14 @@ namespace Sven.GraphManagement
                 if (SvenHelper.Debug)
                 {
                     Debug.Log($"Amount of data: {targetSceneContent.GameObjects.Count} GameObjects, {targetSceneContent.GameObjects.Sum(x => x.Value.Components.Count)} Components, {targetSceneContent.GameObjects.Sum(x => x.Value.Components.Sum(y => y.Value.Properties.Count))} Properties");
-                    Debug.Log($"Query Time: {queryTime} ms");
-                    Debug.Log($"Scene Update Time: {sceneUpdateTime} ms");
-                    Debug.Log($"Processing Time: {(endProcessing - startProcessing).TotalMilliseconds} ms");
+                    ProcessingData processingData = new()
+                    {
+                        queryTime = queryTime,
+                        sceneUpdateTime = sceneUpdateTime,
+                        totalProcessingTime = (endProcessing - startProcessing).TotalMilliseconds
+                    };
+                    processingDatas.Add(processingData);
+                    Debug.Log(processingData);
                 }
             }
             catch (Exception ex)
@@ -612,6 +611,41 @@ namespace Sven.GraphManagement
             }
             _isReadingInstant = false;
         }
+
+        public void PrintExperimentResults()
+        {
+            string results = "";
+
+            results += "SPARQL-Sampled: " + processingDatas.Count + "\n";
+
+            results += "SPARQL-Mean: " + processingDatas.Average(x => x.queryTime) + " ms\n";
+            results += "SPARQL-Min: " + processingDatas.Min(x => x.queryTime) + " ms\n";
+            results += "SPARQL-Max: " + processingDatas.Max(x => x.queryTime) + " ms\n";
+
+            results += "SceneUpdate-Mean: " + processingDatas.Average(x => x.sceneUpdateTime) + " ms\n";
+            results += "SceneUpdate-Min: " + processingDatas.Min(x => x.sceneUpdateTime) + " ms\n";
+            results += "SceneUpdate-Max: " + processingDatas.Max(x => x.sceneUpdateTime) + " ms\n";
+
+            results += "TotalProcessing-Mean: " + processingDatas.Average(x => x.totalProcessingTime) + " ms\n";
+            results += "TotalProcessing-Min: " + processingDatas.Min(x => x.totalProcessingTime) + " ms\n";
+            results += "TotalProcessing-Max: " + processingDatas.Max(x => x.totalProcessingTime) + " ms\n";
+
+            Debug.Log("Experiment results:\n" + results);
+        }
+
+        private readonly List<ProcessingData> processingDatas = new();
+        private class ProcessingData
+        {
+            public double queryTime;
+            public double sceneUpdateTime;
+            public double totalProcessingTime;
+            public override string ToString()
+            {
+                return $"Query Time: {queryTime} ms\nScene Update Time: {sceneUpdateTime} ms\nTotal Processing Time: {totalProcessingTime} ms";
+            }
+        }
+
+
 
         /// <summary>
         /// Compare the target scene content with the current scene content and update it accordingly to modifications

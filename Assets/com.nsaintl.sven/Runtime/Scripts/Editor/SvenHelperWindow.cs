@@ -22,6 +22,15 @@ namespace Sven.Editor
 
             bool refresh = false;
 
+            bool useInside = SvenHelper.UseInside;
+            bool newUseInside = EditorGUILayout.Toggle("Use inside", useInside);
+
+            if (newUseInside != useInside)
+            {
+                EditorPrefs.SetBool(SvenHelper._useInsideKey, newUseInside);
+                refresh = true;
+            }
+
             bool debug = SvenHelper.Debug;
             bool newDebug = EditorGUILayout.Toggle("Show debug logs", debug);
 
