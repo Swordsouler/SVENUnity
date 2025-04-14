@@ -111,6 +111,10 @@ MonoBehaviour:
     <ProcessingMode>k__BackingField: 1
   - <Component>k__BackingField: {fileID: 363914734931802952}
     <ProcessingMode>k__BackingField: 0
+  - <Component>k__BackingField: {fileID: 2056755312468244864}
+    <ProcessingMode>k__BackingField: 0
+  - <Component>k__BackingField: {fileID: -4236714705658505055}
+    <ProcessingMode>k__BackingField: 0
   _graphBuffer: {fileID: 0}
 --- !u!64 &1299247895861300767
 MeshCollider:

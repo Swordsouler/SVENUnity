@@ -228,7 +228,9 @@ MonoBehaviour:
     rdfs:domain sven:User ;\n         rdfs:range sven:Interactor ;\n         rdfs:comment
     \"Relates a user to its owned object.\"@en ,\n                      \"Relie un
     utilisateur \xE0 son objet poss\xE9d\xE9.\"@fr ;\n         rdfs:label \"own\"@en
-    ,\n                    \"poss\xE9der\"@fr .\n\n\n###  http://www.sven.fr/perform\nsven:perform
+    ,\n                    \"poss\xE9der\"@fr .\n\n\n###  http://www.sven.fr/particleProperty\nsven:particleProperty
+    rdf:type owl:ObjectProperty ;\n                      rdfs:subPropertyOf sven:componentProperty
+    ;\n                      rdfs:domain sven:Particle .\n\n\n###  http://www.sven.fr/perform\nsven:perform
     rdf:type owl:ObjectProperty ;\n             rdfs:domain sven:User ;\n            
     rdfs:range sven:Event ;\n             owl:propertyChainAxiom ( sven:sender\n                                     
     [ owl:inverseOf sven:own\n                                      ]\n                                   
@@ -240,7 +242,9 @@ MonoBehaviour:
     a philosophical object to its properties.\"@en ,\n                                       
     \"Relie un objet philosophique \xE0 ses propri\xE9t\xE9s.\"@fr ;\n                          
     rdfs:label \"philosophical property\"@en ,\n                                     
-    \"propri\xE9t\xE9s philosophiques\"@fr .\n\n\n###  http://www.sven.fr/pointOfView\nsven:pointOfView
+    \"propri\xE9t\xE9s philosophiques\"@fr .\n\n\n###  http://www.sven.fr/playing\nsven:playing
+    rdf:type owl:ObjectProperty ;\n             rdfs:subPropertyOf sven:particleProperty
+    ;\n             rdfs:range sven:Primitive .\n\n\n###  http://www.sven.fr/pointOfView\nsven:pointOfView
     rdf:type owl:ObjectProperty ;\n                 rdfs:subPropertyOf sven:own ;\n                
     rdfs:range sven:PointOfView ;\n                 rdfs:comment \"Relates a user
     to its point of view.\"@en ,\n                              \"Relie un utilisateur
@@ -550,10 +554,11 @@ MonoBehaviour:
     represents an entity in the simulation.\"@en ,\n                         \"Un
     objet est un composant qui repr\xE9sente une entit\xE9 dans la simulation.\"@fr
     ;\n            rdfs:label \"Object\"@en ,\n                       \"Objet\"@fr
-    .\n\n\n###  http://www.sven.fr/PhysicalObject\nsven:PhysicalObject rdf:type owl:Class
-    ;\n                    rdfs:comment \"A physical object is an object that has
-    a physical representation.\"@en ,\n                                 \"Un objet
-    physique est un objet qui a une repr\xE9sentation physique.\"@fr ;\n                   
+    .\n\n\n###  http://www.sven.fr/Particle\nsven:Particle rdf:type owl:Class ;\n             
+    rdfs:subClassOf sven:Component .\n\n\n###  http://www.sven.fr/PhysicalObject\nsven:PhysicalObject
+    rdf:type owl:Class ;\n                    rdfs:comment \"A physical object is
+    an object that has a physical representation.\"@en ,\n                                
+    \"Un objet physique est un objet qui a une repr\xE9sentation physique.\"@fr ;\n                   
     rdfs:label \"Objet physique\"@fr ,\n                               \"Physical
     object\"@en .\n\n\n###  http://www.sven.fr/PointOfView\nsven:PointOfView rdf:type
     owl:Class ;\n                 rdfs:subClassOf sven:Interactor ;\n                
@@ -600,37 +605,38 @@ MonoBehaviour:
     \"A shape is a component that represents a geometric shape.\"@en ,\n                       
     \"Une forme est un composant qui repr\xE9sente une forme g\xE9om\xE9trique.\"@fr
     ;\n           rdfs:label \"Forme\"@fr ,\n                      \"Shape\"@en .\n\n\n### 
-    http://www.sven.fr/TangibleObject\nsven:TangibleObject rdf:type owl:Class ;\n                   
-    rdfs:subClassOf sven:PhysicalObject ,\n                                    sven:VirtualObject
-    ;\n                    rdfs:comment \"A tangible object is an object that can
-    be touched by the user.\"@en ,\n                                 \"Un objet tangible
-    est un objet qui peut \xEAtre touch\xE9 par l'utilisateur.\"@fr ;\n                   
-    rdfs:label \"Objet tangible\"@fr ,\n                               \"Tangible
-    object\"@en .\n\n\n###  http://www.sven.fr/Transform\nsven:Transform rdf:type
-    owl:Class ;\n               rdfs:subClassOf sven:Component ;\n              
-    rdfs:comment \"A transform component.\"@en ,\n                            \"Un
-    composant de transformation.\"@fr ;\n               rdfs:label \"Transform\"@en
-    ,\n                          \"Transformation\"@fr .\n\n\n###  http://www.sven.fr/User\nsven:User
-    rdf:type owl:Class ;\n          rdfs:comment \"A user is a person who interacts
-    with the system.\"@en ,\n                       \"Un utilisateur est une personne
-    qui interagit avec le syst\xE8me.\"@fr ;\n          rdfs:label \"User\"@en ,\n                    
-    \"Utilisateur\"@fr .\n\n\n###  http://www.sven.fr/Vector1\nsven:Vector1 rdf:type
-    owl:Class ;\n             rdfs:subClassOf sven:Property ;\n             rdfs:comment
-    \"A 1D vector property.\"@en ,\n                          \"Une propri\xE9t\xE9
-    de vecteur 1D.\"@fr ;\n             rdfs:label \"Vecteur1\"@fr ,\n                       
-    \"Vector1\"@en .\n\n\n###  http://www.sven.fr/Vector2\nsven:Vector2 rdf:type
-    owl:Class ;\n             rdfs:subClassOf sven:Property ;\n             rdfs:comment
-    \"A 2D vector property.\"@en ,\n                          \"Une propri\xE9t\xE9
-    de vecteur 2D.\"@fr ;\n             rdfs:label \"Vecteur2\"@fr ,\n                       
-    \"Vector2\"@en .\n\n\n###  http://www.sven.fr/Vector3\nsven:Vector3 rdf:type
-    owl:Class ;\n             rdfs:subClassOf sven:Property ;\n             rdfs:comment
-    \"A 3D vector property.\"@en ,\n                          \"Une propri\xE9t\xE9
-    de vecteur 3D.\"@fr ;\n             rdfs:label \"Vecteur3\"@fr ,\n                       
-    \"Vector3\"@en .\n\n\n###  http://www.sven.fr/Vector4\nsven:Vector4 rdf:type
-    owl:Class ;\n             rdfs:subClassOf sven:Property ;\n             rdfs:comment
-    \"A 4D vector property.\"@en ,\n                          \"Une propri\xE9t\xE9
-    de vecteur 4D.\"@fr ;\n             rdfs:label \"Vecteur4\"@fr ,\n                       
-    \"Vector4\"@en .\n\n\n###  http://www.sven.fr/VirtualObject\nsven:VirtualObject
+    http://www.sven.fr/Spray\nsven:Spray rdf:type owl:Class ;\n           rdfs:subClassOf
+    sven:Component .\n\n\n###  http://www.sven.fr/TangibleObject\nsven:TangibleObject
+    rdf:type owl:Class ;\n                    rdfs:subClassOf sven:PhysicalObject
+    ,\n                                    sven:VirtualObject ;\n                   
+    rdfs:comment \"A tangible object is an object that can be touched by the user.\"@en
+    ,\n                                 \"Un objet tangible est un objet qui peut
+    \xEAtre touch\xE9 par l'utilisateur.\"@fr ;\n                    rdfs:label \"Objet
+    tangible\"@fr ,\n                               \"Tangible object\"@en .\n\n\n### 
+    http://www.sven.fr/Transform\nsven:Transform rdf:type owl:Class ;\n              
+    rdfs:subClassOf sven:Component ;\n               rdfs:comment \"A transform component.\"@en
+    ,\n                            \"Un composant de transformation.\"@fr ;\n              
+    rdfs:label \"Transform\"@en ,\n                          \"Transformation\"@fr
+    .\n\n\n###  http://www.sven.fr/User\nsven:User rdf:type owl:Class ;\n         
+    rdfs:comment \"A user is a person who interacts with the system.\"@en ,\n                      
+    \"Un utilisateur est une personne qui interagit avec le syst\xE8me.\"@fr ;\n         
+    rdfs:label \"User\"@en ,\n                     \"Utilisateur\"@fr .\n\n\n### 
+    http://www.sven.fr/Vector1\nsven:Vector1 rdf:type owl:Class ;\n             rdfs:subClassOf
+    sven:Property ;\n             rdfs:comment \"A 1D vector property.\"@en ,\n                         
+    \"Une propri\xE9t\xE9 de vecteur 1D.\"@fr ;\n             rdfs:label \"Vecteur1\"@fr
+    ,\n                        \"Vector1\"@en .\n\n\n###  http://www.sven.fr/Vector2\nsven:Vector2
+    rdf:type owl:Class ;\n             rdfs:subClassOf sven:Property ;\n            
+    rdfs:comment \"A 2D vector property.\"@en ,\n                          \"Une
+    propri\xE9t\xE9 de vecteur 2D.\"@fr ;\n             rdfs:label \"Vecteur2\"@fr
+    ,\n                        \"Vector2\"@en .\n\n\n###  http://www.sven.fr/Vector3\nsven:Vector3
+    rdf:type owl:Class ;\n             rdfs:subClassOf sven:Property ;\n            
+    rdfs:comment \"A 3D vector property.\"@en ,\n                          \"Une
+    propri\xE9t\xE9 de vecteur 3D.\"@fr ;\n             rdfs:label \"Vecteur3\"@fr
+    ,\n                        \"Vector3\"@en .\n\n\n###  http://www.sven.fr/Vector4\nsven:Vector4
+    rdf:type owl:Class ;\n             rdfs:subClassOf sven:Property ;\n            
+    rdfs:comment \"A 4D vector property.\"@en ,\n                          \"Une
+    propri\xE9t\xE9 de vecteur 4D.\"@fr ;\n             rdfs:label \"Vecteur4\"@fr
+    ,\n                        \"Vector4\"@en .\n\n\n###  http://www.sven.fr/VirtualObject\nsven:VirtualObject
     rdf:type owl:Class ;\n                   rdfs:subClassOf sven:Object ;\n                  
     rdfs:comment \"A virtual object is an object that has a virtual representation.\"@en
     ,\n                                \"Un objet virtuel est un objet qui a une

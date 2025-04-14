@@ -1,6 +1,8 @@
 using System;
+using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
+using Sven.Content;
 using Sven.GraphManagement;
 using UnityEngine;
 using VDS.RDF;
@@ -15,6 +17,11 @@ namespace Sven.Demo
             readingMode = GraphStorageMode.Remote;
             graphName = DemoManager.graphName;
             endpoint = DemoManager.EndpointUri.ToString();
+            MapppedComponents.AddComponentDescription(typeof(DemoSprayController), new("Spray",
+                new List<Delegate>
+                {
+                    (Func<DemoSprayController, MapppedComponents.PropertyDescription>)(spray => new MapppedComponents.PropertyDescription("enabled", () => spray.enabled, value => spray.enabled = value.ToString() == "true", 1)),
+                }, 1));
             base.Awake();
         }
 

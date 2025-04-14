@@ -380,6 +380,12 @@ sven:own rdf:type owl:ObjectProperty ;
                     "posséder"@fr .
 
 
+###  http://www.sven.fr/particleProperty
+sven:particleProperty rdf:type owl:ObjectProperty ;
+                      rdfs:subPropertyOf sven:componentProperty ;
+                      rdfs:domain sven:Particle .
+
+
 ###  http://www.sven.fr/perform
 sven:perform rdf:type owl:ObjectProperty ;
              rdfs:domain sven:User ;
@@ -400,6 +406,12 @@ sven:philosophicalProperty rdf:type owl:ObjectProperty ;
                                         "Relie un objet philosophique à ses propriétés."@fr ;
                            rdfs:label "philosophical property"@en ,
                                       "propriétés philosophiques"@fr .
+
+
+###  http://www.sven.fr/playing
+sven:playing rdf:type owl:ObjectProperty ;
+             rdfs:subPropertyOf sven:particleProperty ;
+             rdfs:range sven:Primitive .
 
 
 ###  http://www.sven.fr/pointOfView
@@ -1011,6 +1023,11 @@ sven:Object rdf:type owl:Class ;
                        "Objet"@fr .
 
 
+###  http://www.sven.fr/Particle
+sven:Particle rdf:type owl:Class ;
+              rdfs:subClassOf sven:Component .
+
+
 ###  http://www.sven.fr/PhysicalObject
 sven:PhysicalObject rdf:type owl:Class ;
                     rdfs:comment "A physical object is an object that has a physical representation."@en ,
@@ -1107,6 +1124,11 @@ sven:Shape rdf:type owl:Class ;
                         "Une forme est un composant qui représente une forme géométrique."@fr ;
            rdfs:label "Forme"@fr ,
                       "Shape"@en .
+
+
+###  http://www.sven.fr/Spray
+sven:Spray rdf:type owl:Class ;
+           rdfs:subClassOf sven:Component .
 
 
 ###  http://www.sven.fr/TangibleObject

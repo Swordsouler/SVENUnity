@@ -20,6 +20,7 @@ using VDS.RDF.Query.Inference;
 using VDS.RDF.Update;
 using Sven.Utils;
 using System.IO;
+using System.Threading;
 
 namespace Sven.GraphManagement
 {
@@ -189,6 +190,8 @@ namespace Sven.GraphManagement
             /// </summary>
             public Type Type { get; set; }
 
+            public int SortOrder { get; set; } = 0;
+
             /// <summary>
             /// Properties of the component.
             /// </summary>
@@ -201,17 +204,27 @@ namespace Sven.GraphManagement
                 Properties = new();
             }
 
-            public ComponentDescription(string uuid, Type type, Dictionary<string, PropertyDescription> properties)
+            public ComponentDescription(string uuid, Type type, int sortOrder)
             {
                 UUID = uuid;
                 Type = type;
+                SortOrder = sortOrder;
+                Properties = new();
+            }
+
+            public ComponentDescription(string uuid, Type type, int sortOrder, Dictionary<string, PropertyDescription> properties)
+            {
+                UUID = uuid;
+                Type = type;
+                SortOrder = sortOrder;
                 Properties = properties;
             }
 
-            public ComponentDescription(string uuid, Component component, Dictionary<string, PropertyDescription> properties)
+            public ComponentDescription(string uuid, Component component, int sortOrder, Dictionary<string, PropertyDescription> properties)
             {
                 UUID = uuid;
                 Component = component;
+                SortOrder = sortOrder;
                 Properties = properties;
             }
 
@@ -548,8 +561,10 @@ namespace Sven.GraphManagement
                             continue;
                         }
 
-
-                        Type componentType = MapppedComponents.GetType(componentStringType);// ?? Type.GetType(componentStringType);
+                        // call in main thread
+                        Tuple<Type, int> componentData = MapppedComponents.GetData(componentStringType);
+                        Type componentType = componentData.Item1;
+                        int componentSortOrder = componentData.Item2;
                         if (componentType == null || !MapppedComponents.HasProperty(componentType, propertyName)) continue;
                         //Debug.Log($"Component: {componentType} {propertyName}");
 
@@ -565,7 +580,7 @@ namespace Sven.GraphManagement
                             targetSceneContent.GameObjects[objectUUID] = new(objectUUID);
 
                         if (!targetSceneContent.GameObjects[objectUUID].Components.ContainsKey(componentUUID))
-                            targetSceneContent.GameObjects[objectUUID].Components[componentUUID] = new(componentUUID, componentType);
+                            targetSceneContent.GameObjects[objectUUID].Components[componentUUID] = new(componentUUID, componentType, componentSortOrder);
 
                         if (!targetSceneContent.GameObjects[objectUUID].Components[componentUUID].Properties.ContainsKey(propertyName))
                             targetSceneContent.GameObjects[objectUUID].Components[componentUUID].Properties[propertyName] = new(propertyUUID, propertyName, propertyType);
@@ -593,7 +608,7 @@ namespace Sven.GraphManagement
             }
             catch (Exception ex)
             {
-                Debug.LogError($"An error occurred: {ex.Message}");
+                Debug.LogError(ex);
             }
             _isReadingInstant = false;
         }
@@ -628,7 +643,11 @@ namespace Sven.GraphManagement
                 }
                 gameObjectDescription.GameObject.name = gameObjectDescription.Name;
 
-                foreach (ComponentDescription componentDescription in gameObjectDescription.Components.Values)
+                List<ComponentDescription> componentDescriptions = gameObjectDescription.Components.Values.ToList();
+                // sort the components by sort order
+                componentDescriptions = componentDescriptions.OrderBy(x => x.SortOrder).ToList();
+
+                foreach (ComponentDescription componentDescription in componentDescriptions)
                 {
                     // create component if it doesn't exist, otherwise get it from the current scene content
                     bool componentExist = gameObjectExist && currentSceneContent.GameObjects[gameObjectDescription.UUID].Components.ContainsKey(componentDescription.UUID);
@@ -926,6 +945,8 @@ namespace Sven.GraphManagement
             if (selectIndex == -1) throw new Exception("Query must contain a SELECT statement.");
             int insertIndex = query.IndexOf('\n', selectIndex) + 1;
             string graphQuery = query.Insert(insertIndex, $"{graphUri}\n");
+
+            Debug.Log($"Graph query: {graphQuery}");
 
             // Exécutez la requête SPARQL
 #if UNITY_WEBGL

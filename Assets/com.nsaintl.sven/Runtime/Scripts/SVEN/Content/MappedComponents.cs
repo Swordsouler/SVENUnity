@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using DG.Tweening;
+using Lucene.Net.Search;
 using Sven.Context;
 using Sven.GeoData;
 using Sven.Utils;
@@ -74,30 +75,50 @@ namespace Sven.Content
             /// <value></value>
             public List<Delegate> Properties { get; set; }
             public Dictionary<string, PropertyDescription> CachedProperties { get; set; }
+            public int SortOrder { get; set; } = 0;
 
-            public ComponentDescription(string typeName, List<Delegate> properties)
+            public ComponentDescription(string typeName, List<Delegate> properties, int sortOrder = 0)
             {
                 TypeName = typeName;
                 Properties = properties;
                 CachedProperties = new();
+                SortOrder = sortOrder;
                 foreach (Delegate property in properties)
                 {
                     Type propertyType = property.GetType().GetGenericArguments().FirstOrDefault();
-                    if (propertyType != null && !typeof(MonoBehaviour).IsAssignableFrom(propertyType))
+                    if (propertyType != null)
                     {
                         object instance = null;
                         try
                         {
-                            Debug.Log("Creating instance of " + propertyType.Name);
-                            instance = Activator.CreateInstance(propertyType, nonPublic: true);
+                            if (typeof(MonoBehaviour).IsAssignableFrom(propertyType))
+                            {
+                                Debug.Log("Creating instance of MonoBehaviour: " + propertyType.Name);
+                                GameObject tempGameObject = new("Temp_" + propertyType.Name);
+                                instance = tempGameObject.AddComponent(propertyType);
+                            }
+                            else
+                            {
+                                Debug.Log("Creating instance of " + propertyType.Name);
+                                instance = Activator.CreateInstance(propertyType, nonPublic: true);
+                            }
                         }
-                        catch
+                        catch (Exception e)
                         {
-                            Debug.LogError("Error creating instance of " + propertyType.Name);
+                            Debug.LogError("Error creating instance of " + propertyType.Name + ": " + e.Message);
+                        }
+                        finally
+                        {
+                            //if (instance is MonoBehaviour monoBehaviourInstance)
+                            //    GameObject.DestroyImmediate(monoBehaviourInstance.gameObject);
                         }
 
                         if (property.DynamicInvoke(instance) is PropertyDescription propertyDescription)
                             CachedProperties.Add(propertyDescription.PredicateName, propertyDescription);
+                    }
+                    else
+                    {
+                        Debug.LogError("Property type is null or not a MonoBehaviour: " + propertyType?.Name);
                     }
                 }
             }
@@ -200,6 +221,18 @@ namespace Sven.Content
                     (Func<SpriteRenderer, PropertyDescription>)(spriteRenderer => new PropertyDescription("enabled", () => spriteRenderer.enabled, value => spriteRenderer.enabled = value.ToString().ToLower() == "true", 1)),
                     (Func<SpriteRenderer, PropertyDescription>)(spriteRenderer => new PropertyDescription("color", () => spriteRenderer.color, value => spriteRenderer.color = (Color)value, 1/*, "virtualColor"*/)),
                     (Func<SpriteRenderer, PropertyDescription>)(spriteRenderer => new PropertyDescription("sprite", () => spriteRenderer.sprite.name, value => spriteRenderer.sprite = Resources.Load<Sprite>((string)value), 1)),
+                })
+            },
+            {
+                typeof(ParticleSystem), new("Particle",
+                new List<Delegate>
+                {
+                    (Func<ParticleSystem, PropertyDescription>)(particleSystem => new PropertyDescription("playing", () => particleSystem.isPlaying, value => {
+                        if (value.ToString().ToLower() == "true")
+                            particleSystem.Play();
+                        else
+                            particleSystem.Stop();
+                    }, 1)),
                 })
             },
             {
@@ -360,9 +393,11 @@ namespace Sven.Content
         {
             Dictionary<string, Tuple<int, Action<object>>> setters = new();
             if (Values.TryGetValue(component.GetType(), out var componentDescription))
+            {
                 foreach (Delegate del in componentDescription.Properties)
                     if (del.DynamicInvoke(component) is PropertyDescription propertyDescription)
                         setters.Add(propertyDescription.PredicateName, new(propertyDescription.Priority, propertyDescription.Setter));
+            }
             return setters;
         }
 
@@ -436,20 +471,23 @@ namespace Sven.Content
         /// </summary>
         /// <param name="typeName">Name of the component.</param>
         /// <returns>Type of the component.</returns>
-        public static Type GetType(string typeName)
+        public static Tuple<Type, int> GetData(string typeName)
         {
             try
             {
                 foreach (var key in Values.Keys)
                 {
+                    if (Values[key] == null) continue;
                     string typeNameKey = Values[key].TypeName.Contains(":") ? Values[key].TypeName.Split(':')[1] : Values[key].TypeName;
                     if (typeNameKey == typeName)
-                        return key;
+                        return new Tuple<Type, int>(key, Values[key].SortOrder);
                 }
+                Debug.LogWarning($"Type {typeName} not found in mapped components.");
                 return null;
             }
-            catch
+            catch (Exception e)
             {
+                Debug.LogError($"Error getting type {typeName}: {e.Message}");
                 return null;
             }
         }

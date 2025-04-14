@@ -158,7 +158,6 @@ namespace Sven.Demo
             }
 
             //if fire 1
-            //if fire 1
             if (heldObject != null && heldObject.name.Contains("Spray"))
             {
                 ParticleSystem particleSystem = heldObject.GetComponent<ParticleSystem>();
@@ -166,8 +165,6 @@ namespace Sven.Demo
                 if (Input.GetButtonDown("Fire1"))
                 {
                     particleSystem.Play();
-                    ParticleSystem.MainModule mainModule = particleSystem.main;
-                    mainModule.startColor = heldObject.GetComponent<Renderer>().material.color;
                 }
                 else if (Input.GetButtonUp("Fire1"))
                 {

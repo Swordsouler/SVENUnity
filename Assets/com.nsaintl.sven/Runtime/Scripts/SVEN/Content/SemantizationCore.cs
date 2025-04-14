@@ -48,6 +48,7 @@ namespace Sven.Content
         private void Start()
         {
             if (_graphBuffer == null) _graphBuffer = GraphManager.Get("sven");
+            if (_graphBuffer == null) return;
             Component component = GetComponent<Component>();
             componentsToSemantize.RemoveAll(c => c == null || c.Component == null || !component.gameObject.Equals(c.Component.gameObject));
             Initialize();

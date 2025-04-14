@@ -147,7 +147,7 @@ namespace Sven.Content
                 context.Send(_ => { if (observedProperty != null && parentObject != null) currentValue = observedProperty.Getter(); }, null);
                 if (currentValue == null) return;
 
-                if (!Equals(currentValue, observedProperty.LastValue))
+                if (HasValueChanged(currentValue, observedProperty.LastValue))
                 {
                     // limit the semantization with the graph instantPerSecond
                     Instant currentInstant = null;
@@ -162,6 +162,59 @@ namespace Sven.Content
             });
 #endif
             _isCheckingForChanges = false;
+        }
+
+        private bool HasValueChanged(object currentValue, object lastValue)
+        {
+            if (currentValue is double || currentValue is float)
+            {
+                // Compare double values with a precision of 3 decimal places
+                double roundedCurrent = Math.Round(Convert.ToDouble(currentValue), 3);
+                double roundedLast = lastValue != null ? Math.Round(Convert.ToDouble(lastValue), 3) : double.NaN;
+                return !Equals(roundedCurrent, roundedLast);
+            }
+
+            if (currentValue is Vector2 currentVector2 && lastValue is Vector2 lastVector2)
+            {
+                // Compare Vector2 values with a precision of 3 decimal places
+                return !AreVectorsEqual(currentVector2, lastVector2);
+            }
+
+            if (currentValue is Vector3 currentVector3 && lastValue is Vector3 lastVector3)
+            {
+                // Compare Vector3 values with a precision of 3 decimal places
+                return !AreVectorsEqual(currentVector3, lastVector3);
+            }
+
+            if (currentValue is Vector4 currentVector4 && lastValue is Vector4 lastVector4)
+            {
+                // Compare Vector4 values with a precision of 3 decimal places
+                return !AreVectorsEqual(currentVector4, lastVector4);
+            }
+
+            // Compare other types of values directly
+            return !Equals(currentValue, lastValue);
+        }
+
+        private bool AreVectorsEqual(Vector2 v1, Vector2 v2)
+        {
+            return Math.Round(v1.x, 3) == Math.Round(v2.x, 3) &&
+                   Math.Round(v1.y, 3) == Math.Round(v2.y, 3);
+        }
+
+        private bool AreVectorsEqual(Vector3 v1, Vector3 v2)
+        {
+            return Math.Round(v1.x, 3) == Math.Round(v2.x, 3) &&
+                   Math.Round(v1.y, 3) == Math.Round(v2.y, 3) &&
+                   Math.Round(v1.z, 3) == Math.Round(v2.z, 3);
+        }
+
+        private bool AreVectorsEqual(Vector4 v1, Vector4 v2)
+        {
+            return Math.Round(v1.x, 3) == Math.Round(v2.x, 3) &&
+                   Math.Round(v1.y, 3) == Math.Round(v2.y, 3) &&
+                   Math.Round(v1.z, 3) == Math.Round(v2.z, 3) &&
+                   Math.Round(v1.w, 3) == Math.Round(v2.w, 3);
         }
 
         /// <summary>

@@ -53,6 +53,7 @@ namespace Sven.Context
         protected void Awake()
         {
             if (_graphBuffer == null) _graphBuffer = GraphManager.Get("sven");
+            if (_graphBuffer == null) return;
             _semantizationCore = GetComponent<SemantizationCore>();
             if (_semantizationCore == null) Destroy(this);
         }
@@ -65,6 +66,7 @@ namespace Sven.Context
 
         private void Start()
         {
+            if (_graphBuffer == null) return;
             if (_checkInteractorCoroutine != null) StopCoroutine(_checkInteractorCoroutine);
             _checkInteractorCoroutine = StartCoroutine(CheckInteractor(1.0f / _graphBuffer.instantPerSecond));
             _isInitialized = true;
