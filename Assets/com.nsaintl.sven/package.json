@@ -28,6 +28,11 @@
             "displayName": "Replay Semantized Virtual ENvironment",
             "description": "A simple example of how to replay a virtual environment.",
             "path": "Samples~/Replay"
+        },
+        {
+            "displayName": "Demo for ISWC of Semantized Virtual ENvironment",
+            "description": "A use case of the SVEN package for the ISWC 2025 conference.",
+            "path": "Samples~/Demo"
         }
     ],
     "author": {
