@@ -6,13 +6,13 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/Demo/Menu/Demo Menu.unity
+    path: Assets/com.nsaintl.sven/Samples/Demo/Menu/Demo Menu.unity
     guid: f3457796a5ca10c42ae62da5d1febd24
   - enabled: 1
-    path: Assets/Demo/Record/Demo Record.unity
+    path: Assets/com.nsaintl.sven/Samples/Demo/Record/Demo Record.unity
     guid: ba1af09eaafc97641bcae44ae0eb831d
   - enabled: 1
-    path: Assets/Demo/Replay/Demo Replay.unity
+    path: Assets/com.nsaintl.sven/Samples/Demo/Replay/Demo Replay.unity
     guid: c562bb9fb503eba4eb8face7055663e8
   m_configObjects:
     Unity.XR.Oculus.Settings: {fileID: 11400000, guid: bfa1182bd221b4ca89619141f66f1260, type: 2}
