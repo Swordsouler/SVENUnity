@@ -93,13 +93,13 @@ namespace Sven.Content
                         {
                             if (typeof(MonoBehaviour).IsAssignableFrom(propertyType))
                             {
-                                Debug.Log("Creating instance of MonoBehaviour: " + propertyType.Name);
+                                if (SvenHelper.Debug) Debug.Log("Creating instance of MonoBehaviour: " + propertyType.Name);
                                 GameObject tempGameObject = new("Temp_" + propertyType.Name);
                                 instance = tempGameObject.AddComponent(propertyType);
                             }
                             else
                             {
-                                Debug.Log("Creating instance of " + propertyType.Name);
+                                if (SvenHelper.Debug) Debug.Log("Creating instance of " + propertyType.Name);
                                 instance = Activator.CreateInstance(propertyType, nonPublic: true);
                             }
                         }
