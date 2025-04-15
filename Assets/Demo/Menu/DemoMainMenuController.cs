@@ -144,7 +144,18 @@ namespace Sven.Demo
             {
                 HttpClient httpClient = new();
                 SparqlQueryClient client = new(httpClient, DemoManager.EndpointUri);
-                string query = await LoadQueryFileAsync("SPARQL/ListExistentVEs.sparql");
+                string query = @"PREFIX time: <http://www.w3.org/2006/time#>
+
+SELECT DISTINCT ?graphName ?minInstant ?maxInstant (?maxInstant - ?minInstant AS ?duration)
+WHERE {
+    SELECT DISTINCT ?graphName (MIN(?instantDateTime) AS ?minInstant)  (MAX(?instantDateTime) AS ?maxInstant)
+    WHERE {
+        GRAPH ?graphName {
+            ?instant a time:Instant ;
+                     time:inXSDDateTime ?instantDateTime .
+        }
+    } GROUP BY ?graphName ORDER BY ?graphName LIMIT 30
+} ORDER BY DESC(?minInstant) LIMIT 30"; //await LoadQueryFileAsync("SPARQL/ListExistentVEs.sparql");
 
                 SparqlResultSet results = await client.QueryWebGLWithResultSetAsync(query);
 
