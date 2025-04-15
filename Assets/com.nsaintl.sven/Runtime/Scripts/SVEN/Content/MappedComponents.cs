@@ -109,8 +109,8 @@ namespace Sven.Content
                         }
                         finally
                         {
-                            //if (instance is MonoBehaviour monoBehaviourInstance)
-                            //    GameObject.DestroyImmediate(monoBehaviourInstance.gameObject);
+                            if (instance is MonoBehaviour monoBehaviourInstance)
+                                GameObject.DestroyImmediate(monoBehaviourInstance.gameObject);
                         }
 
                         if (property.DynamicInvoke(instance) is PropertyDescription propertyDescription)
