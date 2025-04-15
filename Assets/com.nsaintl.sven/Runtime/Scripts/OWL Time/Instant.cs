@@ -1,4 +1,5 @@
 using System;
+using Sven.Utils;
 using Sven.XsdData;
 using VDS.RDF;
 
@@ -49,7 +50,7 @@ namespace Sven.OwlTime
         public new IUriNode Semantize(IGraph graph)
         {
             IUriNode instantNode = base.Semantize(graph);
-            Interval.SemantizeInside(graph, this);
+            if (SvenHelper.UseInside) Interval.SemantizeInside(graph, this);
             if (inXSDDateTime != null) graph.Assert(new Triple(instantNode, graph.CreateUriNode("time:inXSDDateTime"), inXSDDateTime.ToLiteralNode(graph)));
             // seems to be useless in our case
             // if (inXSDDate != null) graph.Assert(new Triple(temporalEntityNode, graph.CreateUriNode("time:inXSDDate"), inXSDDate.ToLiteralNode(graph)));

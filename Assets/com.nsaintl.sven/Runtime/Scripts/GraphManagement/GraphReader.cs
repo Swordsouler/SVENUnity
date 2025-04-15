@@ -592,16 +592,16 @@ namespace Sven.GraphManagement
 
                 DateTime endProcessing = DateTime.Now;
                 double sceneUpdateTime = (endProcessing - startProcessing).TotalMilliseconds - queryTime;
+                ProcessingData processingData = new()
+                {
+                    queryTime = queryTime,
+                    sceneUpdateTime = sceneUpdateTime,
+                    totalProcessingTime = (endProcessing - startProcessing).TotalMilliseconds
+                };
+                processingDatas.Add(processingData);
                 if (SvenHelper.Debug)
                 {
                     Debug.Log($"Amount of data: {targetSceneContent.GameObjects.Count} GameObjects, {targetSceneContent.GameObjects.Sum(x => x.Value.Components.Count)} Components, {targetSceneContent.GameObjects.Sum(x => x.Value.Components.Sum(y => y.Value.Properties.Count))} Properties");
-                    ProcessingData processingData = new()
-                    {
-                        queryTime = queryTime,
-                        sceneUpdateTime = sceneUpdateTime,
-                        totalProcessingTime = (endProcessing - startProcessing).TotalMilliseconds
-                    };
-                    processingDatas.Add(processingData);
                     Debug.Log(processingData);
                 }
             }
@@ -618,14 +618,17 @@ namespace Sven.GraphManagement
 
             results += "SPARQL-Sampled: " + processingDatas.Count + "\n";
 
+            results += "SPARQL-Median: " + processingDatas.OrderBy(x => x.queryTime).ElementAt(processingDatas.Count / 2).queryTime + " ms\n";
             results += "SPARQL-Mean: " + processingDatas.Average(x => x.queryTime) + " ms\n";
             results += "SPARQL-Min: " + processingDatas.Min(x => x.queryTime) + " ms\n";
             results += "SPARQL-Max: " + processingDatas.Max(x => x.queryTime) + " ms\n";
 
+            results += "SceneUpdate-Median: " + processingDatas.OrderBy(x => x.sceneUpdateTime).ElementAt(processingDatas.Count / 2).sceneUpdateTime + " ms\n";
             results += "SceneUpdate-Mean: " + processingDatas.Average(x => x.sceneUpdateTime) + " ms\n";
             results += "SceneUpdate-Min: " + processingDatas.Min(x => x.sceneUpdateTime) + " ms\n";
             results += "SceneUpdate-Max: " + processingDatas.Max(x => x.sceneUpdateTime) + " ms\n";
 
+            results += "TotalProcessing-Median: " + processingDatas.OrderBy(x => x.totalProcessingTime).ElementAt(processingDatas.Count / 2).totalProcessingTime + " ms\n";
             results += "TotalProcessing-Mean: " + processingDatas.Average(x => x.totalProcessingTime) + " ms\n";
             results += "TotalProcessing-Min: " + processingDatas.Min(x => x.totalProcessingTime) + " ms\n";
             results += "TotalProcessing-Max: " + processingDatas.Max(x => x.totalProcessingTime) + " ms\n";
@@ -980,7 +983,7 @@ namespace Sven.GraphManagement
             int insertIndex = query.IndexOf('\n', selectIndex) + 1;
             string graphQuery = query.Insert(insertIndex, $"{graphUri}\n");
 
-            Debug.Log($"Graph query: {graphQuery}");
+            if (SvenHelper.Debug) Debug.Log($"Graph query: {graphQuery}");
 
             // Exécutez la requête SPARQL
 #if UNITY_WEBGL
