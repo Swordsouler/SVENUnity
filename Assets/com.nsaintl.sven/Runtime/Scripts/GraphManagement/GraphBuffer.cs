@@ -183,6 +183,8 @@ namespace Sven.GraphManagement
                     },
                     downloadHandler = new DownloadHandlerBuffer()
                 };
+                request.SetRequestHeader("Access-Control-Allow-Origin", "*");
+                request.SetRequestHeader("Accept", writerMimeTypeDefinition.CanonicalMimeType);
 
                 UnityWebRequestAsyncOperation operation = request.SendWebRequest();
                 while (!operation.isDone)
