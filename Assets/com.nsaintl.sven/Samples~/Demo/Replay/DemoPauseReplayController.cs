@@ -2,11 +2,13 @@ using NaughtyAttributes;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using UnityEngine;
+#if UNITY_WEBGL && !UNITY_EDITOR
 using VDS.RDF;
 using System.Text;
 using VDS.RDF.Writing;
 using System;
 using VDS.RDF.Parsing;
+#endif
 
 namespace Sven.Demo
 {
@@ -15,8 +17,11 @@ namespace Sven.Demo
         [BoxGroup("View")] public Button printResultButton;
         [BoxGroup("View")] public Button downloadButton;
         [BoxGroup("View")] public Button quitButton;
+        [BoxGroup("View")] public GameObject downloadingActivityIndicator;
 
         [BoxGroup("Controller")] public DemoGraphReader graphReader;
+
+        private bool _isDownloading = false;
 
         public new void Awake()
         {
@@ -26,6 +31,7 @@ namespace Sven.Demo
 
         private void InitializeButtons()
         {
+            if (downloadingActivityIndicator != null) downloadingActivityIndicator.SetActive(false);
             if (printResultButton != null) printResultButton.onClick.AddListener(graphReader.PrintExperimentResults);
             if (downloadButton != null) downloadButton.onClick.AddListener(OnDownloadButtonClicked);
             if (quitButton != null) quitButton.onClick.AddListener(OnQuitButtonClicked);
@@ -33,31 +39,40 @@ namespace Sven.Demo
 
         private async void OnDownloadButtonClicked()
         {
-            IGraph graph = await graphReader.GetGraph();
-            // convert to turtle content
-            string turtleContent = graphReader.DecodeGraph(graph);
+            if (_isDownloading) return;
+            _isDownloading = true;
+            if (downloadingActivityIndicator != null) downloadingActivityIndicator.SetActive(true);
+            if (downloadButton != null) downloadButton.gameObject.SetActive(false);
+            string turtleContent = await graphReader.GetTTL();
 
             // in webgl build, download the turtleContent ass txt file
 #if UNITY_WEBGL && !UNITY_EDITOR
             string fileName = $"sven-{DemoManager.graphName}.ttl";
-            string jsCode = $@"
-                var blob = new Blob([`{turtleContent}`], {{ type: 'text/plain' }});
-                var link = document.createElement('a');
-                link.href = URL.createObjectURL(blob);
-                link.download = '{fileName}';
-                document.body.appendChild(link);
-                link.click();
-                document.body.removeChild(link);
-            ";
-            Application.ExternalEval(jsCode);
+            Application.ExternalCall("downloadFile", turtleContent, fileName);
 #else
             Debug.Log("Graph content:\n" + turtleContent);
 #endif
+            _isDownloading = false;
+            if (downloadingActivityIndicator != null) downloadingActivityIndicator.SetActive(false);
+            if (downloadButton != null) downloadButton.gameObject.SetActive(true);
         }
 
         private void OnQuitButtonClicked()
         {
+            if (_isDownloading) return;
             SceneManager.LoadScene("Demo Menu", LoadSceneMode.Single);
+        }
+
+        public new void Update()
+        {
+            if (_isDownloading) return;
+            base.Update();
+        }
+
+        public new void TogglePause()
+        {
+            if (_isDownloading) return;
+            base.TogglePause();
         }
     }
 }

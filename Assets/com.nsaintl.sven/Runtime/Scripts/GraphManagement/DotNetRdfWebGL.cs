@@ -8,7 +8,13 @@ using UnityEngine;
 using UnityEngine.Networking;
 using VDS.RDF.Parsing;
 #endif
+using System;
+using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
+using Sven.Utils;
+using UnityEngine;
+using UnityEngine.Networking;
 using VDS.RDF;
 using VDS.RDF.Query;
 
@@ -68,6 +74,46 @@ namespace Sven.GraphManagement
 #endif
         }
 
+
+
+        public static async Task<string> QueryWebGLWithResultTTLAsync(this SparqlQueryClient client, string query)
+        {
+            TaskCompletionSource<string> tcs = new();
+            UnityMainThreadDispatcher.Instance.Enqueue(async () =>
+            {
+                try
+                {
+                    using UnityWebRequest request = UnityWebRequest.Post(client.EndpointUri, new Dictionary<string, string>
+                    {
+                        { "query", query },
+                        { "format","text/turtle" }
+                    });
+
+                    request.SetRequestHeader("Accept", "text/turtle");
+
+                    await request.SendWebRequest();
+
+                    if (request.result == UnityWebRequest.Result.Success)
+                    {
+                        tcs.SetResult(request.downloadHandler.text);
+                    }
+                    else
+                    {
+                        Debug.LogError($"SPARQL query failed: {request.error}");
+                        Debug.LogError($"Response: {request.downloadHandler.text}");
+                        tcs.SetException(new Exception($"SPARQL query failed: {request.error}"));
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Debug.LogError($"Exception dans QueryWebGLWithResultSetAsync : {ex}");
+                    tcs.SetException(ex);
+                }
+            });
+
+            return await tcs.Task;
+        }
+
         // returns a graph from the query result (CONSTRUCT query)
         public static async Task<IGraph> QueryWebGLWithResultGraphAsync(this SparqlQueryClient client, string query)
         {
@@ -80,19 +126,22 @@ namespace Sven.GraphManagement
                     using UnityWebRequest request = UnityWebRequest.Post(client.EndpointUri, new Dictionary<string, string>
                     {
                         { "query", query },
-                        { "format","application/rdf+xml" }
+                        { "format","text/turtle" }
                     });
 
-                    request.SetRequestHeader("Accept", "application/rdf+xml");
+                    request.SetRequestHeader("Accept", "text/turtle");
 
                     await request.SendWebRequest();
 
                     if (request.result == UnityWebRequest.Result.Success)
                     {
                         string responseText = request.downloadHandler.text;
+                        Debug.Log($"Response size: {responseText.Length} characters");
+                        // 1000 characters is a good size for a response
+                        Debug.Log($"Response: {responseText.Substring(0, Math.Min(1000, responseText.Length))}");
 
                         IGraph resultGraph = new Graph();
-                        IRdfReader rdfParser = MimeTypesHelper.GetParser("application/rdf+xml");
+                        IRdfReader rdfParser = MimeTypesHelper.GetParser("text/turtle");
                         using StringReader reader = new(responseText);
                         rdfParser.Load(resultGraph, reader);
 
@@ -101,7 +150,8 @@ namespace Sven.GraphManagement
                     }
                     else
                     {
-                        Debug.LogError($"Erreur lors de la requête SPARQL : {request.error}");
+                        Debug.LogError($"SPARQL query failed: {request.error}");
+                        Debug.LogError($"Response: {request.downloadHandler.text}");
                         tcs.SetException(new Exception($"SPARQL query failed: {request.error}"));
                     }
                 }
@@ -112,11 +162,29 @@ namespace Sven.GraphManagement
                 }
             });
 
-            IGraph resultGraph = await tcs.Task;
+            using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(30));
+            try
+            {
+                Task timeoutTask = Task.Delay(Timeout.Infinite, cts.Token);
+                Task<IGraph> graphTask = tcs.Task;
 
-            //foreach (SparqlResult result in resultSet.Cast<SparqlResult>()) Debug.Log($"Result: {result.ToString()}");
+                Task completedTask = await Task.WhenAny(graphTask, timeoutTask);
 
-            return resultGraph;
+                if (completedTask == timeoutTask)
+                {
+                    Debug.LogError("SPARQL query timed out.");
+                    throw new OperationCanceledException("The operation timed out.");
+                }
+
+                IGraph resultGraph = await graphTask; // La tâche s'est terminée avant le délai
+                Debug.Log($"Graph loaded: {resultGraph.Triples.Count} triples");
+                return resultGraph;
+            }
+            catch (OperationCanceledException)
+            {
+                Debug.LogError("SPARQL query timed out.");
+                throw;
+            }
 #else
             return await client.QueryWithResultGraphAsync(query);
 #endif

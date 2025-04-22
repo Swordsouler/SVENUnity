@@ -7,6 +7,7 @@ using Sven.GraphManagement;
 using UnityEngine;
 using VDS.RDF;
 using VDS.RDF.Query;
+using VDS.RDF.Writing;
 
 namespace Sven.Demo
 {
@@ -25,9 +26,13 @@ namespace Sven.Demo
             base.Awake();
         }
 
-        public async Task<IGraph> GetGraph()
+        public async Task<string> GetTTL()
         {
-            string query = $@"CONSTRUCT {{
+            string query = $@"PREFIX time: <http://www.w3.org/2006/time#>
+PREFIX sven: <http://www.sven.fr/>
+PREFIX geo: <http://www.opengis.net/ont/geosparql#>
+
+CONSTRUCT {{
     ?s ?p ?o .
 }}
 FROM <{graph.BaseUri.AbsoluteUri}{Uri.EscapeDataString(graphName)}>
@@ -39,18 +44,18 @@ WHERE {{
             HttpClient httpClient = new();
             SparqlQueryClient sparqlQueryClient = new(httpClient, endpointUri);
 #if UNITY_WEBGL && !UNITY_EDITOR
-            IGraph resultGraph = await sparqlQueryClient.QueryWebGLWithResultGraphAsync(query);
+            string ttlContent = await sparqlQueryClient.QueryWebGLWithResultTTLAsync(query);
 #else
             IGraph resultGraph = await sparqlQueryClient.QueryWithResultGraphAsync(query);
-#endif
-            //resultGraph.NamespaceMap = graph.NamespaceMap;
             foreach (GraphNamespace graphNamespace in ontologyDescription.Namespaces)
             {
                 if (!resultGraph.NamespaceMap.HasNamespace(graphNamespace.Name))
                     resultGraph.NamespaceMap.AddNamespace(graphNamespace.Name, new Uri(graphNamespace.Uri));
             }
 
-            return resultGraph;
+            string ttlContent = DecodeGraph(resultGraph);
+#endif
+            return ttlContent;
         }
     }
 }

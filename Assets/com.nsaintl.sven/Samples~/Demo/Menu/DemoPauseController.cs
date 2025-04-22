@@ -24,7 +24,7 @@ namespace Sven.Demo
         public void RefreshState()
         {
             pauseMenu.SetActive(isPaused);
-            Time.timeScale = isPaused ? 0f : 1f;
+            //Time.timeScale = isPaused ? 0f : 1f;
         }
 
         public void Update()
