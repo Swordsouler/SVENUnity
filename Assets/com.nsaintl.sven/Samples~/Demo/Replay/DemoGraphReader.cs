@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Net.Http;
+using System.Net.Http.Headers;
+using System.Text;
 using System.Threading.Tasks;
 using Sven.Content;
 using Sven.GraphManagement;
@@ -42,6 +44,10 @@ WHERE {{
 
             Uri endpointUri = new(_loadedEndpoint);
             HttpClient httpClient = new();
+
+            var byteArray = Encoding.ASCII.GetBytes($"admin:sven-iswc");
+            httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", Convert.ToBase64String(byteArray));
+
             SparqlQueryClient sparqlQueryClient = new(httpClient, endpointUri);
 #if UNITY_WEBGL && !UNITY_EDITOR
             string ttlContent = await sparqlQueryClient.QueryWebGLWithResultTTLAsync(query);

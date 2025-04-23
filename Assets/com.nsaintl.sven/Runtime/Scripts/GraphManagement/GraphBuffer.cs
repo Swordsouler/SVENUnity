@@ -13,6 +13,8 @@ using Sven.OwlTime;
 using VDS.RDF.Parsing;
 using VDS.RDF.Query.Inference;
 using UnityEngine.Networking;
+using System.Net.Http.Headers;
+
 
 
 
@@ -145,6 +147,10 @@ namespace Sven.GraphManagement
                 try
                 {
                     using HttpClient httpClient = new();
+
+                    var byteArray = Encoding.ASCII.GetBytes($"admin:sven-iswc");
+                    httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", Convert.ToBase64String(byteArray));
+
                     HttpRequestMessage request = new(HttpMethod.Put, serviceUri)
                     {
                         Content = new StringContent(turtle, Encoding.UTF8, writerMimeTypeDefinition.CanonicalMimeType)

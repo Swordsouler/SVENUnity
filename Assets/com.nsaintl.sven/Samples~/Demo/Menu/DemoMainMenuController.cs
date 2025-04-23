@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
+using System.Net.Http.Headers;
+using System.Text;
 using System.Threading.Tasks;
 using NaughtyAttributes;
 using Sven.GraphManagement;
@@ -143,6 +145,10 @@ namespace Sven.Demo
             try
             {
                 HttpClient httpClient = new();
+
+                var byteArray = Encoding.ASCII.GetBytes($"admin:sven-iswc");
+                httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", Convert.ToBase64String(byteArray));
+
                 SparqlQueryClient client = new(httpClient, DemoManager.EndpointUri);
                 string query = @"PREFIX time: <http://www.w3.org/2006/time#>
 

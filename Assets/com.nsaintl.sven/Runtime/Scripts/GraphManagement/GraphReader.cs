@@ -21,6 +21,8 @@ using VDS.RDF.Update;
 using Sven.Utils;
 using System.IO;
 using System.Threading;
+using System.Text;
+using System.Net.Http.Headers;
 
 namespace Sven.GraphManagement
 {
@@ -975,6 +977,10 @@ namespace Sven.GraphManagement
         {
             Uri endpointUri = new(_loadedEndpoint);
             HttpClient httpClient = new();
+
+            var byteArray = Encoding.ASCII.GetBytes($"admin:sven-iswc");
+            httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", Convert.ToBase64String(byteArray));
+
             SparqlQueryClient sparqlQueryClient = new(httpClient, endpointUri);
 
             string graphUri = $"FROM <{graph.BaseUri.AbsoluteUri}{Uri.EscapeDataString(graphName)}>";
