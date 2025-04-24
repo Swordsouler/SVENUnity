@@ -408,7 +408,7 @@ namespace Sven.GraphManagement
             ISparqlUpdateProcessor updateProcessor = new LeviathanUpdateProcessor(dataset);
             SparqlUpdateCommandSet updateCommandSet = new SparqlUpdateParser().ParseFromString($@"
                 PREFIX time: <http://www.w3.org/2006/time#>
-                PREFIX sven: <http://www.sven.fr/>
+                PREFIX sven: <https://sven.lisn.upsaclay.fr/entity/>
 
                 DELETE {{
                     ?object sven:component ?shape .
@@ -469,7 +469,7 @@ namespace Sven.GraphManagement
                 string query = $@"
                     PREFIX time: <http://www.w3.org/2006/time#>
                     PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
-                    PREFIX sven: <http://www.sven.fr/>
+                    PREFIX sven: <https://sven.lisn.upsaclay.fr/entity/>
                     PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
 
                     SELECT DISTINCT ?object ?component ?componentType ?property ?propertyName ?propertyNestedName ?propertyValue ?propertyType
