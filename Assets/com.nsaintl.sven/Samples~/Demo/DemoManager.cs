@@ -25,7 +25,7 @@ namespace Sven.Demo
                     else
                     {
                         // Default to localhost if no valid endpoint URI is provided
-                        _endpointUri = new Uri("http://localhost:7200/repositories/Default");
+                        _endpointUri = new Uri("http://localhost:7200/repositories/SVEN");
                     }
                 }
 

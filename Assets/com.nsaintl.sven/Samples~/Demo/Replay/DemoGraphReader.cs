@@ -31,7 +31,7 @@ namespace Sven.Demo
         public async Task<string> GetTTL()
         {
             string query = $@"PREFIX time: <http://www.w3.org/2006/time#>
-PREFIX sven: <http://www.sven.fr/>
+PREFIX sven: <https://sven.lisn.upsaclay.fr/entity/>
 PREFIX geo: <http://www.opengis.net/ont/geosparql#>
 
 CONSTRUCT {{
