@@ -46,7 +46,7 @@ namespace Sven.Context
         /// <summary>
         /// Start is called before the first frame update.
         /// </summary>
-        private void Start()
+        public void Start()
         {
             if (graphBuffer == null) graphBuffer = GraphManager.Get("sven");
             Initialize();
@@ -70,7 +70,7 @@ namespace Sven.Context
                     graph.Assert(new Triple(userNode, graph.CreateUriNode("sven:pointer"), graph.CreateUriNode("sven:" + pointer.GetComponent<SemantizationCore>().GetUUID())));
         }
 
-        private void OnDestroy()
+        public void OnDestroy()
         {
             foreach (KeyValuePair<string, InputEvent> inputEvent in _inputEvents)
             {
@@ -80,7 +80,7 @@ namespace Sven.Context
             this.DestroyUUID();
         }
 
-        private void Update()
+        public void Update()
         {
             // check for input events (press)
             if (Input.anyKeyDown)

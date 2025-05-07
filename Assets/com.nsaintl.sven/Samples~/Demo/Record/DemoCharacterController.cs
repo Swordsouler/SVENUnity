@@ -42,8 +42,9 @@ namespace Sven.Demo
             _rb.freezeRotation = true;
         }
 
-        private void Start()
+        public new void Start()
         {
+            base.Start();
             if (lockMouse) Cursor.lockState = CursorLockMode.Locked;
 
             pointOfView.cameraComponent.transform.SetParent(transform, false);
@@ -52,8 +53,9 @@ namespace Sven.Demo
             _focusMaterial = Resources.Load<Material>("Materials/Focus");
         }
 
-        private void Update()
+        public new void Update()
         {
+            base.Update();
             float xRotation = pointOfView.cameraComponent.transform.localEulerAngles.y + Input.GetAxis("Mouse X") * mouseSensitivity;
 
             yRotation += Input.GetAxis("Mouse Y") * mouseSensitivity;
