@@ -1929,9 +1929,11 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: You can navigate and interact with the <u>pumpkins</u> and use the <u>paint
-    cans</u> to colour them. Don't forget to press <b>Escape</b> and save your experience
-    so that it is visible and playable from the menus.
+  m_text: "Use the <b>ZQSD</b> keys to move around.\r\nAim at a <u>pumpkin</u> and
+    press <b>F</b> to pick it up or drop it.\r\nYou can use the <u>paint cans</u>
+    on the table to your left to change the color of the pumpkins.\r\nDon\u2019t
+    forget to press <b>Escape</b> to save your experience, so it can be viewed and
+    replayed from the menus."
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}

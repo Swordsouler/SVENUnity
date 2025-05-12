@@ -4,6 +4,7 @@
     "description": "SVEN is an Unity package that allows to semantize a virtual environment, i.e., to add semantic annotations to a virtual environment, to log user interactions, and to replay them.",
     "displayName": "SVEN",
     "unity": "2022.3",
+    "license": "MIT",
     "keywords": [
         "unity",
         "semantic",

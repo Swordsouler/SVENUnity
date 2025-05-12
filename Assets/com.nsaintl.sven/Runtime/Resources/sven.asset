@@ -38,8 +38,10 @@ MonoBehaviour:
     <http://www.w3.org/XML/1998/namespace> .\n@prefix xsd: <http://www.w3.org/2001/XMLSchema#>
     .\n@prefix geof: <http://www.opengis.net/def/function/geosparql/> .\n@prefix
     rdfs: <http://www.w3.org/2000/01/rdf-schema#> .\n@prefix sven: <https://sven.lisn.upsaclay.fr/entity/>
-    .\n@prefix time: <http://www.w3.org/2006/time#> .\n@base <https://sven.lisn.upsaclay.fr/entity/>
-    .\n\n<https://sven.lisn.upsaclay.fr/ontology#> rdf:type owl:Ontology .\n\n#################################################################\n#   
+    .\n@prefix time: <http://www.w3.org/2006/time#> .\n@prefix dcterms: <http://purl.org/dc/terms/>
+    .\n@base <https://sven.lisn.upsaclay.fr/entity/> .\n\n<https://sven.lisn.upsaclay.fr/ontology#>
+    rdf:type owl:Ontology ;\n                dcterms:license <https://opensource.org/licenses/MIT>
+    .\n\n#################################################################\n#   
     Object Properties\n#################################################################\n\n### 
     http://www.opengis.net/ont/geosparql#hasGeometry\ngeo:hasGeometry rdf:type owl:ObjectProperty
     ;\n                rdfs:subPropertyOf sven:componentProperty ;\n               

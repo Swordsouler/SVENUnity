@@ -8,9 +8,11 @@
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 @prefix sven: <https://sven.lisn.upsaclay.fr/entity/> .
 @prefix time: <http://www.w3.org/2006/time#> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
 @base <https://sven.lisn.upsaclay.fr/entity/> .
 
-<https://sven.lisn.upsaclay.fr/ontology#> rdf:type owl:Ontology .
+<https://sven.lisn.upsaclay.fr/ontology#> rdf:type owl:Ontology ;
+                dcterms:license <https://opensource.org/licenses/MIT> .
 
 #################################################################
 #    Object Properties

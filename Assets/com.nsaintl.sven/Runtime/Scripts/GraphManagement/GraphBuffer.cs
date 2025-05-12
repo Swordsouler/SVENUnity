@@ -1,3 +1,7 @@
+// Copyright (c) 2025 CNRS, LISN – Université Paris-Saclay
+// Author: Nicolas SAINT-LÉGER
+// Licensed under the MIT License. See LICENSE file in the project root for full license information.
+
 using System;
 using System.Text;
 using NaughtyAttributes;
@@ -14,10 +18,6 @@ using VDS.RDF.Parsing;
 using VDS.RDF.Query.Inference;
 using UnityEngine.Networking;
 using System.Net.Http.Headers;
-
-
-
-
 
 #if UNITY_EDITOR
 using UnityEditor;
