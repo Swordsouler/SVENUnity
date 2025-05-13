@@ -29,7 +29,7 @@ namespace Sven.Demo
             int i = 0;
             foreach (GameObject pickup in pickups)
             {
-                if (pickup.name.Contains("Pumpkin"))
+                if (pickup.name.Contains("Interactable"))
                 {
                     ps.trigger.SetCollider(i, pickup.transform);
                     i++;
@@ -109,7 +109,7 @@ namespace Sven.Demo
                     if (collider != null)
                     {
                         GameObject obj = collider.gameObject;
-                        if (obj.CompareTag("Pickup") && obj.name.Contains("Pumpkin"))
+                        if (obj.CompareTag("Pickup") && obj.name.Contains("Interactable"))
                         {
                             obj.GetComponent<Renderer>().material = GetComponent<Renderer>().material;
                         }

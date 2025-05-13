@@ -60,7 +60,7 @@ namespace Sven.Demo
             if (sensitivitySlider != null) sensitivitySlider.onValueChanged.AddListener(OnSensitivitySliderValueChanged);
         }
 
-        private void OnDownloadButtonClicked()
+        public void OnDownloadButtonClicked()
         {
             if (_isSending || _isDownloading) return;
             _isDownloading = true;

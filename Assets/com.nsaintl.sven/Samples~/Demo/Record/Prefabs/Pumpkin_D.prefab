@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 7704496204247415424}
   - component: {fileID: -6471848175447764726}
   - component: {fileID: 5460768438145785428}
+  - component: {fileID: -7937157280341691218}
   m_Layer: 7
   m_Name: Pumpkin_D
   m_TagString: Pickup
@@ -131,6 +132,8 @@ MonoBehaviour:
     <ProcessingMode>k__BackingField: 0
   - <Component>k__BackingField: {fileID: 5340509182961508613}
     <ProcessingMode>k__BackingField: 1
+  - <Component>k__BackingField: {fileID: -7937157280341691218}
+    <ProcessingMode>k__BackingField: 1
   _graphBuffer: {fileID: 0}
 --- !u!54 &5460768438145785428
 Rigidbody:
@@ -159,3 +162,15 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
+--- !u!114 &-7937157280341691218
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8572962493446403098}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 96a492372cd6ad44abe2e98338c37a52, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

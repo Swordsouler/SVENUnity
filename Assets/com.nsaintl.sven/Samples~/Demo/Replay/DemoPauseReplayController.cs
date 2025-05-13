@@ -41,7 +41,7 @@ namespace Sven.Demo
             if (quitButton != null) quitButton.onClick.AddListener(OnQuitButtonClicked);
         }
 
-        private async void OnDownloadButtonClicked()
+        public async void OnDownloadButtonClicked()
         {
             if (_isDownloading) return;
             _isDownloading = true;

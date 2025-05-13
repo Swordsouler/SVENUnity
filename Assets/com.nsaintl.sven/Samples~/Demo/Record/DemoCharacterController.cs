@@ -30,6 +30,7 @@ namespace Sven.Demo
         private float verticalInput;
         private bool jumpInput;
 
+        public Transform fruitHolder;
         public Transform pumpkinHolder;
         public Transform sprayCanHolder;
         private GameObject heldObject;
@@ -114,14 +115,14 @@ namespace Sven.Demo
                     {
                         GameObject textObject = new("PickupText");
                         textObject.transform.SetParent(obj.transform);
-                        if (obj.name.Contains("Pumpkin"))
-                            textObject.transform.localPosition = new Vector3(0, 0.6f, 0);
+                        if (obj.name.Contains("Interactable"))
+                            textObject.transform.localPosition = obj.name.Contains("Pumpkin") ? new Vector3(0, 0.6f, 0) : new Vector3(0, 2.5f, 0);
                         else if (obj.name.Contains("Spray"))
                             textObject.transform.localPosition = new Vector3(0, 0.3f, 0);
 
                         textMesh = textObject.AddComponent<TextMeshPro>();
                         textMesh.text = "<b>F</b> to pickup";
-                        if (obj.name.Contains("Pumpkin") && heldObject != null && heldObject.name.Contains("Spray"))
+                        if (obj.name.Contains("Interactable") && heldObject != null && heldObject.name.Contains("Spray"))
                             textMesh.text += "\n<b>Left-Click</b> to paint";
                         textMesh.fontSize = 1;
                         textMesh.color = Color.white;
@@ -219,8 +220,8 @@ namespace Sven.Demo
                 {
                     heldObject = obj;
                     heldObject.GetComponent<Rigidbody>().isKinematic = true;
-                    if (heldObject.name.Contains("Pumpkin"))
-                        heldObject.transform.SetParent(pumpkinHolder);
+                    if (heldObject.name.Contains("Interactable"))
+                        heldObject.transform.SetParent(heldObject.name.Contains("Pumpkin") ? pumpkinHolder : fruitHolder);
                     else if (heldObject.name.Contains("Spray"))
                         heldObject.transform.SetParent(sprayCanHolder);
                     heldObject.transform.SetLocalPositionAndRotation(Vector3.zero, Quaternion.identity);

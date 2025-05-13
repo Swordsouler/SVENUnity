@@ -29,6 +29,26 @@ namespace Sven.Demo
                 {
                     (Func<DemoSprayController, MapppedComponents.PropertyDescription>)(spray => new MapppedComponents.PropertyDescription("enabled", () => spray.enabled, value => spray.enabled = value.ToString() == "true", 1)),
                 }, 1));
+            MapppedComponents.AddComponentDescription(typeof(Pumpkin), new("PumpkinComponent",
+                new List<Delegate>
+                {
+                    (Func<Pumpkin, MapppedComponents.PropertyDescription>)(pumpkin => new MapppedComponents.PropertyDescription("enabled", () => pumpkin.enabled, value => pumpkin.enabled = value.ToString() == "true", 1)),
+                }, 1));
+            MapppedComponents.AddComponentDescription(typeof(Apple), new("AppleComponent",
+                new List<Delegate>
+                {
+                    (Func<Apple, MapppedComponents.PropertyDescription>)(apple => new MapppedComponents.PropertyDescription("enabled", () => apple.enabled, value => apple.enabled = value.ToString() == "true", 1)),
+                }, 1));
+            MapppedComponents.AddComponentDescription(typeof(Banana), new("BananaComponent",
+                new List<Delegate>
+                {
+                    (Func<Banana, MapppedComponents.PropertyDescription>)(banana => new MapppedComponents.PropertyDescription("enabled", () => banana.enabled, value => banana.enabled = value.ToString() == "true", 1)),
+                }, 1));
+            MapppedComponents.AddComponentDescription(typeof(Carrot), new("CarrotComponent",
+                new List<Delegate>
+                {
+                    (Func<Carrot, MapppedComponents.PropertyDescription>)(carrot => new MapppedComponents.PropertyDescription("enabled", () => carrot.enabled, value => carrot.enabled = value.ToString() == "true", 1)),
+                }, 1));
             base.Awake();
         }
 
