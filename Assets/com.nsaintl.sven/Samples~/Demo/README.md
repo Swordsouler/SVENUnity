@@ -19,7 +19,7 @@
 
 ### Scene
 
-1. Move around the scene using **W, A, S, D** or the **arrow keys**. Jump with **Space**, crouch with **Control**.
+1. Move around the scene using **Z, Q, S, D** or the **arrow keys**. Jump with **Space**, crouch with **Control**.
 2. Pick up/drop **pumpkins, carrots, apples, and bananas** using **F**.
 3. Pick up/drop **paint bombs** to color interactive objects using **Left-Click** of your mouse.
 4. Press **Escape** to open the **Pause** menu.
