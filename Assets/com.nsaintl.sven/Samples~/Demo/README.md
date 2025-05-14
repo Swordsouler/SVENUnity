@@ -19,7 +19,7 @@
 
 ### Scene
 
-![Record Scene](./Assets/com.nsaintl.sven/Documentation~/record-scene.png)
+![Record Scene](../../Documentation~/record-scene.png)
 
 1. Move around the scene using **W, A, S, D** or the **arrow keys**. Jump with **Space**, crouch with **Control**.
 2. Pick up/drop **pumpkins, carrots, apples, and bananas** using **F**.
@@ -30,7 +30,7 @@
 
 ### Pause Menu
 
-![Record Scene Pause](./Assets/com.nsaintl.sven/Documentation~/record-scene-pause.png)
+![Record Scene Pause](../../Documentation~/record-scene-pause.png)
 
 1. Adjust the **mouse sensitivity**.
 2. Click **Resume** to return to the scene.
@@ -45,7 +45,7 @@ Once you're back in the main menu, you can replay the scene you just recorded.
 
 ### Menu
 
-![Replay Menu](./Assets/com.nsaintl.sven/Documentation~/replay-menu.png)
+![Replay Menu](../../Documentation~/replay-menu.png)
 
 1. In the "Replay" menu, you can select from scenes previously recorded by any user (only the **20 most recent** are shown).
 2. Click the **Replay** button to start the selected scene.
@@ -54,7 +54,7 @@ Once you're back in the main menu, you can replay the scene you just recorded.
 
 ### Scene
 
-![Replay Scene](./Assets/com.nsaintl.sven/Documentation~/replay-scene.png)
+![Replay Scene](../../Documentation~/replay-scene.png)
 
 1. Replay the scene like a video using the playback interface at the bottom of the screen.
 2. You can also click **Download turtle file** to download the Turtle file of the scene.
@@ -64,7 +64,7 @@ Once you're back in the main menu, you can replay the scene you just recorded.
 
 ### Pause Menu
 
-![Replay Scene Pause](./Assets/com.nsaintl.sven/Documentation~/replay-scene-pause.png)
+![Replay Scene Pause](../../Documentation~/replay-scene-pause.png)
 
 1. Click **Resume** to return to the scene.
 2. Click **Print result** to display performance metrics and identify key timestamps in the browser console.
