@@ -70,3 +70,56 @@ Once you're back in the main menu, you can replay the scene you just recorded.
 4. Click **Quit** to exit the scene and return to the main menu.
 
 ![Replay Scene Pause](../../Documentation~/replay-scene-pause.png)
+
+## SPARQL Example
+
+To try the query examples present in the article, you need to create a repository in GraphDB.
+
+### GraphDB Repository Creation
+
+1. Go to the **Repositories** tab and click on the **Create** button.
+2. Make sure to select the **OWL2-RL** ruleset.
+3. Create the repository with the name of your choice (e.g., **sven**).
+4. Click on the **Create** button to finalize the repository creation.
+
+![Repository Creation](../../Documentation~/sparql-repository-creation.png)
+
+### Uploading Virtual Environment Turtle Files
+
+1. Go to the **Import** tab.
+2. Click on the **Upload RDF files** button and select the Turtle file you want to upload.
+3. Click on the **Import** button to upload the Turtle file.
+
+![Data Upload](../../Documentation~/sparql-data-upload.png)
+
+### Try the SPARQL Queries
+
+1. Go to the **SPARQL** tab.
+2. Copy and paste the SPARQL query you want to try into the query editor.
+
+```sparql
+PREFIX ofn: <http://www.ontotext.com/sparql/functions/>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX time: <http://www.w3.org/2006/time#>
+PREFIX sven: <https://sven.lisn.upsaclay.fr/entity/>
+
+SELECT ?objectType (SUM(?totalSeconds) AS ?sumSeconds)
+WHERE {
+	?user a sven:User ;
+		  sven:pointOfView ?pov .
+	?lookEvent a sven:Event ;
+			   sven:sender ?pov ;
+			   sven:receiver ?lookedObject ;
+			   time:hasTemporalExtent/time:hasXSDDuration ?duration .
+	?lookedObject a ?objectType .
+	?objectType rdfs:subClassOf sven:Food .
+	BIND(ofn:asMillis(?duration) / 1000 AS ?totalSeconds)
+}
+GROUP BY ?objectType
+ORDER BY DESC(?sumSeconds)
+```
+
+3. Click on the **Run** button to execute the query.
+4. The results will be displayed in the results table below the query editor.
+
+![Data Query](../../Documentation~/sparql-data-upload.png)
