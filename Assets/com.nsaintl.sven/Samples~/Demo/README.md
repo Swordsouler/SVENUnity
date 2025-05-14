@@ -9,7 +9,7 @@
 
 ### Menu
 
-![Record Menu](./Assets/com.nsaintl.sven/Documentation~/record-menu.png)
+![Record Menu](../../Documentation~/record-menu.png)
 
 1. In the **Record** menu, choose a scene name. This name will also appear in the **Replay** menu once the scene is recorded.
 2. You can set a semantic logging frequency (default is 10Hz), meaning the scene will be recorded 10 times per second.
