@@ -33,14 +33,15 @@ namespace Sven.Utils
         private static Color _graspAreaDebugColor = Color.green;
 
 #if UNITY_EDITOR
-
         public static void RefreshHelper()
         {
-            _useInside = EditorPrefs.GetBool(_useInsideKey, false);
-            _debug = EditorPrefs.GetBool(_debugKey, false);
-            _pointOfViewDebugColor = ColorUtility.TryParseHtmlString("#" + EditorPrefs.GetString(_pointOfViewDebugColorKey, "FF0000"), out Color pointOfViewDebugColor) ? pointOfViewDebugColor : Color.red;
-            _pointerDebugColor = ColorUtility.TryParseHtmlString("#" + EditorPrefs.GetString(_pointerDebugColorKey, "0000FF"), out Color pointerDebugColor) ? pointerDebugColor : Color.blue;
-            _graspAreaDebugColor = ColorUtility.TryParseHtmlString("#" + EditorPrefs.GetString(_graspAreaDebugColorKey, "00FF00"), out Color graspAreaDebugColor) ? graspAreaDebugColor : Color.green;
+            try {
+                _useInside = EditorPrefs.GetBool(_useInsideKey, false);
+                _debug = EditorPrefs.GetBool(_debugKey, false);
+                _pointOfViewDebugColor = ColorUtility.TryParseHtmlString("#" + EditorPrefs.GetString(_pointOfViewDebugColorKey, "FF0000"), out Color pointOfViewDebugColor) ? pointOfViewDebugColor : Color.red;
+                _pointerDebugColor = ColorUtility.TryParseHtmlString("#" + EditorPrefs.GetString(_pointerDebugColorKey, "0000FF"), out Color pointerDebugColor) ? pointerDebugColor : Color.blue;
+                _graspAreaDebugColor = ColorUtility.TryParseHtmlString("#" + EditorPrefs.GetString(_graspAreaDebugColorKey, "00FF00"), out Color graspAreaDebugColor) ? graspAreaDebugColor : Color.green;
+            } catch {}
         }
 
         static SvenHelper()

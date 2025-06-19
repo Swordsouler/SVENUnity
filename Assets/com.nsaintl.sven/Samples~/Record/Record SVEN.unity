@@ -170,8 +170,6 @@ MonoBehaviour:
   componentsToSemantize:
   - <Component>k__BackingField: {fileID: 36013527}
     <ProcessingMode>k__BackingField: 0
-  - <Component>k__BackingField: {fileID: 36013524}
-    <ProcessingMode>k__BackingField: 0
   - <Component>k__BackingField: {fileID: 36013525}
     <ProcessingMode>k__BackingField: 0
   - <Component>k__BackingField: {fileID: 36013526}
@@ -315,8 +313,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   componentsToSemantize:
   - <Component>k__BackingField: {fileID: 45912286}
-    <ProcessingMode>k__BackingField: 0
-  - <Component>k__BackingField: {fileID: 45912283}
     <ProcessingMode>k__BackingField: 0
   - <Component>k__BackingField: {fileID: 45912284}
     <ProcessingMode>k__BackingField: 0
@@ -536,8 +532,6 @@ MonoBehaviour:
   componentsToSemantize:
   - <Component>k__BackingField: {fileID: 98621463}
     <ProcessingMode>k__BackingField: 0
-  - <Component>k__BackingField: {fileID: 98621458}
-    <ProcessingMode>k__BackingField: 0
   - <Component>k__BackingField: {fileID: 98621459}
     <ProcessingMode>k__BackingField: 0
   - <Component>k__BackingField: {fileID: 98621460}
@@ -604,7 +598,7 @@ MonoBehaviour:
   ontologyDescription: {fileID: 11400000, guid: 02dbca5f0b2f48945a6a733f130690f2, type: 2}
   endpoint: http://localhost:7200/repositories/Demo-Scene/rdf-graphs/service
   graphName: DemoScene
-  _instantPerSecond: 10
+  instantPerSecond: 10
 --- !u!1 &216645333
 GameObject:
   m_ObjectHideFlags: 0
@@ -701,8 +695,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   componentsToSemantize:
   - <Component>k__BackingField: {fileID: 232688357}
-    <ProcessingMode>k__BackingField: 0
-  - <Component>k__BackingField: {fileID: 232688354}
     <ProcessingMode>k__BackingField: 0
   - <Component>k__BackingField: {fileID: 232688355}
     <ProcessingMode>k__BackingField: 0
@@ -997,8 +989,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   componentsToSemantize:
   - <Component>k__BackingField: {fileID: 285358068}
-    <ProcessingMode>k__BackingField: 0
-  - <Component>k__BackingField: {fileID: 285358065}
     <ProcessingMode>k__BackingField: 0
   - <Component>k__BackingField: {fileID: 285358066}
     <ProcessingMode>k__BackingField: 0
@@ -1326,8 +1316,6 @@ MonoBehaviour:
   componentsToSemantize:
   - <Component>k__BackingField: {fileID: 414828576}
     <ProcessingMode>k__BackingField: 0
-  - <Component>k__BackingField: {fileID: 414828573}
-    <ProcessingMode>k__BackingField: 0
   - <Component>k__BackingField: {fileID: 414828574}
     <ProcessingMode>k__BackingField: 0
   - <Component>k__BackingField: {fileID: 414828575}
@@ -1472,8 +1460,6 @@ MonoBehaviour:
   componentsToSemantize:
   - <Component>k__BackingField: {fileID: 417238700}
     <ProcessingMode>k__BackingField: 0
-  - <Component>k__BackingField: {fileID: 417238697}
-    <ProcessingMode>k__BackingField: 0
   - <Component>k__BackingField: {fileID: 417238698}
     <ProcessingMode>k__BackingField: 0
   - <Component>k__BackingField: {fileID: 417238699}
@@ -1617,8 +1603,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   componentsToSemantize:
   - <Component>k__BackingField: {fileID: 424303852}
-    <ProcessingMode>k__BackingField: 0
-  - <Component>k__BackingField: {fileID: 424303849}
     <ProcessingMode>k__BackingField: 0
   - <Component>k__BackingField: {fileID: 424303850}
     <ProcessingMode>k__BackingField: 0
@@ -1810,8 +1794,6 @@ MonoBehaviour:
   componentsToSemantize:
   - <Component>k__BackingField: {fileID: 451770570}
     <ProcessingMode>k__BackingField: 0
-  - <Component>k__BackingField: {fileID: 451770567}
-    <ProcessingMode>k__BackingField: 0
   - <Component>k__BackingField: {fileID: 451770568}
     <ProcessingMode>k__BackingField: 0
   - <Component>k__BackingField: {fileID: 451770569}
@@ -1955,8 +1937,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   componentsToSemantize:
   - <Component>k__BackingField: {fileID: 453002987}
-    <ProcessingMode>k__BackingField: 0
-  - <Component>k__BackingField: {fileID: 453002984}
     <ProcessingMode>k__BackingField: 0
   - <Component>k__BackingField: {fileID: 453002985}
     <ProcessingMode>k__BackingField: 0
@@ -2205,8 +2185,6 @@ MonoBehaviour:
   componentsToSemantize:
   - <Component>k__BackingField: {fileID: 520508988}
     <ProcessingMode>k__BackingField: 0
-  - <Component>k__BackingField: {fileID: 520508985}
-    <ProcessingMode>k__BackingField: 0
   - <Component>k__BackingField: {fileID: 520508986}
     <ProcessingMode>k__BackingField: 0
   - <Component>k__BackingField: {fileID: 520508987}
@@ -2350,8 +2328,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   componentsToSemantize:
   - <Component>k__BackingField: {fileID: 601377091}
-    <ProcessingMode>k__BackingField: 0
-  - <Component>k__BackingField: {fileID: 601377088}
     <ProcessingMode>k__BackingField: 0
   - <Component>k__BackingField: {fileID: 601377089}
     <ProcessingMode>k__BackingField: 0
@@ -2497,8 +2473,6 @@ MonoBehaviour:
   componentsToSemantize:
   - <Component>k__BackingField: {fileID: 651375886}
     <ProcessingMode>k__BackingField: 0
-  - <Component>k__BackingField: {fileID: 651375883}
-    <ProcessingMode>k__BackingField: 0
   - <Component>k__BackingField: {fileID: 651375884}
     <ProcessingMode>k__BackingField: 0
   - <Component>k__BackingField: {fileID: 651375885}
@@ -2642,8 +2616,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   componentsToSemantize:
   - <Component>k__BackingField: {fileID: 659058932}
-    <ProcessingMode>k__BackingField: 0
-  - <Component>k__BackingField: {fileID: 659058929}
     <ProcessingMode>k__BackingField: 0
   - <Component>k__BackingField: {fileID: 659058930}
     <ProcessingMode>k__BackingField: 0
@@ -2789,8 +2761,6 @@ MonoBehaviour:
   componentsToSemantize:
   - <Component>k__BackingField: {fileID: 659357365}
     <ProcessingMode>k__BackingField: 0
-  - <Component>k__BackingField: {fileID: 659357362}
-    <ProcessingMode>k__BackingField: 0
   - <Component>k__BackingField: {fileID: 659357363}
     <ProcessingMode>k__BackingField: 0
   - <Component>k__BackingField: {fileID: 659357364}
@@ -2934,8 +2904,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   componentsToSemantize:
   - <Component>k__BackingField: {fileID: 662985090}
-    <ProcessingMode>k__BackingField: 0
-  - <Component>k__BackingField: {fileID: 662985087}
     <ProcessingMode>k__BackingField: 0
   - <Component>k__BackingField: {fileID: 662985088}
     <ProcessingMode>k__BackingField: 0
@@ -3081,8 +3049,6 @@ MonoBehaviour:
   componentsToSemantize:
   - <Component>k__BackingField: {fileID: 689839372}
     <ProcessingMode>k__BackingField: 0
-  - <Component>k__BackingField: {fileID: 689839369}
-    <ProcessingMode>k__BackingField: 0
   - <Component>k__BackingField: {fileID: 689839370}
     <ProcessingMode>k__BackingField: 0
   - <Component>k__BackingField: {fileID: 689839371}
@@ -3226,8 +3192,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   componentsToSemantize:
   - <Component>k__BackingField: {fileID: 756072465}
-    <ProcessingMode>k__BackingField: 0
-  - <Component>k__BackingField: {fileID: 756072462}
     <ProcessingMode>k__BackingField: 0
   - <Component>k__BackingField: {fileID: 756072463}
     <ProcessingMode>k__BackingField: 0
@@ -3373,8 +3337,6 @@ MonoBehaviour:
   componentsToSemantize:
   - <Component>k__BackingField: {fileID: 832788196}
     <ProcessingMode>k__BackingField: 0
-  - <Component>k__BackingField: {fileID: 832788193}
-    <ProcessingMode>k__BackingField: 0
   - <Component>k__BackingField: {fileID: 832788194}
     <ProcessingMode>k__BackingField: 0
   - <Component>k__BackingField: {fileID: 832788195}
@@ -3517,7 +3479,7 @@ MonoBehaviour:
   - <Component>k__BackingField: {fileID: 938404640}
     <ProcessingMode>k__BackingField: 0
   - <Component>k__BackingField: {fileID: 938404644}
-    <ProcessingMode>k__BackingField: 1
+    <ProcessingMode>k__BackingField: 0
   _graphBuffer: {fileID: 0}
 --- !u!114 &938404644
 MonoBehaviour:
@@ -3584,8 +3546,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   componentsToSemantize:
   - <Component>k__BackingField: {fileID: 943934306}
-    <ProcessingMode>k__BackingField: 0
-  - <Component>k__BackingField: {fileID: 943934303}
     <ProcessingMode>k__BackingField: 0
   - <Component>k__BackingField: {fileID: 943934304}
     <ProcessingMode>k__BackingField: 0
@@ -3730,8 +3690,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   componentsToSemantize:
   - <Component>k__BackingField: {fileID: 1005619027}
-    <ProcessingMode>k__BackingField: 0
-  - <Component>k__BackingField: {fileID: 1005619024}
     <ProcessingMode>k__BackingField: 0
   - <Component>k__BackingField: {fileID: 1005619025}
     <ProcessingMode>k__BackingField: 0
@@ -3943,8 +3901,6 @@ MonoBehaviour:
   componentsToSemantize:
   - <Component>k__BackingField: {fileID: 1031309584}
     <ProcessingMode>k__BackingField: 0
-  - <Component>k__BackingField: {fileID: 1031309581}
-    <ProcessingMode>k__BackingField: 0
   - <Component>k__BackingField: {fileID: 1031309582}
     <ProcessingMode>k__BackingField: 0
   - <Component>k__BackingField: {fileID: 1031309583}
@@ -4088,8 +4044,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   componentsToSemantize:
   - <Component>k__BackingField: {fileID: 1032951740}
-    <ProcessingMode>k__BackingField: 0
-  - <Component>k__BackingField: {fileID: 1032951737}
     <ProcessingMode>k__BackingField: 0
   - <Component>k__BackingField: {fileID: 1032951738}
     <ProcessingMode>k__BackingField: 0
@@ -4235,8 +4189,6 @@ MonoBehaviour:
   componentsToSemantize:
   - <Component>k__BackingField: {fileID: 1046888111}
     <ProcessingMode>k__BackingField: 0
-  - <Component>k__BackingField: {fileID: 1046888108}
-    <ProcessingMode>k__BackingField: 0
   - <Component>k__BackingField: {fileID: 1046888109}
     <ProcessingMode>k__BackingField: 0
   - <Component>k__BackingField: {fileID: 1046888110}
@@ -4359,11 +4311,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fa2df4e4ac6535c4785cd5f3dad489b5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _pointOfView: {fileID: 1942567336}
-  _pointers:
-  - {fileID: 938404644}
-  _graspArea: {fileID: 0}
-  _graphBuffer: {fileID: 0}
+  pointOfView: {fileID: 0}
+  pointers: []
+  graspArea: {fileID: 0}
+  graphBuffer: {fileID: 0}
 --- !u!4 &1127875387
 Transform:
   m_ObjectHideFlags: 0
@@ -4389,7 +4340,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1169822577}
   - component: {fileID: 1169822576}
-  - component: {fileID: 1169822575}
+  - component: {fileID: 1169822578}
   m_Layer: 0
   m_Name: EventSystem
   m_TagString: Untagged
@@ -4397,37 +4348,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &1169822575
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1169822574}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 01614664b831546d2ae94a42149d80ac, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_SendPointerHoverToParent: 1
-  m_MoveRepeatDelay: 0.5
-  m_MoveRepeatRate: 0.1
-  m_XRTrackingOrigin: {fileID: 0}
-  m_ActionsAsset: {fileID: -944628639613478452, guid: ca9f5fa95ffab41fb9a615ab714db018, type: 3}
-  m_PointAction: {fileID: -1654692200621890270, guid: ca9f5fa95ffab41fb9a615ab714db018, type: 3}
-  m_MoveAction: {fileID: -8784545083839296357, guid: ca9f5fa95ffab41fb9a615ab714db018, type: 3}
-  m_SubmitAction: {fileID: 392368643174621059, guid: ca9f5fa95ffab41fb9a615ab714db018, type: 3}
-  m_CancelAction: {fileID: 7727032971491509709, guid: ca9f5fa95ffab41fb9a615ab714db018, type: 3}
-  m_LeftClickAction: {fileID: 3001919216989983466, guid: ca9f5fa95ffab41fb9a615ab714db018, type: 3}
-  m_MiddleClickAction: {fileID: -2185481485913320682, guid: ca9f5fa95ffab41fb9a615ab714db018, type: 3}
-  m_RightClickAction: {fileID: -4090225696740746782, guid: ca9f5fa95ffab41fb9a615ab714db018, type: 3}
-  m_ScrollWheelAction: {fileID: 6240969308177333660, guid: ca9f5fa95ffab41fb9a615ab714db018, type: 3}
-  m_TrackedDevicePositionAction: {fileID: 6564999863303420839, guid: ca9f5fa95ffab41fb9a615ab714db018, type: 3}
-  m_TrackedDeviceOrientationAction: {fileID: 7970375526676320489, guid: ca9f5fa95ffab41fb9a615ab714db018, type: 3}
-  m_DeselectOnBackgroundClick: 1
-  m_PointerBehavior: 0
-  m_CursorLockBehavior: 0
-  m_ScrollDeltaPerTick: 6
 --- !u!114 &1169822576
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4458,6 +4378,26 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1169822578
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1169822574}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4f231c4fb786f3946a6b90b886c48677, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_SendPointerHoverToParent: 1
+  m_HorizontalAxis: Horizontal
+  m_VerticalAxis: Vertical
+  m_SubmitButton: Submit
+  m_CancelButton: Cancel
+  m_InputActionsPerSecond: 10
+  m_RepeatDelay: 0.5
+  m_ForceModuleActive: 0
 --- !u!1 &1185521405
 GameObject:
   m_ObjectHideFlags: 0
@@ -4508,8 +4448,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   componentsToSemantize:
   - <Component>k__BackingField: {fileID: 1185521411}
-    <ProcessingMode>k__BackingField: 0
-  - <Component>k__BackingField: {fileID: 1185521408}
     <ProcessingMode>k__BackingField: 0
   - <Component>k__BackingField: {fileID: 1185521409}
     <ProcessingMode>k__BackingField: 0
@@ -4655,8 +4593,6 @@ MonoBehaviour:
   componentsToSemantize:
   - <Component>k__BackingField: {fileID: 1229614568}
     <ProcessingMode>k__BackingField: 0
-  - <Component>k__BackingField: {fileID: 1229614565}
-    <ProcessingMode>k__BackingField: 0
   - <Component>k__BackingField: {fileID: 1229614566}
     <ProcessingMode>k__BackingField: 0
   - <Component>k__BackingField: {fileID: 1229614567}
@@ -4800,8 +4736,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   componentsToSemantize:
   - <Component>k__BackingField: {fileID: 1275101869}
-    <ProcessingMode>k__BackingField: 0
-  - <Component>k__BackingField: {fileID: 1275101866}
     <ProcessingMode>k__BackingField: 0
   - <Component>k__BackingField: {fileID: 1275101867}
     <ProcessingMode>k__BackingField: 0
@@ -4947,8 +4881,6 @@ MonoBehaviour:
   componentsToSemantize:
   - <Component>k__BackingField: {fileID: 1308310557}
     <ProcessingMode>k__BackingField: 0
-  - <Component>k__BackingField: {fileID: 1308310554}
-    <ProcessingMode>k__BackingField: 0
   - <Component>k__BackingField: {fileID: 1308310555}
     <ProcessingMode>k__BackingField: 0
   - <Component>k__BackingField: {fileID: 1308310556}
@@ -5092,8 +5024,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   componentsToSemantize:
   - <Component>k__BackingField: {fileID: 1340449822}
-    <ProcessingMode>k__BackingField: 0
-  - <Component>k__BackingField: {fileID: 1340449819}
     <ProcessingMode>k__BackingField: 0
   - <Component>k__BackingField: {fileID: 1340449820}
     <ProcessingMode>k__BackingField: 0
@@ -5239,8 +5169,6 @@ MonoBehaviour:
   componentsToSemantize:
   - <Component>k__BackingField: {fileID: 1400164718}
     <ProcessingMode>k__BackingField: 0
-  - <Component>k__BackingField: {fileID: 1400164715}
-    <ProcessingMode>k__BackingField: 0
   - <Component>k__BackingField: {fileID: 1400164716}
     <ProcessingMode>k__BackingField: 0
   - <Component>k__BackingField: {fileID: 1400164717}
@@ -5384,8 +5312,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   componentsToSemantize:
   - <Component>k__BackingField: {fileID: 1426620106}
-    <ProcessingMode>k__BackingField: 0
-  - <Component>k__BackingField: {fileID: 1426620103}
     <ProcessingMode>k__BackingField: 0
   - <Component>k__BackingField: {fileID: 1426620104}
     <ProcessingMode>k__BackingField: 0
@@ -5664,8 +5590,6 @@ MonoBehaviour:
   componentsToSemantize:
   - <Component>k__BackingField: {fileID: 1496543468}
     <ProcessingMode>k__BackingField: 0
-  - <Component>k__BackingField: {fileID: 1496543465}
-    <ProcessingMode>k__BackingField: 0
   - <Component>k__BackingField: {fileID: 1496543466}
     <ProcessingMode>k__BackingField: 0
   - <Component>k__BackingField: {fileID: 1496543467}
@@ -5809,8 +5733,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   componentsToSemantize:
   - <Component>k__BackingField: {fileID: 1516567854}
-    <ProcessingMode>k__BackingField: 0
-  - <Component>k__BackingField: {fileID: 1516567851}
     <ProcessingMode>k__BackingField: 0
   - <Component>k__BackingField: {fileID: 1516567852}
     <ProcessingMode>k__BackingField: 0
@@ -5956,8 +5878,6 @@ MonoBehaviour:
   componentsToSemantize:
   - <Component>k__BackingField: {fileID: 1544171565}
     <ProcessingMode>k__BackingField: 0
-  - <Component>k__BackingField: {fileID: 1544171562}
-    <ProcessingMode>k__BackingField: 0
   - <Component>k__BackingField: {fileID: 1544171563}
     <ProcessingMode>k__BackingField: 0
   - <Component>k__BackingField: {fileID: 1544171564}
@@ -6102,8 +6022,6 @@ MonoBehaviour:
   componentsToSemantize:
   - <Component>k__BackingField: {fileID: 1604506711}
     <ProcessingMode>k__BackingField: 0
-  - <Component>k__BackingField: {fileID: 1604506708}
-    <ProcessingMode>k__BackingField: 0
   - <Component>k__BackingField: {fileID: 1604506709}
     <ProcessingMode>k__BackingField: 0
   - <Component>k__BackingField: {fileID: 1604506710}
@@ -6247,8 +6165,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   componentsToSemantize:
   - <Component>k__BackingField: {fileID: 1648993157}
-    <ProcessingMode>k__BackingField: 0
-  - <Component>k__BackingField: {fileID: 1648993154}
     <ProcessingMode>k__BackingField: 0
   - <Component>k__BackingField: {fileID: 1648993155}
     <ProcessingMode>k__BackingField: 0
@@ -6515,8 +6431,6 @@ MonoBehaviour:
   componentsToSemantize:
   - <Component>k__BackingField: {fileID: 1846451925}
     <ProcessingMode>k__BackingField: 0
-  - <Component>k__BackingField: {fileID: 1846451922}
-    <ProcessingMode>k__BackingField: 0
   - <Component>k__BackingField: {fileID: 1846451923}
     <ProcessingMode>k__BackingField: 0
   - <Component>k__BackingField: {fileID: 1846451924}
@@ -6660,8 +6574,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   componentsToSemantize:
   - <Component>k__BackingField: {fileID: 1896901244}
-    <ProcessingMode>k__BackingField: 0
-  - <Component>k__BackingField: {fileID: 1896901241}
     <ProcessingMode>k__BackingField: 0
   - <Component>k__BackingField: {fileID: 1896901242}
     <ProcessingMode>k__BackingField: 0
@@ -6807,8 +6719,6 @@ MonoBehaviour:
   componentsToSemantize:
   - <Component>k__BackingField: {fileID: 1937762344}
     <ProcessingMode>k__BackingField: 0
-  - <Component>k__BackingField: {fileID: 1937762341}
-    <ProcessingMode>k__BackingField: 0
   - <Component>k__BackingField: {fileID: 1937762342}
     <ProcessingMode>k__BackingField: 0
   - <Component>k__BackingField: {fileID: 1937762343}
@@ -6952,8 +6862,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   componentsToSemantize:
   - <Component>k__BackingField: {fileID: 1938748366}
-    <ProcessingMode>k__BackingField: 0
-  - <Component>k__BackingField: {fileID: 1938748363}
     <ProcessingMode>k__BackingField: 0
   - <Component>k__BackingField: {fileID: 1938748364}
     <ProcessingMode>k__BackingField: 0
@@ -7212,6 +7120,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _graphBuffer: {fileID: 0}
   _debug: 1
+  cameraComponent: {fileID: 0}
 --- !u!1 &1957813137
 GameObject:
   m_ObjectHideFlags: 0
@@ -7262,8 +7171,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   componentsToSemantize:
   - <Component>k__BackingField: {fileID: 1957813143}
-    <ProcessingMode>k__BackingField: 0
-  - <Component>k__BackingField: {fileID: 1957813140}
     <ProcessingMode>k__BackingField: 0
   - <Component>k__BackingField: {fileID: 1957813141}
     <ProcessingMode>k__BackingField: 0
@@ -7409,8 +7316,6 @@ MonoBehaviour:
   componentsToSemantize:
   - <Component>k__BackingField: {fileID: 1999932863}
     <ProcessingMode>k__BackingField: 0
-  - <Component>k__BackingField: {fileID: 1999932860}
-    <ProcessingMode>k__BackingField: 0
   - <Component>k__BackingField: {fileID: 1999932861}
     <ProcessingMode>k__BackingField: 0
   - <Component>k__BackingField: {fileID: 1999932862}
@@ -7554,8 +7459,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   componentsToSemantize:
   - <Component>k__BackingField: {fileID: 2076466405}
-    <ProcessingMode>k__BackingField: 0
-  - <Component>k__BackingField: {fileID: 2076466402}
     <ProcessingMode>k__BackingField: 0
   - <Component>k__BackingField: {fileID: 2076466403}
     <ProcessingMode>k__BackingField: 0
@@ -7701,8 +7604,6 @@ MonoBehaviour:
   componentsToSemantize:
   - <Component>k__BackingField: {fileID: 2089945196}
     <ProcessingMode>k__BackingField: 0
-  - <Component>k__BackingField: {fileID: 2089945193}
-    <ProcessingMode>k__BackingField: 0
   - <Component>k__BackingField: {fileID: 2089945194}
     <ProcessingMode>k__BackingField: 0
   - <Component>k__BackingField: {fileID: 2089945195}
@@ -7846,8 +7747,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   componentsToSemantize:
   - <Component>k__BackingField: {fileID: 2111581971}
-    <ProcessingMode>k__BackingField: 0
-  - <Component>k__BackingField: {fileID: 2111581968}
     <ProcessingMode>k__BackingField: 0
   - <Component>k__BackingField: {fileID: 2111581969}
     <ProcessingMode>k__BackingField: 0
