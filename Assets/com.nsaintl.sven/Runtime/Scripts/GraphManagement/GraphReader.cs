@@ -2,16 +2,20 @@
 // Author: Nicolas SAINT-LÉGER
 // Licensed under the MIT License. See LICENSE file in the project root for full license information.
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.Http;
-using System.Reflection;
-using System.Threading.Tasks;
 using DG.Tweening;
 using NaughtyAttributes;
-using Sven.OwlTime;
 using Sven.Content;
+using Sven.GraphManagement.Description;
+using Sven.OwlTime;
+using Sven.Utils;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Net.Http;
+using System.Net.Http.Headers;
+using System.Text;
+using System.Threading.Tasks;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.UI;
@@ -22,11 +26,6 @@ using VDS.RDF.Query;
 using VDS.RDF.Query.Datasets;
 using VDS.RDF.Query.Inference;
 using VDS.RDF.Update;
-using Sven.Utils;
-using System.IO;
-using System.Threading;
-using System.Text;
-using System.Net.Http.Headers;
 
 namespace Sven.GraphManagement
 {
@@ -62,307 +61,6 @@ namespace Sven.GraphManagement
         /// Game has started.
         /// </summary>
         private bool GameHasStarted => _gameHasStarted;
-
-        #endregion
-
-        #region Scene Content Structure
-
-        /// <summary>
-        /// Graph that contains the scene content.
-        /// </summary>        
-        public class SceneContent
-        {
-            /// <summary>
-            /// Instant of the scene content.
-            /// </summary> 
-            public Instant Instant { get; set; }
-            /// <summary>
-            /// Scene content dictionary.
-            /// </summary>
-            public Dictionary<string, GameObjectDescription> GameObjects { get; set; }
-
-            public SceneContent()
-            {
-                GameObjects = new();
-            }
-
-            public SceneContent(Instant instant)
-            {
-                Instant = instant;
-                GameObjects = new();
-            }
-
-            public SceneContent(Dictionary<string, GameObjectDescription> gameObjects)
-            {
-                GameObjects = gameObjects;
-            }
-
-            /// <summary>
-            /// ToString method.
-            /// </summary>
-            /// <returns>String representation of the property description.</returns>
-            public override string ToString()
-            {
-                return $"{Instant.inXSDDateTime}\n{string.Join($"\n", GameObjects.Select(x => $"---------- {x.Key} ----------\n{x.Value}"))}";
-            }
-        }
-
-        /// <summary>
-        /// GameObject description.
-        /// </summary>
-        public class GameObjectDescription
-        {
-            /// <summary>
-            /// UUID of the GameObject.
-            /// </summary>
-            public string UUID { get; set; }
-
-            /// <summary>
-            /// GameObject.
-            /// </summary>
-            public GameObject GameObject { get; set; }
-
-            /// <summary>
-            /// Active state of the GameObject.
-            /// </summary>
-            public bool Active;
-
-            /// <summary>
-            /// Layer of the GameObject.
-            /// </summary>
-            public string Layer;
-
-            /// <summary>
-            /// Tag of the GameObject.
-            /// </summary>
-            public string Tag;
-
-            /// <summary>
-            /// Name of the GameObject.
-            /// </summary>
-            public string Name;
-
-            /// <summary>
-            /// Components of the GameObject.
-            /// </summary>
-            public Dictionary<string, ComponentDescription> Components { get; set; }
-
-            public GameObjectDescription(string uuid)
-            {
-                UUID = uuid;
-                Components = new();
-            }
-
-            public GameObjectDescription(string uuid, Dictionary<string, ComponentDescription> components)
-            {
-                UUID = uuid;
-                Components = components;
-            }
-
-            public GameObjectDescription(string uuid, GameObject gameObject, Dictionary<string, ComponentDescription> components)
-            {
-                UUID = uuid;
-                GameObject = gameObject;
-                Components = components;
-            }
-
-            /// <summary>
-            /// ToString method.
-            /// </summary>
-            /// <returns>String representation of the property description.</returns>
-            public override string ToString()
-            {
-                return string.Join("\n", Components.Select(x => $"{x.Key} ({x.Value.Type})\n{x.Value}"));
-            }
-        }
-
-        /// <summary>
-        /// Component description.
-        /// </summary>
-        public class ComponentDescription
-        {
-            /// <summary>
-            /// UUID of the Component.
-            /// </summary>
-            public string UUID { get; set; }
-
-            /// <summary>
-            /// Component.
-            /// </summary>
-            public Component Component { get; set; }
-
-            /// <summary>
-            /// Type of the component.
-            /// </summary>
-            public Type Type { get; set; }
-
-            public int SortOrder { get; set; } = 0;
-
-            /// <summary>
-            /// Properties of the component.
-            /// </summary>
-            public Dictionary<string, PropertyDescription> Properties { get; set; }
-
-            public ComponentDescription(string uuid, Type type)
-            {
-                UUID = uuid;
-                Type = type;
-                Properties = new();
-            }
-
-            public ComponentDescription(string uuid, Type type, int sortOrder)
-            {
-                UUID = uuid;
-                Type = type;
-                SortOrder = sortOrder;
-                Properties = new();
-            }
-
-            public ComponentDescription(string uuid, Type type, int sortOrder, Dictionary<string, PropertyDescription> properties)
-            {
-                UUID = uuid;
-                Type = type;
-                SortOrder = sortOrder;
-                Properties = properties;
-            }
-
-            public ComponentDescription(string uuid, Component component, int sortOrder, Dictionary<string, PropertyDescription> properties)
-            {
-                UUID = uuid;
-                Component = component;
-                SortOrder = sortOrder;
-                Properties = properties;
-            }
-
-            /// <summary>
-            /// ToString method.
-            /// </summary>
-            /// <returns>String representation of the property description.</returns>
-            public override string ToString()
-            {
-                return string.Join("\n", Properties.Select(x => $"\t{x.Key} ({x.Value.Type}): ({x.Value})"));
-            }
-        }
-
-        /// <summary>
-        /// Property description.
-        /// </summary>
-        public class PropertyDescription
-        {
-            /// <summary>
-            /// UUID of the Property.
-            /// </summary>
-            public string UUID { get; set; }
-
-            /// <summary>
-            /// Name of the property.
-            /// </summary>
-            public string Name { get; set; }
-
-            /// <summary>
-            /// Type of the property.
-            /// </summary>
-            public Type Type { get; set; }
-
-            /// <summary>
-            /// Values of the property.
-            /// </summary>
-            public Dictionary<string, object> Values { get; set; }
-
-            /// <summary>
-            /// Value of the property.
-            /// </summary>
-            private object _value = null;
-            /// <summary>
-            /// Value of the property.
-            /// </summary>
-            public object Value
-            {
-                get
-                {
-                    _value ??= GenerateValue();
-                    return _value;
-                }
-                private set => _value = value;
-            }
-
-            /// <summary>
-            /// Generate the value of the property.
-            /// </summary>
-            /// <returns>Value of the property.</returns>
-            public object GenerateValue()
-            {
-                if (Type == typeof(object))
-                {
-                    return Values["value"];
-                }
-
-
-                try
-                {
-                    // try to create an instance of the property directly with the parameters and constructor
-                    ConstructorInfo constructor = Type.GetConstructors()
-                                          .OrderByDescending(c => c.GetParameters().Length)
-                                          .FirstOrDefault();
-
-                    ParameterInfo[] parameterInfos = constructor.GetParameters();
-                    object[] orderedParameters = new object[parameterInfos.Length];
-                    object[] parameters = Values.Select(x => x.Value).ToArray();
-
-                    for (int i = 0; i < parameterInfos.Length; i++)
-                    {
-                        var paramInfo = parameterInfos[i];
-                        var value = Values.FirstOrDefault(v => v.Key == paramInfo.Name).Value;
-                        orderedParameters[i] = value ?? throw new InvalidOperationException($"No value provided for parameter '{paramInfo.Name}'.");
-                    }
-
-                    return Activator.CreateInstance(Type, orderedParameters);
-                }
-                catch (MissingMethodException)
-                {
-                    // if the constructor is not found, try to create a default instance and set the properties
-                    object instance = Activator.CreateInstance(Type);
-                    foreach (KeyValuePair<string, object> kvp in Values)
-                    {
-                        PropertyInfo property = Type.GetProperty(kvp.Key);
-                        property?.SetValue(instance, Convert.ChangeType(kvp.Value, property.PropertyType));
-                        if (property != null) continue;
-
-                        //try in fields
-                        FieldInfo field = Type.GetField(kvp.Key);
-                        field?.SetValue(instance, Convert.ChangeType(kvp.Value, field.FieldType));
-                    }
-                    return instance;
-                }
-            }
-
-            public PropertyDescription(string uuid, string name, Type type)
-            {
-                UUID = uuid;
-                Name = name;
-                Type = type;
-                Values = new();
-            }
-
-            public PropertyDescription(string uuid, string name, Type type, Dictionary<string, object> values)
-            {
-                UUID = uuid;
-                Name = name;
-                Type = type;
-                Values = values;
-            }
-
-            /// <summary>
-            /// ToString method.
-            /// </summary>
-            /// <returns>String representation of the property description.</returns>
-            public override string ToString()
-            {
-                int maxValueSize = 50;
-                // x.Value has a limited size of 50 characters
-                return string.Join(", ", Values.Select(x => $"{x.Key}: \"{(x.Value.ToString().Length > maxValueSize ? x.Value.ToString()[..maxValueSize] + "..." : x.Value.ToString())}\""));
-            }
-        }
 
         #endregion
 

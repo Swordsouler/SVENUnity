@@ -12,8 +12,13 @@ using System.Text;
 using UnityEngine;
 using VDS.RDF;
 using VDS.RDF.Parsing;
+using VDS.RDF.Query;
 using VDS.RDF.Query.Inference;
 using VDS.RDF.Writing;
+#if UNITY_WEBGL && !UNITY_EDITOR
+using System.Threading.Tasks;
+using UnityEngine.Networking;
+#endif
 
 namespace Sven.GraphManagement
 {
@@ -30,7 +35,7 @@ namespace Sven.GraphManagement
             authenticationHeaderValue = new AuthenticationHeaderValue("Basic", Convert.ToBase64String(Encoding.UTF8.GetBytes($"{username}:{password}")));
         }
 
-        private static void Clear()
+        public static void Clear()
         {
             instance.Clear();
             ontologies.Clear();
@@ -116,7 +121,7 @@ namespace Sven.GraphManagement
             }
         }
 
-        public static async void SaveToEndpoint(string endpointUrl)
+        public static void SaveToEndpoint(string endpointUrl)
         {
             if (string.IsNullOrEmpty(endpointUrl)) throw new ArgumentNullException(nameof(endpointUrl) + " is null or empty.");
             if (!Uri.IsWellFormedUriString(endpointUrl, UriKind.Absolute)) throw new ArgumentException("The endpoint URL is not valid.", nameof(endpointUrl));
@@ -124,7 +129,6 @@ namespace Sven.GraphManagement
             MimeTypeDefinition writerMimeTypeDefinition = MimeTypesHelper.GetDefinitions("application/x-turtle").First();
             string turtleContent = DecodeGraph();
             string serviceUrl = $"{endpointUrl}?graph={Uri.EscapeDataString(instance.BaseUri.AbsoluteUri)}";
-            string decodedServiceUrl = Uri.UnescapeDataString(serviceUrl);
             try
             {
 #if !UNITY_WEBGL || UNITY_EDITOR
@@ -175,6 +179,76 @@ namespace Sven.GraphManagement
             catch (Exception ex)
             {
                 throw new InvalidOperationException($"Failed to save graph to endpoint: {ex.Message}", ex);
+            }
+        }
+
+        public static async void LoadFromEndpoint(string endpointUrl)
+        {
+            if (string.IsNullOrEmpty(endpointUrl)) throw new ArgumentNullException(nameof(endpointUrl) + " is null or empty.");
+            if (!Uri.IsWellFormedUriString(endpointUrl, UriKind.Absolute)) throw new ArgumentException("The endpoint URL is not valid.", nameof(endpointUrl));
+
+            string query = @"
+SELECT ?s ?p ?o
+WHERE {
+    ?s ?p ?o .
+} LIMIT 1000000";
+            string serviceUrl = $"{endpointUrl}?query={Uri.EscapeDataString(query)}&format=text/turtle";
+            try
+            {
+                using HttpClient httpClient = new();
+                httpClient.DefaultRequestHeaders.Authorization = authenticationHeaderValue;
+                SparqlQueryClient sparqlQueryClient = new(httpClient, new Uri(endpointUrl));
+
+#if UNITY_WEBGL
+                SparqlResultSet results = await sparqlQueryClient.QueryWebGLWithResultSetAsync(graphQuery);
+#else
+                SparqlResultSet results = await sparqlQueryClient.QueryWithResultSetAsync(query);
+#endif
+
+                if (results == null || results.Count == 0)
+                {
+                    Debug.LogWarning("No results found in the graph at the endpoint.");
+                    return;
+                }
+                foreach (var result in results)
+                {
+                    INode subject = result["s"];
+                    INode predicate = result["p"];
+                    INode @object = result["o"];
+                    if (subject != null && predicate != null && @object != null)
+                    {
+                        instance.Assert(new Triple(subject, predicate, @object));
+                    }
+                }
+                Debug.Log("Graph loaded from endpoint successfully.");
+            }
+            catch (Exception ex)
+            {
+                throw new InvalidOperationException($"Failed to load graph from endpoint: {ex.Message}", ex);
+            }
+        }
+
+        public static void LoadFromFile(string absolutePath)
+        {
+            if (string.IsNullOrEmpty(absolutePath)) throw new ArgumentNullException(nameof(absolutePath) + " is null or empty.");
+            if (!System.IO.Path.IsPathRooted(absolutePath)) throw new ArgumentException("The path must be absolute.", nameof(absolutePath));
+            if (!File.Exists(absolutePath)) throw new FileNotFoundException($"File not found: {absolutePath}");
+            instance.LoadFromFile(absolutePath);
+        }
+
+        public static SparqlResultSet Query(string query, bool withReasoning)
+        {
+            if (string.IsNullOrEmpty(query)) throw new ArgumentNullException(nameof(query) + " is null or empty.");
+            if (withReasoning) ApplyRule();
+            SparqlQueryParser parser = new();
+            SparqlQuery sparqlQuery = parser.ParseFromString(query) ?? throw new InvalidOperationException("Failed to parse SPARQL query.");
+            try
+            {
+                return instance.ExecuteQuery(sparqlQuery) as SparqlResultSet;
+            }
+            catch (RdfQueryException ex)
+            {
+                throw new InvalidOperationException($"SPARQL query execution failed: {ex.Message}", ex);
             }
         }
     }
