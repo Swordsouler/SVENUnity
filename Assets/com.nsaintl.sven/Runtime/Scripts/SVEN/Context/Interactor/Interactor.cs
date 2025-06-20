@@ -56,7 +56,7 @@ namespace Sven.Context
         /// </summary>
         protected void Awake()
         {
-            if (_graphBuffer == null) _graphBuffer = GraphManager.Get("sven");
+            if (_graphBuffer == null) _graphBuffer = OldGraphManager.Get("sven");
             if (_graphBuffer == null) return;
             _semantizationCore = GetComponent<SemantizationCore>();
             if (_semantizationCore == null) Destroy(this);

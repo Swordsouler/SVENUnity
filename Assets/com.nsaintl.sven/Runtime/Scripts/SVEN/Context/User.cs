@@ -52,7 +52,7 @@ namespace Sven.Context
         /// </summary>
         public void Start()
         {
-            if (graphBuffer == null) graphBuffer = GraphManager.Get("sven");
+            if (graphBuffer == null) graphBuffer = OldGraphManager.Get("sven");
             Initialize();
         }
 

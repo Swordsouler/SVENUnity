@@ -16,7 +16,6 @@ using Sven.Content;
 using Sven.OwlTime;
 using VDS.RDF.Parsing;
 using VDS.RDF.Query.Inference;
-using UnityEngine.Networking;
 using System.Net.Http.Headers;
 
 #if UNITY_EDITOR
