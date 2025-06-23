@@ -2,6 +2,8 @@
 // Author: Nicolas SAINT-LÉGER
 // Licensed under the MIT License. See LICENSE file in the project root for full license information.
 
+using Sven.OwlTime;
+using Sven.Utils;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -24,21 +26,27 @@ namespace Sven.GraphManagement
 {
     public static class GraphManager
     {
-        private static readonly Graph instance = new();
-        private static readonly Dictionary<string, string> ontologies = new();
-        private static AuthenticationHeaderValue authenticationHeaderValue = null;
+        private static readonly Graph _instance = new();
+        public static int Count => _instance.Triples.Count;
+        private static readonly Dictionary<string, string> _ontologies = new();
+        private static readonly List<Instant> _instants = new();
+        private static AuthenticationHeaderValue _authenticationHeaderValue = null;
+
+        // list namespaces for the graph
+        public static string BaseUri => _instance.BaseUri?.AbsoluteUri ?? "http://example.org/graph";
 
         public static void SetAuthenticationHeaderValue(string username, string password)
         {
             if (string.IsNullOrEmpty(username)) throw new ArgumentNullException(nameof(username) + " is null or empty.");
             if (string.IsNullOrEmpty(password)) throw new ArgumentNullException(nameof(password) + " is null or empty.");
-            authenticationHeaderValue = new AuthenticationHeaderValue("Basic", Convert.ToBase64String(Encoding.UTF8.GetBytes($"{username}:{password}")));
+            _authenticationHeaderValue = new AuthenticationHeaderValue("Basic", Convert.ToBase64String(Encoding.UTF8.GetBytes($"{username}:{password}")));
         }
 
         public static void Clear()
         {
-            instance.Clear();
-            ontologies.Clear();
+            _instance.Clear();
+            _ontologies.Clear();
+            _instants.Clear();
         }
 
         /// <summary>
@@ -56,48 +64,48 @@ namespace Sven.GraphManagement
         }
         public static string DecodeGraph()
         {
-            return DecodeGraph(instance);
+            return DecodeGraph(_instance);
         }
 
         public static void SetBaseUri(string baseUri)
         {
             if (string.IsNullOrEmpty(baseUri)) throw new ArgumentNullException(nameof(baseUri) + " is null or empty.");
-            instance.BaseUri = new Uri(baseUri);
+            _instance.BaseUri = new Uri(baseUri);
         }
 
         public static void SetNamespace(string prefix, string uri)
         {
             if (string.IsNullOrEmpty(prefix)) throw new ArgumentNullException(nameof(prefix) + " is null or empty.");
             if (string.IsNullOrEmpty(uri)) throw new ArgumentNullException(nameof(uri) + " is null or empty.");
-            instance.NamespaceMap.AddNamespace(prefix, UriFactory.Create(uri));
+            _instance.NamespaceMap.AddNamespace(prefix, UriFactory.Create(uri));
         }
 
-        public static void AddOntology(string ontologyName, string ontologyContent)
+        public static void AddOntology(string ontologyName, string ontologyFileName)
         {
             if (string.IsNullOrEmpty(ontologyName)) throw new ArgumentNullException(nameof(ontologyName) + " is null or empty.");
-            if (string.IsNullOrEmpty(ontologyContent)) throw new ArgumentNullException(nameof(ontologyContent) + " is null or empty.");
-            if (ontologies.ContainsKey(ontologyName)) throw new ArgumentException($"Ontology '{ontologyName}' already exists.");
+            if (string.IsNullOrEmpty(ontologyFileName)) throw new ArgumentNullException(nameof(ontologyFileName) + " is null or empty.");
+            if (_ontologies.ContainsKey(ontologyName)) throw new ArgumentException($"Ontology '{ontologyName}' already exists.");
             //Graph ontologyGraph = new();
             TurtleParser turtleParser = new();
-            turtleParser.Load(instance, ontologyContent);
+            turtleParser.Load(_instance, ontologyFileName);
             //instance.Merge(ontologyGraph);
-            ontologies.Add(ontologyName, ontologyContent);
+            _ontologies.Add(ontologyName, ontologyFileName);
         }
 
         public static void ApplyRule()
         {
-            if (instance == null) throw new InvalidOperationException("Graph instance is not initialized.");
+            if (_instance == null) throw new InvalidOperationException("Graph instance is not initialized.");
 
             Graph ontologyGraph = new();
             StaticRdfsReasoner reasoner = new();
-            foreach (var ontology in ontologies)
+            foreach (var ontology in _ontologies)
             {
                 try
                 {
                     TurtleParser turtleParser = new();
                     turtleParser.Load(ontologyGraph, ontology.Value);
                     reasoner.Initialise(ontologyGraph);
-                    reasoner.Apply(instance);
+                    reasoner.Apply(_instance);
                 }
                 catch (Exception ex)
                 {
@@ -121,6 +129,11 @@ namespace Sven.GraphManagement
             }
         }
 
+        public static void SaveToEndpoint()
+        {
+            SaveToEndpoint(SvenConfig.EndpointUrl);
+        }
+
         public static void SaveToEndpoint(string endpointUrl)
         {
             if (string.IsNullOrEmpty(endpointUrl)) throw new ArgumentNullException(nameof(endpointUrl) + " is null or empty.");
@@ -128,12 +141,12 @@ namespace Sven.GraphManagement
 
             MimeTypeDefinition writerMimeTypeDefinition = MimeTypesHelper.GetDefinitions("application/x-turtle").First();
             string turtleContent = DecodeGraph();
-            string serviceUrl = $"{endpointUrl}?graph={Uri.EscapeDataString(instance.BaseUri.AbsoluteUri)}";
+            string serviceUrl = $"{endpointUrl}?graph={Uri.EscapeDataString(_instance.BaseUri.AbsoluteUri)}";
             try
             {
 #if !UNITY_WEBGL || UNITY_EDITOR
                 using HttpClient httpClient = new();
-                httpClient.DefaultRequestHeaders.Authorization = authenticationHeaderValue;
+                httpClient.DefaultRequestHeaders.Authorization = _authenticationHeaderValue;
 
                 HttpRequestMessage request = new(HttpMethod.Put, serviceUrl)
                 {
@@ -196,7 +209,7 @@ WHERE {
             try
             {
                 using HttpClient httpClient = new();
-                httpClient.DefaultRequestHeaders.Authorization = authenticationHeaderValue;
+                httpClient.DefaultRequestHeaders.Authorization = _authenticationHeaderValue;
                 SparqlQueryClient sparqlQueryClient = new(httpClient, new Uri(endpointUrl));
 
 #if UNITY_WEBGL
@@ -217,7 +230,7 @@ WHERE {
                     INode @object = result["o"];
                     if (subject != null && predicate != null && @object != null)
                     {
-                        instance.Assert(new Triple(subject, predicate, @object));
+                        _instance.Assert(new Triple(subject, predicate, @object));
                     }
                 }
                 Debug.Log("Graph loaded from endpoint successfully.");
@@ -233,7 +246,7 @@ WHERE {
             if (string.IsNullOrEmpty(absolutePath)) throw new ArgumentNullException(nameof(absolutePath) + " is null or empty.");
             if (!System.IO.Path.IsPathRooted(absolutePath)) throw new ArgumentException("The path must be absolute.", nameof(absolutePath));
             if (!File.Exists(absolutePath)) throw new FileNotFoundException($"File not found: {absolutePath}");
-            instance.LoadFromFile(absolutePath);
+            _instance.LoadFromFile(absolutePath);
         }
 
         public static SparqlResultSet Query(string query, bool withReasoning)
@@ -244,12 +257,81 @@ WHERE {
             SparqlQuery sparqlQuery = parser.ParseFromString(query) ?? throw new InvalidOperationException("Failed to parse SPARQL query.");
             try
             {
-                return instance.ExecuteQuery(sparqlQuery) as SparqlResultSet;
+                return _instance.ExecuteQuery(sparqlQuery) as SparqlResultSet;
             }
             catch (RdfQueryException ex)
             {
                 throw new InvalidOperationException($"SPARQL query execution failed: {ex.Message}", ex);
             }
+        }
+
+
+        #region Time Management
+
+        /// <summary>
+        /// Current instant.
+        /// </summary>
+        private static Instant _currentInstant;
+        public static Instant CurrentInstant
+        {
+            get
+            {
+                // example : instantPerSecond = 10 -> if now = 2021-10-10T10:10:10.0516051 then dateTime will be 2021-10-10T10:10:10.0000000
+                DateTime dateTime = FormatDateTime(DateTime.Now);
+                if (_currentInstant == null || _currentInstant.inXSDDateTime != dateTime)
+                    CurrentInstant = new Instant(dateTime);
+                return _currentInstant;
+            }
+            private set
+            {
+                if (_currentInstant == value) return;
+                _currentInstant = value;
+                _currentInstant.Semanticize();
+                _instants.Add(value);
+            }
+        }
+
+        /// <summary>
+        /// Format the DateTime to the instantPerSecond.
+        /// </summary>
+        /// <param name="dateTime">The DateTime to format.</param>
+        /// <returns>DateTime.</returns>
+        private static DateTime FormatDateTime(DateTime dateTime)
+        {
+            return new(dateTime.Year, dateTime.Month, dateTime.Day, dateTime.Hour, dateTime.Minute, dateTime.Second, dateTime.Millisecond / (1000 / SvenConfig.SemanticizeFrequency) * (1000 / SvenConfig.SemanticizeFrequency));
+        }
+
+        #endregion
+
+        public static IUriNode Assert(Triple t)
+        {
+            IUriNode subject = t.Subject as IUriNode ?? throw new ArgumentException("The subject of the triple must be an IUriNode.", nameof(t));
+            _instance.Assert(t);
+            return subject;
+        }
+
+        public static IUriNode CreateUriNode(string uri)
+        {
+            if (string.IsNullOrEmpty(uri)) throw new ArgumentNullException(nameof(uri) + " is null or empty.");
+            return _instance.CreateUriNode(UriFactory.Create(uri));
+        }
+
+        public static ILiteralNode CreateLiteralNode(string name)
+        {
+            if (string.IsNullOrEmpty(name)) name = string.Empty;
+            return _instance.CreateLiteralNode(name);
+        }
+
+        public static ILiteralNode CreateLiteralNode(string name, Uri uri)
+        {
+            if (string.IsNullOrEmpty(name)) name = string.Empty;
+            if (uri == null) throw new ArgumentNullException(nameof(uri) + " is null.");
+            return _instance.CreateLiteralNode(name, uri);
+        }
+
+        public static INode CreateTripleNode(Triple triple)
+        {
+            return _instance.CreateTripleNode(triple);
         }
     }
 }

@@ -2,13 +2,13 @@
 // Author: Nicolas SAINT-LÉGER
 // Licensed under the MIT License. See LICENSE file in the project root for full license information.
 
+using Sven.GraphManagement;
+using Sven.OwlTime;
+using Sven.Utils;
 using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using Sven.GraphManagement;
-using Sven.OwlTime;
-using Sven.Utils;
 using UnityEngine;
 using VDS.RDF;
 using VDS.RDF.Parsing;
@@ -20,11 +20,6 @@ namespace Sven.Content
     /// </summary>
     public class Property : Resource
     {
-        /// <summary>
-        /// The graph buffer to semantize the property.
-        /// </summary>
-        private GraphBuffer graphBuffer;
-
         /// <summary>
         /// The parent component of the property.
         /// </summary>
@@ -38,12 +33,12 @@ namespace Sven.Content
         /// <summary>
         /// The parent object node of the property.
         /// </summary>
-        private IUriNode ParentObjectNode => graphBuffer.Graph.CreateUriNode("sven:" + parentObject.GetUUID());
+        private IUriNode ParentObjectNode => GraphManager.CreateUriNode("sven:" + parentObject.GetUUID());
 
         /// <summary>
         /// The parent component node of the property.
         /// </summary>
-        private IUriNode ParentComponentNode => graphBuffer.Graph.CreateUriNode("sven:" + parentComponent.GetUUID());
+        private IUriNode ParentComponentNode => GraphManager.CreateUriNode("sven:" + parentComponent.GetUUID());
 
         /// <summary>
         /// The simplified name of the property to observe.
@@ -116,19 +111,18 @@ namespace Sven.Content
         /// </summary>
         /// <param name="graphBuffer">The graph buffer to semantize the property.</param>
         /// <param name="parentNode">The parent node of the property.</param>
-        public void SemanticObserve(GraphBuffer graphBuffer, Component parentComponent)
+        public void SemanticObserve(Component parentComponent)
         {
-            if (graphBuffer == null || parentComponent == null)
+            if (parentComponent == null)
             {
                 Debug.LogWarning("You are trying to initialize the semantization of a property without a graph buffer or parent component.");
                 return;
             }
-            if (this.graphBuffer != null)
+            if (this.parentComponent != null)
             {
-                Debug.LogWarning("You are trying to initialize the semantization of a property that has already been initialized.");
+                Debug.LogWarning("You are trying to initialize the semantization of a property that is already initialized.");
                 return;
             }
-            this.graphBuffer = graphBuffer;
             this.parentComponent = parentComponent;
             parentObject = parentComponent.GetComponent<SemantizationCore>();
         }
@@ -155,12 +149,12 @@ namespace Sven.Content
                 {
                     // limit the semantization with the graph instantPerSecond
                     Instant currentInstant = null;
-                    context.Send(_ => currentInstant = graphBuffer.CurrentInstant, null);
+                    context.Send(_ => currentInstant = GraphManager.CurrentInstant, null);
                     if (lastSemantizedInstant != null && currentInstant == lastSemantizedInstant) return;
 
                     lastSemantizedInstant = currentInstant;
                     observedProperty.LastValue = currentValue;
-                    if (graphBuffer != null) context.Send(_ => Semantize(currentInstant), null);
+                    context.Send(_ => Semanticize(currentInstant), null);
                 }
 #if !UNITY_WEBGL || UNITY_EDITOR
             });
@@ -224,37 +218,29 @@ namespace Sven.Content
         /// <summary>
         /// Semantizes the property.
         /// </summary>
-        public void Semantize(Instant currentInstant)
+        public void Semanticize(Instant currentInstant)
         {
-            if (graphBuffer == null)
-            {
-                Debug.LogWarning("You are trying to semantize a property without a graph buffer.");
-                return;
-            }
-
-            if (SvenHelper.Debug)
+            if (SvenConfig.Debug)
                 Debug.Log("Semantizing property (" + parentComponent.name + ")." + parentComponent.GetType().Name + "." + Name + " with value " + observedProperty.LastValue);
             DestroyUUID();
 
-            IGraph graph = graphBuffer.Graph;
-
-            IUriNode propertyNode = graph.CreateUriNode("sven:" + GetUUID());
+            IUriNode propertyNode = GraphManager.CreateUriNode("sven:" + GetUUID());
             string propertyTypeName = MapppedProperties.GetValue(observedProperty.LastValue.GetType()).TypeName;
-            IUriNode propertyTypeNode = graph.CreateUriNode(propertyTypeName.Contains(":") ? propertyTypeName : "sven:" + propertyTypeName);
+            IUriNode propertyTypeNode = GraphManager.CreateUriNode(propertyTypeName.Contains(":") ? propertyTypeName : "sven:" + propertyTypeName);
 
             string propertyName = name.Contains(":") ? name : "sven:" + name;
-            graph.Assert(new Triple(ParentComponentNode, graph.CreateUriNode(propertyName), propertyNode));
-            graph.Assert(new Triple(propertyNode, graph.CreateUriNode("rdf:type"), propertyTypeNode));
-            graph.Assert(new Triple(propertyNode, graph.CreateUriNode("sven:exactType"), propertyTypeNode));
+            GraphManager.Assert(new Triple(ParentComponentNode, GraphManager.CreateUriNode(propertyName), propertyNode));
+            GraphManager.Assert(new Triple(propertyNode, GraphManager.CreateUriNode("rdf:type"), propertyTypeNode));
+            GraphManager.Assert(new Triple(propertyNode, GraphManager.CreateUriNode("sven:exactType"), propertyTypeNode));
 
             Interval oldInterval = interval;
             interval = new Interval();
             oldInterval?.End(currentInstant, interval);
-            oldInterval?.Semantize(graph);
+            oldInterval?.Semanticize();
 
             interval.Start(currentInstant, oldInterval);
-            IUriNode intervalNode = interval.Semantize(graph);
-            graph.Assert(new Triple(propertyNode, graph.CreateUriNode("time:hasTemporalExtent"), intervalNode));
+            IUriNode intervalNode = interval.Semanticize();
+            GraphManager.Assert(new Triple(propertyNode, GraphManager.CreateUriNode("time:hasTemporalExtent"), intervalNode));
 
             Dictionary<string, object> values = observedProperty.LastValue.GetSemantizableValues();
             foreach (KeyValuePair<string, object> value in values)
@@ -262,25 +248,24 @@ namespace Sven.Content
                 string stringValue = value.Value.ToRdfString();
                 string XmlSchemaDataType = value.Value.GetXmlSchemaTypes();
                 if (XmlSchemaDataType == XmlSpecsHelper.XmlSchemaDataTypeBoolean) stringValue = stringValue.ToLower();
-                ILiteralNode literalNode = graph.CreateLiteralNode(stringValue, new Uri(XmlSchemaDataType));
-                graph.Assert(new Triple(propertyNode, graph.CreateUriNode(value.Key.Contains(":") ? value.Key : "sven:" + value.Key), literalNode));
+                ILiteralNode literalNode = GraphManager.CreateLiteralNode(stringValue, new Uri(XmlSchemaDataType));
+                GraphManager.Assert(new Triple(propertyNode, GraphManager.CreateUriNode(value.Key.Contains(":") ? value.Key : "sven:" + value.Key), literalNode));
 
                 if (simplifiedName != "")
                 {
                     // créez un nouvelle intervalle à chaque fois ?
                     string simplifiedType = value.Key == "value" ? "" : value.Key.ToUpper();
-                    Triple triple = new(ParentObjectNode, graph.CreateUriNode("sven:" + simplifiedName + simplifiedType), literalNode);
-                    graph.Assert(triple);
-                    graph.Assert(new Triple(graph.CreateTripleNode(triple), graph.CreateUriNode("time:hasTemporalExtent"), intervalNode));
+                    Triple triple = new(ParentObjectNode, GraphManager.CreateUriNode("sven:" + simplifiedName + simplifiedType), literalNode);
+                    GraphManager.Assert(triple);
+                    GraphManager.Assert(new Triple(GraphManager.CreateTripleNode(triple), GraphManager.CreateUriNode("time:hasTemporalExtent"), intervalNode));
                 }
             }
         }
 
         public void Destroy()
         {
-            IGraph graph = graphBuffer.Graph;
-            interval?.End(graphBuffer.CurrentInstant);
-            interval?.Semantize(graph);
+            interval?.End(GraphManager.CurrentInstant);
+            interval?.Semanticize();
             DestroyUUID();
         }
     }

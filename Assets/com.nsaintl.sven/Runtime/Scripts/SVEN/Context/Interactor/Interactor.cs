@@ -2,10 +2,11 @@
 // Author: Nicolas SAINT-LÉGER
 // Licensed under the MIT License. See LICENSE file in the project root for full license information.
 
-using System.Collections;
-using System.Collections.Generic;
 using Sven.Content;
 using Sven.GraphManagement;
+using Sven.Utils;
+using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace Sven.Context
@@ -32,8 +33,8 @@ namespace Sven.Context
         /// <summary>
         /// The graph buffer to semantize the GameObject.
         /// </summary>
-        [SerializeField]
-        protected GraphBuffer _graphBuffer;
+        //[SerializeField]
+        //protected GraphBuffer _graphBuffer;
 
         /// <summary>
         /// The coroutine to check the interactor.
@@ -56,8 +57,6 @@ namespace Sven.Context
         /// </summary>
         protected void Awake()
         {
-            if (_graphBuffer == null) _graphBuffer = OldGraphManager.Get("sven");
-            if (_graphBuffer == null) return;
             _semantizationCore = GetComponent<SemantizationCore>();
             if (_semantizationCore == null) Destroy(this);
         }
@@ -70,9 +69,9 @@ namespace Sven.Context
 
         private void Start()
         {
-            if (_graphBuffer == null) return;
+            //if (_graphBuffer == null) return;
             if (_checkInteractorCoroutine != null) StopCoroutine(_checkInteractorCoroutine);
-            _checkInteractorCoroutine = StartCoroutine(CheckInteractor(1.0f / _graphBuffer.instantPerSecond));
+            _checkInteractorCoroutine = StartCoroutine(CheckInteractor(1.0f / SvenConfig.SemanticizeFrequency));
             _isInitialized = true;
         }
 
@@ -80,8 +79,7 @@ namespace Sven.Context
         {
             if (!_isInitialized) return;
             if (_checkInteractorCoroutine != null) StopCoroutine(_checkInteractorCoroutine);
-            Debug.LogWarning("Interactor OnEnable " + _graphBuffer.name + " " + (1.0f / _graphBuffer.instantPerSecond));
-            _checkInteractorCoroutine = StartCoroutine(CheckInteractor(1.0f / _graphBuffer.instantPerSecond));
+            _checkInteractorCoroutine = StartCoroutine(CheckInteractor(1.0f / SvenConfig.SemanticizeFrequency));
         }
 
         private void OnDisable()
@@ -94,8 +92,8 @@ namespace Sven.Context
             if (_checkInteractorCoroutine != null) StopCoroutine(_checkInteractorCoroutine);
             foreach (CollisionEvent collisionEvent in _collisionEvents.Values)
             {
-                collisionEvent.End(_graphBuffer.CurrentInstant);
-                collisionEvent.Semantize(_graphBuffer.Graph);
+                collisionEvent.End(GraphManager.CurrentInstant);
+                collisionEvent.Semanticize();
             }
         }
 

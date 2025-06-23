@@ -7,7 +7,7 @@ using System.Linq;
 
 namespace Sven.Demo
 {
-    public static class DemoManager
+    public static class DemoGraphConfig
     {
         public static string graphName = "default";
         public static int semantisationFrequency = 10;

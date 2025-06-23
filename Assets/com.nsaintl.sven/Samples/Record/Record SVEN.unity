@@ -176,7 +176,6 @@ MonoBehaviour:
     <ProcessingMode>k__BackingField: 1
   - <Component>k__BackingField: {fileID: 36013522}
     <ProcessingMode>k__BackingField: 0
-  _graphBuffer: {fileID: 0}
 --- !u!65 &36013524
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -320,7 +319,6 @@ MonoBehaviour:
     <ProcessingMode>k__BackingField: 1
   - <Component>k__BackingField: {fileID: 45912281}
     <ProcessingMode>k__BackingField: 0
-  _graphBuffer: {fileID: 0}
 --- !u!65 &45912283
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -538,7 +536,6 @@ MonoBehaviour:
     <ProcessingMode>k__BackingField: 1
   - <Component>k__BackingField: {fileID: 98621461}
     <ProcessingMode>k__BackingField: 0
-  _graphBuffer: {fileID: 0}
 --- !u!114 &98621463
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -551,54 +548,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4727f174807448b43b2e4357632ef9c7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!1 &137352178
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 137352180}
-  - component: {fileID: 137352182}
-  m_Layer: 0
-  m_Name: Graph Buffer
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &137352180
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 137352178}
-  serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &137352182
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 137352178}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5d6e04c6dbdbcc34599fc0785c6bdffd, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  ontologyDescription: {fileID: 11400000, guid: 02dbca5f0b2f48945a6a733f130690f2, type: 2}
-  endpoint: http://localhost:7200/repositories/Demo-Scene/rdf-graphs/service
-  graphName: DemoScene
-  instantPerSecond: 10
 --- !u!1 &216645333
 GameObject:
   m_ObjectHideFlags: 0
@@ -614,7 +563,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &216645334
 Transform:
   m_ObjectHideFlags: 0
@@ -702,7 +651,6 @@ MonoBehaviour:
     <ProcessingMode>k__BackingField: 1
   - <Component>k__BackingField: {fileID: 232688352}
     <ProcessingMode>k__BackingField: 0
-  _graphBuffer: {fileID: 0}
 --- !u!65 &232688354
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -938,7 +886,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4169d39a71e943340966141f25e6fbdb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  graphBuffer: {fileID: 137352182}
 --- !u!1 &285358062
 GameObject:
   m_ObjectHideFlags: 0
@@ -996,7 +943,6 @@ MonoBehaviour:
     <ProcessingMode>k__BackingField: 1
   - <Component>k__BackingField: {fileID: 285358063}
     <ProcessingMode>k__BackingField: 0
-  _graphBuffer: {fileID: 0}
 --- !u!65 &285358065
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -1098,7 +1044,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &286991791
 Transform:
   m_ObjectHideFlags: 0
@@ -1265,6 +1211,51 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 328165527}
   m_CullTransparentMesh: 1
+--- !u!1 &346780039
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 346780041}
+  - component: {fileID: 346780040}
+  m_Layer: 0
+  m_Name: GraphController
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &346780040
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 346780039}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3f76f747641578c40a97142e96baae7a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _baseUri: 
+--- !u!4 &346780041
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 346780039}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &414828570
 GameObject:
   m_ObjectHideFlags: 0
@@ -1322,7 +1313,6 @@ MonoBehaviour:
     <ProcessingMode>k__BackingField: 1
   - <Component>k__BackingField: {fileID: 414828571}
     <ProcessingMode>k__BackingField: 0
-  _graphBuffer: {fileID: 0}
 --- !u!65 &414828573
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -1466,7 +1456,6 @@ MonoBehaviour:
     <ProcessingMode>k__BackingField: 1
   - <Component>k__BackingField: {fileID: 417238695}
     <ProcessingMode>k__BackingField: 0
-  _graphBuffer: {fileID: 0}
 --- !u!65 &417238697
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -1610,7 +1599,6 @@ MonoBehaviour:
     <ProcessingMode>k__BackingField: 1
   - <Component>k__BackingField: {fileID: 424303847}
     <ProcessingMode>k__BackingField: 0
-  _graphBuffer: {fileID: 0}
 --- !u!65 &424303849
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -1712,7 +1700,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &425569423
 Transform:
   m_ObjectHideFlags: 0
@@ -1800,7 +1788,6 @@ MonoBehaviour:
     <ProcessingMode>k__BackingField: 1
   - <Component>k__BackingField: {fileID: 451770565}
     <ProcessingMode>k__BackingField: 0
-  _graphBuffer: {fileID: 0}
 --- !u!65 &451770567
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -1944,7 +1931,6 @@ MonoBehaviour:
     <ProcessingMode>k__BackingField: 1
   - <Component>k__BackingField: {fileID: 453002982}
     <ProcessingMode>k__BackingField: 0
-  _graphBuffer: {fileID: 0}
 --- !u!65 &453002984
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -2049,7 +2035,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &510031584
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2191,7 +2177,6 @@ MonoBehaviour:
     <ProcessingMode>k__BackingField: 1
   - <Component>k__BackingField: {fileID: 520508983}
     <ProcessingMode>k__BackingField: 0
-  _graphBuffer: {fileID: 0}
 --- !u!65 &520508985
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -2335,7 +2320,6 @@ MonoBehaviour:
     <ProcessingMode>k__BackingField: 1
   - <Component>k__BackingField: {fileID: 601377086}
     <ProcessingMode>k__BackingField: 0
-  _graphBuffer: {fileID: 0}
 --- !u!65 &601377088
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -2479,7 +2463,6 @@ MonoBehaviour:
     <ProcessingMode>k__BackingField: 1
   - <Component>k__BackingField: {fileID: 651375881}
     <ProcessingMode>k__BackingField: 0
-  _graphBuffer: {fileID: 0}
 --- !u!65 &651375883
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -2623,7 +2606,6 @@ MonoBehaviour:
     <ProcessingMode>k__BackingField: 1
   - <Component>k__BackingField: {fileID: 659058927}
     <ProcessingMode>k__BackingField: 0
-  _graphBuffer: {fileID: 0}
 --- !u!65 &659058929
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -2767,7 +2749,6 @@ MonoBehaviour:
     <ProcessingMode>k__BackingField: 1
   - <Component>k__BackingField: {fileID: 659357360}
     <ProcessingMode>k__BackingField: 0
-  _graphBuffer: {fileID: 0}
 --- !u!65 &659357362
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -2911,7 +2892,6 @@ MonoBehaviour:
     <ProcessingMode>k__BackingField: 1
   - <Component>k__BackingField: {fileID: 662985085}
     <ProcessingMode>k__BackingField: 0
-  _graphBuffer: {fileID: 0}
 --- !u!65 &662985087
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -3055,7 +3035,6 @@ MonoBehaviour:
     <ProcessingMode>k__BackingField: 1
   - <Component>k__BackingField: {fileID: 689839367}
     <ProcessingMode>k__BackingField: 0
-  _graphBuffer: {fileID: 0}
 --- !u!65 &689839369
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -3199,7 +3178,6 @@ MonoBehaviour:
     <ProcessingMode>k__BackingField: 1
   - <Component>k__BackingField: {fileID: 756072460}
     <ProcessingMode>k__BackingField: 0
-  _graphBuffer: {fileID: 0}
 --- !u!65 &756072462
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -3343,7 +3321,6 @@ MonoBehaviour:
     <ProcessingMode>k__BackingField: 1
   - <Component>k__BackingField: {fileID: 832788191}
     <ProcessingMode>k__BackingField: 0
-  _graphBuffer: {fileID: 0}
 --- !u!65 &832788193
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -3480,7 +3457,6 @@ MonoBehaviour:
     <ProcessingMode>k__BackingField: 0
   - <Component>k__BackingField: {fileID: 938404644}
     <ProcessingMode>k__BackingField: 0
-  _graphBuffer: {fileID: 0}
 --- !u!114 &938404644
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3493,7 +3469,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 698fff3e7839a1c4aa059a40e7fdd9c0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _graphBuffer: {fileID: 0}
   _debug: 1
   <PointerDistance>k__BackingField: 20
 --- !u!1 &943934300
@@ -3553,7 +3528,6 @@ MonoBehaviour:
     <ProcessingMode>k__BackingField: 1
   - <Component>k__BackingField: {fileID: 943934301}
     <ProcessingMode>k__BackingField: 0
-  _graphBuffer: {fileID: 0}
 --- !u!65 &943934303
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -3697,7 +3671,6 @@ MonoBehaviour:
     <ProcessingMode>k__BackingField: 1
   - <Component>k__BackingField: {fileID: 1005619022}
     <ProcessingMode>k__BackingField: 0
-  _graphBuffer: {fileID: 0}
 --- !u!65 &1005619024
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -3829,7 +3802,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3a78211476281d04c9197c7d4ddaf2fd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _graphBuffer: {fileID: 0}
   _debug: 1
   <GraspDistance>k__BackingField: 10
 --- !u!114 &1011916316
@@ -3849,7 +3821,6 @@ MonoBehaviour:
     <ProcessingMode>k__BackingField: 0
   - <Component>k__BackingField: {fileID: 1011916315}
     <ProcessingMode>k__BackingField: 1
-  _graphBuffer: {fileID: 0}
 --- !u!1 &1031309578
 GameObject:
   m_ObjectHideFlags: 0
@@ -3907,7 +3878,6 @@ MonoBehaviour:
     <ProcessingMode>k__BackingField: 1
   - <Component>k__BackingField: {fileID: 1031309579}
     <ProcessingMode>k__BackingField: 0
-  _graphBuffer: {fileID: 0}
 --- !u!65 &1031309581
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -4051,7 +4021,6 @@ MonoBehaviour:
     <ProcessingMode>k__BackingField: 1
   - <Component>k__BackingField: {fileID: 1032951735}
     <ProcessingMode>k__BackingField: 0
-  _graphBuffer: {fileID: 0}
 --- !u!65 &1032951737
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -4195,7 +4164,6 @@ MonoBehaviour:
     <ProcessingMode>k__BackingField: 1
   - <Component>k__BackingField: {fileID: 1046888106}
     <ProcessingMode>k__BackingField: 0
-  _graphBuffer: {fileID: 0}
 --- !u!65 &1046888108
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -4298,7 +4266,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &1127875386
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4314,7 +4282,6 @@ MonoBehaviour:
   pointOfView: {fileID: 0}
   pointers: []
   graspArea: {fileID: 0}
-  graphBuffer: {fileID: 0}
 --- !u!4 &1127875387
 Transform:
   m_ObjectHideFlags: 0
@@ -4455,7 +4422,6 @@ MonoBehaviour:
     <ProcessingMode>k__BackingField: 1
   - <Component>k__BackingField: {fileID: 1185521406}
     <ProcessingMode>k__BackingField: 0
-  _graphBuffer: {fileID: 0}
 --- !u!65 &1185521408
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -4599,7 +4565,6 @@ MonoBehaviour:
     <ProcessingMode>k__BackingField: 1
   - <Component>k__BackingField: {fileID: 1229614563}
     <ProcessingMode>k__BackingField: 0
-  _graphBuffer: {fileID: 0}
 --- !u!65 &1229614565
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -4743,7 +4708,6 @@ MonoBehaviour:
     <ProcessingMode>k__BackingField: 1
   - <Component>k__BackingField: {fileID: 1275101864}
     <ProcessingMode>k__BackingField: 0
-  _graphBuffer: {fileID: 0}
 --- !u!65 &1275101866
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -4887,7 +4851,6 @@ MonoBehaviour:
     <ProcessingMode>k__BackingField: 1
   - <Component>k__BackingField: {fileID: 1308310552}
     <ProcessingMode>k__BackingField: 0
-  _graphBuffer: {fileID: 0}
 --- !u!65 &1308310554
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -5031,7 +4994,6 @@ MonoBehaviour:
     <ProcessingMode>k__BackingField: 1
   - <Component>k__BackingField: {fileID: 1340449817}
     <ProcessingMode>k__BackingField: 0
-  _graphBuffer: {fileID: 0}
 --- !u!65 &1340449819
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -5175,7 +5137,6 @@ MonoBehaviour:
     <ProcessingMode>k__BackingField: 1
   - <Component>k__BackingField: {fileID: 1400164713}
     <ProcessingMode>k__BackingField: 0
-  _graphBuffer: {fileID: 0}
 --- !u!65 &1400164715
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -5319,7 +5280,6 @@ MonoBehaviour:
     <ProcessingMode>k__BackingField: 1
   - <Component>k__BackingField: {fileID: 1426620101}
     <ProcessingMode>k__BackingField: 0
-  _graphBuffer: {fileID: 0}
 --- !u!65 &1426620103
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -5489,7 +5449,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 137352182}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: Sven.GraphManagement.GraphBuffer, Assembly-CSharp
         m_MethodName: SaveExperiment
         m_Mode: 1
@@ -5596,7 +5556,6 @@ MonoBehaviour:
     <ProcessingMode>k__BackingField: 1
   - <Component>k__BackingField: {fileID: 1496543463}
     <ProcessingMode>k__BackingField: 0
-  _graphBuffer: {fileID: 0}
 --- !u!65 &1496543465
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -5740,7 +5699,6 @@ MonoBehaviour:
     <ProcessingMode>k__BackingField: 1
   - <Component>k__BackingField: {fileID: 1516567849}
     <ProcessingMode>k__BackingField: 0
-  _graphBuffer: {fileID: 0}
 --- !u!65 &1516567851
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -5884,7 +5842,6 @@ MonoBehaviour:
     <ProcessingMode>k__BackingField: 1
   - <Component>k__BackingField: {fileID: 1544171560}
     <ProcessingMode>k__BackingField: 0
-  _graphBuffer: {fileID: 0}
 --- !u!65 &1544171562
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -6028,7 +5985,6 @@ MonoBehaviour:
     <ProcessingMode>k__BackingField: 1
   - <Component>k__BackingField: {fileID: 1604506706}
     <ProcessingMode>k__BackingField: 0
-  _graphBuffer: {fileID: 0}
 --- !u!65 &1604506708
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -6172,7 +6128,6 @@ MonoBehaviour:
     <ProcessingMode>k__BackingField: 1
   - <Component>k__BackingField: {fileID: 1648993152}
     <ProcessingMode>k__BackingField: 0
-  _graphBuffer: {fileID: 0}
 --- !u!65 &1648993154
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -6276,7 +6231,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!108 &1801497866
 Light:
   m_ObjectHideFlags: 0
@@ -6437,7 +6392,6 @@ MonoBehaviour:
     <ProcessingMode>k__BackingField: 1
   - <Component>k__BackingField: {fileID: 1846451920}
     <ProcessingMode>k__BackingField: 0
-  _graphBuffer: {fileID: 0}
 --- !u!65 &1846451922
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -6581,7 +6535,6 @@ MonoBehaviour:
     <ProcessingMode>k__BackingField: 1
   - <Component>k__BackingField: {fileID: 1896901239}
     <ProcessingMode>k__BackingField: 0
-  _graphBuffer: {fileID: 0}
 --- !u!65 &1896901241
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -6725,7 +6678,6 @@ MonoBehaviour:
     <ProcessingMode>k__BackingField: 1
   - <Component>k__BackingField: {fileID: 1937762339}
     <ProcessingMode>k__BackingField: 0
-  _graphBuffer: {fileID: 0}
 --- !u!65 &1937762341
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -6869,7 +6821,6 @@ MonoBehaviour:
     <ProcessingMode>k__BackingField: 1
   - <Component>k__BackingField: {fileID: 1938748361}
     <ProcessingMode>k__BackingField: 0
-  _graphBuffer: {fileID: 0}
 --- !u!65 &1938748363
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -6975,7 +6926,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!20 &1942567332
 Camera:
   m_ObjectHideFlags: 0
@@ -7105,7 +7056,6 @@ MonoBehaviour:
     <ProcessingMode>k__BackingField: 0
   - <Component>k__BackingField: {fileID: 1942567333}
     <ProcessingMode>k__BackingField: 0
-  _graphBuffer: {fileID: 0}
 --- !u!114 &1942567336
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7118,7 +7068,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fc0275620122f9a43b37534676c6031c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _graphBuffer: {fileID: 0}
   _debug: 1
   cameraComponent: {fileID: 0}
 --- !u!1 &1957813137
@@ -7178,7 +7127,6 @@ MonoBehaviour:
     <ProcessingMode>k__BackingField: 1
   - <Component>k__BackingField: {fileID: 1957813138}
     <ProcessingMode>k__BackingField: 0
-  _graphBuffer: {fileID: 0}
 --- !u!65 &1957813140
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -7322,7 +7270,6 @@ MonoBehaviour:
     <ProcessingMode>k__BackingField: 1
   - <Component>k__BackingField: {fileID: 1999932858}
     <ProcessingMode>k__BackingField: 0
-  _graphBuffer: {fileID: 0}
 --- !u!65 &1999932860
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -7466,7 +7413,6 @@ MonoBehaviour:
     <ProcessingMode>k__BackingField: 1
   - <Component>k__BackingField: {fileID: 2076466400}
     <ProcessingMode>k__BackingField: 0
-  _graphBuffer: {fileID: 0}
 --- !u!65 &2076466402
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -7610,7 +7556,6 @@ MonoBehaviour:
     <ProcessingMode>k__BackingField: 1
   - <Component>k__BackingField: {fileID: 2089945191}
     <ProcessingMode>k__BackingField: 0
-  _graphBuffer: {fileID: 0}
 --- !u!65 &2089945193
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -7754,7 +7699,6 @@ MonoBehaviour:
     <ProcessingMode>k__BackingField: 1
   - <Component>k__BackingField: {fileID: 2111581966}
     <ProcessingMode>k__BackingField: 0
-  _graphBuffer: {fileID: 0}
 --- !u!65 &2111581968
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -7847,10 +7791,10 @@ SceneRoots:
   m_Roots:
   - {fileID: 1942567333}
   - {fileID: 1801497867}
-  - {fileID: 137352180}
   - {fileID: 425569423}
   - {fileID: 286991791}
   - {fileID: 216645334}
   - {fileID: 510031587}
   - {fileID: 1169822577}
   - {fileID: 1127875387}
+  - {fileID: 346780041}

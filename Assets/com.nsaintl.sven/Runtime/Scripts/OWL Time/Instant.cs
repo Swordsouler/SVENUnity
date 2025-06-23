@@ -2,9 +2,10 @@
 // Author: Nicolas SAINT-LÉGER
 // Licensed under the MIT License. See LICENSE file in the project root for full license information.
 
-using System;
+using Sven.GraphManagement;
 using Sven.Utils;
 using Sven.XsdData;
+using System;
 using VDS.RDF;
 
 namespace Sven.OwlTime
@@ -51,11 +52,11 @@ namespace Sven.OwlTime
         /// Semantizes the temporal entity in the graph.
         /// </summary>
         /// <param name="graph">The graph to semantize the temporal entity.</param>
-        public new IUriNode Semantize(IGraph graph)
+        public new IUriNode Semanticize()
         {
-            IUriNode instantNode = base.Semantize(graph);
-            if (SvenHelper.UseInside) Interval.SemantizeInside(graph, this);
-            if (inXSDDateTime != null) graph.Assert(new Triple(instantNode, graph.CreateUriNode("time:inXSDDateTime"), inXSDDateTime.ToLiteralNode(graph)));
+            IUriNode instantNode = base.Semanticize();
+            if (SvenConfig.UseInside) Interval.SemanticizeInside(this);
+            if (inXSDDateTime != null) GraphManager.Assert(new Triple(instantNode, GraphManager.CreateUriNode("time:inXSDDateTime"), inXSDDateTime.ToLiteralNode()));
             // seems to be useless in our case
             // if (inXSDDate != null) graph.Assert(new Triple(temporalEntityNode, graph.CreateUriNode("time:inXSDDate"), inXSDDate.ToLiteralNode(graph)));
             // if (inXSDTimeStamp != null) graph.Assert(new Triple(temporalEntityNode, graph.CreateUriNode("time:inXSDTimeStamp"), inXSDTimeStamp.ToLiteralNode(graph)));

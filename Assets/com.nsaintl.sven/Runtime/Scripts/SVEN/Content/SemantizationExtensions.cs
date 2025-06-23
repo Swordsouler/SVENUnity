@@ -2,15 +2,15 @@
 // Author: Nicolas SAINT-LÉGER
 // Licensed under the MIT License. See LICENSE file in the project root for full license information.
 
+using Sven.GeoData;
+using Sven.GraphManagement;
+using Sven.OwlTime;
+using Sven.Utils;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using Sven.GeoData;
-using Sven.GraphManagement;
-using Sven.OwlTime;
-using Sven.Utils;
 using UnityEngine;
 using VDS.RDF;
 using VDS.RDF.Nodes;
@@ -169,7 +169,7 @@ namespace Sven.Content
         /// <param name="component">Component to semantize.</param>
         /// <param name="graphBuffer">Graph buffer to semantize the component.</param>
         /// <returns>List of properties that have been semantized.</returns>
-        public static List<Property> SemanticObserve(this Component component, GraphBuffer graphBuffer)
+        public static List<Property> SemanticObserve(this Component component)
         {
             if (!component.gameObject.TryGetComponent(out SemantizationCore semantizationCore))
             {
@@ -177,28 +177,26 @@ namespace Sven.Content
                 throw new NullReferenceException();
             }
 
-            IGraph graph = graphBuffer.Graph;
+            IUriNode gameObjectNode = GraphManager.CreateUriNode("sven:" + semantizationCore.GetUUID());
+            IUriNode componentNode = GraphManager.CreateUriNode("sven:" + component.GetUUID());
+            IUriNode componentTypeNode = GraphManager.CreateUriNode(component.GetRdfType());
 
-            IUriNode gameObjectNode = graph.CreateUriNode("sven:" + semantizationCore.GetUUID());
-            IUriNode componentNode = graph.CreateUriNode("sven:" + component.GetUUID());
-            IUriNode componentTypeNode = graph.CreateUriNode(component.GetRdfType());
-
-            graph.Assert(new Triple(gameObjectNode, graph.CreateUriNode("sven:component"), componentNode));
-            graph.Assert(new Triple(componentNode, graph.CreateUriNode("rdf:type"), componentTypeNode));
-            graph.Assert(new Triple(componentNode, graph.CreateUriNode("sven:exactType"), componentTypeNode));
+            GraphManager.Assert(new Triple(gameObjectNode, GraphManager.CreateUriNode("sven:component"), componentNode));
+            GraphManager.Assert(new Triple(componentNode, GraphManager.CreateUriNode("rdf:type"), componentTypeNode));
+            GraphManager.Assert(new Triple(componentNode, GraphManager.CreateUriNode("sven:exactType"), componentTypeNode));
 
             List<Property> properties = component.GetProperties();
             foreach (Property property in properties)
             {
-                property.SemanticObserve(graphBuffer, component);
-                if (SvenHelper.Debug)
+                property.SemanticObserve(component);
+                if (SvenConfig.Debug)
                     Debug.Log("Observing property (" + semantizationCore.name + ")." + component.GetType().Name + "." + property.Name);
             }
 
             Interval interval = component.GetInterval();
-            interval.Start(graphBuffer.CurrentInstant);
-            IUriNode intervalNode = interval.Semantize(graph);
-            graph.Assert(new Triple(componentNode, graph.CreateUriNode("time:hasTemporalExtent"), intervalNode));
+            interval.Start(GraphManager.CurrentInstant);
+            IUriNode intervalNode = interval.Semanticize();
+            GraphManager.Assert(new Triple(componentNode, GraphManager.CreateUriNode("time:hasTemporalExtent"), intervalNode));
 
             return properties;
         }

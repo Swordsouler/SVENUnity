@@ -22,8 +22,8 @@ namespace Sven.Demo
         public new void Awake()
         {
             readingMode = GraphStorageMode.Remote;
-            graphName = DemoManager.graphName;
-            endpoint = DemoManager.EndpointUri.ToString();
+            graphName = DemoGraphConfig.graphName;
+            endpoint = DemoGraphConfig.EndpointUri.ToString();
             MapppedComponents.AddComponentDescription(typeof(DemoSprayController), new("Spray",
                 new List<Delegate>
                 {

@@ -2,6 +2,7 @@
 // Author: Nicolas SAINT-LÉGER
 // Licensed under the MIT License. See LICENSE file in the project root for full license information.
 
+using Sven.GraphManagement;
 using VDS.RDF;
 
 namespace Sven.Context
@@ -22,10 +23,10 @@ namespace Sven.Context
         /// Semantizes the event.
         /// </summary>
         /// <param name="graph">The graph to semantize the event.</param>
-        public new IUriNode Semantize(IGraph graph)
+        public new IUriNode Semanticize()
         {
-            IUriNode eventNode = base.Semantize(graph);
-            graph.Assert(new Triple(eventNode, graph.CreateUriNode("sven:input"), graph.CreateLiteralNode(_input)));
+            IUriNode eventNode = base.Semanticize();
+            GraphManager.Assert(new Triple(eventNode, GraphManager.CreateUriNode("sven:input"), GraphManager.CreateLiteralNode(_input)));
             return eventNode;
         }
     }

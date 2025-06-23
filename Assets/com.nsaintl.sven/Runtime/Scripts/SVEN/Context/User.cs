@@ -2,10 +2,10 @@
 // Author: Nicolas SAINT-LÉGER
 // Licensed under the MIT License. See LICENSE file in the project root for full license information.
 
-using System.Collections.Generic;
 using Sven.Content;
 using Sven.GraphManagement;
 using Sven.Utils;
+using System.Collections.Generic;
 using UnityEngine;
 using VDS.RDF;
 
@@ -43,16 +43,10 @@ namespace Sven.Context
         public GraspArea graspArea;
 
         /// <summary>
-        /// The graph buffer to semantize the GameObject.
-        /// </summary>
-        public GraphBuffer graphBuffer;
-
-        /// <summary>
         /// Start is called before the first frame update.
         /// </summary>
         public void Start()
         {
-            if (graphBuffer == null) graphBuffer = OldGraphManager.Get("sven");
             Initialize();
         }
 
@@ -61,25 +55,22 @@ namespace Sven.Context
         /// </summary>
         private void Initialize()
         {
-            // semantize user -> to each component
-            IGraph graph = graphBuffer.Graph;
+            IUriNode userNode = GraphManager.CreateUriNode("sven:" + UUID);
 
-            IUriNode userNode = graph.CreateUriNode("sven:" + UUID);
-
-            graph.Assert(new Triple(userNode, graph.CreateUriNode("rdf:type"), graph.CreateUriNode("sven:User")));
-            if (pointOfView != null) graph.Assert(new Triple(userNode, graph.CreateUriNode("sven:pointOfView"), graph.CreateUriNode("sven:" + pointOfView.GetComponent<SemantizationCore>().GetUUID())));
-            if (graspArea != null) graph.Assert(new Triple(userNode, graph.CreateUriNode("sven:graspArea"), graph.CreateUriNode("sven:" + graspArea.GetComponent<SemantizationCore>().GetUUID())));
+            GraphManager.Assert(new Triple(userNode, GraphManager.CreateUriNode("rdf:type"), GraphManager.CreateUriNode("sven:User")));
+            if (pointOfView != null) GraphManager.Assert(new Triple(userNode, GraphManager.CreateUriNode("sven:pointOfView"), GraphManager.CreateUriNode("sven:" + pointOfView.GetComponent<SemantizationCore>().GetUUID())));
+            if (graspArea != null) GraphManager.Assert(new Triple(userNode, GraphManager.CreateUriNode("sven:graspArea"), GraphManager.CreateUriNode("sven:" + graspArea.GetComponent<SemantizationCore>().GetUUID())));
             if (pointers != null)
                 foreach (Pointer pointer in pointers)
-                    graph.Assert(new Triple(userNode, graph.CreateUriNode("sven:pointer"), graph.CreateUriNode("sven:" + pointer.GetComponent<SemantizationCore>().GetUUID())));
+                    GraphManager.Assert(new Triple(userNode, GraphManager.CreateUriNode("sven:pointer"), GraphManager.CreateUriNode("sven:" + pointer.GetComponent<SemantizationCore>().GetUUID())));
         }
 
         public void OnDestroy()
         {
             foreach (KeyValuePair<string, InputEvent> inputEvent in _inputEvents)
             {
-                inputEvent.Value.End(graphBuffer.CurrentInstant);
-                inputEvent.Value.Semantize(graphBuffer.Graph);
+                inputEvent.Value.End(GraphManager.CurrentInstant);
+                inputEvent.Value.Semanticize();
             }
             this.DestroyUUID();
         }
@@ -96,10 +87,10 @@ namespace Sven.Context
                         string key = keyCode.ToString();
                         if (!_inputEvents.ContainsKey(key))
                         {
-                            if (SvenHelper.Debug) Debug.Log(key + " pressed");
+                            if (SvenConfig.Debug) Debug.Log(key + " pressed");
                             InputEvent inputEvent = new(this, key);
-                            inputEvent.Start(graphBuffer.CurrentInstant);
-                            inputEvent.Semantize(graphBuffer.Graph);
+                            inputEvent.Start(GraphManager.CurrentInstant);
+                            inputEvent.Semanticize();
                             _inputEvents.Add(key, inputEvent);
                         }
                     }
@@ -114,9 +105,9 @@ namespace Sven.Context
                     string key = keyCode.ToString();
                     if (_inputEvents.TryGetValue(key, out InputEvent inputEvent))
                     {
-                        if (SvenHelper.Debug) Debug.Log(key + " released");
-                        inputEvent.End(graphBuffer.CurrentInstant);
-                        inputEvent.Semantize(graphBuffer.Graph);
+                        if (SvenConfig.Debug) Debug.Log(key + " released");
+                        inputEvent.End(GraphManager.CurrentInstant);
+                        inputEvent.Semanticize();
                         _inputEvents.Remove(key);
                     }
                 }

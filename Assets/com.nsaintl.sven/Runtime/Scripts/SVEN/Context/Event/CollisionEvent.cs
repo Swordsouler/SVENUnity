@@ -3,6 +3,7 @@
 // Licensed under the MIT License. See LICENSE file in the project root for full license information.
 
 using Sven.Content;
+using Sven.GraphManagement;
 using VDS.RDF;
 
 namespace Sven.Context
@@ -33,11 +34,11 @@ namespace Sven.Context
         /// Semantizes the event.
         /// </summary>
         /// <param name="graph">The graph to semantize the event.</param>
-        public new IUriNode Semantize(IGraph graph)
+        public new IUriNode Semanticize()
         {
-            IUriNode eventNode = base.Semantize(graph);
-            graph.Assert(new Triple(eventNode, graph.CreateUriNode("sven:sender"), graph.CreateUriNode("sven:" + _senderUUID)));
-            graph.Assert(new Triple(eventNode, graph.CreateUriNode("sven:receiver"), graph.CreateUriNode("sven:" + _receiverUUID)));
+            IUriNode eventNode = base.Semanticize();
+            GraphManager.Assert(new Triple(eventNode, GraphManager.CreateUriNode("sven:sender"), GraphManager.CreateUriNode("sven:" + _senderUUID)));
+            GraphManager.Assert(new Triple(eventNode, GraphManager.CreateUriNode("sven:receiver"), GraphManager.CreateUriNode("sven:" + _receiverUUID)));
             return eventNode;
         }
     }

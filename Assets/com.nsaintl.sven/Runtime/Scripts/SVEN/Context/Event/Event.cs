@@ -2,6 +2,7 @@
 // Author: Nicolas SAINT-LÉGER
 // Licensed under the MIT License. See LICENSE file in the project root for full license information.
 
+using Sven.GraphManagement;
 using Sven.OwlTime;
 using VDS.RDF;
 
@@ -24,15 +25,7 @@ namespace Sven.Context
         /// </summary>
         protected User _user;
 
-        /// <summary>
-        /// Gets the URI of the event.
-        /// </summary>
-        /// <param name="graph">The graph to get the URI from.</param>
-        /// <returns>The URI of the event.</returns>
-        public IUriNode GetUriNode(IGraph graph)
-        {
-            return graph.CreateUriNode("sven:" + _uuid);
-        }
+        public IUriNode UriNode => GraphManager.CreateUriNode("sven:" + _uuid);
 
         public Event(User user)
         {
@@ -63,12 +56,12 @@ namespace Sven.Context
         /// Semantizes the event.
         /// </summary>
         /// <param name="graph">The graph to semantize the event.</param>
-        public IUriNode Semantize(IGraph graph)
+        public IUriNode Semanticize()
         {
-            IUriNode eventNode = GetUriNode(graph);
-            graph.Assert(new Triple(eventNode, graph.CreateUriNode("rdf:type"), graph.CreateUriNode($"sven:{GetType().Name}")));
-            graph.Assert(new Triple(eventNode, graph.CreateUriNode("time:hasTemporalExtent"), _interval.Semantize(graph)));
-            if (_user != null) graph.Assert(new Triple(graph.CreateUriNode("sven:" + _user.UUID), graph.CreateUriNode("sven:perform"), eventNode));
+            IUriNode eventNode = UriNode;
+            GraphManager.Assert(new Triple(eventNode, GraphManager.CreateUriNode("rdf:type"), GraphManager.CreateUriNode($"sven:{GetType().Name}")));
+            GraphManager.Assert(new Triple(eventNode, GraphManager.CreateUriNode("time:hasTemporalExtent"), _interval.Semanticize()));
+            if (_user != null) GraphManager.Assert(new Triple(GraphManager.CreateUriNode("sven:" + _user.UUID), GraphManager.CreateUriNode("sven:perform"), eventNode));
             return eventNode;
         }
     }

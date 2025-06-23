@@ -2,6 +2,7 @@
 // Author: Nicolas SAINT-LÉGER
 // Licensed under the MIT License. See LICENSE file in the project root for full license information.
 
+using Sven.GraphManagement;
 using System;
 using VDS.RDF;
 using VDS.RDF.Parsing;
@@ -113,9 +114,9 @@ namespace Sven.XsdData
         /// </summary>
         /// <param name="factory">The node factory.</param>
         /// <returns>The literal node.</returns>
-        public ILiteralNode ToLiteralNode(INodeFactory factory)
+        public ILiteralNode ToLiteralNode()
         {
-            return factory.CreateLiteralNode(Value, new Uri(XmlSpecsHelper.XmlSchemaDataTypeDuration));
+            return GraphManager.CreateLiteralNode(Value, new Uri(XmlSpecsHelper.XmlSchemaDataTypeDuration));
         }
     }
 }

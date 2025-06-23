@@ -3,6 +3,7 @@
 // Licensed under the MIT License. See LICENSE file in the project root for full license information.
 
 using NaughtyAttributes;
+using Sven.GraphManagement;
 using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -26,7 +27,7 @@ namespace Sven.Demo
         [BoxGroup("View")] public GameObject downloadingActivityIndicator;
         [BoxGroup("View")] public GameObject sendingActivityIndicator;
 
-        [BoxGroup("Controller")] public DemoGraphBuffer graphBuffer;
+        //[BoxGroup("Controller")] public DemoGraphBuffer graphBuffer;
         [BoxGroup("Controller")] public DemoCharacterController demoCharacterController;
 
         private bool _isDownloading = false;
@@ -42,7 +43,7 @@ namespace Sven.Demo
         {
             if (downloadingActivityIndicator != null) downloadingActivityIndicator.SetActive(false);
             if (sendingActivityIndicator != null) sendingActivityIndicator.SetActive(false);
-            if (triplesAmountText != null) triplesAmountText.text = graphBuffer.Graph.Triples.Count.ToString();
+            if (triplesAmountText != null) triplesAmountText.text = GraphManager.Count.ToString();
         }
 
         public override void TogglePause()
@@ -66,7 +67,7 @@ namespace Sven.Demo
             _isDownloading = true;
             if (downloadingActivityIndicator != null) downloadingActivityIndicator.SetActive(true);
             if (downloadButton != null) downloadButton.gameObject.SetActive(false);
-            string turtleContent = graphBuffer.DecodeGraph(graphBuffer.Graph);
+            string turtleContent = GraphManager.DecodeGraph();
 
             // in webgl build, download the turtleContent ass txt file
 #if UNITY_WEBGL && !UNITY_EDITOR
@@ -92,7 +93,7 @@ namespace Sven.Demo
             if (saveQuitButton != null) saveQuitButton.gameObject.SetActive(false);
             if (sendingActivityIndicator != null) sendingActivityIndicator.SetActive(true);
 
-            await graphBuffer.SaveExperiment();
+            //await graphBuffer.SaveExperiment();
             SceneManager.LoadScene("Demo Menu", LoadSceneMode.Single);
         }
 
@@ -100,7 +101,7 @@ namespace Sven.Demo
         {
             if (_isSending || _isDownloading) return;
             base.Update();
-            triplesAmountText.text = graphBuffer.Graph.Triples.Count.ToString();
+            triplesAmountText.text = GraphManager.Count.ToString();
         }
     }
 }

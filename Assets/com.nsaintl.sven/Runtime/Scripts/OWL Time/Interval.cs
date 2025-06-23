@@ -2,6 +2,7 @@
 // Author: Nicolas SAINT-LÉGER
 // Licensed under the MIT License. See LICENSE file in the project root for full license information.
 
+using Sven.GraphManagement;
 using System;
 using VDS.RDF;
 
@@ -15,15 +16,13 @@ namespace Sven.OwlTime
         /// <summary>
         /// Initializes a new instance of the Interval class.
         /// </summary>
-        public Interval() : base("time:", Guid.NewGuid().ToString()) { }
+        public Interval() : base(Guid.NewGuid().ToString()) { }
 
         /// <summary>
         /// Initializes a new instance of the Interval class with the specified UUID.
         /// </summary>
         /// <param name="UUID">The UUID to initialize the instance with.</param>
-        public Interval(string UUID) : base("time:", UUID) { }
-
-        public Interval(string prefix, string UUID) : base(prefix, UUID) { }
+        public Interval(string UUID) : base(UUID) { }
 
         /// <summary>
         /// Initializes a new instance of the Interval class.
@@ -57,13 +56,13 @@ namespace Sven.OwlTime
         /// </summary>
         /// <param name="graph">The graph to semantize the interval.</param>
         /// <param name="instant">The instant to semantize inside the interval.</param>
-        public static void SemantizeInside(IGraph graph, Instant instant)
+        public static void SemanticizeInside(Instant instant)
         {
-            IUriNode instantNode = instant.GetUriNode(graph);
+            IUriNode instantNode = instant.UriNode;
 
             foreach (Interval interval in intervals)
             {
-                graph.Assert(new Triple(interval.GetUriNode(graph), graph.CreateUriNode("time:inside"), instantNode));
+                GraphManager.Assert(new Triple(interval.UriNode, GraphManager.CreateUriNode("time:inside"), instantNode));
             }
         }
     }

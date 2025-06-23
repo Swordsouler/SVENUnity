@@ -2,12 +2,11 @@
 // Author: Nicolas SAINT-LÉGER
 // Licensed under the MIT License. See LICENSE file in the project root for full license information.
 
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using Sven.GraphManagement;
 using Sven.OwlTime;
 using Sven.Utils;
+using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using VDS.RDF;
 
@@ -32,16 +31,6 @@ namespace Sven.Content
         private readonly Dictionary<Component, SemanticComponent> componentsProperties = new();
 
         /// <summary>
-        /// The graph buffer to semantize the GameObject.
-        /// </summary>
-        [SerializeField]
-        private GraphBuffer _graphBuffer;
-        /// <summary>
-        /// The graph buffer to semantize the GameObject.
-        /// </summary>
-        public GraphBuffer GraphBuffer => _graphBuffer;
-
-        /// <summary>
         /// Coroutine to check for changes in the properties of the GameObject.
         /// </summary>
         private Coroutine _checkForChangesCoroutine;
@@ -51,12 +40,10 @@ namespace Sven.Content
         /// </summary>
         private void Start()
         {
-            if (_graphBuffer == null) _graphBuffer = OldGraphManager.Get("sven");
-            if (_graphBuffer == null) return;
             Component component = GetComponent<Component>();
             componentsToSemantize.RemoveAll(c => c == null || c.Component == null || !component.gameObject.Equals(c.Component.gameObject));
             Initialize();
-            _checkForChangesCoroutine = StartCoroutine(LoopCheckForChanges(1.0f / _graphBuffer.instantPerSecond));
+            _checkForChangesCoroutine = StartCoroutine(LoopCheckForChanges(1.0f / SvenConfig.SemanticizeFrequency));
         }
 
         /// <summary>
@@ -71,7 +58,7 @@ namespace Sven.Content
                 {
                     Component = this,
                     ProcessingMode = SemanticProcessingMode.Dynamic,
-                    Properties = SemanticObserve(_graphBuffer)
+                    Properties = SemanticObserve()
                 });
 
                 // foreach component in the GameObject, semantize the component and his properties
@@ -80,7 +67,7 @@ namespace Sven.Content
                     {
                         Component = component.Component,
                         ProcessingMode = component.ProcessingMode,
-                        Properties = component.Component.SemanticObserve(_graphBuffer)
+                        Properties = component.Component.SemanticObserve()
                     });
 
             }
@@ -103,7 +90,7 @@ namespace Sven.Content
             }
 
             componentsToSemantize.Add(new SemanticComponent { Component = component, ProcessingMode = mode });
-            List<Property> properties = component.SemanticObserve(_graphBuffer);
+            List<Property> properties = component.SemanticObserve();
             componentsProperties.Add(component, new SemanticComponent
             {
                 Component = component,
@@ -116,7 +103,7 @@ namespace Sven.Content
         /// Overrides the default SemanticObserve method to focus on the GameObject semantization.
         /// </summary>
         /// <param name="graphBuffer">The graph buffer to semantize the GameObject.</param>
-        public List<Property> SemanticObserve(GraphBuffer graphBuffer)
+        public List<Property> SemanticObserve()
         {
             List<Property> properties = new()
             {
@@ -126,23 +113,21 @@ namespace Sven.Content
                 new Property("layer", () => LayerMask.LayerToName(gameObject.layer))
             };
 
-            IGraph graph = graphBuffer.Graph;
+            IUriNode gameObjectNode = GraphManager.CreateUriNode("sven:" + this.GetUUID());
 
-            IUriNode gameObjectNode = graph.CreateUriNode("sven:" + this.GetUUID());
-
-            graph.Assert(new Triple(gameObjectNode, graph.CreateUriNode("rdf:type"), graph.CreateUriNode("sven:VirtualObject")));
-            graph.Assert(new Triple(gameObjectNode, graph.CreateUriNode("rdfs:label"), graph.CreateLiteralNode(name)));
+            GraphManager.Assert(new Triple(gameObjectNode, GraphManager.CreateUriNode("rdf:type"), GraphManager.CreateUriNode("sven:VirtualObject")));
+            GraphManager.Assert(new Triple(gameObjectNode, GraphManager.CreateUriNode("rdfs:label"), GraphManager.CreateLiteralNode(name)));
             foreach (Property property in properties)
             {
-                property.SemanticObserve(graphBuffer, this);
-                if (SvenHelper.Debug)
+                property.SemanticObserve(this);
+                if (SvenConfig.Debug)
                     Debug.Log("Observing property (" + name + ")." + GetType().Name + "." + property.Name);
             }
 
             Interval interval = this.GetInterval();
-            interval.Start(graphBuffer.CurrentInstant);
-            IUriNode intervalNode = interval.Semantize(graph);
-            graph.Assert(new Triple(gameObjectNode, graph.CreateUriNode("time:hasTemporalExtent"), intervalNode));
+            interval.Start(GraphManager.CurrentInstant);
+            IUriNode intervalNode = interval.Semanticize();
+            GraphManager.Assert(new Triple(gameObjectNode, GraphManager.CreateUriNode("time:hasTemporalExtent"), intervalNode));
 
             return properties;
         }
@@ -167,7 +152,7 @@ namespace Sven.Content
                 }
                 catch
                 {
-                    if (SvenHelper.Debug) Debug.LogWarning("Component " + componentProperties.Key.GetType().Name + " has been destroyed. Removing from semantization.");
+                    if (SvenConfig.Debug) Debug.LogWarning("Component " + componentProperties.Key.GetType().Name + " has been destroyed. Removing from semantization.");
                     toRemove.Add(componentProperties.Key);
                 }
             }
@@ -178,8 +163,8 @@ namespace Sven.Content
                     property.Destroy();
 
                 Interval interval = component.GetInterval();
-                interval.End(_graphBuffer.CurrentInstant);
-                interval.Semantize(_graphBuffer.Graph);
+                interval.End(GraphManager.CurrentInstant);
+                interval.Semanticize();
                 component.DestroyUUID();
 
                 componentsProperties.Remove(component);
@@ -212,9 +197,8 @@ namespace Sven.Content
         /// </summary>
         private void OnEnable()
         {
-            if (_graphBuffer == null) return;
             if (_checkForChangesCoroutine != null) StopCoroutine(_checkForChangesCoroutine);
-            StartCoroutine(LoopCheckForChanges(1.0f / _graphBuffer.instantPerSecond));
+            StartCoroutine(LoopCheckForChanges(1.0f / SvenConfig.SemanticizeFrequency));
         }
 
         /// <summary>
@@ -228,8 +212,8 @@ namespace Sven.Content
                     property.Destroy();
 
                 Interval interval = componentProperties.Key.GetInterval();
-                interval.End(_graphBuffer.CurrentInstant);
-                interval.Semantize(_graphBuffer.Graph);
+                interval.End(GraphManager.CurrentInstant);
+                interval.Semanticize();
                 componentProperties.Key.DestroyUUID();
             }
         }

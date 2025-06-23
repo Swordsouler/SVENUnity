@@ -45,7 +45,7 @@ namespace Sven.Demo
 
         private void Awake()
         {
-            if (semantisationFrequencySlider != null) semantisationFrequencySlider.value = DemoManager.semantisationFrequency;
+            if (semantisationFrequencySlider != null) semantisationFrequencySlider.value = DemoGraphConfig.semantisationFrequency;
             InitializeButtons();
             InitializeDropdownAsync();
             // load main menu form
@@ -86,7 +86,7 @@ namespace Sven.Demo
         {
             if (VENameDropdown.options.Count > 0)
             {
-                string graphName = DemoManager.graphName;
+                string graphName = DemoGraphConfig.graphName;
                 int index = VENameDropdown.options.FindIndex(option => _dropdownOptions.TryGetValue(option.text, out string name) && name == graphName);
                 VENameDropdown.value = index != -1 ? index : 0;
                 VENameDropdown.RefreshShownValue();
@@ -109,14 +109,14 @@ namespace Sven.Demo
         private void OnReplayButtonClicked()
         {
             if (_dropdownOptions.Count < 1 || !_dropdownOptions.TryGetValue(VENameDropdown.options[VENameDropdown.value].text, out string graphName)) return;
-            DemoManager.graphName = string.IsNullOrEmpty(graphName) ? "default" : graphName;
+            DemoGraphConfig.graphName = string.IsNullOrEmpty(graphName) ? "default" : graphName;
             SceneManager.LoadScene("Demo Replay", LoadSceneMode.Single);
         }
 
         private void OnPlayButtonClicked()
         {
-            DemoManager.semantisationFrequency = (int)semantisationFrequencySlider.value;
-            DemoManager.graphName = string.IsNullOrEmpty(VENameInputField.text) ? "default" : VENameInputField.text;
+            DemoGraphConfig.semantisationFrequency = (int)semantisationFrequencySlider.value;
+            DemoGraphConfig.graphName = string.IsNullOrEmpty(VENameInputField.text) ? "default" : VENameInputField.text;
             SceneManager.LoadScene("Demo Record", LoadSceneMode.Single);
         }
         private async Task<string> LoadQueryFileAsync(string relativePath)
@@ -153,7 +153,7 @@ namespace Sven.Demo
                 var byteArray = Encoding.ASCII.GetBytes($"admin:sven-iswc");
                 httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", Convert.ToBase64String(byteArray));
 
-                SparqlQueryClient client = new(httpClient, DemoManager.EndpointUri);
+                SparqlQueryClient client = new(httpClient, DemoGraphConfig.EndpointUri);
                 string query = @"PREFIX time: <http://www.w3.org/2006/time#>
 
 SELECT DISTINCT ?graphName ?minInstant ?maxInstant (?maxInstant - ?minInstant AS ?duration)

@@ -11,7 +11,6 @@ namespace Sven.Utils
     [RequireComponent(typeof(TextMeshProUGUI))]
     public class TextGraphSize : MonoBehaviour
     {
-        public GraphBuffer graphBuffer;
         private TextMeshProUGUI tmp;
 
         void Awake()
@@ -21,7 +20,7 @@ namespace Sven.Utils
 
         void Update()
         {
-            tmp.text = graphBuffer.Graph.Triples.Count.ToString();
+            tmp.text = GraphManager.Count.ToString();
         }
     }
 }

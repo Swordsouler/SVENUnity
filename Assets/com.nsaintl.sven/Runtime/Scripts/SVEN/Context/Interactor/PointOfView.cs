@@ -2,10 +2,11 @@
 // Author: Nicolas SAINT-LÉGER
 // Licensed under the MIT License. See LICENSE file in the project root for full license information.
 
+using Sven.Content;
+using Sven.GraphManagement;
+using Sven.Utils;
 using System.Collections;
 using System.Collections.Generic;
-using Sven.Content;
-using Sven.Utils;
 using UnityEngine;
 
 namespace Sven.Context
@@ -61,10 +62,10 @@ namespace Sven.Context
                                 // call start interval semantization of collisionevent
                                 if (!_collisionEvents.ContainsKey(dictionaryKey))
                                 {
-                                    if (SvenHelper.Debug) Debug.Log("Object " + semantizationCore.name + " enters the field of view.");
+                                    if (SvenConfig.Debug) Debug.Log("Object " + semantizationCore.name + " enters the field of view.");
                                     CollisionEvent collisionEvent = new(_semantizationCore, semantizationCore);
-                                    collisionEvent.Start(_graphBuffer.CurrentInstant);
-                                    collisionEvent.Semantize(_graphBuffer.Graph);
+                                    collisionEvent.Start(GraphManager.CurrentInstant);
+                                    collisionEvent.Semanticize();
                                     _collisionEvents.Add(dictionaryKey, collisionEvent);
                                 }
                             }
@@ -82,9 +83,9 @@ namespace Sven.Context
                         string dictionaryKey = $"{_semantizationCore.GetUUID()}-{obj.GetUUID()}";
                         if (_collisionEvents.TryGetValue(dictionaryKey, out CollisionEvent collisionEvent))
                         {
-                            if (SvenHelper.Debug) Debug.Log("Object " + obj.name + " exits the field of view.");
-                            collisionEvent.End(_graphBuffer.CurrentInstant);
-                            collisionEvent.Semantize(_graphBuffer.Graph);
+                            if (SvenConfig.Debug) Debug.Log("Object " + obj.name + " exits the field of view.");
+                            collisionEvent.End(GraphManager.CurrentInstant);
+                            collisionEvent.Semanticize();
                             _collisionEvents.Remove(dictionaryKey);
                         }
                     }
@@ -99,7 +100,7 @@ namespace Sven.Context
         protected new void OnDrawGizmos()
         {
             if (!_debug) return;
-            Gizmos.color = SvenHelper.PointOfViewDebugColor;
+            Gizmos.color = SvenConfig.PointOfViewDebugColor;
             base.OnDrawGizmos();
 
             if (cameraComponent == null) return;

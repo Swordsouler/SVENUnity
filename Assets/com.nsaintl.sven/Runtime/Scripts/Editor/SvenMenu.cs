@@ -4,7 +4,6 @@
 
 #if UNITY_EDITOR
 using Sven.Content;
-using Sven.GraphManagement;
 using UnityEditor;
 using UnityEngine;
 
@@ -15,6 +14,7 @@ namespace Sven.Editor
     /// </summary>
     public class SvenMenu
     {
+        /*
         /// <summary>
         /// Instantiate the graph reader.
         /// </summary>
@@ -33,7 +33,7 @@ namespace Sven.Editor
         {
             GameObject go = new("Graph Buffer");
             go.AddComponent<GraphBuffer>();
-        }
+        }*/
 
         /// <summary>
         /// Instantiate the semantization core.

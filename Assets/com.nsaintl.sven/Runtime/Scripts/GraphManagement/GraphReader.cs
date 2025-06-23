@@ -149,9 +149,9 @@ namespace Sven.GraphManagement
                 DateTime startProcessing = DateTime.Now;
 
                 string intervalProcessing = "";
-                if (SvenHelper.UseInside)
+                if (SvenConfig.UseInside)
                     // with inside
-                    intervalProcessing = $@"?interval time:inside <{instant.GetUriNode(graph)}> .";
+                    intervalProcessing = $@"?interval time:inside <{instant.UriNode}> .";
                 else
                     // with dateTime
                     intervalProcessing = $@"{{
@@ -291,7 +291,7 @@ namespace Sven.GraphManagement
                     return targetSceneContent;
                 });
 #endif
-                if (SvenHelper.Debug) Debug.Log(targetSceneContent);
+                if (SvenConfig.Debug) Debug.Log(targetSceneContent);
                 UpdateContent(targetSceneContent);
 
                 DateTime endProcessing = DateTime.Now;
@@ -303,7 +303,7 @@ namespace Sven.GraphManagement
                     totalProcessingTime = (endProcessing - startProcessing).TotalMilliseconds
                 };
                 processingDatas.Add(processingData);
-                if (SvenHelper.Debug)
+                if (SvenConfig.Debug)
                 {
                     Debug.Log($"Amount of data: {targetSceneContent.GameObjects.Count} GameObjects, {targetSceneContent.GameObjects.Sum(x => x.Value.Components.Count)} Components, {targetSceneContent.GameObjects.Sum(x => x.Value.Components.Sum(y => y.Value.Properties.Count))} Properties");
                     Debug.Log(processingData);
@@ -691,7 +691,7 @@ namespace Sven.GraphManagement
             int insertIndex = query.IndexOf('\n', selectIndex) + 1;
             string graphQuery = query.Insert(insertIndex, $"{graphUri}\n");
 
-            if (SvenHelper.Debug) Debug.Log($"Graph query: {graphQuery}");
+            if (SvenConfig.Debug) Debug.Log($"Graph query: {graphQuery}");
 
             // Exécutez la requête SPARQL
 #if UNITY_WEBGL

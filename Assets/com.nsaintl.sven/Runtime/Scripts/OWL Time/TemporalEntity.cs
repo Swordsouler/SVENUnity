@@ -2,9 +2,10 @@
 // Author: Nicolas SAINT-LÉGER
 // Licensed under the MIT License. See LICENSE file in the project root for full license information.
 
+using Sven.GraphManagement;
+using Sven.XsdData;
 using System;
 using System.Collections.Generic;
-using Sven.XsdData;
 using VDS.RDF;
 
 namespace Sven.OwlTime
@@ -19,25 +20,9 @@ namespace Sven.OwlTime
         /// </summary>
         protected static readonly List<Interval> intervals = new();
 
-        /// <summary>
-        /// The prefix of the temporal entity.
-        /// </summary>
-        private readonly string prefix = "time:";
-        private readonly string UUID;
-        public string GetUUID()
-        {
-            return UUID;
-        }
+        public string UUID { get; private set; }
+        public IUriNode UriNode => GraphManager.CreateUriNode("time:" + UUID);
 
-        /// <summary>
-        /// The URI of the temporal entity.
-        /// </summary>
-        /// <param name="graph">The graph to get the URI from.</param>
-        /// <returns>The URI of the temporal entity.</returns>
-        public IUriNode GetUriNode(IGraph graph)
-        {
-            return graph.CreateUriNode(prefix + UUID);
-        }
 
         /// <summary>
         /// The temporal entity that occurs before this one
@@ -80,16 +65,6 @@ namespace Sven.OwlTime
         }
 
         /// <summary>
-        /// Initializes a new instance of the TemporalEntity class with the specified UUID.
-        /// </summary>
-        /// <param name="UUID">The UUID to initialize the instance with.</param>
-        public TemporalEntity(string prefix, string UUID)
-        {
-            this.prefix = prefix;
-            this.UUID = UUID;
-        }
-
-        /// <summary>
         /// Initializes a new instance of the TemporalEntity class with the specified date.
         /// </summary>
         /// <param name="date">The date to initialize the instance with.</param>
@@ -111,15 +86,15 @@ namespace Sven.OwlTime
         /// Semantizes the temporal entity in the graph.
         /// </summary>
         /// <param name="graph">The graph to semantize the temporal entity.</param>
-        public IUriNode Semantize(IGraph graph)
+        public IUriNode Semanticize()
         {
-            IUriNode temporalEntityNode = GetUriNode(graph);
-            graph.Assert(new Triple(temporalEntityNode, graph.CreateUriNode("rdf:type"), graph.CreateUriNode($"time:{GetType().Name}")));
-            if (after != null) graph.Assert(new Triple(temporalEntityNode, graph.CreateUriNode("time:after"), graph.CreateUriNode($"time:{after}")));
-            if (before != null) graph.Assert(new Triple(temporalEntityNode, graph.CreateUriNode("time:before"), graph.CreateUriNode($"time:{before}")));
-            if (hasBeginning != null) graph.Assert(new Triple(temporalEntityNode, graph.CreateUriNode("time:hasBeginning"), graph.CreateUriNode($"time:{hasBeginning}")));
-            if (hasEnd != null) graph.Assert(new Triple(temporalEntityNode, graph.CreateUriNode("time:hasEnd"), graph.CreateUriNode($"time:{hasEnd}")));
-            if (hasXSDDuration != null) graph.Assert(new Triple(temporalEntityNode, graph.CreateUriNode("time:hasXSDDuration"), hasXSDDuration.ToLiteralNode(graph)));
+            IUriNode temporalEntityNode = UriNode;
+            GraphManager.Assert(new Triple(temporalEntityNode, GraphManager.CreateUriNode("rdf:type"), GraphManager.CreateUriNode($"time:{GetType().Name}")));
+            if (after != null) GraphManager.Assert(new Triple(temporalEntityNode, GraphManager.CreateUriNode("time:after"), GraphManager.CreateUriNode($"time:{after}")));
+            if (before != null) GraphManager.Assert(new Triple(temporalEntityNode, GraphManager.CreateUriNode("time:before"), GraphManager.CreateUriNode($"time:{before}")));
+            if (hasBeginning != null) GraphManager.Assert(new Triple(temporalEntityNode, GraphManager.CreateUriNode("time:hasBeginning"), GraphManager.CreateUriNode($"time:{hasBeginning}")));
+            if (hasEnd != null) GraphManager.Assert(new Triple(temporalEntityNode, GraphManager.CreateUriNode("time:hasEnd"), GraphManager.CreateUriNode($"time:{hasEnd}")));
+            if (hasXSDDuration != null) GraphManager.Assert(new Triple(temporalEntityNode, GraphManager.CreateUriNode("time:hasXSDDuration"), hasXSDDuration.ToLiteralNode()));
             return temporalEntityNode;
         }
 
