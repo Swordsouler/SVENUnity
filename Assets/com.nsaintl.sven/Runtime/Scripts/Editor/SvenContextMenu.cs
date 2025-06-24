@@ -13,7 +13,7 @@ namespace Sven.Editor
     /// <summary>
     /// Menu to instantiate SVEN components.
     /// </summary>
-    public class SvenMenu
+    public class SvenContextMenu
     {
         /// <summary>
         /// Instantiate the semantization core.
