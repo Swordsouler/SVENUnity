@@ -220,7 +220,7 @@ namespace Sven.Content
         /// </summary>
         public void Semanticize(Instant currentInstant)
         {
-            if (SvenConfig.Debug)
+            if (SvenSettings.Debug)
                 Debug.Log("Semantizing property (" + parentComponent.name + ")." + parentComponent.GetType().Name + "." + Name + " with value " + observedProperty.LastValue);
             DestroyUUID();
 

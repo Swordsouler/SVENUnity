@@ -87,7 +87,7 @@ namespace Sven.Context
                         string key = keyCode.ToString();
                         if (!_inputEvents.ContainsKey(key))
                         {
-                            if (SvenConfig.Debug) Debug.Log(key + " pressed");
+                            if (SvenSettings.Debug) Debug.Log(key + " pressed");
                             InputEvent inputEvent = new(this, key);
                             inputEvent.Start(GraphManager.CurrentInstant);
                             inputEvent.Semanticize();
@@ -105,7 +105,7 @@ namespace Sven.Context
                     string key = keyCode.ToString();
                     if (_inputEvents.TryGetValue(key, out InputEvent inputEvent))
                     {
-                        if (SvenConfig.Debug) Debug.Log(key + " released");
+                        if (SvenSettings.Debug) Debug.Log(key + " released");
                         inputEvent.End(GraphManager.CurrentInstant);
                         inputEvent.Semanticize();
                         _inputEvents.Remove(key);

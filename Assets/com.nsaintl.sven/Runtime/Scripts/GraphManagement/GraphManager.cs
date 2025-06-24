@@ -91,7 +91,7 @@ namespace Sven.GraphManagement
 
         public static void LoadOntologies()
         {
-            Dictionary<string, string> ontologies = SvenConfig.Ontologies;
+            Dictionary<string, string> ontologies = SvenSettings.Ontologies;
             foreach (KeyValuePair<string, string> ontology in ontologies)
                 GraphManager.LoadOntology(ontology.Key, ontology.Value);
         }
@@ -135,7 +135,7 @@ namespace Sven.GraphManagement
 
         public static async Task SaveToEndpoint()
         {
-            await SaveToEndpoint(SvenConfig.EndpointUrl);
+            await SaveToEndpoint(SvenSettings.EndpointUrl);
         }
 
         public static async Task SaveToEndpoint(string endpointUrl)
@@ -303,7 +303,7 @@ WHERE {
         /// <returns>DateTime.</returns>
         private static DateTime FormatDateTime(DateTime dateTime)
         {
-            return new(dateTime.Year, dateTime.Month, dateTime.Day, dateTime.Hour, dateTime.Minute, dateTime.Second, dateTime.Millisecond / (1000 / SvenConfig.SemanticizeFrequency) * (1000 / SvenConfig.SemanticizeFrequency));
+            return new(dateTime.Year, dateTime.Month, dateTime.Day, dateTime.Hour, dateTime.Minute, dateTime.Second, dateTime.Millisecond / (1000 / SvenSettings.SemanticizeFrequency) * (1000 / SvenSettings.SemanticizeFrequency));
         }
 
         #endregion

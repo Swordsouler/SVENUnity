@@ -14,15 +14,15 @@ namespace Sven.Editor
     /// <summary>
     /// Helper window to manage SVEN more easily.
     /// </summary>
-    public class SvenConfigWindow : EditorWindow
+    public class SvenSettingsWindow : EditorWindow
     {
         private readonly Dictionary<string, Vector2> ontologiesScrollPosition = new();
         private readonly Dictionary<string, bool> ontologiesIsShown = new();
 
-        [MenuItem("Tools/SVEN Helper")]
+        [MenuItem("Window/SVEN Settings")]
         public static void ShowWindow()
         {
-            GetWindow<SvenConfigWindow>("SVEN Helper");
+            GetWindow<SvenSettingsWindow>("SVEN Settings");
         }
 
         private void OnLostFocus()
@@ -33,77 +33,77 @@ namespace Sven.Editor
 
         private void OnGUI()
         {
-            EditorGUILayout.LabelField("SVEN Helper", EditorStyles.boldLabel);
+            EditorGUILayout.LabelField("SVEN Settings", EditorStyles.boldLabel);
 
             bool refresh = false;
 
-            bool useInside = SvenConfig.UseInside;
+            bool useInside = SvenSettings.UseInside;
             bool newUseInside = EditorGUILayout.Toggle("Use inside", useInside);
 
             if (newUseInside != useInside)
             {
-                EditorPrefs.SetBool(SvenConfig._useInsideKey, newUseInside);
+                EditorPrefs.SetBool(SvenSettings._useInsideKey, newUseInside);
                 refresh = true;
             }
 
-            bool debug = SvenConfig.Debug;
+            bool debug = SvenSettings.Debug;
             bool newDebug = EditorGUILayout.Toggle("Show debug logs", debug);
 
             if (newDebug != debug)
             {
-                EditorPrefs.SetBool(SvenConfig._debugKey, newDebug);
+                EditorPrefs.SetBool(SvenSettings._debugKey, newDebug);
                 refresh = true;
             }
 
-            Color pointOfViewDebugColor = SvenConfig.PointOfViewDebugColor;
+            Color pointOfViewDebugColor = SvenSettings.PointOfViewDebugColor;
             Color newPointOfViewDebugColor = EditorGUILayout.ColorField("Point of View Debug Color", pointOfViewDebugColor);
 
             if (newPointOfViewDebugColor != pointOfViewDebugColor)
             {
-                EditorPrefs.SetString(SvenConfig._pointOfViewDebugColorKey, ColorUtility.ToHtmlStringRGB(newPointOfViewDebugColor));
+                EditorPrefs.SetString(SvenSettings._pointOfViewDebugColorKey, ColorUtility.ToHtmlStringRGB(newPointOfViewDebugColor));
                 refresh = true;
             }
 
-            Color pointerDebugColor = SvenConfig.PointerDebugColor;
+            Color pointerDebugColor = SvenSettings.PointerDebugColor;
             Color newPointerDebugColor = EditorGUILayout.ColorField("Pointer Debug Color", pointerDebugColor);
 
             if (newPointerDebugColor != pointerDebugColor)
             {
-                EditorPrefs.SetString(SvenConfig._pointerDebugColorKey, ColorUtility.ToHtmlStringRGB(newPointerDebugColor));
+                EditorPrefs.SetString(SvenSettings._pointerDebugColorKey, ColorUtility.ToHtmlStringRGB(newPointerDebugColor));
                 refresh = true;
             }
 
-            Color graspAreaDebugColor = SvenConfig.GraspAreaDebugColor;
+            Color graspAreaDebugColor = SvenSettings.GraspAreaDebugColor;
             Color newGraspAreaDebugColor = EditorGUILayout.ColorField("Grasp Area Debug Color", graspAreaDebugColor);
 
             if (newGraspAreaDebugColor != graspAreaDebugColor)
             {
-                EditorPrefs.SetString(SvenConfig._graspAreaDebugColorKey, ColorUtility.ToHtmlStringRGB(newGraspAreaDebugColor));
+                EditorPrefs.SetString(SvenSettings._graspAreaDebugColorKey, ColorUtility.ToHtmlStringRGB(newGraspAreaDebugColor));
                 refresh = true;
             }
 
-            string endpointUrl = SvenConfig.EndpointUrl;
+            string endpointUrl = SvenSettings.EndpointUrl;
             string newEndpointUrl = EditorGUILayout.TextField("Endpoint URL", endpointUrl);
             if (newEndpointUrl != endpointUrl)
             {
-                SvenConfig.EndpointUrl = newEndpointUrl;
-                EditorPrefs.SetString(SvenConfig._endpointUrlKey, newEndpointUrl);
+                SvenSettings.EndpointUrl = newEndpointUrl;
+                EditorPrefs.SetString(SvenSettings._endpointUrlKey, newEndpointUrl);
                 refresh = true;
             }
 
-            int semanticizeFrequency = SvenConfig.SemanticizeFrequency;
+            int semanticizeFrequency = SvenSettings.SemanticizeFrequency;
             int newSemanticizeFrequency = EditorGUILayout.IntSlider("Semanticize Frequency (record/second)", semanticizeFrequency, 1, 60);
             if (newSemanticizeFrequency != semanticizeFrequency)
             {
-                SvenConfig.SemanticizeFrequency = newSemanticizeFrequency;
-                EditorPrefs.SetInt(SvenConfig._semanticizeFrequencyKey, newSemanticizeFrequency);
+                SvenSettings.SemanticizeFrequency = newSemanticizeFrequency;
+                EditorPrefs.SetInt(SvenSettings._semanticizeFrequencyKey, newSemanticizeFrequency);
                 refresh = true;
             }
 
             // ontologies
             EditorGUILayout.LabelField("Ontologies", EditorStyles.boldLabel);
             // create a copy
-            var ontologies = new Dictionary<string, string>(SvenConfig.Ontologies);
+            var ontologies = new Dictionary<string, string>(SvenSettings.Ontologies);
             foreach (var ontology in ontologies)
             {
                 // ontology value is scrollable with a scrollbar, readonly, and has a fixed height of 100 pixels
@@ -117,8 +117,8 @@ namespace Sven.Editor
                     string filePath = System.IO.Path.Combine(Application.streamingAssetsPath, "Ontologies", ontology.Key + ".ttl");
                     if (System.IO.File.Exists(filePath)) System.IO.File.Delete(filePath);
 
-                    SvenConfig.Ontologies.Clear();
-                    SvenConfig.RefreshConfig();
+                    SvenSettings.Ontologies.Clear();
+                    SvenSettings.RefreshConfig();
                 }
                 EditorGUILayout.EndVertical();
                 if (ontologiesIsShown.ContainsKey(ontology.Key) && ontologiesIsShown[ontology.Key])
@@ -149,8 +149,8 @@ namespace Sven.Editor
             }
             if (GUILayout.Button("Refresh Ontologies"))
             {
-                SvenConfig.Ontologies.Clear();
-                SvenConfig.RefreshConfig();
+                SvenSettings.Ontologies.Clear();
+                SvenSettings.RefreshConfig();
             }
             // import ontology button (select .ttl file, copy it into StreamingAssets/Ontologies, and refresh Ontologies)
             if (GUILayout.Button("Import Ontology"))
@@ -162,8 +162,8 @@ namespace Sven.Editor
                     string destinationPath = System.IO.Path.Combine(Application.streamingAssetsPath, "Ontologies", fileName);
                     System.IO.Directory.CreateDirectory(System.IO.Path.GetDirectoryName(destinationPath));
                     System.IO.File.Copy(path, destinationPath, true);
-                    SvenConfig.Ontologies.Clear();
-                    SvenConfig.RefreshConfig();
+                    SvenSettings.Ontologies.Clear();
+                    SvenSettings.RefreshConfig();
                 }
             }
             if (GUILayout.Button("Open Ontologies Folder"))
@@ -179,7 +179,7 @@ namespace Sven.Editor
                 }
             }
 
-            if (refresh) SvenConfig.RefreshConfig();
+            if (refresh) SvenSettings.RefreshConfig();
         }
     }
 }

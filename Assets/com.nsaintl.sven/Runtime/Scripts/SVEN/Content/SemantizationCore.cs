@@ -43,7 +43,7 @@ namespace Sven.Content
             Component component = GetComponent<Component>();
             componentsToSemanticize.RemoveAll(c => c == null || c.Component == null || !component.gameObject.Equals(c.Component.gameObject));
             Initialize();
-            _checkForChangesCoroutine = StartCoroutine(LoopCheckForChanges(1.0f / SvenConfig.SemanticizeFrequency));
+            _checkForChangesCoroutine = StartCoroutine(LoopCheckForChanges(1.0f / SvenSettings.SemanticizeFrequency));
         }
 
         /// <summary>
@@ -120,7 +120,7 @@ namespace Sven.Content
             foreach (Property property in properties)
             {
                 property.SemanticObserve(this);
-                if (SvenConfig.Debug)
+                if (SvenSettings.Debug)
                     Debug.Log("Observing property (" + name + ")." + GetType().Name + "." + property.Name);
             }
 
@@ -152,7 +152,7 @@ namespace Sven.Content
                 }
                 catch
                 {
-                    if (SvenConfig.Debug) Debug.LogWarning("Component " + componentProperties.Key.GetType().Name + " has been destroyed. Removing from semantization.");
+                    if (SvenSettings.Debug) Debug.LogWarning("Component " + componentProperties.Key.GetType().Name + " has been destroyed. Removing from semantization.");
                     toRemove.Add(componentProperties.Key);
                 }
             }
@@ -198,7 +198,7 @@ namespace Sven.Content
         private void OnEnable()
         {
             if (_checkForChangesCoroutine != null) StopCoroutine(_checkForChangesCoroutine);
-            StartCoroutine(LoopCheckForChanges(1.0f / SvenConfig.SemanticizeFrequency));
+            StartCoroutine(LoopCheckForChanges(1.0f / SvenSettings.SemanticizeFrequency));
         }
 
         /// <summary>

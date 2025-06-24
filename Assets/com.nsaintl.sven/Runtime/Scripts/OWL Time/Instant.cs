@@ -55,7 +55,7 @@ namespace Sven.OwlTime
         public new IUriNode Semanticize()
         {
             IUriNode instantNode = base.Semanticize();
-            if (SvenConfig.UseInside) Interval.SemanticizeInside(this);
+            if (SvenSettings.UseInside) Interval.SemanticizeInside(this);
             if (inXSDDateTime != null) GraphManager.Assert(new Triple(instantNode, GraphManager.CreateUriNode("time:inXSDDateTime"), inXSDDateTime.ToLiteralNode()));
             // seems to be useless in our case
             // if (inXSDDate != null) graph.Assert(new Triple(temporalEntityNode, graph.CreateUriNode("time:inXSDDate"), inXSDDate.ToLiteralNode(graph)));

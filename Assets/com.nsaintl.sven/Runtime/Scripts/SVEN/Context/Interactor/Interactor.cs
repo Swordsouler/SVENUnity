@@ -71,7 +71,7 @@ namespace Sven.Context
         {
             //if (_graphBuffer == null) return;
             if (_checkInteractorCoroutine != null) StopCoroutine(_checkInteractorCoroutine);
-            _checkInteractorCoroutine = StartCoroutine(CheckInteractor(1.0f / SvenConfig.SemanticizeFrequency));
+            _checkInteractorCoroutine = StartCoroutine(CheckInteractor(1.0f / SvenSettings.SemanticizeFrequency));
             _isInitialized = true;
         }
 
@@ -79,7 +79,7 @@ namespace Sven.Context
         {
             if (!_isInitialized) return;
             if (_checkInteractorCoroutine != null) StopCoroutine(_checkInteractorCoroutine);
-            _checkInteractorCoroutine = StartCoroutine(CheckInteractor(1.0f / SvenConfig.SemanticizeFrequency));
+            _checkInteractorCoroutine = StartCoroutine(CheckInteractor(1.0f / SvenSettings.SemanticizeFrequency));
         }
 
         private void OnDisable()

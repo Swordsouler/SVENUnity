@@ -48,7 +48,7 @@ namespace Sven.Context
                             // call start interval semantization of collisionevent
                             if (!_collisionEvents.ContainsKey(dictionaryKey))
                             {
-                                if (SvenConfig.Debug) Debug.Log("Object " + semantizationCore.name + " enters the pointer range.");
+                                if (SvenSettings.Debug) Debug.Log("Object " + semantizationCore.name + " enters the pointer range.");
                                 CollisionEvent collisionEvent = new(_semantizationCore, semantizationCore);
                                 collisionEvent.Start(GraphManager.CurrentInstant);
                                 collisionEvent.Semanticize();
@@ -68,7 +68,7 @@ namespace Sven.Context
                         string dictionaryKey = $"{_semantizationCore.GetUUID()}-{obj.GetUUID()}";
                         if (_collisionEvents.TryGetValue(dictionaryKey, out CollisionEvent collisionEvent))
                         {
-                            if (SvenConfig.Debug) Debug.Log("Object " + obj.name + " exits the pointer range.");
+                            if (SvenSettings.Debug) Debug.Log("Object " + obj.name + " exits the pointer range.");
                             collisionEvent.End(GraphManager.CurrentInstant);
                             collisionEvent.Semanticize();
                             _collisionEvents.Remove(dictionaryKey);
@@ -89,7 +89,7 @@ namespace Sven.Context
         protected new void OnDrawGizmos()
         {
             if (!_debug) return;
-            Gizmos.color = SvenConfig.PointerDebugColor;
+            Gizmos.color = SvenSettings.PointerDebugColor;
             base.OnDrawGizmos();
 
             Vector3 direction = transform.forward;

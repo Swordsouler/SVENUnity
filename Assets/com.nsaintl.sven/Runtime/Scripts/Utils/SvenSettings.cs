@@ -19,7 +19,7 @@ namespace Sven.Utils
     /// <summary>
     /// Helper class to manage SVEN settings.
     /// </summary>
-    public static class SvenConfig
+    public static class SvenSettings
     {
         #region UseInside
         public static bool UseInside => _useInside;
@@ -138,7 +138,7 @@ namespace Sven.Utils
             catch { }
         }
 
-        static SvenConfig()
+        static SvenSettings()
         {
             RefreshConfig();
         }
