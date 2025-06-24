@@ -2,6 +2,7 @@
 // Author: Nicolas SAINT-LÉGER
 // Licensed under the MIT License. See LICENSE file in the project root for full license information.
 
+using Sven.GraphManagement.Description;
 using Sven.OwlTime;
 using Sven.Utils;
 using System;
@@ -135,11 +136,7 @@ namespace Sven.GraphManagement
 
         public static async Task SaveToEndpoint()
         {
-            await SaveToEndpoint(SvenSettings.EndpointUrl);
-        }
-
-        public static async Task SaveToEndpoint(string endpointUrl)
-        {
+            string endpointUrl = SvenSettings.EndpointUrl;
             Debug.Log($"Saving graph to endpoint: {endpointUrl}");
             if (string.IsNullOrEmpty(endpointUrl)) throw new ArgumentNullException(nameof(endpointUrl) + " is null or empty.");
             if (!Uri.IsWellFormedUriString(endpointUrl, UriKind.Absolute)) throw new ArgumentException("The endpoint URL is not valid.", nameof(endpointUrl));
@@ -337,6 +334,43 @@ WHERE {
         public static INode CreateTripleNode(Triple triple)
         {
             return _instance.CreateTripleNode(triple);
+        }
+
+        private static Task LoadInstantsFromEndpoint()
+        {
+            string endpointUrl = SvenSettings.EndpointUrl;
+            throw new NotImplementedException("Équivalent de GraphReader.LoadInstants()");
+        }
+
+        private static Task LoadInstantsFromMemory()
+        {
+            throw new NotImplementedException("Équivalent de GraphReader.LoadInstants()");
+        }
+
+        private static Task RetrieveSceneFromEndpoint()
+        {
+            string endpointUrl = SvenSettings.EndpointUrl;
+            throw new NotImplementedException("Équivalent de GraphReader.LoadInstant(), mais en faisant la requête dans le graphe distant");
+        }
+
+        private static Task RetrieveSceneFromMemory()
+        {
+            throw new NotImplementedException("Équivalent de GraphReader.LoadInstant(), mais en faisant la requête dans le graphe local");
+        }
+
+        private static Task ReconstructScene(SceneContent sceneContent)
+        {
+            throw new NotImplementedException("Équivalent de GraphReader.UpdateContent(SceneContent targetSceneContent)");
+        }
+
+        private static SceneContent GetSceneContent(SparqlResultSet sparqlResultSet)
+        {
+            throw new NotImplementedException("Équivalent de GraphReader.LoadInstant() dans le thread");
+        }
+
+        private static SceneContent GetSceneContent()
+        {
+            throw new NotImplementedException("Obtient le SceneContent de la scène actuel. Consulte l'ensemble des SemantizationCore");
         }
     }
 }

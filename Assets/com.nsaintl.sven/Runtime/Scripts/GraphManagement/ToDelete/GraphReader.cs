@@ -171,7 +171,7 @@ namespace Sven.GraphManagement
                 string query = $@"
                     PREFIX time: <http://www.w3.org/2006/time#>
                     PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
-                    PREFIX sven: <https://sven.lisn.upsaclay.fr/entity/>
+                    PREFIX sven: <https://sven.lisn.upsaclay.fr/ontology#>
                     PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
 
                     SELECT DISTINCT ?object ?component ?componentType ?property ?propertyName ?propertyNestedName ?propertyValue ?propertyType
