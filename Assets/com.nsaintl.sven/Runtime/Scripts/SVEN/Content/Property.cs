@@ -33,12 +33,12 @@ namespace Sven.Content
         /// <summary>
         /// The parent object node of the property.
         /// </summary>
-        private IUriNode ParentObjectNode => GraphManager.CreateUriNode("sven:" + parentObject.GetUUID());
+        private IUriNode ParentObjectNode => GraphManager.CreateUriNode(":" + parentObject.GetUUID());
 
         /// <summary>
         /// The parent component node of the property.
         /// </summary>
-        private IUriNode ParentComponentNode => GraphManager.CreateUriNode("sven:" + parentComponent.GetUUID());
+        private IUriNode ParentComponentNode => GraphManager.CreateUriNode(":" + parentComponent.GetUUID());
 
         /// <summary>
         /// The simplified name of the property to observe.
@@ -224,7 +224,7 @@ namespace Sven.Content
                 Debug.Log("Semantizing property (" + parentComponent.name + ")." + parentComponent.GetType().Name + "." + Name + " with value " + observedProperty.LastValue);
             DestroyUUID();
 
-            IUriNode propertyNode = GraphManager.CreateUriNode("sven:" + GetUUID());
+            IUriNode propertyNode = GraphManager.CreateUriNode(":" + GetUUID());
             string propertyTypeName = MapppedProperties.GetValue(observedProperty.LastValue.GetType()).TypeName;
             IUriNode propertyTypeNode = GraphManager.CreateUriNode(propertyTypeName.Contains(":") ? propertyTypeName : "sven:" + propertyTypeName);
 
@@ -253,7 +253,6 @@ namespace Sven.Content
 
                 if (simplifiedName != "")
                 {
-                    // créez un nouvelle intervalle à chaque fois ?
                     string simplifiedType = value.Key == "value" ? "" : value.Key.ToUpper();
                     Triple triple = new(ParentObjectNode, GraphManager.CreateUriNode("sven:" + simplifiedName + simplifiedType), literalNode);
                     GraphManager.Assert(triple);

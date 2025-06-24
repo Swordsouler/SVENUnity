@@ -61,7 +61,7 @@ namespace Sven.Utils
                 if (!string.IsNullOrEmpty(argsEndpointUrl) && Uri.TryCreate(argsEndpointUrl, UriKind.Absolute, out Uri parsedUri))
                     _endpointUrl = parsedUri.ToString();
                 else
-                    _endpointUrl = "http://localhost:7200/";
+                    _endpointUrl = "http://localhost:7200/repositories/Demo-Scene";
                 return _endpointUrl;
             }
             set

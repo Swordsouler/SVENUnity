@@ -23,7 +23,7 @@ namespace Sven.Content
         /// Components to semantize at initialization. WARNING: Do not use this list for algorithmic purposes (it's just for the Unity Editor).
         /// </summary>
         [HideInInspector]
-        public List<SemanticComponent> componentsToSemantize = new();
+        public List<SemanticComponent> componentsToSemanticize = new();
 
         /// <summary>
         /// Properties of the each Component to semantize.
@@ -41,7 +41,7 @@ namespace Sven.Content
         private void Start()
         {
             Component component = GetComponent<Component>();
-            componentsToSemantize.RemoveAll(c => c == null || c.Component == null || !component.gameObject.Equals(c.Component.gameObject));
+            componentsToSemanticize.RemoveAll(c => c == null || c.Component == null || !component.gameObject.Equals(c.Component.gameObject));
             Initialize();
             _checkForChangesCoroutine = StartCoroutine(LoopCheckForChanges(1.0f / SvenConfig.SemanticizeFrequency));
         }
@@ -62,7 +62,7 @@ namespace Sven.Content
                 });
 
                 // foreach component in the GameObject, semantize the component and his properties
-                foreach (var component in componentsToSemantize)
+                foreach (var component in componentsToSemanticize)
                     componentsProperties.Add(component.Component, new SemanticComponent
                     {
                         Component = component.Component,
@@ -83,13 +83,13 @@ namespace Sven.Content
         /// <param name="component">The component to add to the semantization process.</param>
         public void AddSemanticComponent(Component component, SemanticProcessingMode mode)
         {
-            if (componentsToSemantize.Find(c => c.Component == component) != null)
+            if (componentsToSemanticize.Find(c => c.Component == component) != null)
             {
                 Debug.LogWarning("Component " + component.GetType().Name + " is already being semantized.");
                 return;
             }
 
-            componentsToSemantize.Add(new SemanticComponent { Component = component, ProcessingMode = mode });
+            componentsToSemanticize.Add(new SemanticComponent { Component = component, ProcessingMode = mode });
             List<Property> properties = component.SemanticObserve();
             componentsProperties.Add(component, new SemanticComponent
             {
@@ -113,7 +113,7 @@ namespace Sven.Content
                 new Property("layer", () => LayerMask.LayerToName(gameObject.layer))
             };
 
-            IUriNode gameObjectNode = GraphManager.CreateUriNode("sven:" + this.GetUUID());
+            IUriNode gameObjectNode = GraphManager.CreateUriNode(":" + this.GetUUID());
 
             GraphManager.Assert(new Triple(gameObjectNode, GraphManager.CreateUriNode("rdf:type"), GraphManager.CreateUriNode("sven:VirtualObject")));
             GraphManager.Assert(new Triple(gameObjectNode, GraphManager.CreateUriNode("rdfs:label"), GraphManager.CreateLiteralNode(name)));

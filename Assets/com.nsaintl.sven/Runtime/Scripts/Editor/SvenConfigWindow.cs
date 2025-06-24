@@ -16,12 +16,19 @@ namespace Sven.Editor
     /// </summary>
     public class SvenConfigWindow : EditorWindow
     {
-        private Dictionary<string, Vector2> ontologiesScrollPosition = new();
+        private readonly Dictionary<string, Vector2> ontologiesScrollPosition = new();
+        private readonly Dictionary<string, bool> ontologiesIsShown = new();
 
         [MenuItem("Tools/SVEN Helper")]
         public static void ShowWindow()
         {
             GetWindow<SvenConfigWindow>("SVEN Helper");
+        }
+
+        private void OnLostFocus()
+        {
+            ontologiesIsShown.Clear();
+            ontologiesScrollPosition.Clear();
         }
 
         private void OnGUI()
@@ -114,16 +121,30 @@ namespace Sven.Editor
                     SvenConfig.RefreshConfig();
                 }
                 EditorGUILayout.EndVertical();
-                // scrollable labelfield for ontology value
-                if (!ontologiesScrollPosition.ContainsKey(ontology.Key))
+                if (ontologiesIsShown.ContainsKey(ontology.Key) && ontologiesIsShown[ontology.Key])
                 {
-                    ontologiesScrollPosition[ontology.Key] = Vector2.zero;
+                    // scrollable labelfield for ontology value
+                    if (!ontologiesScrollPosition.ContainsKey(ontology.Key))
+                    {
+                        ontologiesScrollPosition[ontology.Key] = Vector2.zero;
+                    }
+                    ontologiesScrollPosition[ontology.Key] = EditorGUILayout.BeginScrollView(ontologiesScrollPosition[ontology.Key], GUILayout.Height(150));
+                    // read the content of the file at <ontology.Value>
+                    string ontologyContent = System.IO.File.Exists(ontology.Value) ? System.IO.File.ReadAllText(ontology.Value) : "File not found: " + ontology.Value;
+                    GUILayout.TextArea(ontologyContent, EditorStyles.textField, GUILayout.ExpandHeight(true));
+                    GUILayout.EndScrollView();
                 }
-                ontologiesScrollPosition[ontology.Key] = EditorGUILayout.BeginScrollView(ontologiesScrollPosition[ontology.Key], GUILayout.Height(150));
-                // read the content of the file at <ontology.Value>
-                string ontologyContent = System.IO.File.Exists(ontology.Value) ? System.IO.File.ReadAllText(ontology.Value) : "File not found: " + ontology.Value;
-                GUILayout.TextArea(ontologyContent, EditorStyles.textField, GUILayout.ExpandHeight(true));
-                GUILayout.EndScrollView();
+                else
+                {
+                    // button show content of ontology file
+                    if (GUILayout.Button("Show Content", GUILayout.ExpandWidth(true), GUILayout.Height(39)))
+                    {
+                        if (ontologiesIsShown.ContainsKey(ontology.Key))
+                            ontologiesIsShown[ontology.Key] = !ontologiesIsShown[ontology.Key];
+                        else
+                            ontologiesIsShown[ontology.Key] = true;
+                    }
+                }
                 EditorGUILayout.EndHorizontal();
             }
             if (GUILayout.Button("Refresh Ontologies"))
@@ -158,11 +179,7 @@ namespace Sven.Editor
                 }
             }
 
-
-            if (refresh)
-            {
-                SvenConfig.RefreshConfig();
-            }
+            if (refresh) SvenConfig.RefreshConfig();
         }
     }
 }

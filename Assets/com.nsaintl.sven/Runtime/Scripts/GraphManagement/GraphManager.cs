@@ -11,6 +11,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
+using System.Threading.Tasks;
 using UnityEngine;
 using VDS.RDF;
 using VDS.RDF.Parsing;
@@ -31,9 +32,6 @@ namespace Sven.GraphManagement
         private static readonly Dictionary<string, string> _ontologies = new();
         private static readonly List<Instant> _instants = new();
         private static AuthenticationHeaderValue _authenticationHeaderValue = null;
-
-        // list namespaces for the graph
-        public static string BaseUri => _instance.BaseUri?.AbsoluteUri ?? "http://example.org/graph";
 
         public static void SetAuthenticationHeaderValue(string username, string password)
         {
@@ -75,12 +73,11 @@ namespace Sven.GraphManagement
 
         public static void SetNamespace(string prefix, string uri)
         {
-            if (string.IsNullOrEmpty(prefix)) throw new ArgumentNullException(nameof(prefix) + " is null or empty.");
             if (string.IsNullOrEmpty(uri)) throw new ArgumentNullException(nameof(uri) + " is null or empty.");
             _instance.NamespaceMap.AddNamespace(prefix, UriFactory.Create(uri));
         }
 
-        public static void AddOntology(string ontologyName, string ontologyFileName)
+        public static void LoadOntology(string ontologyName, string ontologyFileName)
         {
             if (string.IsNullOrEmpty(ontologyName)) throw new ArgumentNullException(nameof(ontologyName) + " is null or empty.");
             if (string.IsNullOrEmpty(ontologyFileName)) throw new ArgumentNullException(nameof(ontologyFileName) + " is null or empty.");
@@ -92,7 +89,14 @@ namespace Sven.GraphManagement
             _ontologies.Add(ontologyName, ontologyFileName);
         }
 
-        public static void ApplyRule()
+        public static void LoadOntologies()
+        {
+            Dictionary<string, string> ontologies = SvenConfig.Ontologies;
+            foreach (KeyValuePair<string, string> ontology in ontologies)
+                GraphManager.LoadOntology(ontology.Key, ontology.Value);
+        }
+
+        public static void ApplyRules()
         {
             if (_instance == null) throw new InvalidOperationException("Graph instance is not initialized.");
 
@@ -129,19 +133,20 @@ namespace Sven.GraphManagement
             }
         }
 
-        public static void SaveToEndpoint()
+        public static async Task SaveToEndpoint()
         {
-            SaveToEndpoint(SvenConfig.EndpointUrl);
+            await SaveToEndpoint(SvenConfig.EndpointUrl);
         }
 
-        public static void SaveToEndpoint(string endpointUrl)
+        public static async Task SaveToEndpoint(string endpointUrl)
         {
+            Debug.Log($"Saving graph to endpoint: {endpointUrl}");
             if (string.IsNullOrEmpty(endpointUrl)) throw new ArgumentNullException(nameof(endpointUrl) + " is null or empty.");
             if (!Uri.IsWellFormedUriString(endpointUrl, UriKind.Absolute)) throw new ArgumentException("The endpoint URL is not valid.", nameof(endpointUrl));
 
             MimeTypeDefinition writerMimeTypeDefinition = MimeTypesHelper.GetDefinitions("application/x-turtle").First();
             string turtleContent = DecodeGraph();
-            string serviceUrl = $"{endpointUrl}?graph={Uri.EscapeDataString(_instance.BaseUri.AbsoluteUri)}";
+            string serviceUrl = $"{endpointUrl}/rdf-graphs/service?graph={Uri.EscapeDataString(_instance.BaseUri.AbsoluteUri)}";
             try
             {
 #if !UNITY_WEBGL || UNITY_EDITOR
@@ -153,7 +158,7 @@ namespace Sven.GraphManagement
                     Content = new StringContent(turtleContent, Encoding.UTF8, writerMimeTypeDefinition.CanonicalMimeType)
                 };
 
-                using HttpResponseMessage httpResponseMessage = httpClient.SendAsync(request).Result;
+                using HttpResponseMessage httpResponseMessage = await httpClient.SendAsync(request);
 
                 if (httpResponseMessage.IsSuccessStatusCode)
                 {
@@ -252,7 +257,7 @@ WHERE {
         public static SparqlResultSet Query(string query, bool withReasoning)
         {
             if (string.IsNullOrEmpty(query)) throw new ArgumentNullException(nameof(query) + " is null or empty.");
-            if (withReasoning) ApplyRule();
+            if (withReasoning) ApplyRules();
             SparqlQueryParser parser = new();
             SparqlQuery sparqlQuery = parser.ParseFromString(query) ?? throw new InvalidOperationException("Failed to parse SPARQL query.");
             try
@@ -313,7 +318,7 @@ WHERE {
         public static IUriNode CreateUriNode(string uri)
         {
             if (string.IsNullOrEmpty(uri)) throw new ArgumentNullException(nameof(uri) + " is null or empty.");
-            return _instance.CreateUriNode(UriFactory.Create(uri));
+            return _instance.CreateUriNode(uri);
         }
 
         public static ILiteralNode CreateLiteralNode(string name)

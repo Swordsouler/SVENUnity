@@ -55,7 +55,7 @@ namespace Sven.Context
         /// </summary>
         private void Initialize()
         {
-            IUriNode userNode = GraphManager.CreateUriNode("sven:" + UUID);
+            IUriNode userNode = GraphManager.CreateUriNode(":" + UUID);
 
             GraphManager.Assert(new Triple(userNode, GraphManager.CreateUriNode("rdf:type"), GraphManager.CreateUriNode("sven:User")));
             if (pointOfView != null) GraphManager.Assert(new Triple(userNode, GraphManager.CreateUriNode("sven:pointOfView"), GraphManager.CreateUriNode("sven:" + pointOfView.GetComponent<SemantizationCore>().GetUUID())));

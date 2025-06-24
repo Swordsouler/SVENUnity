@@ -2,49 +2,61 @@
 // Author: Nicolas SAINT-LÉGER
 // Licensed under the MIT License. See LICENSE file in the project root for full license information.
 
-using Sven.Utils;
-using System.Collections.Generic;
+using NaughtyAttributes;
+using Sven.Content;
+using System.Threading;
+using System.Threading.Tasks;
 using UnityEngine;
 
 namespace Sven.GraphManagement
 {
     public class GraphController : MonoBehaviour
     {
-        [SerializeField] private string _baseUri = "https://sven.lisn.upsaclay.fr/Default/";
-        public string BaseUri
+        [ShowNativeProperty] private string BaseUri => "https://sven.lisn.upsaclay.fr/ve/" + _graphName + "/";
+        [SerializeField] private string _graphName = "Default";
+        public string GraphName
         {
-            get => _baseUri;
+            get => _graphName;
             set
             {
                 if (string.IsNullOrEmpty(value)) return;
-                if (_baseUri == value) return;
-                _baseUri = value;
+                if (_graphName == value) return;
+                _graphName = value;
                 GraphManager.SetBaseUri(BaseUri);
+                GraphManager.SetNamespace("", BaseUri);
             }
         }
 
         private void Awake()
         {
             GraphManager.Clear();
-            LoadOntologies();
+            GraphManager.LoadOntologies();
             GraphManager.SetBaseUri(BaseUri);
-        }
-
-        private void LoadOntologies()
-        {
-            Dictionary<string, string> ontologies = SvenConfig.Ontologies;
-            foreach (KeyValuePair<string, string> ontology in ontologies)
-                GraphManager.AddOntology(ontology.Key, ontology.Value);
-        }
-
-        private void Update()
-        {
-            //Debug.Log(GraphManager.BaseUri);
+            GraphManager.SetNamespace("", BaseUri);
         }
 
         private void OnApplicationQuit()
         {
+            SaveGraph();
             GraphManager.Clear();
         }
+
+        private async void SaveGraph()
+        {
+            SemantizationCore[] semantizationCores = FindObjectsByType<SemantizationCore>(FindObjectsSortMode.None);
+            SynchronizationContext context = SynchronizationContext.Current;
+#if !UNITY_WEBGL || UNITY_EDITOR
+            await Task.Run(() =>
+            {
+#endif
+                foreach (SemantizationCore semantizationCore in semantizationCores)
+                    context.Send(_ => semantizationCore.OnDestroy(), null);
+#if !UNITY_WEBGL || UNITY_EDITOR
+            });
+#endif
+            GraphManager.ApplyRules();
+            await GraphManager.SaveToEndpoint();
+        }
+
     }
 }

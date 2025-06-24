@@ -21,7 +21,7 @@ namespace Sven.OwlTime
         protected static readonly List<Interval> intervals = new();
 
         public string UUID { get; private set; }
-        public IUriNode UriNode => GraphManager.CreateUriNode("time:" + UUID);
+        public IUriNode UriNode => GraphManager.CreateUriNode(":" + UUID);
 
 
         /// <summary>

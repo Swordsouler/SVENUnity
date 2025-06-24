@@ -100,13 +100,13 @@ namespace Sven.Editor
 
                     // Display a checkbox for the component with "(ALL)" and a tooltip if it doesn't have GetProperties
                     GUIContent content = new("", "The component will be fully semantized, which may cause performance issues. To fix this, declare a GetProperties function for this component in SemantizationExtensions.");
-                    bool newIsSemantized = EditorGUILayout.Toggle(components.Exists(c => ((SemantizationCore)c.gameObject.GetComponent<SemantizationCore>()).componentsToSemantize.Exists(sc => sc.Component == c)), GUILayout.Width(20));
+                    bool newIsSemantized = EditorGUILayout.Toggle(components.Exists(c => ((SemantizationCore)c.gameObject.GetComponent<SemantizationCore>()).componentsToSemanticize.Exists(sc => sc.Component == c)), GUILayout.Width(20));
 
                     // Disable the dropdown if the checkbox is not checked
                     EditorGUI.BeginDisabledGroup(!newIsSemantized);
 
                     // Display a dropdown for the component with the options from SemanticProcessingMode
-                    int selectedIndex = EditorGUILayout.Popup(newIsSemantized ? ((SemantizationCore)components[0].gameObject.GetComponent<SemantizationCore>()).componentsToSemantize.Find(sc => sc.Component == components[0])?.ProcessingMode == SemanticProcessingMode.Static ? 1 : 0 : 0, newIsSemantized ? processingModeOptions : new string[] { "" }, GUILayout.Width(80));
+                    int selectedIndex = EditorGUILayout.Popup(newIsSemantized ? ((SemantizationCore)components[0].gameObject.GetComponent<SemantizationCore>()).componentsToSemanticize.Find(sc => sc.Component == components[0])?.ProcessingMode == SemanticProcessingMode.Static ? 1 : 0 : 0, newIsSemantized ? processingModeOptions : new string[] { "" }, GUILayout.Width(80));
 
                     // End disabled group for dropdown
                     EditorGUI.EndDisabledGroup();
@@ -121,23 +121,23 @@ namespace Sven.Editor
                     foreach (Component component in components)
                     {
                         SemantizationCore core = (SemantizationCore)component.gameObject.GetComponent<SemantizationCore>();
-                        bool isSemantized = core.componentsToSemantize.Find(c => c.Component == component) != null;
+                        bool isSemantized = core.componentsToSemanticize.Find(c => c.Component == component) != null;
 
                         if (newIsSemantized && !isSemantized)
                         {
-                            core.componentsToSemantize.Add(new SemanticComponent { Component = component, ProcessingMode = (SemanticProcessingMode)selectedIndex });
-                            core.componentsToSemantize.RemoveAll(c => c == null || c.Component == null || !component.gameObject.Equals(c.Component.gameObject));
+                            core.componentsToSemanticize.Add(new SemanticComponent { Component = component, ProcessingMode = (SemanticProcessingMode)selectedIndex });
+                            core.componentsToSemanticize.RemoveAll(c => c == null || c.Component == null || !component.gameObject.Equals(c.Component.gameObject));
                         }
                         else if (!newIsSemantized && isSemantized)
                         {
-                            core.componentsToSemantize.Remove(core.componentsToSemantize.Find(c => c.Component == component));
-                            core.componentsToSemantize.RemoveAll(c => c == null || c.Component == null || !component.gameObject.Equals(c.Component.gameObject));
+                            core.componentsToSemanticize.Remove(core.componentsToSemanticize.Find(c => c.Component == component));
+                            core.componentsToSemanticize.RemoveAll(c => c == null || c.Component == null || !component.gameObject.Equals(c.Component.gameObject));
                         }
 
                         // Handle the dropdown selection (you can add your logic here)
                         if (newIsSemantized)
                         {
-                            core.componentsToSemantize.Find(c => c.Component == component).ProcessingMode = (SemanticProcessingMode)selectedIndex;
+                            core.componentsToSemanticize.Find(c => c.Component == component).ProcessingMode = (SemanticProcessingMode)selectedIndex;
                         }
                     }
                 }

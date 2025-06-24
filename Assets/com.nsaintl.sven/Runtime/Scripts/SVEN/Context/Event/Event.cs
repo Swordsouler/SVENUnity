@@ -25,7 +25,7 @@ namespace Sven.Context
         /// </summary>
         protected User _user;
 
-        public IUriNode UriNode => GraphManager.CreateUriNode("sven:" + _uuid);
+        public IUriNode UriNode => GraphManager.CreateUriNode(":" + _uuid);
 
         public Event(User user)
         {

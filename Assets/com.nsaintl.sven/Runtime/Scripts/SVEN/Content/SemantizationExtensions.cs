@@ -177,8 +177,8 @@ namespace Sven.Content
                 throw new NullReferenceException();
             }
 
-            IUriNode gameObjectNode = GraphManager.CreateUriNode("sven:" + semantizationCore.GetUUID());
-            IUriNode componentNode = GraphManager.CreateUriNode("sven:" + component.GetUUID());
+            IUriNode gameObjectNode = GraphManager.CreateUriNode(":" + semantizationCore.GetUUID());
+            IUriNode componentNode = GraphManager.CreateUriNode(":" + component.GetUUID());
             IUriNode componentTypeNode = GraphManager.CreateUriNode(component.GetRdfType());
 
             GraphManager.Assert(new Triple(gameObjectNode, GraphManager.CreateUriNode("sven:component"), componentNode));

@@ -167,15 +167,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7e518ae278ae889448712861370435c0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  componentsToSemantize:
-  - <Component>k__BackingField: {fileID: 36013527}
-    <ProcessingMode>k__BackingField: 0
-  - <Component>k__BackingField: {fileID: 36013525}
-    <ProcessingMode>k__BackingField: 0
-  - <Component>k__BackingField: {fileID: 36013526}
-    <ProcessingMode>k__BackingField: 1
+  componentsToSemanticize:
   - <Component>k__BackingField: {fileID: 36013522}
     <ProcessingMode>k__BackingField: 0
+  - <Component>k__BackingField: {fileID: 36013527}
+    <ProcessingMode>k__BackingField: 1
+  - <Component>k__BackingField: {fileID: 36013526}
+    <ProcessingMode>k__BackingField: 1
+  - <Component>k__BackingField: {fileID: 36013525}
+    <ProcessingMode>k__BackingField: 1
 --- !u!65 &36013524
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -310,15 +310,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7e518ae278ae889448712861370435c0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  componentsToSemantize:
-  - <Component>k__BackingField: {fileID: 45912286}
-    <ProcessingMode>k__BackingField: 0
-  - <Component>k__BackingField: {fileID: 45912284}
+  componentsToSemanticize:
+  - <Component>k__BackingField: {fileID: 45912281}
     <ProcessingMode>k__BackingField: 0
   - <Component>k__BackingField: {fileID: 45912285}
     <ProcessingMode>k__BackingField: 1
-  - <Component>k__BackingField: {fileID: 45912281}
-    <ProcessingMode>k__BackingField: 0
+  - <Component>k__BackingField: {fileID: 45912284}
+    <ProcessingMode>k__BackingField: 1
+  - <Component>k__BackingField: {fileID: 45912286}
+    <ProcessingMode>k__BackingField: 1
 --- !u!65 &45912283
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -527,15 +527,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7e518ae278ae889448712861370435c0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  componentsToSemantize:
-  - <Component>k__BackingField: {fileID: 98621463}
-    <ProcessingMode>k__BackingField: 0
-  - <Component>k__BackingField: {fileID: 98621459}
-    <ProcessingMode>k__BackingField: 0
-  - <Component>k__BackingField: {fileID: 98621460}
-    <ProcessingMode>k__BackingField: 1
+  componentsToSemanticize:
   - <Component>k__BackingField: {fileID: 98621461}
     <ProcessingMode>k__BackingField: 0
+  - <Component>k__BackingField: {fileID: 98621463}
+    <ProcessingMode>k__BackingField: 1
+  - <Component>k__BackingField: {fileID: 98621460}
+    <ProcessingMode>k__BackingField: 1
+  - <Component>k__BackingField: {fileID: 98621459}
+    <ProcessingMode>k__BackingField: 1
 --- !u!114 &98621463
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -563,7 +563,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &216645334
 Transform:
   m_ObjectHideFlags: 0
@@ -642,15 +642,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7e518ae278ae889448712861370435c0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  componentsToSemantize:
-  - <Component>k__BackingField: {fileID: 232688357}
-    <ProcessingMode>k__BackingField: 0
-  - <Component>k__BackingField: {fileID: 232688355}
+  componentsToSemanticize:
+  - <Component>k__BackingField: {fileID: 232688352}
     <ProcessingMode>k__BackingField: 0
   - <Component>k__BackingField: {fileID: 232688356}
     <ProcessingMode>k__BackingField: 1
-  - <Component>k__BackingField: {fileID: 232688352}
-    <ProcessingMode>k__BackingField: 0
+  - <Component>k__BackingField: {fileID: 232688355}
+    <ProcessingMode>k__BackingField: 1
+  - <Component>k__BackingField: {fileID: 232688357}
+    <ProcessingMode>k__BackingField: 1
 --- !u!65 &232688354
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -934,15 +934,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7e518ae278ae889448712861370435c0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  componentsToSemantize:
-  - <Component>k__BackingField: {fileID: 285358068}
-    <ProcessingMode>k__BackingField: 0
-  - <Component>k__BackingField: {fileID: 285358066}
+  componentsToSemanticize:
+  - <Component>k__BackingField: {fileID: 285358063}
     <ProcessingMode>k__BackingField: 0
   - <Component>k__BackingField: {fileID: 285358067}
     <ProcessingMode>k__BackingField: 1
-  - <Component>k__BackingField: {fileID: 285358063}
-    <ProcessingMode>k__BackingField: 0
+  - <Component>k__BackingField: {fileID: 285358066}
+    <ProcessingMode>k__BackingField: 1
+  - <Component>k__BackingField: {fileID: 285358068}
+    <ProcessingMode>k__BackingField: 1
 --- !u!65 &285358065
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -1044,7 +1044,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &286991791
 Transform:
   m_ObjectHideFlags: 0
@@ -1240,7 +1240,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3f76f747641578c40a97142e96baae7a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _baseUri: 
+  _graphName: Default
 --- !u!4 &346780041
 Transform:
   m_ObjectHideFlags: 0
@@ -1304,15 +1304,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7e518ae278ae889448712861370435c0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  componentsToSemantize:
-  - <Component>k__BackingField: {fileID: 414828576}
-    <ProcessingMode>k__BackingField: 0
-  - <Component>k__BackingField: {fileID: 414828574}
+  componentsToSemanticize:
+  - <Component>k__BackingField: {fileID: 414828571}
     <ProcessingMode>k__BackingField: 0
   - <Component>k__BackingField: {fileID: 414828575}
     <ProcessingMode>k__BackingField: 1
-  - <Component>k__BackingField: {fileID: 414828571}
-    <ProcessingMode>k__BackingField: 0
+  - <Component>k__BackingField: {fileID: 414828574}
+    <ProcessingMode>k__BackingField: 1
+  - <Component>k__BackingField: {fileID: 414828576}
+    <ProcessingMode>k__BackingField: 1
 --- !u!65 &414828573
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -1447,15 +1447,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7e518ae278ae889448712861370435c0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  componentsToSemantize:
-  - <Component>k__BackingField: {fileID: 417238700}
-    <ProcessingMode>k__BackingField: 0
-  - <Component>k__BackingField: {fileID: 417238698}
+  componentsToSemanticize:
+  - <Component>k__BackingField: {fileID: 417238695}
     <ProcessingMode>k__BackingField: 0
   - <Component>k__BackingField: {fileID: 417238699}
     <ProcessingMode>k__BackingField: 1
-  - <Component>k__BackingField: {fileID: 417238695}
-    <ProcessingMode>k__BackingField: 0
+  - <Component>k__BackingField: {fileID: 417238698}
+    <ProcessingMode>k__BackingField: 1
+  - <Component>k__BackingField: {fileID: 417238700}
+    <ProcessingMode>k__BackingField: 1
 --- !u!65 &417238697
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -1590,15 +1590,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7e518ae278ae889448712861370435c0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  componentsToSemantize:
-  - <Component>k__BackingField: {fileID: 424303852}
-    <ProcessingMode>k__BackingField: 0
-  - <Component>k__BackingField: {fileID: 424303850}
+  componentsToSemanticize:
+  - <Component>k__BackingField: {fileID: 424303847}
     <ProcessingMode>k__BackingField: 0
   - <Component>k__BackingField: {fileID: 424303851}
     <ProcessingMode>k__BackingField: 1
-  - <Component>k__BackingField: {fileID: 424303847}
-    <ProcessingMode>k__BackingField: 0
+  - <Component>k__BackingField: {fileID: 424303850}
+    <ProcessingMode>k__BackingField: 1
+  - <Component>k__BackingField: {fileID: 424303852}
+    <ProcessingMode>k__BackingField: 1
 --- !u!65 &424303849
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -1700,7 +1700,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &425569423
 Transform:
   m_ObjectHideFlags: 0
@@ -1779,15 +1779,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7e518ae278ae889448712861370435c0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  componentsToSemantize:
-  - <Component>k__BackingField: {fileID: 451770570}
-    <ProcessingMode>k__BackingField: 0
-  - <Component>k__BackingField: {fileID: 451770568}
-    <ProcessingMode>k__BackingField: 0
-  - <Component>k__BackingField: {fileID: 451770569}
-    <ProcessingMode>k__BackingField: 1
+  componentsToSemanticize:
   - <Component>k__BackingField: {fileID: 451770565}
     <ProcessingMode>k__BackingField: 0
+  - <Component>k__BackingField: {fileID: 451770570}
+    <ProcessingMode>k__BackingField: 1
+  - <Component>k__BackingField: {fileID: 451770569}
+    <ProcessingMode>k__BackingField: 1
+  - <Component>k__BackingField: {fileID: 451770568}
+    <ProcessingMode>k__BackingField: 1
 --- !u!65 &451770567
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -1922,15 +1922,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7e518ae278ae889448712861370435c0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  componentsToSemantize:
-  - <Component>k__BackingField: {fileID: 453002987}
-    <ProcessingMode>k__BackingField: 0
-  - <Component>k__BackingField: {fileID: 453002985}
+  componentsToSemanticize:
+  - <Component>k__BackingField: {fileID: 453002982}
     <ProcessingMode>k__BackingField: 0
   - <Component>k__BackingField: {fileID: 453002986}
     <ProcessingMode>k__BackingField: 1
-  - <Component>k__BackingField: {fileID: 453002982}
-    <ProcessingMode>k__BackingField: 0
+  - <Component>k__BackingField: {fileID: 453002985}
+    <ProcessingMode>k__BackingField: 1
+  - <Component>k__BackingField: {fileID: 453002987}
+    <ProcessingMode>k__BackingField: 1
 --- !u!65 &453002984
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -2168,15 +2168,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7e518ae278ae889448712861370435c0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  componentsToSemantize:
-  - <Component>k__BackingField: {fileID: 520508988}
-    <ProcessingMode>k__BackingField: 0
-  - <Component>k__BackingField: {fileID: 520508986}
-    <ProcessingMode>k__BackingField: 0
-  - <Component>k__BackingField: {fileID: 520508987}
-    <ProcessingMode>k__BackingField: 1
+  componentsToSemanticize:
   - <Component>k__BackingField: {fileID: 520508983}
     <ProcessingMode>k__BackingField: 0
+  - <Component>k__BackingField: {fileID: 520508988}
+    <ProcessingMode>k__BackingField: 1
+  - <Component>k__BackingField: {fileID: 520508987}
+    <ProcessingMode>k__BackingField: 1
+  - <Component>k__BackingField: {fileID: 520508986}
+    <ProcessingMode>k__BackingField: 1
 --- !u!65 &520508985
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -2311,15 +2311,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7e518ae278ae889448712861370435c0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  componentsToSemantize:
-  - <Component>k__BackingField: {fileID: 601377091}
-    <ProcessingMode>k__BackingField: 0
-  - <Component>k__BackingField: {fileID: 601377089}
+  componentsToSemanticize:
+  - <Component>k__BackingField: {fileID: 601377086}
     <ProcessingMode>k__BackingField: 0
   - <Component>k__BackingField: {fileID: 601377090}
     <ProcessingMode>k__BackingField: 1
-  - <Component>k__BackingField: {fileID: 601377086}
-    <ProcessingMode>k__BackingField: 0
+  - <Component>k__BackingField: {fileID: 601377089}
+    <ProcessingMode>k__BackingField: 1
+  - <Component>k__BackingField: {fileID: 601377091}
+    <ProcessingMode>k__BackingField: 1
 --- !u!65 &601377088
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -2454,15 +2454,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7e518ae278ae889448712861370435c0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  componentsToSemantize:
-  - <Component>k__BackingField: {fileID: 651375886}
-    <ProcessingMode>k__BackingField: 0
-  - <Component>k__BackingField: {fileID: 651375884}
+  componentsToSemanticize:
+  - <Component>k__BackingField: {fileID: 651375881}
     <ProcessingMode>k__BackingField: 0
   - <Component>k__BackingField: {fileID: 651375885}
     <ProcessingMode>k__BackingField: 1
-  - <Component>k__BackingField: {fileID: 651375881}
-    <ProcessingMode>k__BackingField: 0
+  - <Component>k__BackingField: {fileID: 651375884}
+    <ProcessingMode>k__BackingField: 1
+  - <Component>k__BackingField: {fileID: 651375886}
+    <ProcessingMode>k__BackingField: 1
 --- !u!65 &651375883
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -2597,15 +2597,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7e518ae278ae889448712861370435c0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  componentsToSemantize:
-  - <Component>k__BackingField: {fileID: 659058932}
-    <ProcessingMode>k__BackingField: 0
-  - <Component>k__BackingField: {fileID: 659058930}
+  componentsToSemanticize:
+  - <Component>k__BackingField: {fileID: 659058927}
     <ProcessingMode>k__BackingField: 0
   - <Component>k__BackingField: {fileID: 659058931}
     <ProcessingMode>k__BackingField: 1
-  - <Component>k__BackingField: {fileID: 659058927}
-    <ProcessingMode>k__BackingField: 0
+  - <Component>k__BackingField: {fileID: 659058930}
+    <ProcessingMode>k__BackingField: 1
+  - <Component>k__BackingField: {fileID: 659058932}
+    <ProcessingMode>k__BackingField: 1
 --- !u!65 &659058929
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -2740,15 +2740,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7e518ae278ae889448712861370435c0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  componentsToSemantize:
-  - <Component>k__BackingField: {fileID: 659357365}
-    <ProcessingMode>k__BackingField: 0
-  - <Component>k__BackingField: {fileID: 659357363}
+  componentsToSemanticize:
+  - <Component>k__BackingField: {fileID: 659357360}
     <ProcessingMode>k__BackingField: 0
   - <Component>k__BackingField: {fileID: 659357364}
     <ProcessingMode>k__BackingField: 1
-  - <Component>k__BackingField: {fileID: 659357360}
-    <ProcessingMode>k__BackingField: 0
+  - <Component>k__BackingField: {fileID: 659357363}
+    <ProcessingMode>k__BackingField: 1
+  - <Component>k__BackingField: {fileID: 659357365}
+    <ProcessingMode>k__BackingField: 1
 --- !u!65 &659357362
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -2883,15 +2883,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7e518ae278ae889448712861370435c0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  componentsToSemantize:
-  - <Component>k__BackingField: {fileID: 662985090}
-    <ProcessingMode>k__BackingField: 0
-  - <Component>k__BackingField: {fileID: 662985088}
+  componentsToSemanticize:
+  - <Component>k__BackingField: {fileID: 662985085}
     <ProcessingMode>k__BackingField: 0
   - <Component>k__BackingField: {fileID: 662985089}
     <ProcessingMode>k__BackingField: 1
-  - <Component>k__BackingField: {fileID: 662985085}
-    <ProcessingMode>k__BackingField: 0
+  - <Component>k__BackingField: {fileID: 662985088}
+    <ProcessingMode>k__BackingField: 1
+  - <Component>k__BackingField: {fileID: 662985090}
+    <ProcessingMode>k__BackingField: 1
 --- !u!65 &662985087
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -3026,15 +3026,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7e518ae278ae889448712861370435c0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  componentsToSemantize:
-  - <Component>k__BackingField: {fileID: 689839372}
-    <ProcessingMode>k__BackingField: 0
-  - <Component>k__BackingField: {fileID: 689839370}
-    <ProcessingMode>k__BackingField: 0
-  - <Component>k__BackingField: {fileID: 689839371}
-    <ProcessingMode>k__BackingField: 1
+  componentsToSemanticize:
   - <Component>k__BackingField: {fileID: 689839367}
     <ProcessingMode>k__BackingField: 0
+  - <Component>k__BackingField: {fileID: 689839372}
+    <ProcessingMode>k__BackingField: 1
+  - <Component>k__BackingField: {fileID: 689839371}
+    <ProcessingMode>k__BackingField: 1
+  - <Component>k__BackingField: {fileID: 689839370}
+    <ProcessingMode>k__BackingField: 1
 --- !u!65 &689839369
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -3169,15 +3169,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7e518ae278ae889448712861370435c0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  componentsToSemantize:
-  - <Component>k__BackingField: {fileID: 756072465}
-    <ProcessingMode>k__BackingField: 0
-  - <Component>k__BackingField: {fileID: 756072463}
-    <ProcessingMode>k__BackingField: 0
-  - <Component>k__BackingField: {fileID: 756072464}
-    <ProcessingMode>k__BackingField: 1
+  componentsToSemanticize:
   - <Component>k__BackingField: {fileID: 756072460}
     <ProcessingMode>k__BackingField: 0
+  - <Component>k__BackingField: {fileID: 756072465}
+    <ProcessingMode>k__BackingField: 1
+  - <Component>k__BackingField: {fileID: 756072464}
+    <ProcessingMode>k__BackingField: 1
+  - <Component>k__BackingField: {fileID: 756072463}
+    <ProcessingMode>k__BackingField: 1
 --- !u!65 &756072462
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -3312,15 +3312,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7e518ae278ae889448712861370435c0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  componentsToSemantize:
-  - <Component>k__BackingField: {fileID: 832788196}
-    <ProcessingMode>k__BackingField: 0
-  - <Component>k__BackingField: {fileID: 832788194}
-    <ProcessingMode>k__BackingField: 0
-  - <Component>k__BackingField: {fileID: 832788195}
-    <ProcessingMode>k__BackingField: 1
+  componentsToSemanticize:
   - <Component>k__BackingField: {fileID: 832788191}
     <ProcessingMode>k__BackingField: 0
+  - <Component>k__BackingField: {fileID: 832788196}
+    <ProcessingMode>k__BackingField: 1
+  - <Component>k__BackingField: {fileID: 832788195}
+    <ProcessingMode>k__BackingField: 1
+  - <Component>k__BackingField: {fileID: 832788194}
+    <ProcessingMode>k__BackingField: 1
 --- !u!65 &832788193
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -3452,11 +3452,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7e518ae278ae889448712861370435c0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  componentsToSemantize:
+  componentsToSemanticize:
   - <Component>k__BackingField: {fileID: 938404640}
     <ProcessingMode>k__BackingField: 0
   - <Component>k__BackingField: {fileID: 938404644}
-    <ProcessingMode>k__BackingField: 0
+    <ProcessingMode>k__BackingField: 1
 --- !u!114 &938404644
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3519,15 +3519,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7e518ae278ae889448712861370435c0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  componentsToSemantize:
-  - <Component>k__BackingField: {fileID: 943934306}
-    <ProcessingMode>k__BackingField: 0
-  - <Component>k__BackingField: {fileID: 943934304}
+  componentsToSemanticize:
+  - <Component>k__BackingField: {fileID: 943934301}
     <ProcessingMode>k__BackingField: 0
   - <Component>k__BackingField: {fileID: 943934305}
     <ProcessingMode>k__BackingField: 1
-  - <Component>k__BackingField: {fileID: 943934301}
-    <ProcessingMode>k__BackingField: 0
+  - <Component>k__BackingField: {fileID: 943934304}
+    <ProcessingMode>k__BackingField: 1
+  - <Component>k__BackingField: {fileID: 943934306}
+    <ProcessingMode>k__BackingField: 1
 --- !u!65 &943934303
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -3662,15 +3662,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7e518ae278ae889448712861370435c0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  componentsToSemantize:
-  - <Component>k__BackingField: {fileID: 1005619027}
-    <ProcessingMode>k__BackingField: 0
-  - <Component>k__BackingField: {fileID: 1005619025}
+  componentsToSemanticize:
+  - <Component>k__BackingField: {fileID: 1005619022}
     <ProcessingMode>k__BackingField: 0
   - <Component>k__BackingField: {fileID: 1005619026}
     <ProcessingMode>k__BackingField: 1
-  - <Component>k__BackingField: {fileID: 1005619022}
-    <ProcessingMode>k__BackingField: 0
+  - <Component>k__BackingField: {fileID: 1005619025}
+    <ProcessingMode>k__BackingField: 1
+  - <Component>k__BackingField: {fileID: 1005619027}
+    <ProcessingMode>k__BackingField: 1
 --- !u!65 &1005619024
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -3816,7 +3816,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7e518ae278ae889448712861370435c0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  componentsToSemantize:
+  componentsToSemanticize:
   - <Component>k__BackingField: {fileID: 1011916314}
     <ProcessingMode>k__BackingField: 0
   - <Component>k__BackingField: {fileID: 1011916315}
@@ -3869,15 +3869,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7e518ae278ae889448712861370435c0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  componentsToSemantize:
-  - <Component>k__BackingField: {fileID: 1031309584}
-    <ProcessingMode>k__BackingField: 0
-  - <Component>k__BackingField: {fileID: 1031309582}
+  componentsToSemanticize:
+  - <Component>k__BackingField: {fileID: 1031309579}
     <ProcessingMode>k__BackingField: 0
   - <Component>k__BackingField: {fileID: 1031309583}
     <ProcessingMode>k__BackingField: 1
-  - <Component>k__BackingField: {fileID: 1031309579}
-    <ProcessingMode>k__BackingField: 0
+  - <Component>k__BackingField: {fileID: 1031309582}
+    <ProcessingMode>k__BackingField: 1
+  - <Component>k__BackingField: {fileID: 1031309584}
+    <ProcessingMode>k__BackingField: 1
 --- !u!65 &1031309581
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -4012,15 +4012,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7e518ae278ae889448712861370435c0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  componentsToSemantize:
-  - <Component>k__BackingField: {fileID: 1032951740}
-    <ProcessingMode>k__BackingField: 0
-  - <Component>k__BackingField: {fileID: 1032951738}
-    <ProcessingMode>k__BackingField: 0
-  - <Component>k__BackingField: {fileID: 1032951739}
-    <ProcessingMode>k__BackingField: 1
+  componentsToSemanticize:
   - <Component>k__BackingField: {fileID: 1032951735}
     <ProcessingMode>k__BackingField: 0
+  - <Component>k__BackingField: {fileID: 1032951740}
+    <ProcessingMode>k__BackingField: 1
+  - <Component>k__BackingField: {fileID: 1032951739}
+    <ProcessingMode>k__BackingField: 1
+  - <Component>k__BackingField: {fileID: 1032951738}
+    <ProcessingMode>k__BackingField: 1
 --- !u!65 &1032951737
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -4155,15 +4155,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7e518ae278ae889448712861370435c0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  componentsToSemantize:
-  - <Component>k__BackingField: {fileID: 1046888111}
-    <ProcessingMode>k__BackingField: 0
-  - <Component>k__BackingField: {fileID: 1046888109}
+  componentsToSemanticize:
+  - <Component>k__BackingField: {fileID: 1046888106}
     <ProcessingMode>k__BackingField: 0
   - <Component>k__BackingField: {fileID: 1046888110}
     <ProcessingMode>k__BackingField: 1
-  - <Component>k__BackingField: {fileID: 1046888106}
-    <ProcessingMode>k__BackingField: 0
+  - <Component>k__BackingField: {fileID: 1046888109}
+    <ProcessingMode>k__BackingField: 1
+  - <Component>k__BackingField: {fileID: 1046888111}
+    <ProcessingMode>k__BackingField: 1
 --- !u!65 &1046888108
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -4266,7 +4266,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &1127875386
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4413,15 +4413,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7e518ae278ae889448712861370435c0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  componentsToSemantize:
-  - <Component>k__BackingField: {fileID: 1185521411}
-    <ProcessingMode>k__BackingField: 0
-  - <Component>k__BackingField: {fileID: 1185521409}
-    <ProcessingMode>k__BackingField: 0
-  - <Component>k__BackingField: {fileID: 1185521410}
-    <ProcessingMode>k__BackingField: 1
+  componentsToSemanticize:
   - <Component>k__BackingField: {fileID: 1185521406}
     <ProcessingMode>k__BackingField: 0
+  - <Component>k__BackingField: {fileID: 1185521411}
+    <ProcessingMode>k__BackingField: 1
+  - <Component>k__BackingField: {fileID: 1185521410}
+    <ProcessingMode>k__BackingField: 1
+  - <Component>k__BackingField: {fileID: 1185521409}
+    <ProcessingMode>k__BackingField: 1
 --- !u!65 &1185521408
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -4556,15 +4556,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7e518ae278ae889448712861370435c0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  componentsToSemantize:
-  - <Component>k__BackingField: {fileID: 1229614568}
-    <ProcessingMode>k__BackingField: 0
-  - <Component>k__BackingField: {fileID: 1229614566}
+  componentsToSemanticize:
+  - <Component>k__BackingField: {fileID: 1229614563}
     <ProcessingMode>k__BackingField: 0
   - <Component>k__BackingField: {fileID: 1229614567}
     <ProcessingMode>k__BackingField: 1
-  - <Component>k__BackingField: {fileID: 1229614563}
-    <ProcessingMode>k__BackingField: 0
+  - <Component>k__BackingField: {fileID: 1229614566}
+    <ProcessingMode>k__BackingField: 1
+  - <Component>k__BackingField: {fileID: 1229614568}
+    <ProcessingMode>k__BackingField: 1
 --- !u!65 &1229614565
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -4699,15 +4699,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7e518ae278ae889448712861370435c0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  componentsToSemantize:
-  - <Component>k__BackingField: {fileID: 1275101869}
-    <ProcessingMode>k__BackingField: 0
-  - <Component>k__BackingField: {fileID: 1275101867}
+  componentsToSemanticize:
+  - <Component>k__BackingField: {fileID: 1275101864}
     <ProcessingMode>k__BackingField: 0
   - <Component>k__BackingField: {fileID: 1275101868}
     <ProcessingMode>k__BackingField: 1
-  - <Component>k__BackingField: {fileID: 1275101864}
-    <ProcessingMode>k__BackingField: 0
+  - <Component>k__BackingField: {fileID: 1275101867}
+    <ProcessingMode>k__BackingField: 1
+  - <Component>k__BackingField: {fileID: 1275101869}
+    <ProcessingMode>k__BackingField: 1
 --- !u!65 &1275101866
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -4842,15 +4842,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7e518ae278ae889448712861370435c0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  componentsToSemantize:
-  - <Component>k__BackingField: {fileID: 1308310557}
-    <ProcessingMode>k__BackingField: 0
-  - <Component>k__BackingField: {fileID: 1308310555}
-    <ProcessingMode>k__BackingField: 0
-  - <Component>k__BackingField: {fileID: 1308310556}
-    <ProcessingMode>k__BackingField: 1
+  componentsToSemanticize:
   - <Component>k__BackingField: {fileID: 1308310552}
     <ProcessingMode>k__BackingField: 0
+  - <Component>k__BackingField: {fileID: 1308310557}
+    <ProcessingMode>k__BackingField: 1
+  - <Component>k__BackingField: {fileID: 1308310556}
+    <ProcessingMode>k__BackingField: 1
+  - <Component>k__BackingField: {fileID: 1308310555}
+    <ProcessingMode>k__BackingField: 1
 --- !u!65 &1308310554
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -4985,15 +4985,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7e518ae278ae889448712861370435c0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  componentsToSemantize:
-  - <Component>k__BackingField: {fileID: 1340449822}
-    <ProcessingMode>k__BackingField: 0
-  - <Component>k__BackingField: {fileID: 1340449820}
+  componentsToSemanticize:
+  - <Component>k__BackingField: {fileID: 1340449817}
     <ProcessingMode>k__BackingField: 0
   - <Component>k__BackingField: {fileID: 1340449821}
     <ProcessingMode>k__BackingField: 1
-  - <Component>k__BackingField: {fileID: 1340449817}
-    <ProcessingMode>k__BackingField: 0
+  - <Component>k__BackingField: {fileID: 1340449820}
+    <ProcessingMode>k__BackingField: 1
+  - <Component>k__BackingField: {fileID: 1340449822}
+    <ProcessingMode>k__BackingField: 1
 --- !u!65 &1340449819
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -5128,15 +5128,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7e518ae278ae889448712861370435c0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  componentsToSemantize:
-  - <Component>k__BackingField: {fileID: 1400164718}
-    <ProcessingMode>k__BackingField: 0
-  - <Component>k__BackingField: {fileID: 1400164716}
+  componentsToSemanticize:
+  - <Component>k__BackingField: {fileID: 1400164713}
     <ProcessingMode>k__BackingField: 0
   - <Component>k__BackingField: {fileID: 1400164717}
     <ProcessingMode>k__BackingField: 1
-  - <Component>k__BackingField: {fileID: 1400164713}
-    <ProcessingMode>k__BackingField: 0
+  - <Component>k__BackingField: {fileID: 1400164716}
+    <ProcessingMode>k__BackingField: 1
+  - <Component>k__BackingField: {fileID: 1400164718}
+    <ProcessingMode>k__BackingField: 1
 --- !u!65 &1400164715
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -5271,15 +5271,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7e518ae278ae889448712861370435c0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  componentsToSemantize:
-  - <Component>k__BackingField: {fileID: 1426620106}
-    <ProcessingMode>k__BackingField: 0
-  - <Component>k__BackingField: {fileID: 1426620104}
+  componentsToSemanticize:
+  - <Component>k__BackingField: {fileID: 1426620101}
     <ProcessingMode>k__BackingField: 0
   - <Component>k__BackingField: {fileID: 1426620105}
     <ProcessingMode>k__BackingField: 1
-  - <Component>k__BackingField: {fileID: 1426620101}
-    <ProcessingMode>k__BackingField: 0
+  - <Component>k__BackingField: {fileID: 1426620104}
+    <ProcessingMode>k__BackingField: 1
+  - <Component>k__BackingField: {fileID: 1426620106}
+    <ProcessingMode>k__BackingField: 1
 --- !u!65 &1426620103
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -5547,15 +5547,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7e518ae278ae889448712861370435c0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  componentsToSemantize:
-  - <Component>k__BackingField: {fileID: 1496543468}
-    <ProcessingMode>k__BackingField: 0
-  - <Component>k__BackingField: {fileID: 1496543466}
+  componentsToSemanticize:
+  - <Component>k__BackingField: {fileID: 1496543463}
     <ProcessingMode>k__BackingField: 0
   - <Component>k__BackingField: {fileID: 1496543467}
     <ProcessingMode>k__BackingField: 1
-  - <Component>k__BackingField: {fileID: 1496543463}
-    <ProcessingMode>k__BackingField: 0
+  - <Component>k__BackingField: {fileID: 1496543466}
+    <ProcessingMode>k__BackingField: 1
+  - <Component>k__BackingField: {fileID: 1496543468}
+    <ProcessingMode>k__BackingField: 1
 --- !u!65 &1496543465
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -5690,15 +5690,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7e518ae278ae889448712861370435c0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  componentsToSemantize:
-  - <Component>k__BackingField: {fileID: 1516567854}
-    <ProcessingMode>k__BackingField: 0
-  - <Component>k__BackingField: {fileID: 1516567852}
+  componentsToSemanticize:
+  - <Component>k__BackingField: {fileID: 1516567849}
     <ProcessingMode>k__BackingField: 0
   - <Component>k__BackingField: {fileID: 1516567853}
     <ProcessingMode>k__BackingField: 1
-  - <Component>k__BackingField: {fileID: 1516567849}
-    <ProcessingMode>k__BackingField: 0
+  - <Component>k__BackingField: {fileID: 1516567852}
+    <ProcessingMode>k__BackingField: 1
+  - <Component>k__BackingField: {fileID: 1516567854}
+    <ProcessingMode>k__BackingField: 1
 --- !u!65 &1516567851
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -5833,15 +5833,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7e518ae278ae889448712861370435c0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  componentsToSemantize:
-  - <Component>k__BackingField: {fileID: 1544171565}
-    <ProcessingMode>k__BackingField: 0
-  - <Component>k__BackingField: {fileID: 1544171563}
-    <ProcessingMode>k__BackingField: 0
-  - <Component>k__BackingField: {fileID: 1544171564}
-    <ProcessingMode>k__BackingField: 1
+  componentsToSemanticize:
   - <Component>k__BackingField: {fileID: 1544171560}
     <ProcessingMode>k__BackingField: 0
+  - <Component>k__BackingField: {fileID: 1544171565}
+    <ProcessingMode>k__BackingField: 1
+  - <Component>k__BackingField: {fileID: 1544171564}
+    <ProcessingMode>k__BackingField: 1
+  - <Component>k__BackingField: {fileID: 1544171563}
+    <ProcessingMode>k__BackingField: 1
 --- !u!65 &1544171562
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -5976,15 +5976,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7e518ae278ae889448712861370435c0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  componentsToSemantize:
-  - <Component>k__BackingField: {fileID: 1604506711}
-    <ProcessingMode>k__BackingField: 0
-  - <Component>k__BackingField: {fileID: 1604506709}
+  componentsToSemanticize:
+  - <Component>k__BackingField: {fileID: 1604506706}
     <ProcessingMode>k__BackingField: 0
   - <Component>k__BackingField: {fileID: 1604506710}
     <ProcessingMode>k__BackingField: 1
-  - <Component>k__BackingField: {fileID: 1604506706}
-    <ProcessingMode>k__BackingField: 0
+  - <Component>k__BackingField: {fileID: 1604506709}
+    <ProcessingMode>k__BackingField: 1
+  - <Component>k__BackingField: {fileID: 1604506711}
+    <ProcessingMode>k__BackingField: 1
 --- !u!65 &1604506708
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -6119,15 +6119,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7e518ae278ae889448712861370435c0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  componentsToSemantize:
-  - <Component>k__BackingField: {fileID: 1648993157}
-    <ProcessingMode>k__BackingField: 0
-  - <Component>k__BackingField: {fileID: 1648993155}
+  componentsToSemanticize:
+  - <Component>k__BackingField: {fileID: 1648993152}
     <ProcessingMode>k__BackingField: 0
   - <Component>k__BackingField: {fileID: 1648993156}
     <ProcessingMode>k__BackingField: 1
-  - <Component>k__BackingField: {fileID: 1648993152}
-    <ProcessingMode>k__BackingField: 0
+  - <Component>k__BackingField: {fileID: 1648993155}
+    <ProcessingMode>k__BackingField: 1
+  - <Component>k__BackingField: {fileID: 1648993157}
+    <ProcessingMode>k__BackingField: 1
 --- !u!65 &1648993154
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -6231,7 +6231,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!108 &1801497866
 Light:
   m_ObjectHideFlags: 0
@@ -6383,15 +6383,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7e518ae278ae889448712861370435c0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  componentsToSemantize:
-  - <Component>k__BackingField: {fileID: 1846451925}
-    <ProcessingMode>k__BackingField: 0
-  - <Component>k__BackingField: {fileID: 1846451923}
+  componentsToSemanticize:
+  - <Component>k__BackingField: {fileID: 1846451920}
     <ProcessingMode>k__BackingField: 0
   - <Component>k__BackingField: {fileID: 1846451924}
     <ProcessingMode>k__BackingField: 1
-  - <Component>k__BackingField: {fileID: 1846451920}
-    <ProcessingMode>k__BackingField: 0
+  - <Component>k__BackingField: {fileID: 1846451923}
+    <ProcessingMode>k__BackingField: 1
+  - <Component>k__BackingField: {fileID: 1846451925}
+    <ProcessingMode>k__BackingField: 1
 --- !u!65 &1846451922
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -6526,15 +6526,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7e518ae278ae889448712861370435c0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  componentsToSemantize:
-  - <Component>k__BackingField: {fileID: 1896901244}
-    <ProcessingMode>k__BackingField: 0
-  - <Component>k__BackingField: {fileID: 1896901242}
-    <ProcessingMode>k__BackingField: 0
-  - <Component>k__BackingField: {fileID: 1896901243}
-    <ProcessingMode>k__BackingField: 1
+  componentsToSemanticize:
   - <Component>k__BackingField: {fileID: 1896901239}
     <ProcessingMode>k__BackingField: 0
+  - <Component>k__BackingField: {fileID: 1896901244}
+    <ProcessingMode>k__BackingField: 1
+  - <Component>k__BackingField: {fileID: 1896901243}
+    <ProcessingMode>k__BackingField: 1
+  - <Component>k__BackingField: {fileID: 1896901242}
+    <ProcessingMode>k__BackingField: 1
 --- !u!65 &1896901241
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -6669,15 +6669,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7e518ae278ae889448712861370435c0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  componentsToSemantize:
-  - <Component>k__BackingField: {fileID: 1937762344}
-    <ProcessingMode>k__BackingField: 0
-  - <Component>k__BackingField: {fileID: 1937762342}
-    <ProcessingMode>k__BackingField: 0
-  - <Component>k__BackingField: {fileID: 1937762343}
-    <ProcessingMode>k__BackingField: 1
+  componentsToSemanticize:
   - <Component>k__BackingField: {fileID: 1937762339}
     <ProcessingMode>k__BackingField: 0
+  - <Component>k__BackingField: {fileID: 1937762344}
+    <ProcessingMode>k__BackingField: 1
+  - <Component>k__BackingField: {fileID: 1937762343}
+    <ProcessingMode>k__BackingField: 1
+  - <Component>k__BackingField: {fileID: 1937762342}
+    <ProcessingMode>k__BackingField: 1
 --- !u!65 &1937762341
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -6812,15 +6812,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7e518ae278ae889448712861370435c0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  componentsToSemantize:
-  - <Component>k__BackingField: {fileID: 1938748366}
-    <ProcessingMode>k__BackingField: 0
-  - <Component>k__BackingField: {fileID: 1938748364}
+  componentsToSemanticize:
+  - <Component>k__BackingField: {fileID: 1938748361}
     <ProcessingMode>k__BackingField: 0
   - <Component>k__BackingField: {fileID: 1938748365}
     <ProcessingMode>k__BackingField: 1
-  - <Component>k__BackingField: {fileID: 1938748361}
-    <ProcessingMode>k__BackingField: 0
+  - <Component>k__BackingField: {fileID: 1938748364}
+    <ProcessingMode>k__BackingField: 1
+  - <Component>k__BackingField: {fileID: 1938748366}
+    <ProcessingMode>k__BackingField: 1
 --- !u!65 &1938748363
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -6926,7 +6926,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!20 &1942567332
 Camera:
   m_ObjectHideFlags: 0
@@ -7051,11 +7051,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7e518ae278ae889448712861370435c0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  componentsToSemantize:
-  - <Component>k__BackingField: {fileID: 1942567332}
-    <ProcessingMode>k__BackingField: 0
+  componentsToSemanticize:
   - <Component>k__BackingField: {fileID: 1942567333}
     <ProcessingMode>k__BackingField: 0
+  - <Component>k__BackingField: {fileID: 1942567332}
+    <ProcessingMode>k__BackingField: 1
 --- !u!114 &1942567336
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7118,15 +7118,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7e518ae278ae889448712861370435c0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  componentsToSemantize:
-  - <Component>k__BackingField: {fileID: 1957813143}
-    <ProcessingMode>k__BackingField: 0
-  - <Component>k__BackingField: {fileID: 1957813141}
+  componentsToSemanticize:
+  - <Component>k__BackingField: {fileID: 1957813138}
     <ProcessingMode>k__BackingField: 0
   - <Component>k__BackingField: {fileID: 1957813142}
     <ProcessingMode>k__BackingField: 1
-  - <Component>k__BackingField: {fileID: 1957813138}
-    <ProcessingMode>k__BackingField: 0
+  - <Component>k__BackingField: {fileID: 1957813141}
+    <ProcessingMode>k__BackingField: 1
+  - <Component>k__BackingField: {fileID: 1957813143}
+    <ProcessingMode>k__BackingField: 1
 --- !u!65 &1957813140
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -7261,15 +7261,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7e518ae278ae889448712861370435c0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  componentsToSemantize:
-  - <Component>k__BackingField: {fileID: 1999932863}
-    <ProcessingMode>k__BackingField: 0
-  - <Component>k__BackingField: {fileID: 1999932861}
-    <ProcessingMode>k__BackingField: 0
-  - <Component>k__BackingField: {fileID: 1999932862}
-    <ProcessingMode>k__BackingField: 1
+  componentsToSemanticize:
   - <Component>k__BackingField: {fileID: 1999932858}
     <ProcessingMode>k__BackingField: 0
+  - <Component>k__BackingField: {fileID: 1999932863}
+    <ProcessingMode>k__BackingField: 1
+  - <Component>k__BackingField: {fileID: 1999932862}
+    <ProcessingMode>k__BackingField: 1
+  - <Component>k__BackingField: {fileID: 1999932861}
+    <ProcessingMode>k__BackingField: 1
 --- !u!65 &1999932860
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -7404,15 +7404,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7e518ae278ae889448712861370435c0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  componentsToSemantize:
-  - <Component>k__BackingField: {fileID: 2076466405}
-    <ProcessingMode>k__BackingField: 0
-  - <Component>k__BackingField: {fileID: 2076466403}
-    <ProcessingMode>k__BackingField: 0
-  - <Component>k__BackingField: {fileID: 2076466404}
-    <ProcessingMode>k__BackingField: 1
+  componentsToSemanticize:
   - <Component>k__BackingField: {fileID: 2076466400}
     <ProcessingMode>k__BackingField: 0
+  - <Component>k__BackingField: {fileID: 2076466405}
+    <ProcessingMode>k__BackingField: 1
+  - <Component>k__BackingField: {fileID: 2076466404}
+    <ProcessingMode>k__BackingField: 1
+  - <Component>k__BackingField: {fileID: 2076466403}
+    <ProcessingMode>k__BackingField: 1
 --- !u!65 &2076466402
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -7547,15 +7547,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7e518ae278ae889448712861370435c0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  componentsToSemantize:
-  - <Component>k__BackingField: {fileID: 2089945196}
-    <ProcessingMode>k__BackingField: 0
-  - <Component>k__BackingField: {fileID: 2089945194}
+  componentsToSemanticize:
+  - <Component>k__BackingField: {fileID: 2089945191}
     <ProcessingMode>k__BackingField: 0
   - <Component>k__BackingField: {fileID: 2089945195}
     <ProcessingMode>k__BackingField: 1
-  - <Component>k__BackingField: {fileID: 2089945191}
-    <ProcessingMode>k__BackingField: 0
+  - <Component>k__BackingField: {fileID: 2089945194}
+    <ProcessingMode>k__BackingField: 1
+  - <Component>k__BackingField: {fileID: 2089945196}
+    <ProcessingMode>k__BackingField: 1
 --- !u!65 &2089945193
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -7690,15 +7690,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7e518ae278ae889448712861370435c0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  componentsToSemantize:
-  - <Component>k__BackingField: {fileID: 2111581971}
-    <ProcessingMode>k__BackingField: 0
-  - <Component>k__BackingField: {fileID: 2111581969}
+  componentsToSemanticize:
+  - <Component>k__BackingField: {fileID: 2111581966}
     <ProcessingMode>k__BackingField: 0
   - <Component>k__BackingField: {fileID: 2111581970}
     <ProcessingMode>k__BackingField: 1
-  - <Component>k__BackingField: {fileID: 2111581966}
-    <ProcessingMode>k__BackingField: 0
+  - <Component>k__BackingField: {fileID: 2111581969}
+    <ProcessingMode>k__BackingField: 1
+  - <Component>k__BackingField: {fileID: 2111581971}
+    <ProcessingMode>k__BackingField: 1
 --- !u!65 &2111581968
 BoxCollider:
   m_ObjectHideFlags: 0

@@ -1,4 +1,3 @@
-@prefix : <https://sven.lisn.upsaclay.fr/entity/> .
 @prefix geo: <http://www.opengis.net/ont/geosparql#> .
 @prefix owl: <http://www.w3.org/2002/07/owl#> .
 @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
@@ -6,13 +5,13 @@
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 @prefix geof: <http://www.opengis.net/def/function/geosparql/> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
-@prefix sven: <https://sven.lisn.upsaclay.fr/entity/> .
+@prefix sven: <https://sven.lisn.upsaclay.fr/ontology#> .
 @prefix time: <http://www.w3.org/2006/time#> .
 @prefix dcterms: <http://purl.org/dc/terms/> .
-@base <https://sven.lisn.upsaclay.fr/entity/> .
+@base <https://sven.lisn.upsaclay.fr/ontology> .
 
-<https://sven.lisn.upsaclay.fr/ontology#> rdf:type owl:Ontology ;
-                                           dcterms:license <https://opensource.org/licenses/MIT> .
+<https://sven.lisn.upsaclay.fr/ontology> rdf:type owl:Ontology ;
+                                         dcterms:license <https://opensource.org/licenses/MIT> .
 
 #################################################################
 #    Annotation properties
@@ -46,7 +45,7 @@ time:hasTemporalExtent rdf:type owl:ObjectProperty ;
                                   "has temporal extent"@en .
 
 
-###  https://sven.lisn.upsaclay.fr/entity/POVFOV
+###  https://sven.lisn.upsaclay.fr/ontology#POVFOV
 sven:POVFOV rdf:type owl:ObjectProperty ;
             rdfs:subPropertyOf sven:philosophicalProperty ;
             rdfs:domain sven:PointOfView ;
@@ -60,7 +59,7 @@ sven:POVFOV rdf:type owl:ObjectProperty ;
                        "Point of view field of view"@en .
 
 
-###  https://sven.lisn.upsaclay.fr/entity/POVFar
+###  https://sven.lisn.upsaclay.fr/ontology#POVFar
 sven:POVFar rdf:type owl:ObjectProperty ;
             rdfs:subPropertyOf sven:philosophicalProperty ;
             rdfs:domain sven:PointOfView ;
@@ -74,7 +73,7 @@ sven:POVFar rdf:type owl:ObjectProperty ;
                        "Point of view far"@en .
 
 
-###  https://sven.lisn.upsaclay.fr/entity/POVNear
+###  https://sven.lisn.upsaclay.fr/ontology#POVNear
 sven:POVNear rdf:type owl:ObjectProperty ;
              rdfs:subPropertyOf sven:philosophicalProperty ;
              rdfs:domain sven:PointOfView ;
@@ -88,7 +87,7 @@ sven:POVNear rdf:type owl:ObjectProperty ;
                         "Point of view near"@en .
 
 
-###  https://sven.lisn.upsaclay.fr/entity/active
+###  https://sven.lisn.upsaclay.fr/ontology#active
 sven:active rdf:type owl:ObjectProperty ;
             rdfs:subPropertyOf sven:objectProperty ;
             rdfs:range sven:Primitive ;
@@ -98,7 +97,7 @@ sven:active rdf:type owl:ObjectProperty ;
                        "active"@en .
 
 
-###  https://sven.lisn.upsaclay.fr/entity/audioProperty
+###  https://sven.lisn.upsaclay.fr/ontology#audioProperty
 sven:audioProperty rdf:type owl:ObjectProperty ;
                    rdfs:subPropertyOf sven:componentProperty ;
                    rdfs:domain sven:Audio ;
@@ -108,7 +107,7 @@ sven:audioProperty rdf:type owl:ObjectProperty ;
                               "propriétés audio"@fr .
 
 
-###  https://sven.lisn.upsaclay.fr/entity/backgroundColor
+###  https://sven.lisn.upsaclay.fr/ontology#backgroundColor
 sven:backgroundColor rdf:type owl:ObjectProperty ;
                      rdfs:subPropertyOf sven:cameraProperty ;
                      rdfs:range sven:Color ;
@@ -118,7 +117,7 @@ sven:backgroundColor rdf:type owl:ObjectProperty ;
                                 "couleur de fond"@fr .
 
 
-###  https://sven.lisn.upsaclay.fr/entity/cameraProperty
+###  https://sven.lisn.upsaclay.fr/ontology#cameraProperty
 sven:cameraProperty rdf:type owl:ObjectProperty ;
                     rdfs:subPropertyOf sven:componentProperty ;
                     rdfs:domain sven:Camera ;
@@ -128,7 +127,7 @@ sven:cameraProperty rdf:type owl:ObjectProperty ;
                                "propriétés de la caméra"@fr .
 
 
-###  https://sven.lisn.upsaclay.fr/entity/clearFlags
+###  https://sven.lisn.upsaclay.fr/ontology#clearFlags
 sven:clearFlags rdf:type owl:ObjectProperty ;
                 rdfs:subPropertyOf sven:cameraProperty ;
                 rdfs:range sven:Primitive ;
@@ -138,7 +137,7 @@ sven:clearFlags rdf:type owl:ObjectProperty ;
                            "drapeaux de nettoyage"@fr .
 
 
-###  https://sven.lisn.upsaclay.fr/entity/color
+###  https://sven.lisn.upsaclay.fr/ontology#color
 sven:color rdf:type owl:ObjectProperty ;
            rdfs:subPropertyOf sven:renderProperty ;
            rdfs:range sven:Color ;
@@ -148,7 +147,7 @@ sven:color rdf:type owl:ObjectProperty ;
                       "couleur"@fr .
 
 
-###  https://sven.lisn.upsaclay.fr/entity/component
+###  https://sven.lisn.upsaclay.fr/ontology#component
 sven:component rdf:type owl:ObjectProperty ;
                rdfs:subPropertyOf sven:objectProperty ;
                rdfs:range sven:Component ;
@@ -158,7 +157,7 @@ sven:component rdf:type owl:ObjectProperty ;
                           "composant"@fr .
 
 
-###  https://sven.lisn.upsaclay.fr/entity/componentProperty
+###  https://sven.lisn.upsaclay.fr/ontology#componentProperty
 sven:componentProperty rdf:type owl:ObjectProperty ;
                        rdfs:domain sven:Component ;
                        rdfs:comment "Relates a component to its properties."@en ,
@@ -167,7 +166,7 @@ sven:componentProperty rdf:type owl:ObjectProperty ;
                                   "propriétés du composant"@fr .
 
 
-###  https://sven.lisn.upsaclay.fr/entity/enabled
+###  https://sven.lisn.upsaclay.fr/ontology#enabled
 sven:enabled rdf:type owl:ObjectProperty ;
              rdfs:subPropertyOf sven:componentProperty ;
              rdfs:range sven:Primitive ;
@@ -177,7 +176,7 @@ sven:enabled rdf:type owl:ObjectProperty ;
                         "enabled"@en .
 
 
-###  https://sven.lisn.upsaclay.fr/entity/farClipPlane
+###  https://sven.lisn.upsaclay.fr/ontology#farClipPlane
 sven:farClipPlane rdf:type owl:ObjectProperty ;
                   rdfs:subPropertyOf sven:cameraProperty ;
                   rdfs:range sven:Primitive ;
@@ -187,7 +186,7 @@ sven:farClipPlane rdf:type owl:ObjectProperty ;
                              "plan de clip loin"@fr .
 
 
-###  https://sven.lisn.upsaclay.fr/entity/fieldOfView
+###  https://sven.lisn.upsaclay.fr/ontology#fieldOfView
 sven:fieldOfView rdf:type owl:ObjectProperty ;
                  rdfs:subPropertyOf sven:cameraProperty ;
                  rdfs:range sven:Primitive ;
@@ -197,7 +196,7 @@ sven:fieldOfView rdf:type owl:ObjectProperty ;
                             "field of view"@en .
 
 
-###  https://sven.lisn.upsaclay.fr/entity/graspAreaObject
+###  https://sven.lisn.upsaclay.fr/ontology#graspAreaObject
 sven:graspAreaObject rdf:type owl:ObjectProperty ;
                      rdfs:subPropertyOf sven:own ;
                      rdfs:range sven:GraspAreaObject ;
@@ -207,7 +206,7 @@ sven:graspAreaObject rdf:type owl:ObjectProperty ;
                                 "objet de zone de préhension"@fr .
 
 
-###  https://sven.lisn.upsaclay.fr/entity/graspAreaProperty
+###  https://sven.lisn.upsaclay.fr/ontology#graspAreaProperty
 sven:graspAreaProperty rdf:type owl:ObjectProperty ;
                        rdfs:subPropertyOf sven:componentProperty ;
                        rdfs:domain sven:GraspArea ;
@@ -217,7 +216,7 @@ sven:graspAreaProperty rdf:type owl:ObjectProperty ;
                                   "propriétés de la zone de préhension"@fr .
 
 
-###  https://sven.lisn.upsaclay.fr/entity/graspDistance
+###  https://sven.lisn.upsaclay.fr/ontology#graspDistance
 sven:graspDistance rdf:type owl:ObjectProperty ;
                    rdfs:subPropertyOf sven:graspAreaProperty ;
                    rdfs:range sven:Primitive ;
@@ -227,7 +226,7 @@ sven:graspDistance rdf:type owl:ObjectProperty ;
                               "grasp distance"@en .
 
 
-###  https://sven.lisn.upsaclay.fr/entity/graspRange
+###  https://sven.lisn.upsaclay.fr/ontology#graspRange
 sven:graspRange rdf:type owl:ObjectProperty ;
                 rdfs:subPropertyOf sven:philosophicalProperty ;
                 rdfs:domain sven:GraspAreaObject ;
@@ -241,7 +240,7 @@ sven:graspRange rdf:type owl:ObjectProperty ;
                            "rayon de préhension"@fr .
 
 
-###  https://sven.lisn.upsaclay.fr/entity/layer
+###  https://sven.lisn.upsaclay.fr/ontology#layer
 sven:layer rdf:type owl:ObjectProperty ;
            rdfs:subPropertyOf sven:objectProperty ;
            rdfs:range sven:Primitive ;
@@ -251,9 +250,9 @@ sven:layer rdf:type owl:ObjectProperty ;
                       "layer"@en .
 
 
-###  https://sven.lisn.upsaclay.fr/entity/material
+###  https://sven.lisn.upsaclay.fr/ontology#material
 sven:material rdf:type owl:ObjectProperty ;
-              rdfs:subPropertyOf <https://sven.lisn.upsaclay.fr/entity/3DRenderProperty> ;
+              rdfs:subPropertyOf <https://sven.lisn.upsaclay.fr/ontology#3DRenderProperty> ;
               rdfs:range sven:Primitive ;
               rdfs:comment "Relates a 3D render to its material."@en ,
                            "Relie un rendu 3D à son matériau."@fr ;
@@ -261,7 +260,7 @@ sven:material rdf:type owl:ObjectProperty ;
                          "matériau"@fr .
 
 
-###  https://sven.lisn.upsaclay.fr/entity/material1
+###  https://sven.lisn.upsaclay.fr/ontology#material1
 sven:material1 rdf:type owl:ObjectProperty ;
                rdfs:subPropertyOf sven:material ;
                rdfs:range sven:Primitive ;
@@ -271,7 +270,7 @@ sven:material1 rdf:type owl:ObjectProperty ;
                           "matériau 1"@fr .
 
 
-###  https://sven.lisn.upsaclay.fr/entity/material2
+###  https://sven.lisn.upsaclay.fr/ontology#material2
 sven:material2 rdf:type owl:ObjectProperty ;
                rdfs:subPropertyOf sven:material ;
                rdfs:range sven:Primitive ;
@@ -281,7 +280,7 @@ sven:material2 rdf:type owl:ObjectProperty ;
                           "matériau 2"@fr .
 
 
-###  https://sven.lisn.upsaclay.fr/entity/material3
+###  https://sven.lisn.upsaclay.fr/ontology#material3
 sven:material3 rdf:type owl:ObjectProperty ;
                rdfs:subPropertyOf sven:material ;
                rdfs:range sven:Primitive ;
@@ -291,7 +290,7 @@ sven:material3 rdf:type owl:ObjectProperty ;
                           "matériau 3"@fr .
 
 
-###  https://sven.lisn.upsaclay.fr/entity/material4
+###  https://sven.lisn.upsaclay.fr/ontology#material4
 sven:material4 rdf:type owl:ObjectProperty ;
                rdfs:subPropertyOf sven:material ;
                rdfs:range sven:Primitive ;
@@ -301,7 +300,7 @@ sven:material4 rdf:type owl:ObjectProperty ;
                           "matériau 4"@fr .
 
 
-###  https://sven.lisn.upsaclay.fr/entity/maxAudioDistance
+###  https://sven.lisn.upsaclay.fr/ontology#maxAudioDistance
 sven:maxAudioDistance rdf:type owl:ObjectProperty ;
                       rdfs:subPropertyOf sven:audioProperty ;
                       rdfs:range sven:Primitive ;
@@ -311,7 +310,7 @@ sven:maxAudioDistance rdf:type owl:ObjectProperty ;
                                  "max audio distance"@en .
 
 
-###  https://sven.lisn.upsaclay.fr/entity/maxSoundDistance
+###  https://sven.lisn.upsaclay.fr/ontology#maxSoundDistance
 sven:maxSoundDistance rdf:type owl:ObjectProperty ;
                       rdfs:subPropertyOf sven:philosophicalProperty ;
                       rdfs:domain sven:AudioObject ;
@@ -322,7 +321,7 @@ sven:maxSoundDistance rdf:type owl:ObjectProperty ;
                                  "max sound distance"@en .
 
 
-###  https://sven.lisn.upsaclay.fr/entity/mesh
+###  https://sven.lisn.upsaclay.fr/ontology#mesh
 sven:mesh rdf:type owl:ObjectProperty ;
           rdfs:subPropertyOf sven:shapeProperty ;
           rdfs:range sven:Primitive ;
@@ -332,7 +331,7 @@ sven:mesh rdf:type owl:ObjectProperty ;
                      "mesh"@en .
 
 
-###  https://sven.lisn.upsaclay.fr/entity/minAudioDistance
+###  https://sven.lisn.upsaclay.fr/ontology#minAudioDistance
 sven:minAudioDistance rdf:type owl:ObjectProperty ;
                       rdfs:subPropertyOf sven:audioProperty ;
                       rdfs:range sven:Primitive ;
@@ -342,7 +341,7 @@ sven:minAudioDistance rdf:type owl:ObjectProperty ;
                                  "min audio distance"@en .
 
 
-###  https://sven.lisn.upsaclay.fr/entity/minSoundDistance
+###  https://sven.lisn.upsaclay.fr/ontology#minSoundDistance
 sven:minSoundDistance rdf:type owl:ObjectProperty ;
                       rdfs:subPropertyOf sven:philosophicalProperty ;
                       rdfs:domain sven:AudioObject ;
@@ -353,7 +352,7 @@ sven:minSoundDistance rdf:type owl:ObjectProperty ;
                                  "min sound distance"@en .
 
 
-###  https://sven.lisn.upsaclay.fr/entity/name
+###  https://sven.lisn.upsaclay.fr/ontology#name
 sven:name rdf:type owl:ObjectProperty ;
           rdfs:subPropertyOf sven:objectProperty ;
           rdfs:range sven:Primitive ;
@@ -363,7 +362,7 @@ sven:name rdf:type owl:ObjectProperty ;
                      "nom"@fr .
 
 
-###  https://sven.lisn.upsaclay.fr/entity/nearClipPlane
+###  https://sven.lisn.upsaclay.fr/ontology#nearClipPlane
 sven:nearClipPlane rdf:type owl:ObjectProperty ;
                    rdfs:subPropertyOf sven:cameraProperty ;
                    rdfs:range sven:Primitive ;
@@ -373,7 +372,7 @@ sven:nearClipPlane rdf:type owl:ObjectProperty ;
                               "plan de clip près"@fr .
 
 
-###  https://sven.lisn.upsaclay.fr/entity/normals
+###  https://sven.lisn.upsaclay.fr/ontology#normals
 sven:normals rdf:type owl:ObjectProperty ;
              rdfs:subPropertyOf sven:shapeProperty ;
              rdfs:range sven:Primitive ;
@@ -383,7 +382,7 @@ sven:normals rdf:type owl:ObjectProperty ;
                         "normals"@en .
 
 
-###  https://sven.lisn.upsaclay.fr/entity/objectProperty
+###  https://sven.lisn.upsaclay.fr/ontology#objectProperty
 sven:objectProperty rdf:type owl:ObjectProperty ;
                     rdfs:subPropertyOf sven:componentProperty ;
                     rdfs:domain sven:Object ;
@@ -393,7 +392,7 @@ sven:objectProperty rdf:type owl:ObjectProperty ;
                                "propriétés de l'objet"@fr .
 
 
-###  https://sven.lisn.upsaclay.fr/entity/orthographic
+###  https://sven.lisn.upsaclay.fr/ontology#orthographic
 sven:orthographic rdf:type owl:ObjectProperty ;
                   rdfs:subPropertyOf sven:cameraProperty ;
                   rdfs:range sven:Primitive ;
@@ -403,7 +402,7 @@ sven:orthographic rdf:type owl:ObjectProperty ;
                              "orthographique"@fr .
 
 
-###  https://sven.lisn.upsaclay.fr/entity/orthographicSize
+###  https://sven.lisn.upsaclay.fr/ontology#orthographicSize
 sven:orthographicSize rdf:type owl:ObjectProperty ;
                       rdfs:subPropertyOf sven:cameraProperty ;
                       rdfs:range sven:Primitive ;
@@ -413,7 +412,7 @@ sven:orthographicSize rdf:type owl:ObjectProperty ;
                                  "taille orthographique"@fr .
 
 
-###  https://sven.lisn.upsaclay.fr/entity/own
+###  https://sven.lisn.upsaclay.fr/ontology#own
 sven:own rdf:type owl:ObjectProperty ;
          rdfs:domain sven:User ;
          rdfs:range sven:Interactor ;
@@ -423,7 +422,7 @@ sven:own rdf:type owl:ObjectProperty ;
                     "posséder"@fr .
 
 
-###  https://sven.lisn.upsaclay.fr/entity/particleProperty
+###  https://sven.lisn.upsaclay.fr/ontology#particleProperty
 sven:particleProperty rdf:type owl:ObjectProperty ;
                       rdfs:subPropertyOf sven:componentProperty ;
                       rdfs:domain sven:Particle ;
@@ -433,7 +432,7 @@ sven:particleProperty rdf:type owl:ObjectProperty ;
                                  "propriétés de particule"@fr .
 
 
-###  https://sven.lisn.upsaclay.fr/entity/perform
+###  https://sven.lisn.upsaclay.fr/ontology#perform
 sven:perform rdf:type owl:ObjectProperty ;
              rdfs:domain sven:User ;
              rdfs:range sven:Event ;
@@ -447,7 +446,7 @@ sven:perform rdf:type owl:ObjectProperty ;
                         "perform"@en .
 
 
-###  https://sven.lisn.upsaclay.fr/entity/philosophicalProperty
+###  https://sven.lisn.upsaclay.fr/ontology#philosophicalProperty
 sven:philosophicalProperty rdf:type owl:ObjectProperty ;
                            rdfs:comment "Relates a philosophical object to its properties."@en ,
                                         "Relie un objet philosophique à ses propriétés."@fr ;
@@ -455,7 +454,7 @@ sven:philosophicalProperty rdf:type owl:ObjectProperty ;
                                       "propriétés philosophiques"@fr .
 
 
-###  https://sven.lisn.upsaclay.fr/entity/playing
+###  https://sven.lisn.upsaclay.fr/ontology#playing
 sven:playing rdf:type owl:ObjectProperty ;
              rdfs:subPropertyOf sven:particleProperty ;
              rdfs:range sven:Primitive ;
@@ -465,7 +464,7 @@ sven:playing rdf:type owl:ObjectProperty ;
                         "playing"@en .
 
 
-###  https://sven.lisn.upsaclay.fr/entity/pointOfView
+###  https://sven.lisn.upsaclay.fr/ontology#pointOfView
 sven:pointOfView rdf:type owl:ObjectProperty ;
                  rdfs:subPropertyOf sven:own ;
                  rdfs:range sven:PointOfView ;
@@ -475,7 +474,7 @@ sven:pointOfView rdf:type owl:ObjectProperty ;
                             "point of view"@en .
 
 
-###  https://sven.lisn.upsaclay.fr/entity/pointer
+###  https://sven.lisn.upsaclay.fr/ontology#pointer
 sven:pointer rdf:type owl:ObjectProperty ;
              rdfs:subPropertyOf sven:own ;
              rdfs:range sven:PointerObject ;
@@ -485,7 +484,7 @@ sven:pointer rdf:type owl:ObjectProperty ;
                         "pointeur"@fr .
 
 
-###  https://sven.lisn.upsaclay.fr/entity/pointerDistance
+###  https://sven.lisn.upsaclay.fr/ontology#pointerDistance
 sven:pointerDistance rdf:type owl:ObjectProperty ;
                      rdfs:subPropertyOf sven:pointerProperty ;
                      rdfs:range sven:Primitive ;
@@ -495,7 +494,7 @@ sven:pointerDistance rdf:type owl:ObjectProperty ;
                                 "pointer distance"@en .
 
 
-###  https://sven.lisn.upsaclay.fr/entity/pointerProperty
+###  https://sven.lisn.upsaclay.fr/ontology#pointerProperty
 sven:pointerProperty rdf:type owl:ObjectProperty ;
                      rdfs:subPropertyOf sven:componentProperty ;
                      rdfs:domain sven:Pointer ;
@@ -505,7 +504,7 @@ sven:pointerProperty rdf:type owl:ObjectProperty ;
                                 "propriétés du pointeur"@fr .
 
 
-###  https://sven.lisn.upsaclay.fr/entity/pointerRange
+###  https://sven.lisn.upsaclay.fr/ontology#pointerRange
 sven:pointerRange rdf:type owl:ObjectProperty ;
                   rdfs:subPropertyOf sven:philosophicalProperty ;
                   rdfs:domain sven:PointerObject ;
@@ -519,7 +518,7 @@ sven:pointerRange rdf:type owl:ObjectProperty ;
                              "portée du pointeur"@fr .
 
 
-###  https://sven.lisn.upsaclay.fr/entity/position
+###  https://sven.lisn.upsaclay.fr/ontology#position
 sven:position rdf:type owl:ObjectProperty ;
               rdfs:subPropertyOf sven:transformProperty ;
               rdfs:range sven:Vector3 ;
@@ -529,7 +528,7 @@ sven:position rdf:type owl:ObjectProperty ;
                          "position"@fr .
 
 
-###  https://sven.lisn.upsaclay.fr/entity/realPosition
+###  https://sven.lisn.upsaclay.fr/ontology#realPosition
 sven:realPosition rdf:type owl:ObjectProperty ;
                   rdfs:subPropertyOf sven:philosophicalProperty ;
                   rdfs:domain sven:PhysicalObject ;
@@ -540,7 +539,7 @@ sven:realPosition rdf:type owl:ObjectProperty ;
                              "real position"@en .
 
 
-###  https://sven.lisn.upsaclay.fr/entity/realSize
+###  https://sven.lisn.upsaclay.fr/ontology#realSize
 sven:realSize rdf:type owl:ObjectProperty ;
               rdfs:subPropertyOf sven:philosophicalProperty ;
               rdfs:domain sven:PhysicalObject ;
@@ -551,7 +550,7 @@ sven:realSize rdf:type owl:ObjectProperty ;
                          "taille réelle"@fr .
 
 
-###  https://sven.lisn.upsaclay.fr/entity/receiver
+###  https://sven.lisn.upsaclay.fr/ontology#receiver
 sven:receiver rdf:type owl:ObjectProperty ;
               rdfs:domain sven:CollisionEvent ;
               rdfs:range sven:Object ;
@@ -561,7 +560,7 @@ sven:receiver rdf:type owl:ObjectProperty ;
                          "récepteur"@fr .
 
 
-###  https://sven.lisn.upsaclay.fr/entity/renderProperty
+###  https://sven.lisn.upsaclay.fr/ontology#renderProperty
 sven:renderProperty rdf:type owl:ObjectProperty ;
                     rdfs:subPropertyOf sven:componentProperty ;
                     rdfs:domain sven:Render ;
@@ -571,7 +570,7 @@ sven:renderProperty rdf:type owl:ObjectProperty ;
                                "render property"@en .
 
 
-###  https://sven.lisn.upsaclay.fr/entity/rotation
+###  https://sven.lisn.upsaclay.fr/ontology#rotation
 sven:rotation rdf:type owl:ObjectProperty ;
               rdfs:subPropertyOf sven:transformProperty ;
               rdfs:range sven:Quaternion ;
@@ -581,7 +580,7 @@ sven:rotation rdf:type owl:ObjectProperty ;
                          "rotation"@fr .
 
 
-###  https://sven.lisn.upsaclay.fr/entity/scale
+###  https://sven.lisn.upsaclay.fr/ontology#scale
 sven:scale rdf:type owl:ObjectProperty ;
            rdfs:subPropertyOf sven:transformProperty ;
            rdfs:range sven:Vector3 ;
@@ -591,7 +590,7 @@ sven:scale rdf:type owl:ObjectProperty ;
                       "échelle"@fr .
 
 
-###  https://sven.lisn.upsaclay.fr/entity/sender
+###  https://sven.lisn.upsaclay.fr/ontology#sender
 sven:sender rdf:type owl:ObjectProperty ;
             rdfs:domain sven:CollisionEvent ;
             rdfs:range sven:Object ;
@@ -601,7 +600,7 @@ sven:sender rdf:type owl:ObjectProperty ;
                        "sender"@en .
 
 
-###  https://sven.lisn.upsaclay.fr/entity/shapeProperty
+###  https://sven.lisn.upsaclay.fr/ontology#shapeProperty
 sven:shapeProperty rdf:type owl:ObjectProperty ;
                    rdfs:subPropertyOf sven:componentProperty ;
                    rdfs:domain sven:Shape ;
@@ -611,9 +610,9 @@ sven:shapeProperty rdf:type owl:ObjectProperty ;
                               "shape property"@en .
 
 
-###  https://sven.lisn.upsaclay.fr/entity/sprite
+###  https://sven.lisn.upsaclay.fr/ontology#sprite
 sven:sprite rdf:type owl:ObjectProperty ;
-            rdfs:subPropertyOf <https://sven.lisn.upsaclay.fr/entity/2DRenderProperty> ;
+            rdfs:subPropertyOf <https://sven.lisn.upsaclay.fr/ontology#2DRenderProperty> ;
             rdfs:range sven:Primitive ;
             rdfs:comment "Relates a 2D render to its sprite."@en ,
                          "Relie un rendu 2D à son sprite."@fr ;
@@ -621,7 +620,7 @@ sven:sprite rdf:type owl:ObjectProperty ;
                        "sprite"@fr .
 
 
-###  https://sven.lisn.upsaclay.fr/entity/tag
+###  https://sven.lisn.upsaclay.fr/ontology#tag
 sven:tag rdf:type owl:ObjectProperty ;
          rdfs:subPropertyOf sven:objectProperty ;
          rdfs:range sven:Primitive ;
@@ -631,7 +630,7 @@ sven:tag rdf:type owl:ObjectProperty ;
                     "étiquette"@fr .
 
 
-###  https://sven.lisn.upsaclay.fr/entity/transformProperty
+###  https://sven.lisn.upsaclay.fr/ontology#transformProperty
 sven:transformProperty rdf:type owl:ObjectProperty ;
                        rdfs:subPropertyOf sven:componentProperty ;
                        rdfs:domain sven:Transform ;
@@ -641,7 +640,7 @@ sven:transformProperty rdf:type owl:ObjectProperty ;
                                   "transform property"@en .
 
 
-###  https://sven.lisn.upsaclay.fr/entity/triangles
+###  https://sven.lisn.upsaclay.fr/ontology#triangles
 sven:triangles rdf:type owl:ObjectProperty ;
                rdfs:subPropertyOf sven:shapeProperty ;
                rdfs:range sven:Primitive ;
@@ -651,7 +650,7 @@ sven:triangles rdf:type owl:ObjectProperty ;
                           "triangles"@fr .
 
 
-###  https://sven.lisn.upsaclay.fr/entity/uvs
+###  https://sven.lisn.upsaclay.fr/ontology#uvs
 sven:uvs rdf:type owl:ObjectProperty ;
          rdfs:subPropertyOf sven:shapeProperty ;
          rdfs:range sven:Primitive ;
@@ -661,7 +660,7 @@ sven:uvs rdf:type owl:ObjectProperty ;
                     "uvs"@fr .
 
 
-###  https://sven.lisn.upsaclay.fr/entity/vertices
+###  https://sven.lisn.upsaclay.fr/ontology#vertices
 sven:vertices rdf:type owl:ObjectProperty ;
               rdfs:subPropertyOf sven:shapeProperty ;
               rdfs:range sven:Primitive ;
@@ -671,7 +670,7 @@ sven:vertices rdf:type owl:ObjectProperty ;
                          "vertices"@en .
 
 
-###  https://sven.lisn.upsaclay.fr/entity/virtualColor
+###  https://sven.lisn.upsaclay.fr/ontology#virtualColor
 sven:virtualColor rdf:type owl:ObjectProperty ;
                   rdfs:subPropertyOf sven:philosophicalProperty ;
                   rdfs:domain sven:RenderObject ;
@@ -685,7 +684,7 @@ sven:virtualColor rdf:type owl:ObjectProperty ;
                              "virtual color"@en .
 
 
-###  https://sven.lisn.upsaclay.fr/entity/virtualPosition
+###  https://sven.lisn.upsaclay.fr/ontology#virtualPosition
 sven:virtualPosition rdf:type owl:ObjectProperty ;
                      rdfs:subPropertyOf sven:philosophicalProperty ;
                      rdfs:domain sven:VirtualObject ;
@@ -699,7 +698,7 @@ sven:virtualPosition rdf:type owl:ObjectProperty ;
                                 "virtual position"@en .
 
 
-###  https://sven.lisn.upsaclay.fr/entity/virtualRotation
+###  https://sven.lisn.upsaclay.fr/ontology#virtualRotation
 sven:virtualRotation rdf:type owl:ObjectProperty ;
                      rdfs:subPropertyOf sven:philosophicalProperty ;
                      rdfs:domain sven:VirtualObject ;
@@ -713,7 +712,7 @@ sven:virtualRotation rdf:type owl:ObjectProperty ;
                                 "virtual rotation"@en .
 
 
-###  https://sven.lisn.upsaclay.fr/entity/virtualSize
+###  https://sven.lisn.upsaclay.fr/ontology#virtualSize
 sven:virtualSize rdf:type owl:ObjectProperty ;
                  rdfs:subPropertyOf sven:philosophicalProperty ;
                  rdfs:domain sven:VirtualObject ;
@@ -727,20 +726,20 @@ sven:virtualSize rdf:type owl:ObjectProperty ;
                             "virtual size"@en .
 
 
-###  https://sven.lisn.upsaclay.fr/entity/2DRenderProperty
-<https://sven.lisn.upsaclay.fr/entity/2DRenderProperty> rdf:type owl:ObjectProperty ;
+###  https://sven.lisn.upsaclay.fr/ontology#2DRenderProperty
+<https://sven.lisn.upsaclay.fr/ontology#2DRenderProperty> rdf:type owl:ObjectProperty ;
                                                         rdfs:subPropertyOf sven:renderProperty ;
-                                                        rdfs:domain <https://sven.lisn.upsaclay.fr/entity/2DRender> ;
+                                                        rdfs:domain <https://sven.lisn.upsaclay.fr/ontology#2DRender> ;
                                                         rdfs:comment "Relates a 2D render to its properties."@en ,
                                                                      "Relie un rendu 2D à ses propriétés."@fr ;
                                                         rdfs:label "2D render property"@en ,
                                                                    "propriétés de rendu 2D"@fr .
 
 
-###  https://sven.lisn.upsaclay.fr/entity/3DRenderProperty
-<https://sven.lisn.upsaclay.fr/entity/3DRenderProperty> rdf:type owl:ObjectProperty ;
+###  https://sven.lisn.upsaclay.fr/ontology#3DRenderProperty
+<https://sven.lisn.upsaclay.fr/ontology#3DRenderProperty> rdf:type owl:ObjectProperty ;
                                                         rdfs:subPropertyOf sven:renderProperty ;
-                                                        rdfs:domain <https://sven.lisn.upsaclay.fr/entity/3DRender> ;
+                                                        rdfs:domain <https://sven.lisn.upsaclay.fr/ontology#3DRender> ;
                                                         rdfs:comment "Relates a 3D render to its properties."@en ,
                                                                      "Relie un rendu 3D à ses propriétés."@fr ;
                                                         rdfs:label "3D render property"@en ,
@@ -751,7 +750,7 @@ sven:virtualSize rdf:type owl:ObjectProperty ;
 #    Data properties
 #################################################################
 
-###  https://sven.lisn.upsaclay.fr/entity/a
+###  https://sven.lisn.upsaclay.fr/ontology#a
 sven:a rdf:type owl:DatatypeProperty ;
        rdfs:subPropertyOf sven:propertyData ;
        rdfs:domain sven:Color ;
@@ -762,7 +761,7 @@ sven:a rdf:type owl:DatatypeProperty ;
                   "alpha"@fr .
 
 
-###  https://sven.lisn.upsaclay.fr/entity/b
+###  https://sven.lisn.upsaclay.fr/ontology#b
 sven:b rdf:type owl:DatatypeProperty ;
        rdfs:subPropertyOf sven:propertyData ;
        rdfs:domain sven:Color ;
@@ -773,7 +772,7 @@ sven:b rdf:type owl:DatatypeProperty ;
                   "blue"@en .
 
 
-###  https://sven.lisn.upsaclay.fr/entity/g
+###  https://sven.lisn.upsaclay.fr/ontology#g
 sven:g rdf:type owl:DatatypeProperty ;
        rdfs:subPropertyOf sven:propertyData ;
        rdfs:domain sven:Color ;
@@ -784,7 +783,7 @@ sven:g rdf:type owl:DatatypeProperty ;
                   "vert"@fr .
 
 
-###  https://sven.lisn.upsaclay.fr/entity/propertyData
+###  https://sven.lisn.upsaclay.fr/ontology#propertyData
 sven:propertyData rdf:type owl:DatatypeProperty ,
                            owl:FunctionalProperty ;
                   rdfs:domain sven:Property ;
@@ -794,7 +793,7 @@ sven:propertyData rdf:type owl:DatatypeProperty ,
                              "property data"@en .
 
 
-###  https://sven.lisn.upsaclay.fr/entity/r
+###  https://sven.lisn.upsaclay.fr/ontology#r
 sven:r rdf:type owl:DatatypeProperty ;
        rdfs:subPropertyOf sven:propertyData ;
        rdfs:domain sven:Color ;
@@ -805,7 +804,7 @@ sven:r rdf:type owl:DatatypeProperty ;
                   "rouge"@fr .
 
 
-###  https://sven.lisn.upsaclay.fr/entity/realPositionX
+###  https://sven.lisn.upsaclay.fr/ontology#realPositionX
 sven:realPositionX rdf:type owl:DatatypeProperty ;
                    rdfs:subPropertyOf owl:topDataProperty ;
                    rdfs:domain sven:PhysicalObject ;
@@ -816,7 +815,7 @@ sven:realPositionX rdf:type owl:DatatypeProperty ;
                               "real position X"@en .
 
 
-###  https://sven.lisn.upsaclay.fr/entity/realPositionY
+###  https://sven.lisn.upsaclay.fr/ontology#realPositionY
 sven:realPositionY rdf:type owl:DatatypeProperty ;
                    rdfs:subPropertyOf owl:topDataProperty ;
                    rdfs:domain sven:PhysicalObject ;
@@ -827,7 +826,7 @@ sven:realPositionY rdf:type owl:DatatypeProperty ;
                               "real position Y"@en .
 
 
-###  https://sven.lisn.upsaclay.fr/entity/realPositionZ
+###  https://sven.lisn.upsaclay.fr/ontology#realPositionZ
 sven:realPositionZ rdf:type owl:DatatypeProperty ;
                    rdfs:subPropertyOf owl:topDataProperty ;
                    rdfs:domain sven:PhysicalObject ;
@@ -838,7 +837,7 @@ sven:realPositionZ rdf:type owl:DatatypeProperty ;
                               "real position Z"@en .
 
 
-###  https://sven.lisn.upsaclay.fr/entity/realSizeX
+###  https://sven.lisn.upsaclay.fr/ontology#realSizeX
 sven:realSizeX rdf:type owl:DatatypeProperty ;
                rdfs:subPropertyOf owl:topDataProperty ;
                rdfs:domain sven:PhysicalObject ;
@@ -849,7 +848,7 @@ sven:realSizeX rdf:type owl:DatatypeProperty ;
                           "taille réelle X"@fr .
 
 
-###  https://sven.lisn.upsaclay.fr/entity/realSizeY
+###  https://sven.lisn.upsaclay.fr/ontology#realSizeY
 sven:realSizeY rdf:type owl:DatatypeProperty ;
                rdfs:subPropertyOf owl:topDataProperty ;
                rdfs:domain sven:PhysicalObject ;
@@ -860,7 +859,7 @@ sven:realSizeY rdf:type owl:DatatypeProperty ;
                           "taille réelle Y"@fr .
 
 
-###  https://sven.lisn.upsaclay.fr/entity/value
+###  https://sven.lisn.upsaclay.fr/ontology#value
 sven:value rdf:type owl:DatatypeProperty ;
            rdfs:subPropertyOf sven:propertyData ;
            rdfs:domain sven:Primitive ;
@@ -870,7 +869,7 @@ sven:value rdf:type owl:DatatypeProperty ;
                       "value"@en .
 
 
-###  https://sven.lisn.upsaclay.fr/entity/w
+###  https://sven.lisn.upsaclay.fr/ontology#w
 sven:w rdf:type owl:DatatypeProperty ;
        rdfs:subPropertyOf sven:propertyData ;
        rdfs:range xsd:float ;
@@ -880,7 +879,7 @@ sven:w rdf:type owl:DatatypeProperty ;
                   "w"@fr .
 
 
-###  https://sven.lisn.upsaclay.fr/entity/x
+###  https://sven.lisn.upsaclay.fr/ontology#x
 sven:x rdf:type owl:DatatypeProperty ;
        rdfs:subPropertyOf sven:propertyData ;
        rdfs:range xsd:float ;
@@ -890,7 +889,7 @@ sven:x rdf:type owl:DatatypeProperty ;
                   "x"@fr .
 
 
-###  https://sven.lisn.upsaclay.fr/entity/y
+###  https://sven.lisn.upsaclay.fr/ontology#y
 sven:y rdf:type owl:DatatypeProperty ;
        rdfs:subPropertyOf sven:propertyData ;
        rdfs:range xsd:float ;
@@ -900,7 +899,7 @@ sven:y rdf:type owl:DatatypeProperty ;
                   "y"@fr .
 
 
-###  https://sven.lisn.upsaclay.fr/entity/z
+###  https://sven.lisn.upsaclay.fr/ontology#z
 sven:z rdf:type owl:DatatypeProperty ;
        rdfs:subPropertyOf sven:propertyData ;
        rdfs:range xsd:float ;
@@ -940,7 +939,7 @@ time:Interval rdf:type owl:Class ;
                          "Intervalle"@fr .
 
 
-###  https://sven.lisn.upsaclay.fr/entity/Actor
+###  https://sven.lisn.upsaclay.fr/ontology#Actor
 sven:Actor rdf:type owl:Class ;
            owl:equivalentClass sven:Object ;
            rdfs:comment "An actor is a object from Unreal Engine that can interact with the user."@en ,
@@ -949,7 +948,7 @@ sven:Actor rdf:type owl:Class ;
                       "Actor"@en .
 
 
-###  https://sven.lisn.upsaclay.fr/entity/ActorComponent
+###  https://sven.lisn.upsaclay.fr/ontology#ActorComponent
 sven:ActorComponent rdf:type owl:Class ;
                     owl:equivalentClass sven:Component ;
                     rdfs:comment "An actor component is a component from Unreal Engine that can interact with the user."@en ,
@@ -958,7 +957,7 @@ sven:ActorComponent rdf:type owl:Class ;
                                "Composant acteur"@fr .
 
 
-###  https://sven.lisn.upsaclay.fr/entity/Apple
+###  https://sven.lisn.upsaclay.fr/ontology#Apple
 sven:Apple rdf:type owl:Class ;
            rdfs:subClassOf sven:Fruit ;
            owl:equivalentClass [
@@ -977,7 +976,7 @@ sven:Apple rdf:type owl:Class ;
                         "Pomme"@fr .
 
 
-###  https://sven.lisn.upsaclay.fr/entity/AppleComponent
+###  https://sven.lisn.upsaclay.fr/ontology#AppleComponent
 sven:AppleComponent rdf:type owl:Class ;
                     rdfs:subClassOf sven:Component ;
                     rdfs:comment "An apple component."@en ,
@@ -986,7 +985,7 @@ sven:AppleComponent rdf:type owl:Class ;
                                   "Composant de pomme"@fr .
 
 
-###  https://sven.lisn.upsaclay.fr/entity/Audio
+###  https://sven.lisn.upsaclay.fr/ontology#Audio
 sven:Audio rdf:type owl:Class ;
            rdfs:subClassOf sven:Component ;
            rdfs:comment "An audio component."@en ,
@@ -995,7 +994,7 @@ sven:Audio rdf:type owl:Class ;
                       "Audio"@fr .
 
 
-###  https://sven.lisn.upsaclay.fr/entity/AudioObject
+###  https://sven.lisn.upsaclay.fr/ontology#AudioObject
 sven:AudioObject rdf:type owl:Class ;
                  rdfs:subClassOf sven:VirtualObject ;
                  rdfs:comment "An audio object."@en ,
@@ -1004,7 +1003,7 @@ sven:AudioObject rdf:type owl:Class ;
                             "Objet audio"@fr .
 
 
-###  https://sven.lisn.upsaclay.fr/entity/Banana
+###  https://sven.lisn.upsaclay.fr/ontology#Banana
 sven:Banana rdf:type owl:Class ;
             rdfs:subClassOf sven:Fruit ;
             owl:equivalentClass [
@@ -1023,7 +1022,7 @@ sven:Banana rdf:type owl:Class ;
                         "Banane"@fr .
 
 
-###  https://sven.lisn.upsaclay.fr/entity/BananaComponent
+###  https://sven.lisn.upsaclay.fr/ontology#BananaComponent
 sven:BananaComponent rdf:type owl:Class ;
                      rdfs:subClassOf sven:Component ;
                      rdfs:comment "A banana component."@en ,
@@ -1032,7 +1031,7 @@ sven:BananaComponent rdf:type owl:Class ;
                                     "Composant de banane"@fr .
 
 
-###  https://sven.lisn.upsaclay.fr/entity/Camera
+###  https://sven.lisn.upsaclay.fr/ontology#Camera
 sven:Camera rdf:type owl:Class ;
             rdfs:subClassOf sven:Component ;
             rdfs:comment "A camera component."@en ,
@@ -1041,7 +1040,7 @@ sven:Camera rdf:type owl:Class ;
                        "Caméra"@fr .
 
 
-###  https://sven.lisn.upsaclay.fr/entity/Carrot
+###  https://sven.lisn.upsaclay.fr/ontology#Carrot
 sven:Carrot rdf:type owl:Class ;
             rdfs:subClassOf sven:Vegetable ;
             owl:equivalentClass [
@@ -1060,7 +1059,7 @@ sven:Carrot rdf:type owl:Class ;
                         "Carotte"@fr .
 
 
-###  https://sven.lisn.upsaclay.fr/entity/CarrotComponent
+###  https://sven.lisn.upsaclay.fr/ontology#CarrotComponent
 sven:CarrotComponent rdf:type owl:Class ;
                      rdfs:subClassOf sven:Component ;
                       rdfs:comment "A carrot component."@en ,
@@ -1069,7 +1068,7 @@ sven:CarrotComponent rdf:type owl:Class ;
                                     "Composant de carotte"@fr .
 
 
-###  https://sven.lisn.upsaclay.fr/entity/CollisionEvent
+###  https://sven.lisn.upsaclay.fr/ontology#CollisionEvent
 sven:CollisionEvent rdf:type owl:Class ;
                     rdfs:subClassOf sven:Event ;
                     rdfs:comment "A collision event between two objects."@en ,
@@ -1078,7 +1077,7 @@ sven:CollisionEvent rdf:type owl:Class ;
                                "Événement de collision"@fr .
 
 
-###  https://sven.lisn.upsaclay.fr/entity/Color
+###  https://sven.lisn.upsaclay.fr/ontology#Color
 sven:Color rdf:type owl:Class ;
            rdfs:subClassOf sven:Property ;
            rdfs:comment "A color property."@en ,
@@ -1087,7 +1086,7 @@ sven:Color rdf:type owl:Class ;
                       "Couleur"@fr .
 
 
-###  https://sven.lisn.upsaclay.fr/entity/Component
+###  https://sven.lisn.upsaclay.fr/ontology#Component
 sven:Component rdf:type owl:Class ;
                owl:equivalentClass sven:Node ;
                rdfs:comment "A component is a part of an object."@en ,
@@ -1096,7 +1095,7 @@ sven:Component rdf:type owl:Class ;
                           "Composant"@fr .
 
 
-###  https://sven.lisn.upsaclay.fr/entity/Event
+###  https://sven.lisn.upsaclay.fr/ontology#Event
 sven:Event rdf:type owl:Class ;
            rdfs:comment "An event is an action that occurs during the simulation."@en ,
                         "Un événement est une action qui se produit pendant la simulation."@fr ;
@@ -1104,17 +1103,17 @@ sven:Event rdf:type owl:Class ;
                       "Événement"@fr .
 
 
-###  https://sven.lisn.upsaclay.fr/entity/Food
+###  https://sven.lisn.upsaclay.fr/ontology#Food
 sven:Food rdf:type owl:Class ;
           rdfs:subClassOf sven:VirtualObject .
 
 
-###  https://sven.lisn.upsaclay.fr/entity/Fruit
+###  https://sven.lisn.upsaclay.fr/ontology#Fruit
 sven:Fruit rdf:type owl:Class ;
            rdfs:subClassOf sven:Food .
 
 
-###  https://sven.lisn.upsaclay.fr/entity/GameObject
+###  https://sven.lisn.upsaclay.fr/ontology#GameObject
 sven:GameObject rdf:type owl:Class ;
                 owl:equivalentClass sven:Object ;
                 rdfs:comment "A game object is an object from Unity that can interact with the user."@en ,
@@ -1123,7 +1122,7 @@ sven:GameObject rdf:type owl:Class ;
                            "Objet de jeu"@fr .
 
 
-###  https://sven.lisn.upsaclay.fr/entity/GraspArea
+###  https://sven.lisn.upsaclay.fr/ontology#GraspArea
 sven:GraspArea rdf:type owl:Class ;
                rdfs:subClassOf sven:Component ;
                rdfs:comment "A grasp area component that represents the area where the user can interact with the object."@en ,
@@ -1132,7 +1131,7 @@ sven:GraspArea rdf:type owl:Class ;
                           "Zone de préhension"@fr .
 
 
-###  https://sven.lisn.upsaclay.fr/entity/GraspAreaObject
+###  https://sven.lisn.upsaclay.fr/ontology#GraspAreaObject
 sven:GraspAreaObject rdf:type owl:Class ;
                      rdfs:subClassOf sven:Interactor ;
                      rdfs:comment "A grasp area object that represents the area where the user can interact with the object."@en ,
@@ -1141,7 +1140,7 @@ sven:GraspAreaObject rdf:type owl:Class ;
                                 "Objet de zone de préhension"@fr .
 
 
-###  https://sven.lisn.upsaclay.fr/entity/InputEvent
+###  https://sven.lisn.upsaclay.fr/ontology#InputEvent
 sven:InputEvent rdf:type owl:Class ;
                 rdfs:subClassOf sven:Event ;
                 rdfs:comment "An input event from the user."@en ,
@@ -1150,7 +1149,7 @@ sven:InputEvent rdf:type owl:Class ;
                            "Événement d'entrée"@fr .
 
 
-###  https://sven.lisn.upsaclay.fr/entity/Interactor
+###  https://sven.lisn.upsaclay.fr/ontology#Interactor
 sven:Interactor rdf:type owl:Class ;
                 rdfs:subClassOf sven:VirtualObject ;
                 rdfs:comment "An interactor is an object that represents a modality of interaction of the user with the system."@en ,
@@ -1159,7 +1158,7 @@ sven:Interactor rdf:type owl:Class ;
                            "Interactor"@en .
 
 
-###  https://sven.lisn.upsaclay.fr/entity/Node
+###  https://sven.lisn.upsaclay.fr/ontology#Node
 sven:Node rdf:type owl:Class ;
           rdfs:comment "A node is a component from Godot Engine."@en ,
                        "Un noeud est un composant de Godot Engine."@fr ;
@@ -1167,7 +1166,7 @@ sven:Node rdf:type owl:Class ;
                      "Noeud"@fr .
 
 
-###  https://sven.lisn.upsaclay.fr/entity/Object
+###  https://sven.lisn.upsaclay.fr/ontology#Object
 sven:Object rdf:type owl:Class ;
             rdfs:comment "An object is a component that represents an entity in the simulation."@en ,
                          "Un objet est un composant qui représente une entité dans la simulation."@fr ;
@@ -1175,7 +1174,7 @@ sven:Object rdf:type owl:Class ;
                        "Objet"@fr .
 
 
-###  https://sven.lisn.upsaclay.fr/entity/Particle
+###  https://sven.lisn.upsaclay.fr/ontology#Particle
 sven:Particle rdf:type owl:Class ;
               rdfs:subClassOf sven:Component ;
               rdfs:comment "A particle component."@en ,
@@ -1184,7 +1183,7 @@ sven:Particle rdf:type owl:Class ;
                          "Particule"@fr .
 
 
-###  https://sven.lisn.upsaclay.fr/entity/PhysicalObject
+###  https://sven.lisn.upsaclay.fr/ontology#PhysicalObject
 sven:PhysicalObject rdf:type owl:Class ;
                     rdfs:comment "A physical object is an object that has a physical representation."@en ,
                                  "Un objet physique est un objet qui a une représentation physique."@fr ;
@@ -1192,7 +1191,7 @@ sven:PhysicalObject rdf:type owl:Class ;
                                "Physical object"@en .
 
 
-###  https://sven.lisn.upsaclay.fr/entity/PointOfView
+###  https://sven.lisn.upsaclay.fr/ontology#PointOfView
 sven:PointOfView rdf:type owl:Class ;
                  rdfs:subClassOf sven:Interactor ;
                  rdfs:comment "A point of view object that represents the point of view of the user."@en ,
@@ -1201,7 +1200,7 @@ sven:PointOfView rdf:type owl:Class ;
                             "Point of view"@en .
 
 
-###  https://sven.lisn.upsaclay.fr/entity/Pointer
+###  https://sven.lisn.upsaclay.fr/ontology#Pointer
 sven:Pointer rdf:type owl:Class ;
              rdfs:subClassOf sven:Component ;
              rdfs:comment "A pointer component that represents the pointer of the user."@en ,
@@ -1210,7 +1209,7 @@ sven:Pointer rdf:type owl:Class ;
                         "Pointeur"@fr .
 
 
-###  https://sven.lisn.upsaclay.fr/entity/PointerObject
+###  https://sven.lisn.upsaclay.fr/ontology#PointerObject
 sven:PointerObject rdf:type owl:Class ;
                    rdfs:subClassOf sven:Interactor ;
                    rdfs:comment "A pointer object that represents the pointer of the user."@en ,
@@ -1219,7 +1218,7 @@ sven:PointerObject rdf:type owl:Class ;
                               "Pointer object"@en .
 
 
-###  https://sven.lisn.upsaclay.fr/entity/Primitive
+###  https://sven.lisn.upsaclay.fr/ontology#Primitive
 sven:Primitive rdf:type owl:Class ;
                rdfs:subClassOf sven:Property ;
                rdfs:comment "A primitive property."@en ,
@@ -1228,7 +1227,7 @@ sven:Primitive rdf:type owl:Class ;
                           "Primitive"@en .
 
 
-###  https://sven.lisn.upsaclay.fr/entity/Property
+###  https://sven.lisn.upsaclay.fr/ontology#Property
 sven:Property rdf:type owl:Class ;
               rdfs:comment "A property is a characteristic of an object."@en ,
                            "Une propriété est une caractéristique d'un objet."@fr ;
@@ -1236,7 +1235,7 @@ sven:Property rdf:type owl:Class ;
                          "Propriété"@fr .
 
 
-###  https://sven.lisn.upsaclay.fr/entity/Pumpkin
+###  https://sven.lisn.upsaclay.fr/ontology#Pumpkin
 sven:Pumpkin rdf:type owl:Class ;
              rdfs:subClassOf sven:Vegetable ;
              owl:equivalentClass [
@@ -1255,7 +1254,7 @@ sven:Pumpkin rdf:type owl:Class ;
                           "Citrouille"@fr .
 
 
-###  https://sven.lisn.upsaclay.fr/entity/PumpkinComponent
+###  https://sven.lisn.upsaclay.fr/ontology#PumpkinComponent
 sven:PumpkinComponent rdf:type owl:Class ;
                       rdfs:subClassOf sven:Component ;
                       rdfs:comment "A pumpkin component."@en ,
@@ -1264,7 +1263,7 @@ sven:PumpkinComponent rdf:type owl:Class ;
                                     "Composant de citrouille"@fr .
 
 
-###  https://sven.lisn.upsaclay.fr/entity/Quaternion
+###  https://sven.lisn.upsaclay.fr/ontology#Quaternion
 sven:Quaternion rdf:type owl:Class ;
                 owl:equivalentClass sven:Vector4 ;
                 rdfs:subClassOf sven:Property ;
@@ -1274,7 +1273,7 @@ sven:Quaternion rdf:type owl:Class ;
                            "Quaternion"@fr .
 
 
-###  https://sven.lisn.upsaclay.fr/entity/Reference
+###  https://sven.lisn.upsaclay.fr/ontology#Reference
 sven:Reference rdf:type owl:Class ;
                rdfs:subClassOf sven:Property ;
                rdfs:comment "A reference property."@en ,
@@ -1283,7 +1282,7 @@ sven:Reference rdf:type owl:Class ;
                           "Référence"@fr .
 
 
-###  https://sven.lisn.upsaclay.fr/entity/Render
+###  https://sven.lisn.upsaclay.fr/ontology#Render
 sven:Render rdf:type owl:Class ;
             rdfs:subClassOf sven:Component ;
             rdfs:comment "A render component."@en ,
@@ -1292,7 +1291,7 @@ sven:Render rdf:type owl:Class ;
                        "Rendu"@fr .
 
 
-###  https://sven.lisn.upsaclay.fr/entity/RenderObject
+###  https://sven.lisn.upsaclay.fr/ontology#RenderObject
 sven:RenderObject rdf:type owl:Class ;
                   rdfs:subClassOf sven:VirtualObject ;
                   rdfs:comment "A render object."@en ,
@@ -1301,7 +1300,7 @@ sven:RenderObject rdf:type owl:Class ;
                              "Render object"@en .
 
 
-###  https://sven.lisn.upsaclay.fr/entity/Shape
+###  https://sven.lisn.upsaclay.fr/ontology#Shape
 sven:Shape rdf:type owl:Class ;
            rdfs:subClassOf sven:Component ;
            rdfs:comment "A shape is a component that represents a geometric shape."@en ,
@@ -1310,7 +1309,7 @@ sven:Shape rdf:type owl:Class ;
                       "Shape"@en .
 
 
-###  https://sven.lisn.upsaclay.fr/entity/Spray
+###  https://sven.lisn.upsaclay.fr/ontology#Spray
 sven:Spray rdf:type owl:Class ;
            rdfs:subClassOf sven:Component ;
            rdfs:comment "A spray component for the ISWC demo."@en ,
@@ -1319,7 +1318,7 @@ sven:Spray rdf:type owl:Class ;
                       "Spray"@en .
 
 
-###  https://sven.lisn.upsaclay.fr/entity/TangibleObject
+###  https://sven.lisn.upsaclay.fr/ontology#TangibleObject
 sven:TangibleObject rdf:type owl:Class ;
                     rdfs:subClassOf sven:PhysicalObject ,
                                     sven:VirtualObject ;
@@ -1329,7 +1328,7 @@ sven:TangibleObject rdf:type owl:Class ;
                                "Tangible object"@en .
 
 
-###  https://sven.lisn.upsaclay.fr/entity/Transform
+###  https://sven.lisn.upsaclay.fr/ontology#Transform
 sven:Transform rdf:type owl:Class ;
                rdfs:subClassOf sven:Component ;
                rdfs:comment "A transform component."@en ,
@@ -1338,7 +1337,7 @@ sven:Transform rdf:type owl:Class ;
                           "Transformation"@fr .
 
 
-###  https://sven.lisn.upsaclay.fr/entity/User
+###  https://sven.lisn.upsaclay.fr/ontology#User
 sven:User rdf:type owl:Class ;
           rdfs:comment "A user is a person who interacts with the system."@en ,
                        "Un utilisateur est une personne qui interagit avec le système."@fr ;
@@ -1346,7 +1345,7 @@ sven:User rdf:type owl:Class ;
                      "Utilisateur"@fr .
 
 
-###  https://sven.lisn.upsaclay.fr/entity/Vector1
+###  https://sven.lisn.upsaclay.fr/ontology#Vector1
 sven:Vector1 rdf:type owl:Class ;
              rdfs:subClassOf sven:Property ;
              rdfs:comment "A 1D vector property."@en ,
@@ -1355,7 +1354,7 @@ sven:Vector1 rdf:type owl:Class ;
                         "Vector1"@en .
 
 
-###  https://sven.lisn.upsaclay.fr/entity/Vector2
+###  https://sven.lisn.upsaclay.fr/ontology#Vector2
 sven:Vector2 rdf:type owl:Class ;
              rdfs:subClassOf sven:Property ;
              rdfs:comment "A 2D vector property."@en ,
@@ -1364,7 +1363,7 @@ sven:Vector2 rdf:type owl:Class ;
                         "Vector2"@en .
 
 
-###  https://sven.lisn.upsaclay.fr/entity/Vector3
+###  https://sven.lisn.upsaclay.fr/ontology#Vector3
 sven:Vector3 rdf:type owl:Class ;
              rdfs:subClassOf sven:Property ;
              rdfs:comment "A 3D vector property."@en ,
@@ -1373,7 +1372,7 @@ sven:Vector3 rdf:type owl:Class ;
                         "Vector3"@en .
 
 
-###  https://sven.lisn.upsaclay.fr/entity/Vector4
+###  https://sven.lisn.upsaclay.fr/ontology#Vector4
 sven:Vector4 rdf:type owl:Class ;
              rdfs:subClassOf sven:Property ;
              rdfs:comment "A 4D vector property."@en ,
@@ -1382,12 +1381,12 @@ sven:Vector4 rdf:type owl:Class ;
                         "Vector4"@en .
 
 
-###  https://sven.lisn.upsaclay.fr/entity/Vegetable
+###  https://sven.lisn.upsaclay.fr/ontology#Vegetable
 sven:Vegetable rdf:type owl:Class ;
                rdfs:subClassOf sven:Food .
 
 
-###  https://sven.lisn.upsaclay.fr/entity/VirtualObject
+###  https://sven.lisn.upsaclay.fr/ontology#VirtualObject
 sven:VirtualObject rdf:type owl:Class ;
                    rdfs:subClassOf sven:Object ;
                    rdfs:comment "A virtual object is an object that has a virtual representation."@en ,
@@ -1396,8 +1395,8 @@ sven:VirtualObject rdf:type owl:Class ;
                               "Virtual object"@en .
 
 
-###  https://sven.lisn.upsaclay.fr/entity/2DRender
-<https://sven.lisn.upsaclay.fr/entity/2DRender> rdf:type owl:Class ;
+###  https://sven.lisn.upsaclay.fr/ontology#2DRender
+<https://sven.lisn.upsaclay.fr/ontology#2DRender> rdf:type owl:Class ;
                                                 rdfs:subClassOf sven:Render ;
                                                 rdfs:comment "A 2D render component."@en ,
                                                              "Un composant de rendu 2D."@fr ;
@@ -1405,8 +1404,8 @@ sven:VirtualObject rdf:type owl:Class ;
                                                            "Rendu 2D"@fr .
 
 
-###  https://sven.lisn.upsaclay.fr/entity/3DRender
-<https://sven.lisn.upsaclay.fr/entity/3DRender> rdf:type owl:Class ;
+###  https://sven.lisn.upsaclay.fr/ontology#3DRender
+<https://sven.lisn.upsaclay.fr/ontology#3DRender> rdf:type owl:Class ;
                                                 rdfs:subClassOf sven:Render ;
                                                 rdfs:comment "A 3D render component."@en ,
                                                              "Un composant de rendu 3D."@fr ;
