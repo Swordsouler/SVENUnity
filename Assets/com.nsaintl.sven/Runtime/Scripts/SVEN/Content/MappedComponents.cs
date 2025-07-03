@@ -476,7 +476,6 @@ namespace Sven.Content
         /// <returns>Type of the component.</returns>
         public static Tuple<Type, int> GetData(string typeName)
         {
-            Debug.Log(typeName);
             try
             {
                 foreach (var key in Values.Keys)
