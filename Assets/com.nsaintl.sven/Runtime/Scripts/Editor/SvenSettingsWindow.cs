@@ -25,6 +25,11 @@ namespace Sven.Editor
             GetWindow<SvenSettingsWindow>("SVEN Settings");
         }
 
+        private void OnValidate()
+        {
+            SvenSettings.RefreshConfig();
+        }
+
         private void OnLostFocus()
         {
             ontologiesIsShown.Clear();

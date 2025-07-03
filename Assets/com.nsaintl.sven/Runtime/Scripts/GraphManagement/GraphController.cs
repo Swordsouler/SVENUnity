@@ -37,7 +37,8 @@ namespace Sven.GraphManagement
 
         private void OnApplicationQuit()
         {
-            SaveAndQuitGraph();
+            //SaveAndQuitGraph();
+            // Add to remote (don't overwrite)
         }
 
         public async Task SaveGraph()

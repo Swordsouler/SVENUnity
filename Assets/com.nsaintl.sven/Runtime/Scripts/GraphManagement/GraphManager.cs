@@ -23,7 +23,6 @@ using VDS.RDF.Parsing;
 using VDS.RDF.Query;
 using VDS.RDF.Query.Inference;
 using VDS.RDF.Writing;
-using static Sven.GraphManagement.GraphReader;
 #if UNITY_WEBGL && !UNITY_EDITOR
 using System.Threading.Tasks;
 using UnityEngine.Networking;
@@ -38,6 +37,10 @@ namespace Sven.GraphManagement
         private static readonly Dictionary<string, string> _ontologies = new();
         private static readonly List<Instant> _instants = new();
         private static AuthenticationHeaderValue _authenticationHeaderValue = null;
+        public static DateTime StartedAt => _instants.Count > 0 ? _instants[0].inXSDDateTime : DateTime.Now;
+        public static DateTime EndedAt => _instants.Count > 0 ? _instants[^1].inXSDDateTime : DateTime.Now;
+        public static float Duration => (float)(EndedAt - StartedAt).TotalSeconds;
+        public static Instant CurrentInstantLoaded { get; private set; } = null;
 
         public static void SetAuthenticationHeaderValue(string username, string password)
         {
@@ -369,12 +372,10 @@ WHERE {
             {
                 //get the dateTime
                 INode dateTimeNode = result["dateTime"];
-                int contentModifier = (int)result["contentModifier"].AsValuedNode().AsInteger();
                 //create a new instant
                 DateTimeOffset dateTimeOffset = DateTimeOffset.Parse(dateTimeNode.AsValuedNode().AsString());
-                InstantDescription instant = new(dateTimeOffset.DateTime, contentModifier);
                 //add the instant to the list
-                _instants.Add(instant);
+                _instants.Add(new(dateTimeOffset.DateTime));
             }
         }
 
@@ -389,7 +390,7 @@ WHERE {
     ?interval time:hasBeginning ?instant .
 } GROUP BY ?instant ?dateTime ORDER BY ?dateTime";
 
-        private static async Task LoadInstantsFromEndpoint()
+        public static async Task LoadInstantsFromEndpoint()
         {
             string endpointUrl = SvenSettings.EndpointUrl;
 
@@ -397,7 +398,7 @@ WHERE {
             LoadInstants(results);
         }
 
-        private static void LoadInstantsFromMemory()
+        public static void LoadInstantsFromMemory()
         {
             SparqlResultSet results = QueryMemory(LoadInstantsQuery);
             LoadInstants(results);
@@ -477,7 +478,7 @@ WHERE {{
 
                     string propertyName = result["propertyName"].NodeType switch
                     {
-                        NodeType.Uri => result["propertyName"].ToString()[(result["propertyName"].ToString().LastIndexOf("/") + 1)..],
+                        NodeType.Uri => result["propertyName"].ToString()[(result["propertyName"].ToString().LastIndexOf("#") + 1)..],
                         _ => result["propertyName"].AsValuedNode().AsString()
                     };
                     string componentUUID, componentStringType, propertyStringType, propertyNestedName;
@@ -486,9 +487,9 @@ WHERE {{
                         componentUUID = result["component"].ToString()[(result["component"].ToString().LastIndexOf("/") + 1)..];
 
                         // get types
-                        componentStringType = result["componentType"]?.ToString()[(result["componentType"].ToString().LastIndexOf("/") + 1)..];
-                        propertyStringType = result["propertyType"].ToString()[(result["propertyType"].ToString().LastIndexOf("/") + 1)..];
-                        propertyNestedName = result["propertyNestedName"].ToString()[(result["propertyNestedName"].ToString().LastIndexOf("/") + 1)..];
+                        componentStringType = result["componentType"]?.ToString()[(result["componentType"].ToString().LastIndexOf("#") + 1)..];
+                        propertyStringType = result["propertyType"].ToString()[(result["propertyType"].ToString().LastIndexOf("#") + 1)..];
+                        propertyNestedName = result["propertyNestedName"].ToString()[(result["propertyNestedName"].ToString().LastIndexOf("#") + 1)..];
                     }
                     catch
                     {
@@ -549,8 +550,21 @@ WHERE {{
             return sceneContent;
         }
 
-        private static async Task RetrieveSceneFromEndpoint(Instant instant)
+        /// <summary>
+        /// Search the instant that is closer previous the duration sent.
+        /// </summary>
+        /// <param name="duration">Duration to search.</param>
+        public static Instant SearchInstant(float duration)
         {
+            Instant searchedInstant = _instants.LastOrDefault(x => x.inXSDDateTime <= StartedAt.AddSeconds(duration));
+            return searchedInstant;
+        }
+
+        public static async Task RetrieveSceneFromEndpoint(Instant instant)
+        {
+            Debug.Log($"Retrieving scene from endpoint for instant: {instant.inXSDDateTime:yyyy-MM-ddTHH:mm:ss.fffzzz}");
+            CurrentInstantLoaded = instant;
+            if (instant == null) return;
             string endpointUrl = SvenSettings.EndpointUrl;
 
             SparqlResultSet results = await QueryEndpoint(endpointUrl, RetrieveSceneQuery(instant));
@@ -558,14 +572,15 @@ WHERE {{
             ReconstructScene(targetSceneContent);
         }
 
-        private static async Task RetrieveSceneFromMemory(Instant instant)
+        public static async Task RetrieveSceneFromMemory(Instant instant)
         {
+            CurrentInstantLoaded = instant;
+            if (instant == null) return;
+
             SparqlResultSet results = QueryMemory(RetrieveSceneQuery(instant));
             SceneContent targetSceneContent = await GetSceneContent(results);
             ReconstructScene(targetSceneContent);
         }
-
-        /************/
 
         private static SceneContent GetSceneContent()
         {
@@ -586,7 +601,7 @@ WHERE {{
                     string componentUUID = component.GetUUID();
                     if (!sceneContent.GameObjects[objectUUID].Components.ContainsKey(componentUUID))
                     {
-                        Tuple<Type, int> componentData = MapppedComponents.GetData(component.GetRdfType());
+                        Tuple<Type, int> componentData = MapppedComponents.GetData(component.GetType().Name);
                         Type componentType = componentData.Item1;
                         int componentSortOrder = componentData.Item2;
                         sceneContent.GameObjects[objectUUID].Components[componentUUID] = new(componentUUID, componentType, componentSortOrder);
@@ -735,6 +750,30 @@ WHERE {{
                 }
             }
             throw new NotImplementedException("Équivalent de GraphReader.UpdateContent(SceneContent targetSceneContent)");
+        }
+
+        public static Instant NextInstant()
+        {
+            if (CurrentInstantLoaded == null) return _instants.Count > 0 ? _instants.First() : CurrentInstantLoaded;
+
+            // next of current instant
+            Instant nextInstant = _instants.FirstOrDefault(x => x.inXSDDateTime > CurrentInstantLoaded.inXSDDateTime);
+            if (nextInstant != null) return nextInstant;
+            // if no next instant, return the current instant
+            Debug.LogWarning("No next instant found, returning current instant instead.");
+            return CurrentInstantLoaded;
+        }
+
+        public static Instant PreviousInstant()
+        {
+            if (CurrentInstantLoaded == null) return _instants.Count > 0 ? _instants.First() : CurrentInstantLoaded;
+
+            // previous of current instant
+            Instant previousInstant = _instants.LastOrDefault(x => x.inXSDDateTime < CurrentInstantLoaded.inXSDDateTime);
+            if (previousInstant != null) return previousInstant;
+            // if no previous instant, return the current instant
+            Debug.LogWarning("No previous instant found, returning current instant instead.");
+            return CurrentInstantLoaded;
         }
     }
 }
