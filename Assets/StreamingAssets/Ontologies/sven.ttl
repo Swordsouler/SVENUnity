@@ -6,6 +6,7 @@
 @prefix geof: <http://www.opengis.net/def/function/geosparql/> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 @prefix sven: <https://sven.lisn.upsaclay.fr/ontology#> .
+@prefix ve: <https://sven.lisn.upsaclay.fr/ve/> .
 @prefix time: <http://www.w3.org/2006/time#> .
 @prefix dcterms: <http://purl.org/dc/terms/> .
 @base <https://sven.lisn.upsaclay.fr/ontology> .

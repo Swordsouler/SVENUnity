@@ -2,6 +2,8 @@
 // Author: Nicolas SAINT-LÉGER
 // Licensed under the MIT License. See LICENSE file in the project root for full license information.
 
+using DG.Tweening;
+using Sven.Content;
 using Sven.GraphManagement.Description;
 using Sven.OwlTime;
 using Sven.Utils;
@@ -11,14 +13,17 @@ using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
 using VDS.RDF;
+using VDS.RDF.Nodes;
 using VDS.RDF.Parsing;
 using VDS.RDF.Query;
 using VDS.RDF.Query.Inference;
 using VDS.RDF.Writing;
+using static Sven.GraphManagement.GraphReader;
 #if UNITY_WEBGL && !UNITY_EDITOR
 using System.Threading.Tasks;
 using UnityEngine.Networking;
@@ -207,39 +212,23 @@ SELECT ?s ?p ?o
 WHERE {
     ?s ?p ?o .
 } LIMIT 1000000";
-            string serviceUrl = $"{endpointUrl}?query={Uri.EscapeDataString(query)}&format=text/turtle";
-            try
+
+            SparqlResultSet results = await QueryEndpoint(endpointUrl, query);
+
+            if (results == null || results.Count == 0)
             {
-                using HttpClient httpClient = new();
-                httpClient.DefaultRequestHeaders.Authorization = _authenticationHeaderValue;
-                SparqlQueryClient sparqlQueryClient = new(httpClient, new Uri(endpointUrl));
-
-#if UNITY_WEBGL
-                SparqlResultSet results = await sparqlQueryClient.QueryWebGLWithResultSetAsync(graphQuery);
-#else
-                SparqlResultSet results = await sparqlQueryClient.QueryWithResultSetAsync(query);
-#endif
-
-                if (results == null || results.Count == 0)
-                {
-                    Debug.LogWarning("No results found in the graph at the endpoint.");
-                    return;
-                }
-                foreach (var result in results)
-                {
-                    INode subject = result["s"];
-                    INode predicate = result["p"];
-                    INode @object = result["o"];
-                    if (subject != null && predicate != null && @object != null)
-                    {
-                        _instance.Assert(new Triple(subject, predicate, @object));
-                    }
-                }
-                Debug.Log("Graph loaded from endpoint successfully.");
+                Debug.LogWarning("No results found in the graph at the endpoint.");
+                return;
             }
-            catch (Exception ex)
+            foreach (var result in results)
             {
-                throw new InvalidOperationException($"Failed to load graph from endpoint: {ex.Message}", ex);
+                INode subject = result["s"];
+                INode predicate = result["p"];
+                INode @object = result["o"];
+                if (subject != null && predicate != null && @object != null)
+                {
+                    _instance.Assert(new Triple(subject, predicate, @object));
+                }
             }
         }
 
@@ -336,41 +325,415 @@ WHERE {
             return _instance.CreateTripleNode(triple);
         }
 
-        private static Task LoadInstantsFromEndpoint()
+        public static async Task<SparqlResultSet> QueryEndpoint(string endpointUrl, string query)
+        {
+            if (string.IsNullOrEmpty(endpointUrl)) throw new ArgumentNullException(nameof(endpointUrl) + " is null or empty.");
+            if (string.IsNullOrEmpty(query)) throw new ArgumentNullException(nameof(query) + " is null or empty.");
+
+            Uri endpointUri = new(endpointUrl);
+            HttpClient httpClient = new();
+            httpClient.DefaultRequestHeaders.Authorization = _authenticationHeaderValue;
+
+            SparqlQueryClient sparqlQueryClient = new(httpClient, endpointUri);
+            if (SvenSettings.Debug) Debug.Log($"Graph query: {query}");
+#if UNITY_WEBGL
+            SparqlResultSet results = await sparqlQueryClient.QueryWebGLWithResultSetAsync(query);
+#else
+            SparqlResultSet results = await sparqlQueryClient.QueryWithResultSetAsync(query);
+#endif
+
+            return results;
+        }
+
+        public static SparqlResultSet QueryMemory(string query)
+        {
+            if (string.IsNullOrEmpty(query)) throw new ArgumentNullException(nameof(query) + " is null or empty.");
+            SparqlQueryParser parser = new();
+            SparqlQuery sparqlQuery = parser.ParseFromString(query) ?? throw new InvalidOperationException("Failed to parse SPARQL query.");
+            try
+            {
+                return _instance.ExecuteQuery(sparqlQuery) as SparqlResultSet;
+            }
+            catch (RdfQueryException ex)
+            {
+                throw new InvalidOperationException($"SPARQL query execution failed: {ex.Message}", ex);
+            }
+        }
+
+        private static void LoadInstants(SparqlResultSet instantsResultSet)
+        {
+            _instants.Clear();
+
+            //iterate over the results
+            foreach (SparqlResult result in instantsResultSet.Cast<SparqlResult>())
+            {
+                //get the dateTime
+                INode dateTimeNode = result["dateTime"];
+                int contentModifier = (int)result["contentModifier"].AsValuedNode().AsInteger();
+                //create a new instant
+                DateTimeOffset dateTimeOffset = DateTimeOffset.Parse(dateTimeNode.AsValuedNode().AsString());
+                InstantDescription instant = new(dateTimeOffset.DateTime, contentModifier);
+                //add the instant to the list
+                _instants.Add(instant);
+            }
+        }
+
+        private static string LoadInstantsQuery => @"PREFIX time: <http://www.w3.org/2006/time#>
+
+SELECT ?instant ?dateTime (COUNT(?contentModification) as ?contentModifier)
+WHERE {
+    ?instant a time:Instant ;
+            time:inXSDDateTime ?dateTime .
+    ?contentModification time:hasTemporalExtent ?interval .
+    ?interval time:hasBeginning ?instant .
+} GROUP BY ?instant ?dateTime ORDER BY ?dateTime";
+
+        private static async Task LoadInstantsFromEndpoint()
         {
             string endpointUrl = SvenSettings.EndpointUrl;
-            throw new NotImplementedException("Équivalent de GraphReader.LoadInstants()");
+
+            SparqlResultSet results = await QueryEndpoint(endpointUrl, LoadInstantsQuery);
+            LoadInstants(results);
         }
 
-        private static Task LoadInstantsFromMemory()
+        private static void LoadInstantsFromMemory()
         {
-            throw new NotImplementedException("Équivalent de GraphReader.LoadInstants()");
+            SparqlResultSet results = QueryMemory(LoadInstantsQuery);
+            LoadInstants(results);
         }
 
-        private static Task RetrieveSceneFromEndpoint()
+        private static string RetrieveInstantQueryTime(Instant instant)
+        {
+            return SvenSettings.UseInside ?
+                $"?interval time:inside <{instant.UriNode}> ." :
+                $@"
+    {{
+        SELECT DISTINCT ?interval
+        WHERE {{
+            VALUES ?instantTime {{ {$"\"{instant.inXSDDateTime:yyyy-MM-ddTHH:mm:ss.fffzzz}\""}^^xsd:dateTime }}
+            ?interval a time:Interval ;
+                    time:hasBeginning/time:inXSDDateTime ?startTime .
+            OPTIONAL {{
+                ?interval time:hasEnd/time:inXSDDateTime ?_endTime .
+            }}
+            BIND(IF(BOUND(?_endTime), ?_endTime, NOW()) AS ?endTime)
+            FILTER(?startTime <= ?instantTime && ?instantTime < ?endTime)
+        }} ORDER BY ?startTime ?endTime limit 10000
+    }}";
+        }
+
+        private static string RetrieveSceneQuery(Instant instant)
+        {
+            return $@"PREFIX time: <http://www.w3.org/2006/time#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX sven: <https://sven.lisn.upsaclay.fr/ontology#>
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+
+SELECT DISTINCT ?object ?component ?componentType ?property ?propertyName ?propertyNestedName ?propertyValue ?propertyType
+WHERE {{
+    {{
+        VALUES ?propertyName {{
+            sven:active
+            sven:layer
+            sven:tag
+            sven:name
+        }}
+        ?object a sven:VirtualObject ;
+                ?propertyName ?property .
+        ?property sven:value ?propertyValue ;
+                    time:hasTemporalExtent ?interval .
+    }}
+    UNION
+    {{
+        ?object a sven:VirtualObject ;
+                sven:component ?component .
+        ?component sven:exactType ?componentType ;
+                ?propertyName ?property .
+        ?propertyName rdfs:subPropertyOf* sven:componentProperty ;
+                    rdfs:range ?propertyRange .
+        ?property sven:exactType ?propertyType ;
+                ?propertyNestedName ?propertyValue ;
+                time:hasTemporalExtent ?interval .
+        ?propertyNestedName rdfs:subPropertyOf sven:propertyData .
+        FILTER(?propertyNestedName != sven:propertyData)
+    }}
+    {RetrieveInstantQueryTime(instant)}
+}}";
+        }
+
+        private static async Task<SceneContent> GetSceneContent(SparqlResultSet resultSet)
+        {
+#if !UNITY_WEBGL || UNITY_EDITOR
+            SceneContent sceneContent = await Task.Run(() =>
+            {
+#endif
+                SceneContent sceneContent = new();
+
+                foreach (SparqlResult result in resultSet.Cast<SparqlResult>())
+                {
+                    // get uuids
+                    string objectUUID = result["object"].ToString()[(result["object"].ToString().LastIndexOf("/") + 1)..];
+
+                    string propertyName = result["propertyName"].NodeType switch
+                    {
+                        NodeType.Uri => result["propertyName"].ToString()[(result["propertyName"].ToString().LastIndexOf("/") + 1)..],
+                        _ => result["propertyName"].AsValuedNode().AsString()
+                    };
+                    string componentUUID, componentStringType, propertyStringType, propertyNestedName;
+                    try
+                    {
+                        componentUUID = result["component"].ToString()[(result["component"].ToString().LastIndexOf("/") + 1)..];
+
+                        // get types
+                        componentStringType = result["componentType"]?.ToString()[(result["componentType"].ToString().LastIndexOf("/") + 1)..];
+                        propertyStringType = result["propertyType"].ToString()[(result["propertyType"].ToString().LastIndexOf("/") + 1)..];
+                        propertyNestedName = result["propertyNestedName"].ToString()[(result["propertyNestedName"].ToString().LastIndexOf("/") + 1)..];
+                    }
+                    catch
+                    {
+                        if (!sceneContent.GameObjects.ContainsKey(objectUUID))
+                            sceneContent.GameObjects[objectUUID] = new(objectUUID);
+
+                        switch (propertyName)
+                        {
+                            case "active":
+                                sceneContent.GameObjects[objectUUID].Active = result["propertyValue"].AsValuedNode().AsString() == "true";
+                                continue;
+                            case "layer":
+                                sceneContent.GameObjects[objectUUID].Layer = result["propertyValue"].AsValuedNode().AsString();
+                                continue;
+                            case "tag":
+                                sceneContent.GameObjects[objectUUID].Tag = result["propertyValue"].AsValuedNode().AsString();
+                                continue;
+                            case "name":
+                                sceneContent.GameObjects[objectUUID].Name = result["propertyValue"].AsValuedNode().AsString();
+                                continue;
+                        }
+                        continue;
+                    }
+
+                    // call in main thread
+                    Tuple<Type, int> componentData = MapppedComponents.GetData(componentStringType);
+                    Type componentType = componentData.Item1;
+                    int componentSortOrder = componentData.Item2;
+                    if (componentType == null || !MapppedComponents.HasProperty(componentType, propertyName)) continue;
+                    //Debug.Log($"Component: {componentType} {propertyName}");
+
+                    Type propertyType = MapppedProperties.GetType(propertyStringType) ?? Type.GetType(propertyStringType);
+                    if (!MapppedProperties.HasNestedProperty(propertyType, propertyNestedName)) continue;
+
+                    string propertyUUID = result["property"].ToString()[(result["property"].ToString().LastIndexOf("/") + 1)..];
+                    object propertyValue = result["propertyValue"].AsValuedNode().ToValue();
+                    //if (propertyName == "position")
+                    //Debug.Log(propertyName + " " + propertyNestedName + " " + propertyValue + " " + result["propertyValue"].AsValuedNode());
+
+                    if (!sceneContent.GameObjects.ContainsKey(objectUUID))
+                        sceneContent.GameObjects[objectUUID] = new(objectUUID);
+
+                    if (!sceneContent.GameObjects[objectUUID].Components.ContainsKey(componentUUID))
+                        sceneContent.GameObjects[objectUUID].Components[componentUUID] = new(componentUUID, componentType, componentSortOrder);
+
+                    if (!sceneContent.GameObjects[objectUUID].Components[componentUUID].Properties.ContainsKey(propertyName))
+                        sceneContent.GameObjects[objectUUID].Components[componentUUID].Properties[propertyName] = new(propertyUUID, propertyName, propertyType);
+
+                    if (!sceneContent.GameObjects[objectUUID].Components[componentUUID].Properties[propertyName].Values.ContainsKey(propertyNestedName))
+                        sceneContent.GameObjects[objectUUID].Components[componentUUID].Properties[propertyName].Values[propertyNestedName] = propertyValue;
+                    else Debug.LogWarning($"Property {propertyNestedName} already exists in {propertyName} of {componentType} in {objectUUID}");
+                }
+#if !UNITY_WEBGL || UNITY_EDITOR
+                return sceneContent;
+            });
+#endif
+
+            return sceneContent;
+        }
+
+        private static async Task RetrieveSceneFromEndpoint(Instant instant)
         {
             string endpointUrl = SvenSettings.EndpointUrl;
-            throw new NotImplementedException("Équivalent de GraphReader.LoadInstant(), mais en faisant la requête dans le graphe distant");
+
+            SparqlResultSet results = await QueryEndpoint(endpointUrl, RetrieveSceneQuery(instant));
+            SceneContent targetSceneContent = await GetSceneContent(results);
+            ReconstructScene(targetSceneContent);
         }
 
-        private static Task RetrieveSceneFromMemory()
+        private static async Task RetrieveSceneFromMemory(Instant instant)
         {
-            throw new NotImplementedException("Équivalent de GraphReader.LoadInstant(), mais en faisant la requête dans le graphe local");
+            SparqlResultSet results = QueryMemory(RetrieveSceneQuery(instant));
+            SceneContent targetSceneContent = await GetSceneContent(results);
+            ReconstructScene(targetSceneContent);
         }
 
-        private static Task ReconstructScene(SceneContent sceneContent)
-        {
-            throw new NotImplementedException("Équivalent de GraphReader.UpdateContent(SceneContent targetSceneContent)");
-        }
-
-        private static SceneContent GetSceneContent(SparqlResultSet sparqlResultSet)
-        {
-            throw new NotImplementedException("Équivalent de GraphReader.LoadInstant() dans le thread");
-        }
+        /************/
 
         private static SceneContent GetSceneContent()
         {
-            throw new NotImplementedException("Obtient le SceneContent de la scène actuel. Consulte l'ensemble des SemantizationCore");
+            SceneContent sceneContent = new(CurrentInstant);
+            // get all semantizationCore objects in the scene
+            SemantizationCore[] semantizationCores = UnityEngine.Object.FindObjectsByType<SemantizationCore>(FindObjectsSortMode.None);
+            // iterate over the semantizationCores and get their content
+            // do the things to fill SceneContent
+            foreach (SemantizationCore semantizationCore in semantizationCores)
+            {
+                string objectUUID = semantizationCore.GetUUID();
+                if (!sceneContent.GameObjects.ContainsKey(objectUUID))
+                    sceneContent.GameObjects[objectUUID] = new(objectUUID);
+
+                List<Component> components = semantizationCore.GetComponents<Component>().ToList();
+                foreach (Component component in components)
+                {
+                    string componentUUID = component.GetUUID();
+                    if (!sceneContent.GameObjects[objectUUID].Components.ContainsKey(componentUUID))
+                    {
+                        Tuple<Type, int> componentData = MapppedComponents.GetData(component.GetRdfType());
+                        Type componentType = componentData.Item1;
+                        int componentSortOrder = componentData.Item2;
+                        sceneContent.GameObjects[objectUUID].Components[componentUUID] = new(componentUUID, componentType, componentSortOrder);
+
+                        List<PropertyInfo> properties = componentType.GetProperties(BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly).ToList();
+                        foreach (PropertyInfo property in properties)
+                        {
+                            string propertyName = property.Name;
+                            Type propertyType = property.PropertyType;
+
+                            if (!sceneContent.GameObjects[objectUUID].Components[componentUUID].Properties.ContainsKey(propertyName))
+                                sceneContent.GameObjects[objectUUID].Components[componentUUID].Properties[propertyName] = new(propertyName, propertyName, propertyType);
+
+                            List<PropertyInfo> nestedProperties = propertyType.GetProperties(BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly).ToList();
+                            foreach (PropertyInfo nestedProperty in nestedProperties)
+                            {
+                                string propertyNestedName = nestedProperty.Name;
+                                object propertyValue = nestedProperty.GetValue(component, null);
+
+                                if (!sceneContent.GameObjects[objectUUID].Components[componentUUID].Properties[propertyName].Values.ContainsKey(propertyNestedName))
+                                    sceneContent.GameObjects[objectUUID].Components[componentUUID].Properties[propertyName].Values[propertyNestedName] = propertyValue;
+                            }
+                        }
+
+                    }
+                }
+            }
+            return sceneContent;
+        }
+
+        private static void ReconstructScene(SceneContent sceneContent)
+        {
+            SceneContent currentSceneContent = GetSceneContent();
+
+            foreach (GameObjectDescription gameObjectDescription in sceneContent.GameObjects.Values)
+            {
+                // create gamobject if it doesn't exist, otherwise get it from the current scene content
+                bool gameObjectExist = currentSceneContent.GameObjects.ContainsKey(gameObjectDescription.UUID);
+                if (gameObjectExist)
+                    gameObjectDescription.GameObject = currentSceneContent.GameObjects[gameObjectDescription.UUID].GameObject;
+                else
+                {
+                    gameObjectDescription.GameObject = new GameObject(gameObjectDescription.UUID);
+                    //gameObjectDescription.GameObject.transform.SetParent(transform);
+                }
+                gameObjectDescription.GameObject.SetActive(gameObjectDescription.Active);
+                gameObjectDescription.GameObject.layer = LayerMask.NameToLayer(gameObjectDescription.Layer);
+                try
+                {
+                    bool isTagExist = !string.IsNullOrEmpty(gameObjectDescription.Tag);
+                    gameObjectDescription.GameObject.tag = isTagExist ? gameObjectDescription.Tag ?? "Untagged" : "Untagged";
+                }
+                catch (Exception)
+                {
+                    gameObjectDescription.GameObject.tag = "Untagged";
+                }
+                gameObjectDescription.GameObject.name = gameObjectDescription.Name;
+
+                List<ComponentDescription> componentDescriptions = gameObjectDescription.Components.Values.ToList();
+                // sort the components by sort order
+                componentDescriptions = componentDescriptions.OrderBy(x => x.SortOrder).ToList();
+
+                foreach (ComponentDescription componentDescription in componentDescriptions)
+                {
+                    // create component if it doesn't exist, otherwise get it from the current scene content
+                    bool componentExist = gameObjectExist && currentSceneContent.GameObjects[gameObjectDescription.UUID].Components.ContainsKey(componentDescription.UUID);
+                    if (componentExist)
+                        componentDescription.Component = currentSceneContent.GameObjects[gameObjectDescription.UUID].Components[componentDescription.UUID].Component;
+                    else
+                    {
+                        // we check transform because it is a special case, it is already attached to the gameObject at instantiation and is unique
+                        if (componentDescription.Type == typeof(Transform))
+                            componentDescription.Component = gameObjectDescription.GameObject.transform;
+                        else
+                        {
+                            try
+                            {
+                                //Debug.Log(componentDescription.Type);
+                                componentDescription.Component = gameObjectDescription.GameObject.AddComponent(componentDescription.Type);
+
+                                // Default initialization
+                                if (componentDescription.Component is MeshRenderer meshRenderer)
+                                    meshRenderer.material = new Material(Shader.Find("Standard"));
+                                if (componentDescription.Component is MeshFilter meshFilter)
+                                    meshFilter.mesh = new Mesh();
+                            }
+                            catch (Exception ex)
+                            {
+                                Debug.LogError($"Error while adding component {componentDescription.Type} to {gameObjectDescription.UUID}: {ex.Message}");
+                            }
+                        }
+                    }
+
+                    // get the setters of the component item1 = priority, item2 = setter
+                    Dictionary<string, Tuple<int, Action<object>>> setters = MapppedComponents.GetSetters(componentDescription.Component);
+                    //reorder the properties by priority
+                    componentDescription.Properties = componentDescription.Properties.OrderBy(x => setters[x.Key].Item1).ToDictionary(x => x.Key, x => x.Value);
+                    //if (componentDescription.Component.GetType() == typeof(MeshFilter)) continue;
+
+                    foreach (PropertyDescription propertyDescription in componentDescription.Properties.Values)
+                    {
+                        // check if the property state exists in the current scene content (by checking the uuid)
+                        bool propertyExist = componentExist && currentSceneContent.GameObjects[gameObjectDescription.UUID].Components[componentDescription.UUID].Properties.TryGetValue(propertyDescription.Name, out var currentPropertyDescription) && currentPropertyDescription.UUID == propertyDescription.UUID;
+                        if (propertyExist) continue;
+
+                        object propertyValue = propertyDescription.Value;
+                        if (propertyValue == null)
+                        {
+                            Debug.LogWarning($"Property {propertyDescription} is null in {componentDescription.Type} of {gameObjectDescription.UUID}");
+                            continue;
+                        }
+                        //if (componentDescription.Component.GetType() == typeof(MeshRenderer))
+                        //    Debug.Log($"Property: {propertyDescription.Name} {propertyDescription.Type} {propertyValue.GetType()}  {propertyValue}");
+
+                        if (setters.TryGetValue(propertyDescription.Name, out var setter) && setter.Item2 != null)
+                        {
+                            setter.Item2(propertyValue);
+                        }
+                        //else Debug.LogWarning($"Setter not found for {propertyDescription.Type} in {componentDescription.Type} of {gameObjectDescription.UUID}");
+                    }
+                }
+            }
+
+            // remove the gameobjects and components that are not in the target scene content
+            foreach (GameObjectDescription gameObjectDescription in currentSceneContent.GameObjects.Values)
+            {
+                if (!sceneContent.GameObjects.ContainsKey(gameObjectDescription.UUID))
+                {
+                    foreach (ComponentDescription componentDescription in gameObjectDescription.Components.Values)
+                    {
+                        DOTween.Kill(componentDescription.Component);
+                        if (componentDescription.Type != typeof(Transform))
+                            GameObject.Destroy(componentDescription.Component);
+                    }
+                    GameObject.Destroy(gameObjectDescription.GameObject);
+                }
+                else
+                {
+                    foreach (ComponentDescription componentDescription in gameObjectDescription.Components.Values)
+                        if (!sceneContent.GameObjects[gameObjectDescription.UUID].Components.ContainsKey(componentDescription.UUID))
+                        {
+                            DOTween.Kill(componentDescription.Component);
+                            if (componentDescription.Type != typeof(Transform))
+                                GameObject.Destroy(componentDescription.Component);
+                        }
+                }
+            }
+            throw new NotImplementedException("Équivalent de GraphReader.UpdateContent(SceneContent targetSceneContent)");
         }
     }
 }
