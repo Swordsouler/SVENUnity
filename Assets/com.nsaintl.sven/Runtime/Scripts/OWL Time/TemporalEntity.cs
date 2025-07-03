@@ -90,10 +90,10 @@ namespace Sven.OwlTime
         {
             IUriNode temporalEntityNode = UriNode;
             GraphManager.Assert(new Triple(temporalEntityNode, GraphManager.CreateUriNode("rdf:type"), GraphManager.CreateUriNode($"time:{GetType().Name}")));
-            if (after != null) GraphManager.Assert(new Triple(temporalEntityNode, GraphManager.CreateUriNode("time:after"), GraphManager.CreateUriNode($"time:{after}")));
-            if (before != null) GraphManager.Assert(new Triple(temporalEntityNode, GraphManager.CreateUriNode("time:before"), GraphManager.CreateUriNode($"time:{before}")));
-            if (hasBeginning != null) GraphManager.Assert(new Triple(temporalEntityNode, GraphManager.CreateUriNode("time:hasBeginning"), GraphManager.CreateUriNode($"time:{hasBeginning}")));
-            if (hasEnd != null) GraphManager.Assert(new Triple(temporalEntityNode, GraphManager.CreateUriNode("time:hasEnd"), GraphManager.CreateUriNode($"time:{hasEnd}")));
+            if (after != null) GraphManager.Assert(new Triple(temporalEntityNode, GraphManager.CreateUriNode("time:after"), after.UriNode));
+            if (before != null) GraphManager.Assert(new Triple(temporalEntityNode, GraphManager.CreateUriNode("time:before"), before.UriNode));
+            if (hasBeginning != null) GraphManager.Assert(new Triple(temporalEntityNode, GraphManager.CreateUriNode("time:hasBeginning"), hasBeginning.UriNode));
+            if (hasEnd != null) GraphManager.Assert(new Triple(temporalEntityNode, GraphManager.CreateUriNode("time:hasEnd"), hasEnd.UriNode));
             if (hasXSDDuration != null) GraphManager.Assert(new Triple(temporalEntityNode, GraphManager.CreateUriNode("time:hasXSDDuration"), hasXSDDuration.ToLiteralNode()));
             return temporalEntityNode;
         }

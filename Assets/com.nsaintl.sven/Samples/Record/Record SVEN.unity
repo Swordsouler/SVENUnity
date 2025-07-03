@@ -5449,9 +5449,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: Sven.GraphManagement.GraphBuffer, Assembly-CSharp
-        m_MethodName: SaveExperiment
+      - m_Target: {fileID: 346780040}
+        m_TargetAssemblyTypeName: Sven.GraphManagement.GraphController, com.nsaintl.sven
+        m_MethodName: SaveGraph
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}

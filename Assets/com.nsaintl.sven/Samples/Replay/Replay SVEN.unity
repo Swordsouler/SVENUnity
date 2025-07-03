@@ -165,7 +165,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ontologyDescription: {fileID: 11400000, guid: 02dbca5f0b2f48945a6a733f130690f2, type: 2}
   readingMode: 1
-  endpoint: http://localhost:7200/repositories/SVEN
+  endpoint: http://localhost:7200/repositories/Demo-Scene
   graphName: Default
   _currentInstantIndex: 0
 --- !u!1 &331900381

@@ -37,11 +37,10 @@ namespace Sven.GraphManagement
 
         private void OnApplicationQuit()
         {
-            SaveGraph();
-            GraphManager.Clear();
+            SaveAndQuitGraph();
         }
 
-        private async void SaveGraph()
+        public async Task SaveGraph()
         {
             SemantizationCore[] semantizationCores = FindObjectsByType<SemantizationCore>(FindObjectsSortMode.None);
             SynchronizationContext context = SynchronizationContext.Current;
@@ -58,5 +57,10 @@ namespace Sven.GraphManagement
             await GraphManager.SaveToEndpoint();
         }
 
+        public async void SaveAndQuitGraph()
+        {
+            await SaveGraph();
+            GraphManager.Clear();
+        }
     }
 }

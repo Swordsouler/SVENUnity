@@ -240,7 +240,7 @@ namespace Sven.Content
 
             interval.Start(currentInstant, oldInterval);
             IUriNode intervalNode = interval.Semanticize();
-            GraphManager.Assert(new Triple(propertyNode, GraphManager.CreateUriNode("time:hasTemporalExtent"), intervalNode));
+            GraphManager.Assert(new Triple(propertyNode, GraphManager.CreateUriNode("sven:hasTemporalExtent"), intervalNode));
 
             Dictionary<string, object> values = observedProperty.LastValue.GetSemantizableValues();
             foreach (KeyValuePair<string, object> value in values)
@@ -256,7 +256,7 @@ namespace Sven.Content
                     string simplifiedType = value.Key == "value" ? "" : value.Key.ToUpper();
                     Triple triple = new(ParentObjectNode, GraphManager.CreateUriNode("sven:" + simplifiedName + simplifiedType), literalNode);
                     GraphManager.Assert(triple);
-                    GraphManager.Assert(new Triple(GraphManager.CreateTripleNode(triple), GraphManager.CreateUriNode("time:hasTemporalExtent"), intervalNode));
+                    GraphManager.Assert(new Triple(GraphManager.CreateTripleNode(triple), GraphManager.CreateUriNode("sven:hasTemporalExtent"), intervalNode));
                 }
             }
         }

@@ -37,8 +37,8 @@ geo:hasGeometry rdf:type owl:ObjectProperty ;
                            "has geometry"@en .
 
 
-###  http://www.w3.org/2006/time#hasTemporalExtent
-time:hasTemporalExtent rdf:type owl:ObjectProperty ;
+###  https://sven.lisn.upsaclay.fr/ontology#hasTemporalExtent
+sven:hasTemporalExtent rdf:type owl:ObjectProperty ;
                        rdfs:range time:Interval ;
                        rdfs:comment "Relates a temporal entity to its temporal extent."@en ,
                                     "Relie une entité temporelle à son étendue temporelle."@fr ;

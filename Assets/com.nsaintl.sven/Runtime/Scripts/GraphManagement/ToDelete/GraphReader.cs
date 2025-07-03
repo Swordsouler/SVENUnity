@@ -186,7 +186,7 @@ namespace Sven.GraphManagement
                             ?object a sven:VirtualObject ;
                                     ?propertyName ?property .
                             ?property sven:value ?propertyValue ;
-                                        time:hasTemporalExtent ?interval .
+                                        sven:hasTemporalExtent ?interval .
                         }}
                         UNION
                         {{
@@ -198,7 +198,7 @@ namespace Sven.GraphManagement
                                         rdfs:range ?propertyRange .
                             ?property sven:exactType ?propertyType ;
                                     ?propertyNestedName ?propertyValue ;
-                                    time:hasTemporalExtent ?interval .
+                                    sven:hasTemporalExtent ?interval .
                             ?propertyNestedName rdfs:subPropertyOf sven:propertyData .
                             FILTER(?propertyNestedName != sven:propertyData)
                         }}
@@ -223,7 +223,7 @@ namespace Sven.GraphManagement
 
                         string propertyName = result["propertyName"].NodeType switch
                         {
-                            NodeType.Uri => result["propertyName"].ToString()[(result["propertyName"].ToString().LastIndexOf("/") + 1)..],
+                            NodeType.Uri => result["propertyName"].ToString()[(result["propertyName"].ToString().LastIndexOf("#") + 1)..],
                             _ => result["propertyName"].AsValuedNode().AsString()
                         };
                         string componentUUID, componentStringType, propertyStringType, propertyNestedName;
@@ -232,9 +232,9 @@ namespace Sven.GraphManagement
                             componentUUID = result["component"].ToString()[(result["component"].ToString().LastIndexOf("/") + 1)..];
 
                             // get types
-                            componentStringType = result["componentType"]?.ToString()[(result["componentType"].ToString().LastIndexOf("/") + 1)..];
-                            propertyStringType = result["propertyType"].ToString()[(result["propertyType"].ToString().LastIndexOf("/") + 1)..];
-                            propertyNestedName = result["propertyNestedName"].ToString()[(result["propertyNestedName"].ToString().LastIndexOf("/") + 1)..];
+                            componentStringType = result["componentType"]?.ToString()[(result["componentType"].ToString().LastIndexOf("#") + 1)..];
+                            propertyStringType = result["propertyType"].ToString()[(result["propertyType"].ToString().LastIndexOf("#") + 1)..];
+                            propertyNestedName = result["propertyNestedName"].ToString()[(result["propertyNestedName"].ToString().LastIndexOf("#") + 1)..];
                         }
                         catch
                         {
@@ -685,11 +685,13 @@ namespace Sven.GraphManagement
 
             SparqlQueryClient sparqlQueryClient = new(httpClient, endpointUri);
 
-            string graphUri = $"FROM <{graph.BaseUri.AbsoluteUri}{Uri.EscapeDataString(graphName)}>";
+            //string graphUri = $"FROM <{graph.BaseUri.AbsoluteUri}{Uri.EscapeDataString(graphName)}>";
+            string graphUri = $"FROM <https://sven.lisn.upsaclay.fr/ve/{Uri.EscapeDataString(graphName)}/>";
             int selectIndex = query.IndexOf("SELECT", StringComparison.OrdinalIgnoreCase);
             if (selectIndex == -1) throw new Exception("Query must contain a SELECT statement.");
             int insertIndex = query.IndexOf('\n', selectIndex) + 1;
             string graphQuery = query.Insert(insertIndex, $"{graphUri}\n");
+            Debug.Log(graphQuery);
 
             if (SvenSettings.Debug) Debug.Log($"Graph query: {graphQuery}");
 
@@ -710,12 +712,13 @@ namespace Sven.GraphManagement
         {
             string query = @"
                 PREFIX time: <http://www.w3.org/2006/time#>
+                PREFIX sven: <https://sven.lisn.upsaclay.fr/ontology#>
 
                 SELECT ?instant ?dateTime (COUNT(?contentModification) as ?contentModifier)
                 WHERE {
                     ?instant a time:Instant ;
                             time:inXSDDateTime ?dateTime .
-                    ?contentModification time:hasTemporalExtent ?interval .
+                    ?contentModification sven:hasTemporalExtent ?interval .
                     ?interval time:hasBeginning ?instant .
                 } GROUP BY ?instant ?dateTime ORDER BY ?dateTime";
 

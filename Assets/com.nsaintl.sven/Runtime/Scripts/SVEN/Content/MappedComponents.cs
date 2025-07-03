@@ -2,14 +2,13 @@
 // Author: Nicolas SAINT-LÉGER
 // Licensed under the MIT License. See LICENSE file in the project root for full license information.
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using DG.Tweening;
-using Lucene.Net.Search;
 using Sven.Context;
 using Sven.GeoData;
 using Sven.Utils;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace Sven.Content
@@ -477,6 +476,7 @@ namespace Sven.Content
         /// <returns>Type of the component.</returns>
         public static Tuple<Type, int> GetData(string typeName)
         {
+            Debug.Log(typeName);
             try
             {
                 foreach (var key in Values.Keys)

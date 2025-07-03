@@ -379,12 +379,13 @@ WHERE {
         }
 
         private static string LoadInstantsQuery => @"PREFIX time: <http://www.w3.org/2006/time#>
+PREFIX sven: <https://sven.lisn.upsaclay.fr/ontology#>
 
 SELECT ?instant ?dateTime (COUNT(?contentModification) as ?contentModifier)
 WHERE {
     ?instant a time:Instant ;
             time:inXSDDateTime ?dateTime .
-    ?contentModification time:hasTemporalExtent ?interval .
+    ?contentModification sven:hasTemporalExtent ?interval .
     ?interval time:hasBeginning ?instant .
 } GROUP BY ?instant ?dateTime ORDER BY ?dateTime";
 
@@ -441,7 +442,7 @@ WHERE {{
         ?object a sven:VirtualObject ;
                 ?propertyName ?property .
         ?property sven:value ?propertyValue ;
-                    time:hasTemporalExtent ?interval .
+                    sven:hasTemporalExtent ?interval .
     }}
     UNION
     {{
@@ -453,7 +454,7 @@ WHERE {{
                     rdfs:range ?propertyRange .
         ?property sven:exactType ?propertyType ;
                 ?propertyNestedName ?propertyValue ;
-                time:hasTemporalExtent ?interval .
+                sven:hasTemporalExtent ?interval .
         ?propertyNestedName rdfs:subPropertyOf sven:propertyData .
         FILTER(?propertyNestedName != sven:propertyData)
     }}

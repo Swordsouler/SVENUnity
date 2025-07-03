@@ -127,7 +127,7 @@ namespace Sven.Content
             Interval interval = this.GetInterval();
             interval.Start(GraphManager.CurrentInstant);
             IUriNode intervalNode = interval.Semanticize();
-            GraphManager.Assert(new Triple(gameObjectNode, GraphManager.CreateUriNode("time:hasTemporalExtent"), intervalNode));
+            GraphManager.Assert(new Triple(gameObjectNode, GraphManager.CreateUriNode("sven:hasTemporalExtent"), intervalNode));
 
             return properties;
         }
