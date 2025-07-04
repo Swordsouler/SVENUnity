@@ -15,6 +15,7 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
+using UnityEditor;
 using UnityEngine;
 using VDS.RDF;
 using VDS.RDF.Nodes;
@@ -695,6 +696,9 @@ WHERE {{
 
                 foreach (GameObjectDescription gameObjectDescription in sceneContent.GameObjects.Values)
                 {
+#if UNITY_EDITOR
+                    if (!EditorApplication.isPlaying) return;
+#endif
                     // create gamobject if it doesn't exist, otherwise get it from the current scene content
                     bool gameObjectExist = currentSceneContent.GameObjects.ContainsKey(gameObjectDescription.UUID);
                     if (gameObjectExist)
