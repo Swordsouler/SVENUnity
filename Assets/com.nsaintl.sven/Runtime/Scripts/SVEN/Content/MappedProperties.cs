@@ -2,10 +2,10 @@
 // Author: Nicolas SAINT-LÉGER
 // Licensed under the MIT License. See LICENSE file in the project root for full license information.
 
+using Sven.GeoData;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Sven.GeoData;
 using UnityEngine;
 
 namespace Sven.Content
@@ -104,6 +104,13 @@ namespace Sven.Content
             if (Value.Values.Any(x => x.TypeName == typeName))
                 return Value.FirstOrDefault(x => x.Value.TypeName == typeName).Key;
             return typeof(object);
+        }
+
+        public static List<string> GetNestedProperties(Type type)
+        {
+            if (Value.TryGetValue(type, out var propertyDescription))
+                return propertyDescription.NestedProperties;
+            return Value[typeof(object)].NestedProperties;
         }
     }
 }

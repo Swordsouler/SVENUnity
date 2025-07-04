@@ -45,7 +45,7 @@ namespace Sven.GraphManagement.Description
         /// <returns>String representation of the property description.</returns>
         public override string ToString()
         {
-            return $"{Instant.inXSDDateTime}\n{string.Join($"\n", GameObjects.Select(x => $"---------- {x.Key} ----------\n{x.Value}"))}";
+            return $"{Instant?.inXSDDateTime}\n{string.Join($"\n", GameObjects.Select(x => $"---------- {x.Key} ({x.Value.Name}) ----------\n{x.Value}"))}";
         }
     }
 }

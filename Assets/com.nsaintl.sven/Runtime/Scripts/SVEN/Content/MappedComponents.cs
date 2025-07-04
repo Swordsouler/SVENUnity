@@ -97,8 +97,9 @@ namespace Sven.Content
                             if (typeof(MonoBehaviour).IsAssignableFrom(propertyType))
                             {
                                 if (SvenSettings.Debug) Debug.Log("Creating instance of MonoBehaviour: " + propertyType.Name);
-                                GameObject tempGameObject = new("Temp_" + propertyType.Name);
-                                instance = tempGameObject.AddComponent(propertyType);
+                                continue;
+                                /*GameObject tempGameObject = new("Temp_" + propertyType.Name);
+                                instance = tempGameObject.AddComponent(propertyType);*/
                             }
                             else
                             {
@@ -108,7 +109,7 @@ namespace Sven.Content
                         }
                         catch (Exception e)
                         {
-                            Debug.LogError("Error creating instance of " + propertyType.Name + ": " + e.Message);
+                            Debug.LogError("Error creating instance of " + propertyType.Name + ": " + e);
                         }
                         finally
                         {
@@ -184,7 +185,8 @@ namespace Sven.Content
                     (Func<MeshRenderer, PropertyDescription>)(meshRenderer => new PropertyDescription("enabled", () => meshRenderer.enabled, value => meshRenderer.enabled = value.ToString().ToLower() == "true", 1)),
                     (Func<MeshRenderer, PropertyDescription>)(meshRenderer => new PropertyDescription("color", () => meshRenderer.material.color, value => meshRenderer.material.DOColor((Color)value, lerpSpeed), 1/*, "virtualColor"*/)),
                     (Func<MeshRenderer, PropertyDescription>)(meshRenderer => new PropertyDescription("material1", () => meshRenderer.materials.Length > 0 ? meshRenderer.materials[0].name.Replace(" (Instance)", "") : null, value => {
-                        if (value == null) return;
+                        string currentMaterialName = meshRenderer.materials.Length > 0 ? meshRenderer.materials[0].name.Replace(" (Instance)", "") : null;
+                        if (value == null || (string)value == currentMaterialName) return;
                         Material[] materials = meshRenderer.materials;
                         if(materials.Length > 0 && materials[0] != null && materials[0].name == (string)value) return;
                         if (materials.Length < 1) Array.Resize(ref materials, 1);
@@ -192,7 +194,8 @@ namespace Sven.Content
                         meshRenderer.materials = materials;
                     }, 1)),
                     (Func<MeshRenderer, PropertyDescription>)(meshRenderer => new PropertyDescription("material2", () => meshRenderer.materials.Length > 1 ? meshRenderer.materials[1].name.Replace(" (Instance)", "") : null, value => {
-                        if (value == null) return;
+                        string currentMaterialName = meshRenderer.materials.Length > 1 ? meshRenderer.materials[1].name.Replace(" (Instance)", "") : null;
+                        if (value == null || (string)value == currentMaterialName) return;
                         Material[] materials = meshRenderer.materials;
                         if (materials.Length > 1 && materials[1] != null && materials[1].name == (string)value) return;
                         if (materials.Length < 2) Array.Resize(ref materials, 2);
@@ -200,7 +203,8 @@ namespace Sven.Content
                         meshRenderer.materials = materials;
                     }, 1)),
                     (Func<MeshRenderer, PropertyDescription>)(meshRenderer => new PropertyDescription("material3", () => meshRenderer.materials.Length > 2 ? meshRenderer.materials[2].name.Replace(" (Instance)", "") : null, value => {
-                        if (value == null) return;
+                        string currentMaterialName = meshRenderer.materials.Length > 2 ? meshRenderer.materials[2].name.Replace(" (Instance)", "") : null;
+                        if (value == null || (string)value == currentMaterialName) return;
                         Material[] materials = meshRenderer.materials;
                         if (materials.Length > 2 && materials[2] != null && materials[2].name == (string)value) return;
                         if (materials.Length < 3) Array.Resize(ref materials, 3);
@@ -208,7 +212,8 @@ namespace Sven.Content
                         meshRenderer.materials = materials;
                     }, 1)),
                     (Func<MeshRenderer, PropertyDescription>)(meshRenderer => new PropertyDescription("material4", () => meshRenderer.materials.Length > 3 ? meshRenderer.materials[3].name.Replace(" (Instance)", "") : null, value => {
-                        if (value == null) return;
+                        string currentMaterialName = meshRenderer.materials.Length > 3 ? meshRenderer.materials[3].name.Replace(" (Instance)", "") : null;
+                        if (value == null || (string)value == currentMaterialName) return;
                         Material[] materials = meshRenderer.materials;
                         if (materials.Length > 3 && materials[3] != null && materials[3].name == (string)value) return;
                         if (materials.Length < 4) Array.Resize(ref materials, 4);
@@ -302,6 +307,7 @@ namespace Sven.Content
                 })},
 
             // Ignore the following components
+            {typeof(SemantizationCore), null},
             {typeof(PointOfView), null},
             {typeof(GraspArea), new("GraspArea", new List<Delegate>
             {
@@ -404,6 +410,18 @@ namespace Sven.Content
             return setters;
         }
 
+        public static Dictionary<string, Tuple<int, Func<object>>> GetGetters(Component component)
+        {
+            Dictionary<string, Tuple<int, Func<object>>> getters = new();
+            if (Values.TryGetValue(component.GetType(), out var componentDescription))
+            {
+                foreach (Delegate del in componentDescription.Properties)
+                    if (del.DynamicInvoke(component) is PropertyDescription propertyDescription)
+                        getters.Add(propertyDescription.PredicateName, new(propertyDescription.Priority, propertyDescription.Getter));
+            }
+            return getters;
+        }
+
         /// <summary>
         /// Check if a component is mapped.
         /// </summary>
@@ -478,12 +496,15 @@ namespace Sven.Content
         {
             try
             {
+                typeName = typeName.Contains(":") ? typeName.Split(':')[1] : typeName;
                 foreach (var key in Values.Keys)
                 {
-                    if (Values[key] == null) continue;
-                    string typeNameKey = Values[key].TypeName.Contains(":") ? Values[key].TypeName.Split(':')[1] : Values[key].TypeName;
+                    //if (Values[key] == null) continue;
+                    string typeNameKey = Values[key] != null ?
+                        (Values[key].TypeName.Contains(":") ? Values[key].TypeName.Split(':')[1] : Values[key].TypeName) :
+                        key.Name.Split()[^1];
                     if (typeNameKey == typeName)
-                        return new Tuple<Type, int>(key, Values[key].SortOrder);
+                        return Values[key] != null ? new Tuple<Type, int>(key, Values[key].SortOrder) : null;
                 }
                 Debug.LogWarning($"Type {typeName} not found in mapped components.");
                 return null;

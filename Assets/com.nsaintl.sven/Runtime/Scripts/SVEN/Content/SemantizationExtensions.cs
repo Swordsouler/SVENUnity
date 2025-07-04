@@ -71,6 +71,19 @@ namespace Sven.Content
             }
         }
 
+        public static void AddUUID(this Component component, string UUID)
+        {
+            if (componentUUIDs.ContainsKey(component))
+            {
+                Debug.LogWarning("Component already has a UUID. Overwriting it.");
+                componentUUIDs[component] = (UUID, new Interval());
+            }
+            else
+            {
+                componentUUIDs.TryAdd(component, (UUID, new Interval()));
+            }
+        }
+
         /// <summary>
         /// Gets the component by the identifier.
         /// </summary>
@@ -208,7 +221,7 @@ namespace Sven.Content
         /// <returns>RDF type of the component.</returns>
         public static string GetRdfType(this Component component)
         {
-            if (MapppedComponents.TryGetValue(component.GetType(), out var value))
+            if (MapppedComponents.TryGetValue(component.GetType(), out var value) && value != null)
                 return value.TypeName.Contains(":") ? value.TypeName : "sven:" + value.TypeName;
             else return "sven:" + component.GetType().Name;
         }

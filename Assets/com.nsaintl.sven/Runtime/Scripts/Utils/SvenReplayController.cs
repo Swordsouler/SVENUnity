@@ -5,6 +5,7 @@
 using Sven.GraphManagement;
 using Sven.OwlTime;
 using System.Globalization;
+using System.Threading.Tasks;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -16,30 +17,6 @@ namespace Sven.Utils
     /// </summary>
     public class SvenReplayController : MonoBehaviour
     {
-        /// <summary>
-        /// GraphReader to read the graph.
-        /// </summary>
-        /*[SerializeField, OnValueChanged("ResetController")]
-        private GraphReader _graphReader;
-        /// <summary>
-        /// GraphReader to read the graph.
-        /// </summary>
-        private GraphReader GraphReader
-        {
-            get => _graphReader;
-            set
-            {
-                if (_graphReader != null) _graphReader.OnGraphLoaded -= ResetController;
-                _graphReader = value;
-                if (_graphReader != null)
-                {
-                    _graphReader.OnGraphLoaded += ResetController;
-                    ResetController();
-                }
-                //Debug.Log("GraphReader set");
-            }
-        }*/
-
         /// <summary>
         /// Slider to control the time.
         /// </summary>
@@ -106,6 +83,9 @@ namespace Sven.Utils
             }
         }
 
+        private bool _isRunningQuery = false;
+        private float? _pendingSceneValue = null;
+
         private void Awake()
         {
             IsPlaying = false;
@@ -121,7 +101,7 @@ namespace Sven.Utils
 
         private void OnSliderValueChanged(float value)
         {
-            _ = GraphManager.RetrieveSceneFromEndpoint(GraphManager.SearchInstant(value));
+            _ = RetrieveScene(value);
             int hours = (int)value / 3600;
             int minutes = (int)value % 3600 / 60;
             float seconds = value % 60;
@@ -132,12 +112,42 @@ namespace Sven.Utils
                 _timeText.text = string.Format(CultureInfo.InvariantCulture, "{0}:{1:D2}", minutes, (int)seconds);
         }
 
+        private async Task RetrieveScene(float value)
+        {
+            if (_isRunningQuery)
+            {
+                _pendingSceneValue = value; // Mémorise la dernière valeur demandée
+                return;
+            }
+
+            _isRunningQuery = true;
+            try
+            {
+                await GraphManager.RetrieveSceneFromEndpoint(GraphManager.SearchInstant(value));
+            }
+            catch (System.Exception e)
+            {
+                Debug.LogError("Error retrieving scene: " + e.Message);
+            }
+            finally
+            {
+                _isRunningQuery = false;
+
+                // Si une nouvelle valeur a été demandée pendant le traitement, on la traite maintenant
+                if (_pendingSceneValue.HasValue)
+                {
+                    float nextValue = _pendingSceneValue.Value;
+                    _pendingSceneValue = null;
+                    await RetrieveScene(nextValue);
+                }
+            }
+        }
+
         /// <summary>
         /// Reset the controller to its default state.
         /// </summary>
         private void ResetController()
         {
-            //if (GraphReader == null || !GraphReader.IsGraphLoaded) return;
             _timeSlider.minValue = 0;
             _timeSlider.maxValue = GraphManager.Duration;
             _timeSlider.value = 0;

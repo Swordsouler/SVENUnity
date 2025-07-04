@@ -13,7 +13,6 @@ using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
-using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
@@ -330,22 +329,29 @@ WHERE {
 
         public static async Task<SparqlResultSet> QueryEndpoint(string endpointUrl, string query)
         {
-            if (string.IsNullOrEmpty(endpointUrl)) throw new ArgumentNullException(nameof(endpointUrl) + " is null or empty.");
-            if (string.IsNullOrEmpty(query)) throw new ArgumentNullException(nameof(query) + " is null or empty.");
+#if !UNITY_WEBGL || UNITY_EDITOR
+            return await Task.Run(async () =>
+            {
+#endif
+                if (string.IsNullOrEmpty(endpointUrl)) throw new ArgumentNullException(nameof(endpointUrl) + " is null or empty.");
+                if (string.IsNullOrEmpty(query)) throw new ArgumentNullException(nameof(query) + " is null or empty.");
 
-            Uri endpointUri = new(endpointUrl);
-            HttpClient httpClient = new();
-            httpClient.DefaultRequestHeaders.Authorization = _authenticationHeaderValue;
+                Uri endpointUri = new(endpointUrl);
+                HttpClient httpClient = new();
+                httpClient.DefaultRequestHeaders.Authorization = _authenticationHeaderValue;
 
-            SparqlQueryClient sparqlQueryClient = new(httpClient, endpointUri);
-            if (SvenSettings.Debug) Debug.Log($"Graph query: {query}");
+                SparqlQueryClient sparqlQueryClient = new(httpClient, endpointUri);
+                if (SvenSettings.Debug) Debug.Log($"Graph query: {query}");
 #if UNITY_WEBGL
-            SparqlResultSet results = await sparqlQueryClient.QueryWebGLWithResultSetAsync(query);
+                SparqlResultSet results = await sparqlQueryClient.QueryWebGLWithResultSetAsync(query);
 #else
-            SparqlResultSet results = await sparqlQueryClient.QueryWithResultSetAsync(query);
+                SparqlResultSet results = await sparqlQueryClient.QueryWithResultSetAsync(query);
 #endif
 
-            return results;
+                return results;
+#if !UNITY_WEBGL || UNITY_EDITOR
+            });
+#endif
         }
 
         public static SparqlResultSet QueryMemory(string query)
@@ -562,14 +568,30 @@ WHERE {{
 
         public static async Task RetrieveSceneFromEndpoint(Instant instant)
         {
-            Debug.Log($"Retrieving scene from endpoint for instant: {instant.inXSDDateTime:yyyy-MM-ddTHH:mm:ss.fffzzz}");
+            var stopwatch = System.Diagnostics.Stopwatch.StartNew();
+
             CurrentInstantLoaded = instant;
             if (instant == null) return;
             string endpointUrl = SvenSettings.EndpointUrl;
 
+            stopwatch.Restart();
             SparqlResultSet results = await QueryEndpoint(endpointUrl, RetrieveSceneQuery(instant));
+            stopwatch.Stop();
+            long queryEndpointElapsed = stopwatch.ElapsedMilliseconds;
+
+            stopwatch.Restart();
             SceneContent targetSceneContent = await GetSceneContent(results);
+            stopwatch.Stop();
+            long getSceneContentElapsed = stopwatch.ElapsedMilliseconds;
+
+            stopwatch.Restart();
             ReconstructScene(targetSceneContent);
+            stopwatch.Stop();
+            long reconstructSceneElapsed = stopwatch.ElapsedMilliseconds;
+            long totalElapsed = queryEndpointElapsed + getSceneContentElapsed + reconstructSceneElapsed;
+
+            if (SvenSettings.Debug)
+                UnityEngine.Debug.Log($"QueryEndpoint: {queryEndpointElapsed} ms \nGetSceneContent: {getSceneContentElapsed} ms \nReconstructScene: {reconstructSceneElapsed} ms\nTotal: {totalElapsed} ms");
         }
 
         public static async Task RetrieveSceneFromMemory(Instant instant)
@@ -584,172 +606,215 @@ WHERE {{
 
         private static SceneContent GetSceneContent()
         {
-            SceneContent sceneContent = new(CurrentInstant);
-            // get all semantizationCore objects in the scene
-            SemantizationCore[] semantizationCores = UnityEngine.Object.FindObjectsByType<SemantizationCore>(FindObjectsSortMode.None);
-            // iterate over the semantizationCores and get their content
-            // do the things to fill SceneContent
-            foreach (SemantizationCore semantizationCore in semantizationCores)
+            try
             {
-                string objectUUID = semantizationCore.GetUUID();
-                if (!sceneContent.GameObjects.ContainsKey(objectUUID))
-                    sceneContent.GameObjects[objectUUID] = new(objectUUID);
-
-                List<Component> components = semantizationCore.GetComponents<Component>().ToList();
-                foreach (Component component in components)
+                SceneContent sceneContent = new(CurrentInstant);
+                // get all semantizationCore objects in the scene
+                SemantizationCore[] semantizationCores = UnityEngine.Object.FindObjectsByType<SemantizationCore>(FindObjectsSortMode.None);
+                // iterate over the semantizationCores and get their content
+                // do the things to fill SceneContent
+                foreach (SemantizationCore semantizationCore in semantizationCores)
                 {
-                    string componentUUID = component.GetUUID();
-                    if (!sceneContent.GameObjects[objectUUID].Components.ContainsKey(componentUUID))
+                    string objectUUID = semantizationCore.GetUUID();
+                    if (!sceneContent.GameObjects.ContainsKey(objectUUID))
                     {
-                        Tuple<Type, int> componentData = MapppedComponents.GetData(component.GetType().Name);
-                        Type componentType = componentData.Item1;
-                        int componentSortOrder = componentData.Item2;
-                        sceneContent.GameObjects[objectUUID].Components[componentUUID] = new(componentUUID, componentType, componentSortOrder);
-
-                        List<PropertyInfo> properties = componentType.GetProperties(BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly).ToList();
-                        foreach (PropertyInfo property in properties)
+                        GameObjectDescription gameObjectDescription = new(objectUUID)
                         {
-                            string propertyName = property.Name;
-                            Type propertyType = property.PropertyType;
+                            Active = semantizationCore.gameObject.activeSelf,
+                            Layer = LayerMask.LayerToName(semantizationCore.gameObject.layer),
+                            Tag = semantizationCore.gameObject.tag,
+                            Name = semantizationCore.gameObject.name,
+                            GameObject = semantizationCore.gameObject
+                        };
+                        sceneContent.GameObjects[objectUUID] = gameObjectDescription;
+                    }
 
-                            if (!sceneContent.GameObjects[objectUUID].Components[componentUUID].Properties.ContainsKey(propertyName))
-                                sceneContent.GameObjects[objectUUID].Components[componentUUID].Properties[propertyName] = new(propertyName, propertyName, propertyType);
+                    List<Component> components = semantizationCore.GetComponents<Component>().ToList();
+                    foreach (Component component in components)
+                    {
+                        string componentUUID = component.GetUUID();
+                        if (!sceneContent.GameObjects[objectUUID].Components.ContainsKey(componentUUID))
+                        {
+                            Tuple<Type, int> componentData = MapppedComponents.GetData(component.GetRdfType());
+                            if (componentData == null) continue;
+                            Type componentType = componentData.Item1;
+                            int componentSortOrder = componentData.Item2;
 
-                            List<PropertyInfo> nestedProperties = propertyType.GetProperties(BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly).ToList();
-                            foreach (PropertyInfo nestedProperty in nestedProperties)
+                            if (!sceneContent.GameObjects[objectUUID].Components.ContainsKey(componentUUID))
+                                sceneContent.GameObjects[objectUUID].Components[componentUUID] = new(componentUUID, componentType, componentSortOrder)
+                                {
+                                    Component = component
+                                };
+
+                            Dictionary<string, Tuple<int, Func<object>>> getters = MapppedComponents.GetGetters(component);
+                            foreach (KeyValuePair<string, Tuple<int, Func<object>>> getter in getters)
                             {
-                                string propertyNestedName = nestedProperty.Name;
-                                object propertyValue = nestedProperty.GetValue(component, null);
+                                string propertyName = getter.Key;
+                                Func<object> getterFunc = getter.Value.Item2;
+                                object propertyValue = getterFunc();
+                                if (propertyValue == null) continue;
+                                Type propertyType = propertyValue.GetType();
+                                if (!sceneContent.GameObjects[objectUUID].Components[componentUUID].Properties.ContainsKey(propertyName))
+                                    sceneContent.GameObjects[objectUUID].Components[componentUUID].Properties[propertyName] = new(propertyName, propertyName, propertyType);
 
-                                if (!sceneContent.GameObjects[objectUUID].Components[componentUUID].Properties[propertyName].Values.ContainsKey(propertyNestedName))
-                                    sceneContent.GameObjects[objectUUID].Components[componentUUID].Properties[propertyName].Values[propertyNestedName] = propertyValue;
+                                List<string> nestedProperties = MapppedProperties.GetNestedProperties(propertyValue.GetType());
+                                foreach (string nestedProperty in nestedProperties)
+                                {
+                                    object nestedValue;
+                                    if (nestedProperty == "value")
+                                    {
+                                        nestedValue = propertyValue;
+                                    }
+                                    else
+                                    {
+                                        nestedValue = propertyType.GetField(nestedProperty)?.GetValue(propertyValue) ??
+                                                      propertyType.GetProperty(nestedProperty)?.GetValue(propertyValue);
+                                    }
+                                    if (!sceneContent.GameObjects[objectUUID].Components[componentUUID].Properties[propertyName].Values.ContainsKey(nestedProperty))
+                                        sceneContent.GameObjects[objectUUID].Components[componentUUID].Properties[propertyName].Values[nestedProperty] = nestedValue;
+                                }
                             }
                         }
-
                     }
                 }
+                return sceneContent;
             }
-            return sceneContent;
+            catch (Exception ex)
+            {
+                Debug.LogError(ex);
+                return null;
+            }
         }
 
         private static void ReconstructScene(SceneContent sceneContent)
         {
             SceneContent currentSceneContent = GetSceneContent();
-
-            foreach (GameObjectDescription gameObjectDescription in sceneContent.GameObjects.Values)
+            try
             {
-                // create gamobject if it doesn't exist, otherwise get it from the current scene content
-                bool gameObjectExist = currentSceneContent.GameObjects.ContainsKey(gameObjectDescription.UUID);
-                if (gameObjectExist)
-                    gameObjectDescription.GameObject = currentSceneContent.GameObjects[gameObjectDescription.UUID].GameObject;
-                else
-                {
-                    gameObjectDescription.GameObject = new GameObject(gameObjectDescription.UUID);
-                    //gameObjectDescription.GameObject.transform.SetParent(transform);
-                }
-                gameObjectDescription.GameObject.SetActive(gameObjectDescription.Active);
-                gameObjectDescription.GameObject.layer = LayerMask.NameToLayer(gameObjectDescription.Layer);
-                try
-                {
-                    bool isTagExist = !string.IsNullOrEmpty(gameObjectDescription.Tag);
-                    gameObjectDescription.GameObject.tag = isTagExist ? gameObjectDescription.Tag ?? "Untagged" : "Untagged";
-                }
-                catch (Exception)
-                {
-                    gameObjectDescription.GameObject.tag = "Untagged";
-                }
-                gameObjectDescription.GameObject.name = gameObjectDescription.Name;
+                Debug.Log(sceneContent);
 
-                List<ComponentDescription> componentDescriptions = gameObjectDescription.Components.Values.ToList();
-                // sort the components by sort order
-                componentDescriptions = componentDescriptions.OrderBy(x => x.SortOrder).ToList();
-
-                foreach (ComponentDescription componentDescription in componentDescriptions)
+                foreach (GameObjectDescription gameObjectDescription in sceneContent.GameObjects.Values)
                 {
-                    // create component if it doesn't exist, otherwise get it from the current scene content
-                    bool componentExist = gameObjectExist && currentSceneContent.GameObjects[gameObjectDescription.UUID].Components.ContainsKey(componentDescription.UUID);
-                    if (componentExist)
-                        componentDescription.Component = currentSceneContent.GameObjects[gameObjectDescription.UUID].Components[componentDescription.UUID].Component;
+                    // create gamobject if it doesn't exist, otherwise get it from the current scene content
+                    bool gameObjectExist = currentSceneContent.GameObjects.ContainsKey(gameObjectDescription.UUID);
+                    if (gameObjectExist)
+                        gameObjectDescription.GameObject = currentSceneContent.GameObjects[gameObjectDescription.UUID].GameObject;
                     else
                     {
-                        // we check transform because it is a special case, it is already attached to the gameObject at instantiation and is unique
-                        if (componentDescription.Type == typeof(Transform))
-                            componentDescription.Component = gameObjectDescription.GameObject.transform;
+                        gameObjectDescription.GameObject = new GameObject(gameObjectDescription.UUID);
+                        gameObjectDescription.GameObject.AddComponent<SemantizationCore>().AddUUID(gameObjectDescription.UUID);
+                        //gameObjectDescription.GameObject.transform.SetParent(transform);
+                    }
+                    gameObjectDescription.GameObject.SetActive(gameObjectDescription.Active);
+                    gameObjectDescription.GameObject.layer = LayerMask.NameToLayer(gameObjectDescription.Layer);
+                    try
+                    {
+                        bool isTagExist = !string.IsNullOrEmpty(gameObjectDescription.Tag);
+                        gameObjectDescription.GameObject.tag = isTagExist ? gameObjectDescription.Tag ?? "Untagged" : "Untagged";
+                    }
+                    catch (Exception)
+                    {
+                        gameObjectDescription.GameObject.tag = "Untagged";
+                    }
+                    gameObjectDescription.GameObject.name = gameObjectDescription.Name;
+
+                    List<ComponentDescription> componentDescriptions = gameObjectDescription.Components.Values.ToList();
+                    // sort the components by sort order
+                    componentDescriptions = componentDescriptions.OrderBy(x => x.SortOrder).ToList();
+
+                    foreach (ComponentDescription componentDescription in componentDescriptions)
+                    {
+                        // create component if it doesn't exist, otherwise get it from the current scene content
+                        bool componentExist = gameObjectExist && currentSceneContent.GameObjects[gameObjectDescription.UUID].Components.ContainsKey(componentDescription.UUID);
+                        if (componentExist)
+                            componentDescription.Component = currentSceneContent.GameObjects[gameObjectDescription.UUID].Components[componentDescription.UUID].Component;
                         else
                         {
-                            try
+                            // we check transform because it is a special case, it is already attached to the gameObject at instantiation and is unique
+                            if (componentDescription.Type == typeof(Transform))
                             {
-                                //Debug.Log(componentDescription.Type);
-                                componentDescription.Component = gameObjectDescription.GameObject.AddComponent(componentDescription.Type);
-
-                                // Default initialization
-                                if (componentDescription.Component is MeshRenderer meshRenderer)
-                                    meshRenderer.material = new Material(Shader.Find("Standard"));
-                                if (componentDescription.Component is MeshFilter meshFilter)
-                                    meshFilter.mesh = new Mesh();
+                                componentDescription.Component = gameObjectDescription.GameObject.transform;
                             }
-                            catch (Exception ex)
+                            else
                             {
-                                Debug.LogError($"Error while adding component {componentDescription.Type} to {gameObjectDescription.UUID}: {ex.Message}");
+                                try
+                                {
+                                    //Debug.Log(componentDescription.Type);
+                                    componentDescription.Component = gameObjectDescription.GameObject.AddComponent(componentDescription.Type);
+
+                                    // Default initialization
+                                    if (componentDescription.Component is MeshRenderer meshRenderer)
+                                        meshRenderer.material = new Material(Shader.Find("Standard"));
+                                    if (componentDescription.Component is MeshFilter meshFilter)
+                                        meshFilter.mesh = new Mesh();
+                                }
+                                catch (Exception ex)
+                                {
+                                    Debug.LogError($"Error while adding component {componentDescription.Type} to {gameObjectDescription.UUID}: {ex.Message}");
+                                }
                             }
+                            componentDescription.Component.AddUUID(componentDescription.UUID);
                         }
-                    }
 
-                    // get the setters of the component item1 = priority, item2 = setter
-                    Dictionary<string, Tuple<int, Action<object>>> setters = MapppedComponents.GetSetters(componentDescription.Component);
-                    //reorder the properties by priority
-                    componentDescription.Properties = componentDescription.Properties.OrderBy(x => setters[x.Key].Item1).ToDictionary(x => x.Key, x => x.Value);
-                    //if (componentDescription.Component.GetType() == typeof(MeshFilter)) continue;
+                        // get the setters of the component item1 = priority, item2 = setter
+                        Dictionary<string, Tuple<int, Action<object>>> setters = MapppedComponents.GetSetters(componentDescription.Component);
+                        //reorder the properties by priority
+                        componentDescription.Properties = componentDescription.Properties.OrderBy(x => setters[x.Key].Item1).ToDictionary(x => x.Key, x => x.Value);
+                        //if (componentDescription.Component.GetType() == typeof(MeshFilter)) continue;
 
-                    foreach (PropertyDescription propertyDescription in componentDescription.Properties.Values)
-                    {
-                        // check if the property state exists in the current scene content (by checking the uuid)
-                        bool propertyExist = componentExist && currentSceneContent.GameObjects[gameObjectDescription.UUID].Components[componentDescription.UUID].Properties.TryGetValue(propertyDescription.Name, out var currentPropertyDescription) && currentPropertyDescription.UUID == propertyDescription.UUID;
-                        if (propertyExist) continue;
-
-                        object propertyValue = propertyDescription.Value;
-                        if (propertyValue == null)
+                        foreach (PropertyDescription propertyDescription in componentDescription.Properties.Values)
                         {
-                            Debug.LogWarning($"Property {propertyDescription} is null in {componentDescription.Type} of {gameObjectDescription.UUID}");
-                            continue;
-                        }
-                        //if (componentDescription.Component.GetType() == typeof(MeshRenderer))
-                        //    Debug.Log($"Property: {propertyDescription.Name} {propertyDescription.Type} {propertyValue.GetType()}  {propertyValue}");
+                            // check if the property state exists in the current scene content (by checking the uuid)
+                            bool propertyExist = componentExist && currentSceneContent.GameObjects[gameObjectDescription.UUID].Components[componentDescription.UUID].Properties.TryGetValue(propertyDescription.Name, out var currentPropertyDescription) && currentPropertyDescription.UUID == propertyDescription.UUID;
+                            if (propertyExist) continue;
 
-                        if (setters.TryGetValue(propertyDescription.Name, out var setter) && setter.Item2 != null)
-                        {
-                            setter.Item2(propertyValue);
+                            object propertyValue = propertyDescription.Value;
+                            if (propertyValue == null)
+                            {
+                                Debug.LogWarning($"Property {propertyDescription} is null in {componentDescription.Type} of {gameObjectDescription.UUID}");
+                                continue;
+                            }
+                            //if (componentDescription.Component.GetType() == typeof(MeshRenderer))
+                            //    Debug.Log($"Property: {propertyDescription.Name} {propertyDescription.Type} {propertyValue.GetType()}  {propertyValue}");
+
+                            if (setters.TryGetValue(propertyDescription.Name, out var setter) && setter.Item2 != null)
+                            {
+                                setter.Item2(propertyValue);
+                            }
+                            //else Debug.LogWarning($"Setter not found for {propertyDescription.Type} in {componentDescription.Type} of {gameObjectDescription.UUID}");
                         }
-                        //else Debug.LogWarning($"Setter not found for {propertyDescription.Type} in {componentDescription.Type} of {gameObjectDescription.UUID}");
                     }
                 }
-            }
 
-            // remove the gameobjects and components that are not in the target scene content
-            foreach (GameObjectDescription gameObjectDescription in currentSceneContent.GameObjects.Values)
-            {
-                if (!sceneContent.GameObjects.ContainsKey(gameObjectDescription.UUID))
+                // remove the gameobjects and components that are not in the target scene content
+                foreach (GameObjectDescription gameObjectDescription in currentSceneContent.GameObjects.Values)
                 {
-                    foreach (ComponentDescription componentDescription in gameObjectDescription.Components.Values)
+                    if (!sceneContent.GameObjects.ContainsKey(gameObjectDescription.UUID))
                     {
-                        DOTween.Kill(componentDescription.Component);
-                        if (componentDescription.Type != typeof(Transform))
-                            GameObject.Destroy(componentDescription.Component);
-                    }
-                    GameObject.Destroy(gameObjectDescription.GameObject);
-                }
-                else
-                {
-                    foreach (ComponentDescription componentDescription in gameObjectDescription.Components.Values)
-                        if (!sceneContent.GameObjects[gameObjectDescription.UUID].Components.ContainsKey(componentDescription.UUID))
+                        foreach (ComponentDescription componentDescription in gameObjectDescription.Components.Values)
                         {
                             DOTween.Kill(componentDescription.Component);
                             if (componentDescription.Type != typeof(Transform))
                                 GameObject.Destroy(componentDescription.Component);
                         }
+                        GameObject.Destroy(gameObjectDescription.GameObject);
+                    }
+                    else
+                    {
+                        foreach (ComponentDescription componentDescription in gameObjectDescription.Components.Values)
+                            if (!sceneContent.GameObjects[gameObjectDescription.UUID].Components.ContainsKey(componentDescription.UUID))
+                            {
+                                DOTween.Kill(componentDescription.Component);
+                                if (componentDescription.Type != typeof(Transform))
+                                    GameObject.Destroy(componentDescription.Component);
+                            }
+                    }
                 }
             }
-            throw new NotImplementedException("Équivalent de GraphReader.UpdateContent(SceneContent targetSceneContent)");
+            catch (Exception ex)
+            {
+                Debug.LogError(ex);
+            }
         }
 
         public static Instant NextInstant()
