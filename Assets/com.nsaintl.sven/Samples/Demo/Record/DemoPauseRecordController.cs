@@ -27,7 +27,6 @@ namespace Sven.Demo
         [BoxGroup("View")] public GameObject downloadingActivityIndicator;
         [BoxGroup("View")] public GameObject sendingActivityIndicator;
 
-        //[BoxGroup("Controller")] public DemoGraphBuffer graphBuffer;
         [BoxGroup("Controller")] public DemoCharacterController demoCharacterController;
 
         private bool _isDownloading = false;
@@ -69,7 +68,7 @@ namespace Sven.Demo
             if (downloadButton != null) downloadButton.gameObject.SetActive(false);
             string turtleContent = GraphManager.DecodeGraph();
 
-            // in webgl build, download the turtleContent ass txt file
+            // in webgl build, download the turtleContent as txt file
 #if UNITY_WEBGL && !UNITY_EDITOR
             string fileName = $"sven-{DemoManager.graphName}.ttl";
             Application.ExternalCall("downloadFile", turtleContent, fileName);
@@ -93,6 +92,7 @@ namespace Sven.Demo
             if (saveQuitButton != null) saveQuitButton.gameObject.SetActive(false);
             if (sendingActivityIndicator != null) sendingActivityIndicator.SetActive(true);
 
+            GraphManager.ApplyRules();
             await GraphManager.SaveToEndpoint();
             SceneManager.LoadScene("Demo Menu", LoadSceneMode.Single);
         }

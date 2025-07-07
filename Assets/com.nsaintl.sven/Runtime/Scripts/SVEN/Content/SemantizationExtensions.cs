@@ -164,7 +164,7 @@ namespace Sven.Content
                 List<Property> properties = new();
                 foreach (Delegate del in MapppedComponents.GetValue(type).Properties)
                 {
-                    MapppedComponents.PropertyDescription propertyDescription = del.DynamicInvoke(component) as MapppedComponents.PropertyDescription;
+                    ComponentProperty propertyDescription = del.DynamicInvoke(component) as ComponentProperty;
                     properties.Add(new Property(propertyDescription.PredicateName, propertyDescription.Getter, propertyDescription.SimplifiedName));
                 }
                 return properties;

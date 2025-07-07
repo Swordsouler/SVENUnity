@@ -2,15 +2,13 @@
 // Author: Nicolas SAINT-LÉGER
 // Licensed under the MIT License. See LICENSE file in the project root for full license information.
 
+using NaughtyAttributes;
+using Sven.GraphManagement;
+using Sven.Utils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net.Http;
-using System.Net.Http.Headers;
-using System.Text;
 using System.Threading.Tasks;
-using NaughtyAttributes;
-using Sven.GraphManagement;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Networking;
@@ -39,13 +37,14 @@ namespace Sven.Demo
         [BoxGroup("View")] public TextMeshProUGUI subTitleText;
         [BoxGroup("View")] public GameObject dropdownActivityIndicator;
         [BoxGroup("View")] public Slider semantisationFrequencySlider;
+        [BoxGroup("View")] public GraphController graphController;
 
         private DemoMainMenuPage _currentPage = null;
         private Dictionary<string, string> _dropdownOptions = new();
 
         private void Awake()
         {
-            if (semantisationFrequencySlider != null) semantisationFrequencySlider.value = DemoGraphConfig.semantisationFrequency;
+            if (semantisationFrequencySlider != null) semantisationFrequencySlider.value = SvenSettings.SemanticizeFrequency; //DemoGraphConfig.semantisationFrequency;
             InitializeButtons();
             InitializeDropdownAsync();
             // load main menu form
@@ -86,7 +85,7 @@ namespace Sven.Demo
         {
             if (VENameDropdown.options.Count > 0)
             {
-                string graphName = DemoGraphConfig.graphName;
+                string graphName = graphController.GraphName;
                 int index = VENameDropdown.options.FindIndex(option => _dropdownOptions.TryGetValue(option.text, out string name) && name == graphName);
                 VENameDropdown.value = index != -1 ? index : 0;
                 VENameDropdown.RefreshShownValue();
@@ -109,14 +108,14 @@ namespace Sven.Demo
         private void OnReplayButtonClicked()
         {
             if (_dropdownOptions.Count < 1 || !_dropdownOptions.TryGetValue(VENameDropdown.options[VENameDropdown.value].text, out string graphName)) return;
-            DemoGraphConfig.graphName = string.IsNullOrEmpty(graphName) ? "default" : graphName;
+            graphController.GraphName = string.IsNullOrEmpty(graphName) ? "default" : graphName;
             SceneManager.LoadScene("Demo Replay", LoadSceneMode.Single);
         }
 
         private void OnPlayButtonClicked()
         {
-            DemoGraphConfig.semantisationFrequency = (int)semantisationFrequencySlider.value;
-            DemoGraphConfig.graphName = string.IsNullOrEmpty(VENameInputField.text) ? "default" : VENameInputField.text;
+            SvenSettings.SemanticizeFrequency = (int)semantisationFrequencySlider.value;
+            graphController.GraphName = string.IsNullOrEmpty(VENameInputField.text) ? "default" : VENameInputField.text;
             SceneManager.LoadScene("Demo Record", LoadSceneMode.Single);
         }
         private async Task<string> LoadQueryFileAsync(string relativePath)
@@ -148,12 +147,6 @@ namespace Sven.Demo
         {
             try
             {
-                HttpClient httpClient = new();
-
-                var byteArray = Encoding.ASCII.GetBytes($"admin:sven-iswc");
-                httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", Convert.ToBase64String(byteArray));
-
-                SparqlQueryClient client = new(httpClient, DemoGraphConfig.EndpointUri);
                 string query = @"PREFIX time: <http://www.w3.org/2006/time#>
 
 SELECT DISTINCT ?graphName ?minInstant ?maxInstant (?maxInstant - ?minInstant AS ?duration)
@@ -167,7 +160,7 @@ WHERE {
     } GROUP BY ?graphName ORDER BY ?graphName LIMIT 30
 } ORDER BY DESC(?minInstant) LIMIT 30"; //await LoadQueryFileAsync("SPARQL/ListExistentVEs.sparql");
 
-                SparqlResultSet results = await client.QueryWebGLWithResultSetAsync(query);
+                SparqlResultSet results = await GraphManager.QueryEndpoint(SvenSettings.EndpointUrl, query);
 
                 VENameDropdown.options.Clear();
                 _dropdownOptions.Clear();
@@ -179,7 +172,7 @@ WHERE {
                     if (result["graphName"] is not IUriNode graphNameNode) continue;
                     if (result["duration"] is not ILiteralNode durationNode) continue;
 
-                    string graphName = graphNameNode.Uri.ToString().Split("/").LastOrDefault();
+                    string graphName = graphNameNode.Uri.ToString().Split("/")[^2];
 
                     optionContent += $"[{FormatDate(instantNode.Value)}]";
                     optionContent += $" <b>{graphName}</b>";

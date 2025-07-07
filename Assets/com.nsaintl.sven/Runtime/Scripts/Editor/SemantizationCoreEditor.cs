@@ -3,12 +3,12 @@
 // Licensed under the MIT License. See LICENSE file in the project root for full license information.
 
 #if UNITY_EDITOR
-using UnityEditor;
-using UnityEngine;
 using NaughtyAttributes.Editor;
+using Sven.Content;
 using System;
 using System.Collections.Generic;
-using Sven.Content;
+using UnityEditor;
+using UnityEngine;
 
 namespace Sven.Editor
 {

@@ -29,16 +29,11 @@ namespace Sven.GraphManagement
 
         private void Awake()
         {
+            if (GraphManager.Count != 0) return;
             GraphManager.Clear();
             GraphManager.LoadOntologies();
             GraphManager.SetBaseUri(BaseUri);
             GraphManager.SetNamespace("", BaseUri);
-        }
-
-        private void OnApplicationQuit()
-        {
-            //SaveAndQuitGraph();
-            // Add to remote (don't overwrite)
         }
 
         public async Task SaveGraph()

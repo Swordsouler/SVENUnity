@@ -2,13 +2,24 @@
 // Author: Nicolas SAINT-LÉGER
 // Licensed under the MIT License. See LICENSE file in the project root for full license information.
 
+using Sven.Content;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
 namespace Sven.Demo
 {
-    public class DemoSprayController : MonoBehaviour
+    public class DemoSprayController : MonoBehaviour, IComponentMapping
     {
+        public static ComponentMapping ComponentMapping()
+        {
+            return new("Spray",
+                new List<Delegate>
+                {
+                    (Func<DemoSprayController, ComponentProperty>)(spray => new ComponentProperty("enabled", () => spray.enabled, value => spray.enabled = value.ToString() == "true", 1)),
+                });
+        }
+
         private ParticleSystem ps;
 
         // these lists are used to contain the particles which match

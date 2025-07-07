@@ -41,6 +41,7 @@ namespace Sven.GraphManagement
         public static DateTime EndedAt => _instants.Count > 0 ? _instants[^1].inXSDDateTime : DateTime.Now;
         public static float Duration => (float)(EndedAt - StartedAt).TotalSeconds;
         public static Instant CurrentInstantLoaded { get; private set; } = null;
+        public static string BaseUri => _instance.BaseUri?.AbsoluteUri ?? string.Empty;
 
         public static void SetAuthenticationHeaderValue(string username, string password)
         {
@@ -100,6 +101,7 @@ namespace Sven.GraphManagement
 
         public static void LoadOntologies()
         {
+            MapppedComponents.LoadAllMappedComponents();
             Dictionary<string, string> ontologies = SvenSettings.Ontologies;
             foreach (KeyValuePair<string, string> ontology in ontologies)
                 GraphManager.LoadOntology(ontology.Key, ontology.Value);
@@ -386,16 +388,18 @@ WHERE {
             }
         }
 
-        private static string LoadInstantsQuery => @"PREFIX time: <http://www.w3.org/2006/time#>
+        private static string LoadInstantsQuery => $@"PREFIX : <{BaseUri}>
+PREFIX time: <http://www.w3.org/2006/time#>
 PREFIX sven: <https://sven.lisn.upsaclay.fr/ontology#>
 
 SELECT ?instant ?dateTime (COUNT(?contentModification) as ?contentModifier)
-WHERE {
+FROM :
+WHERE {{
     ?instant a time:Instant ;
             time:inXSDDateTime ?dateTime .
     ?contentModification sven:hasTemporalExtent ?interval .
     ?interval time:hasBeginning ?instant .
-} GROUP BY ?instant ?dateTime ORDER BY ?dateTime";
+}} GROUP BY ?instant ?dateTime ORDER BY ?dateTime";
 
         public static async Task LoadInstantsFromEndpoint()
         {
@@ -433,12 +437,14 @@ WHERE {
 
         private static string RetrieveSceneQuery(Instant instant)
         {
-            return $@"PREFIX time: <http://www.w3.org/2006/time#>
+            return $@"PREFIX : <{BaseUri}>
+PREFIX time: <http://www.w3.org/2006/time#>
 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 PREFIX sven: <https://sven.lisn.upsaclay.fr/ontology#>
 PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
 
 SELECT DISTINCT ?object ?component ?componentType ?property ?propertyName ?propertyNestedName ?propertyValue ?propertyType
+FROM :
 WHERE {{
     {{
         VALUES ?propertyName {{
@@ -525,7 +531,9 @@ WHERE {{
                     Tuple<Type, int> componentData = MapppedComponents.GetData(componentStringType);
                     Type componentType = componentData.Item1;
                     int componentSortOrder = componentData.Item2;
+                    Debug.Log($"Component: {componentStringType} {componentData != null} {componentType == null} {!MapppedComponents.HasProperty(componentType, propertyName)}");
                     if (componentType == null || !MapppedComponents.HasProperty(componentType, propertyName)) continue;
+                    Debug.Log($"Component: {componentStringType}");
                     //Debug.Log($"Component: {componentType} {propertyName}");
 
                     Type propertyType = MapppedProperties.GetType(propertyStringType) ?? Type.GetType(propertyStringType);
@@ -578,21 +586,22 @@ WHERE {{
             stopwatch.Restart();
             SparqlResultSet results = await QueryEndpoint(endpointUrl, RetrieveSceneQuery(instant));
             stopwatch.Stop();
-            long queryEndpointElapsed = stopwatch.ElapsedMilliseconds;
+            double queryEndpointElapsed = stopwatch.ElapsedMilliseconds;
 
             stopwatch.Restart();
             SceneContent targetSceneContent = await GetSceneContent(results);
-            stopwatch.Stop();
-            long getSceneContentElapsed = stopwatch.ElapsedMilliseconds;
-
-            stopwatch.Restart();
             ReconstructScene(targetSceneContent);
             stopwatch.Stop();
-            long reconstructSceneElapsed = stopwatch.ElapsedMilliseconds;
-            long totalElapsed = queryEndpointElapsed + getSceneContentElapsed + reconstructSceneElapsed;
+            double reconstructSceneElapsed = stopwatch.ElapsedMilliseconds;
+            double totalElapsed = queryEndpointElapsed + reconstructSceneElapsed;
 
-            if (SvenSettings.Debug)
-                UnityEngine.Debug.Log($"QueryEndpoint: {queryEndpointElapsed} ms \nGetSceneContent: {getSceneContentElapsed} ms \nReconstructScene: {reconstructSceneElapsed} ms\nTotal: {totalElapsed} ms");
+            ProcessingData processedData = new()
+            {
+                queryTime = queryEndpointElapsed,
+                sceneUpdateTime = reconstructSceneElapsed,
+                totalProcessingTime = totalElapsed
+            };
+            processedDatas.Add(processedData);
         }
 
         public static async Task RetrieveSceneFromMemory(Instant instant)
@@ -692,7 +701,8 @@ WHERE {{
             SceneContent currentSceneContent = GetSceneContent();
             try
             {
-                Debug.Log(sceneContent);
+                if (SvenSettings.Debug) Debug.Log(currentSceneContent);
+                if (SvenSettings.Debug) Debug.Log(sceneContent);
 
                 foreach (GameObjectDescription gameObjectDescription in sceneContent.GameObjects.Values)
                 {
@@ -843,6 +853,80 @@ WHERE {{
             // if no previous instant, return the current instant
             Debug.LogWarning("No previous instant found, returning current instant instead.");
             return CurrentInstantLoaded;
+        }
+
+        public static async Task<string> DownloadTTLFromEndpoint(string enpointUrl)
+        {
+
+            string query = $@"PREFIX : <{BaseUri}>
+PREFIX time: <http://www.w3.org/2006/time#>
+PREFIX sven: <https://sven.lisn.upsaclay.fr/ontology#>
+PREFIX geo: <http://www.opengis.net/ont/geosparql#>
+
+CONSTRUCT {{
+    ?s ?p ?o .
+}}
+FROM :
+WHERE {{
+    ?s ?p ?o .
+}}";
+
+            Uri endpointUri = new(enpointUrl);
+            HttpClient httpClient = new();
+
+            httpClient.DefaultRequestHeaders.Authorization = _authenticationHeaderValue;
+
+            SparqlQueryClient sparqlQueryClient = new(httpClient, endpointUri);
+#if UNITY_WEBGL && !UNITY_EDITOR
+            string ttlContent = await sparqlQueryClient.QueryWebGLWithResultTTLAsync(query);
+#else
+            IGraph resultGraph = await sparqlQueryClient.QueryWithResultGraphAsync(query);
+            /*foreach (GraphNamespace graphNamespace in ontologyDescription.Namespaces)
+            {
+                if (!resultGraph.NamespaceMap.HasNamespace(graphNamespace.Name))
+                    resultGraph.NamespaceMap.AddNamespace(graphNamespace.Name, new Uri(graphNamespace.Uri));
+            }*/
+
+            string ttlContent = DecodeGraph(resultGraph);
+#endif
+            return ttlContent;
+        }
+
+
+        private static readonly List<ProcessingData> processedDatas = new();
+        private class ProcessingData
+        {
+            public double queryTime;
+            public double sceneUpdateTime;
+            public double totalProcessingTime;
+            public override string ToString()
+            {
+                return $"Query Time: {queryTime} ms\nScene Update Time: {sceneUpdateTime} ms\nTotal Processing Time: {totalProcessingTime} ms";
+            }
+        }
+
+        public static void PrintExperimentResults()
+        {
+            string results = "";
+
+            results += "SPARQL-Sampled: " + processedDatas.Count + "\n";
+
+            results += "SPARQL-Median: " + processedDatas.OrderBy(x => x.queryTime).ElementAt(processedDatas.Count / 2).queryTime + " ms\n";
+            results += "SPARQL-Mean: " + processedDatas.Average(x => x.queryTime) + " ms\n";
+            results += "SPARQL-Min: " + processedDatas.Min(x => x.queryTime) + " ms\n";
+            results += "SPARQL-Max: " + processedDatas.Max(x => x.queryTime) + " ms\n";
+
+            results += "SceneUpdate-Median: " + processedDatas.OrderBy(x => x.sceneUpdateTime).ElementAt(processedDatas.Count / 2).sceneUpdateTime + " ms\n";
+            results += "SceneUpdate-Mean: " + processedDatas.Average(x => x.sceneUpdateTime) + " ms\n";
+            results += "SceneUpdate-Min: " + processedDatas.Min(x => x.sceneUpdateTime) + " ms\n";
+            results += "SceneUpdate-Max: " + processedDatas.Max(x => x.sceneUpdateTime) + " ms\n";
+
+            results += "TotalProcessing-Median: " + processedDatas.OrderBy(x => x.totalProcessingTime).ElementAt(processedDatas.Count / 2).totalProcessingTime + " ms\n";
+            results += "TotalProcessing-Mean: " + processedDatas.Average(x => x.totalProcessingTime) + " ms\n";
+            results += "TotalProcessing-Min: " + processedDatas.Min(x => x.totalProcessingTime) + " ms\n";
+            results += "TotalProcessing-Max: " + processedDatas.Max(x => x.totalProcessingTime) + " ms\n";
+
+            Debug.Log("Experiment results:\n" + results);
         }
     }
 }

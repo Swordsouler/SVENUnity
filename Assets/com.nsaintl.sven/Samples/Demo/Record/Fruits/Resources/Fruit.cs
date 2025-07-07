@@ -1,6 +1,4 @@
-using UnityEngine;
-
 namespace Sven.Demo
 {
-    public class Fruit : Food { }
+    public abstract class Fruit : Food { }
 }

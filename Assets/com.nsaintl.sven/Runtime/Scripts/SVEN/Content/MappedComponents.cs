@@ -18,173 +18,64 @@ namespace Sven.Content
     /// </summary>
     public static class MapppedComponents
     {
-        /// <summary>
-        /// Description of a property.
-        /// </summary>
-        public class PropertyDescription
-        {
-            /// <summary>
-            /// Name of the property.
-            /// </summary>
-            public string PredicateName { get; set; }
-            /// <summary>
-            /// Getter of the property.
-            /// </summary>
-            public Func<object> Getter { get; set; }
-            /// <summary>
-            /// Setter of the property.
-            /// </summary>
-            public Action<object> Setter { get; set; }
-            /// <summary>
-            /// Simplified name of the property.
-            /// </summary>
-            public string SimplifiedName { get; set; }
-            /// <summary>
-            /// Priority of the property. (closer to 0 is higher priority)
-            /// </summary>
-            public int Priority { get; set; }
-
-            public PropertyDescription(string predicateName, Func<object> getter, Action<object> setter, int priority, string simplifiedName = "")
-            {
-                PredicateName = predicateName;
-                Getter = getter;
-                Setter = setter;
-                SimplifiedName = simplifiedName;
-                Priority = priority;
-            }
-
-            public PropertyDescription(string predicateName, Func<object> getter, Action<object> setter, int priority)
-            {
-                PredicateName = predicateName;
-                Getter = getter;
-                Setter = setter;
-                SimplifiedName = "";
-                Priority = priority;
-            }
-        }
-
-        /// <summary>
-        /// Description of a component.
-        /// </summary>
-        public class ComponentDescription
-        {
-            /// <summary>
-            /// Name of the component in the knowledge graph.
-            /// </summary>
-            public string TypeName { get; set; }
-            /// <summary>
-            /// Delegates of the properties of the component.
-            /// </summary>
-            /// <value></value>
-            public List<Delegate> Properties { get; set; }
-            public Dictionary<string, PropertyDescription> CachedProperties { get; set; }
-            public int SortOrder { get; set; } = 0;
-
-            public ComponentDescription(string typeName, List<Delegate> properties, int sortOrder = 0)
-            {
-                TypeName = typeName;
-                Properties = properties;
-                CachedProperties = new();
-                SortOrder = sortOrder;
-                foreach (Delegate property in properties)
-                {
-                    Type propertyType = property.GetType().GetGenericArguments().FirstOrDefault();
-                    if (propertyType != null)
-                    {
-                        object instance = null;
-                        try
-                        {
-                            if (typeof(MonoBehaviour).IsAssignableFrom(propertyType))
-                            {
-                                if (SvenSettings.Debug) Debug.Log("Creating instance of MonoBehaviour: " + propertyType.Name);
-                                continue;
-                                /*GameObject tempGameObject = new("Temp_" + propertyType.Name);
-                                instance = tempGameObject.AddComponent(propertyType);*/
-                            }
-                            else
-                            {
-                                if (SvenSettings.Debug) Debug.Log("Creating instance of " + propertyType.Name);
-                                instance = Activator.CreateInstance(propertyType, nonPublic: true);
-                            }
-                        }
-                        catch (Exception e)
-                        {
-                            Debug.LogError("Error creating instance of " + propertyType.Name + ": " + e);
-                        }
-                        finally
-                        {
-                            if (instance is MonoBehaviour monoBehaviourInstance)
-                                GameObject.DestroyImmediate(monoBehaviourInstance.gameObject);
-                        }
-
-                        if (property.DynamicInvoke(instance) is PropertyDescription propertyDescription)
-                            CachedProperties.Add(propertyDescription.PredicateName, propertyDescription);
-                    }
-                    else
-                    {
-                        Debug.LogError("Property type is null or not a MonoBehaviour: " + propertyType?.Name);
-                    }
-                }
-            }
-        }
 
         private static readonly float lerpSpeed = 0.4f;
 
         /// <summary>
         /// Values of the properties of the components.
         /// </summary>
-        private static readonly Dictionary<Type, ComponentDescription> Values = new()
+        private static readonly Dictionary<Type, ComponentMapping> Values = new()
         {
             {
                 typeof(BoxCollider), new("geo:Feature",
                 new List<Delegate>
                 {
-                    (Func<BoxCollider, PropertyDescription>)(collider => new PropertyDescription("enabled", () => collider.enabled, value => collider.enabled = value.ToString().ToLower() == "true", 1)),
-                    (Func<BoxCollider, PropertyDescription>)(collider => new PropertyDescription("size", () => collider.size, value => collider.size = (Vector3)value, 1)),
-                    (Func<BoxCollider, PropertyDescription>)(collider => new PropertyDescription("center", () => collider.center, value => collider.center = (Vector3)value, 1)),
-                    (Func<BoxCollider, PropertyDescription>)(collider => new PropertyDescription("isTrigger", () => collider.isTrigger, value => collider.isTrigger = value.ToString().ToLower() == "true", 1)),
-                    (Func<BoxCollider, PropertyDescription>)(collider => new PropertyDescription("geo:hasGeometry", () => new GeoWKT(collider.bounds), value => {}, 1)),
+                    (Func<BoxCollider, ComponentProperty>)(collider => new ComponentProperty("enabled", () => collider.enabled, value => collider.enabled = value.ToString().ToLower() == "true", 1)),
+                    (Func<BoxCollider, ComponentProperty>)(collider => new ComponentProperty("size", () => collider.size, value => collider.size = (Vector3)value, 1)),
+                    (Func<BoxCollider, ComponentProperty>)(collider => new ComponentProperty("center", () => collider.center, value => collider.center = (Vector3)value, 1)),
+                    (Func<BoxCollider, ComponentProperty>)(collider => new ComponentProperty("isTrigger", () => collider.isTrigger, value => collider.isTrigger = value.ToString().ToLower() == "true", 1)),
+                    (Func<BoxCollider, ComponentProperty>)(collider => new ComponentProperty("geo:hasGeometry", () => new GeoWKT(collider.bounds), value => {}, 1)),
                 })
             },
             {
                 typeof(Transform), new("Transform",
                 new List<Delegate>
                 {
-                    (Func<Transform, PropertyDescription>)(transform => new PropertyDescription("position", () => transform.position, value => transform.DOMove((Vector3)value, lerpSpeed), 1/*, "virtualPosition"*/)),
-                    (Func<Transform, PropertyDescription>)(transform => new PropertyDescription("rotation", () => transform.rotation, value => transform.DORotateQuaternion((Quaternion)value, lerpSpeed), 1/*, "virtualRotation"*/)),
-                    (Func<Transform, PropertyDescription>)(transform => new PropertyDescription("scale", () => transform.localScale, value => transform.DOScale((Vector3)value, lerpSpeed), 1/*, "virtualSize"*/)),
+                    (Func<Transform, ComponentProperty>)(transform => new ComponentProperty("position", () => transform.position, value => transform.DOMove((Vector3)value, lerpSpeed), 1/*, "virtualPosition"*/)),
+                    (Func<Transform, ComponentProperty>)(transform => new ComponentProperty("rotation", () => transform.rotation, value => transform.DORotateQuaternion((Quaternion)value, lerpSpeed), 1/*, "virtualRotation"*/)),
+                    (Func<Transform, ComponentProperty>)(transform => new ComponentProperty("scale", () => transform.localScale, value => transform.DOScale((Vector3)value, lerpSpeed), 1/*, "virtualSize"*/)),
                 })
             },
             {
                 typeof(AudioSource), new("Audio",
                 new List<Delegate>
                 {
-                    (Func<AudioSource, PropertyDescription>)(audioSource => new PropertyDescription("enabled", () => audioSource.enabled, value => audioSource.enabled = value.ToString().ToLower() == "true", 1)),
-                    (Func<AudioSource, PropertyDescription>)(audioSource => new PropertyDescription("minAudioDistance", () => audioSource.minDistance, value => audioSource.minDistance = (float)value, 1/*, "minSoundDistance"*/)),
-                    (Func<AudioSource, PropertyDescription>)(audioSource => new PropertyDescription("maxAudioDistance", () => audioSource.maxDistance, value => audioSource.maxDistance = (float)value, 1/*, "maxSoundDistance"*/)),
+                    (Func<AudioSource, ComponentProperty>)(audioSource => new ComponentProperty("enabled", () => audioSource.enabled, value => audioSource.enabled = value.ToString().ToLower() == "true", 1)),
+                    (Func<AudioSource, ComponentProperty>)(audioSource => new ComponentProperty("minAudioDistance", () => audioSource.minDistance, value => audioSource.minDistance = (float)value, 1/*, "minSoundDistance"*/)),
+                    (Func<AudioSource, ComponentProperty>)(audioSource => new ComponentProperty("maxAudioDistance", () => audioSource.maxDistance, value => audioSource.maxDistance = (float)value, 1/*, "maxSoundDistance"*/)),
                 })
             },
             {
                 typeof(Camera), new("Camera",
                 new List<Delegate>
                 {
-                    (Func<Camera, PropertyDescription>)(camera => new PropertyDescription("enabled", () => camera.enabled, value => camera.enabled = value.ToString().ToLower() == "true", 1)),
-                    (Func<Camera, PropertyDescription>)(camera => new PropertyDescription("nearClipPlane", () => camera.nearClipPlane, value => camera.nearClipPlane = (float)value, 1/*, "POVNear"*/)),
-                    (Func<Camera, PropertyDescription>)(camera => new PropertyDescription("farClipPlane", () => camera.farClipPlane, value => camera.farClipPlane = (float)value, 1/*, "POVFar"*/)),
-                    (Func<Camera, PropertyDescription>)(camera => new PropertyDescription("fieldOfView", () => camera.fieldOfView, value => camera.fieldOfView = (float)value, 1/*, "POVFOV"*/)),
-                    (Func<Camera, PropertyDescription>)(camera => new PropertyDescription("orthographic", () => camera.orthographic, value => camera.orthographic = value.ToString() == "true", 1)),
-                    (Func<Camera, PropertyDescription>)(camera => new PropertyDescription("orthographicSize", () => camera.orthographicSize, value => camera.orthographicSize = (float)value, 1)),
-                    (Func<Camera, PropertyDescription>)(camera => new PropertyDescription("clearFlags", () => camera.clearFlags.ToString(), value => camera.clearFlags = (CameraClearFlags)Enum.Parse(typeof(CameraClearFlags), (string)value), 1)),
-                    (Func<Camera, PropertyDescription>)(camera => new PropertyDescription("backgroundColor", () => camera.backgroundColor, value => camera.backgroundColor = (Color)value, 1)),
+                    (Func<Camera, ComponentProperty>)(camera => new ComponentProperty("enabled", () => camera.enabled, value => camera.enabled = value.ToString().ToLower() == "true", 1)),
+                    (Func<Camera, ComponentProperty>)(camera => new ComponentProperty("nearClipPlane", () => camera.nearClipPlane, value => camera.nearClipPlane = (float)value, 1/*, "POVNear"*/)),
+                    (Func<Camera, ComponentProperty>)(camera => new ComponentProperty("farClipPlane", () => camera.farClipPlane, value => camera.farClipPlane = (float)value, 1/*, "POVFar"*/)),
+                    (Func<Camera, ComponentProperty>)(camera => new ComponentProperty("fieldOfView", () => camera.fieldOfView, value => camera.fieldOfView = (float)value, 1/*, "POVFOV"*/)),
+                    (Func<Camera, ComponentProperty>)(camera => new ComponentProperty("orthographic", () => camera.orthographic, value => camera.orthographic = value.ToString() == "true", 1)),
+                    (Func<Camera, ComponentProperty>)(camera => new ComponentProperty("orthographicSize", () => camera.orthographicSize, value => camera.orthographicSize = (float)value, 1)),
+                    (Func<Camera, ComponentProperty>)(camera => new ComponentProperty("clearFlags", () => camera.clearFlags.ToString(), value => camera.clearFlags = (CameraClearFlags)Enum.Parse(typeof(CameraClearFlags), (string)value), 1)),
+                    (Func<Camera, ComponentProperty>)(camera => new ComponentProperty("backgroundColor", () => camera.backgroundColor, value => camera.backgroundColor = (Color)value, 1)),
                 })
             },
             {
                 typeof(MeshRenderer), new("3DRender",
                 new List<Delegate>
                 {
-                    (Func<MeshRenderer, PropertyDescription>)(meshRenderer => new PropertyDescription("enabled", () => meshRenderer.enabled, value => meshRenderer.enabled = value.ToString().ToLower() == "true", 1)),
-                    (Func<MeshRenderer, PropertyDescription>)(meshRenderer => new PropertyDescription("color", () => meshRenderer.material.color, value => meshRenderer.material.DOColor((Color)value, lerpSpeed), 1/*, "virtualColor"*/)),
-                    (Func<MeshRenderer, PropertyDescription>)(meshRenderer => new PropertyDescription("material1", () => meshRenderer.materials.Length > 0 ? meshRenderer.materials[0].name.Replace(" (Instance)", "") : null, value => {
+                    (Func<MeshRenderer, ComponentProperty>)(meshRenderer => new ComponentProperty("enabled", () => meshRenderer.enabled, value => meshRenderer.enabled = value.ToString().ToLower() == "true", 1)),
+                    (Func<MeshRenderer, ComponentProperty>)(meshRenderer => new ComponentProperty("color", () => meshRenderer.material.color, value => meshRenderer.material.DOColor((Color)value, lerpSpeed), 1/*, "virtualColor"*/)),
+                    (Func<MeshRenderer, ComponentProperty>)(meshRenderer => new ComponentProperty("material1", () => meshRenderer.materials.Length > 0 ? meshRenderer.materials[0].name.Replace(" (Instance)", "") : null, value => {
                         string currentMaterialName = meshRenderer.materials.Length > 0 ? meshRenderer.materials[0].name.Replace(" (Instance)", "") : null;
                         if (value == null || (string)value == currentMaterialName) return;
                         Material[] materials = meshRenderer.materials;
@@ -193,7 +84,7 @@ namespace Sven.Content
                         materials[0] = Resources.Load<Material>($"Materials/{(string)value}");
                         meshRenderer.materials = materials;
                     }, 1)),
-                    (Func<MeshRenderer, PropertyDescription>)(meshRenderer => new PropertyDescription("material2", () => meshRenderer.materials.Length > 1 ? meshRenderer.materials[1].name.Replace(" (Instance)", "") : null, value => {
+                    (Func<MeshRenderer, ComponentProperty>)(meshRenderer => new ComponentProperty("material2", () => meshRenderer.materials.Length > 1 ? meshRenderer.materials[1].name.Replace(" (Instance)", "") : null, value => {
                         string currentMaterialName = meshRenderer.materials.Length > 1 ? meshRenderer.materials[1].name.Replace(" (Instance)", "") : null;
                         if (value == null || (string)value == currentMaterialName) return;
                         Material[] materials = meshRenderer.materials;
@@ -202,7 +93,7 @@ namespace Sven.Content
                         materials[1] = Resources.Load<Material>($"Materials/{(string)value}");
                         meshRenderer.materials = materials;
                     }, 1)),
-                    (Func<MeshRenderer, PropertyDescription>)(meshRenderer => new PropertyDescription("material3", () => meshRenderer.materials.Length > 2 ? meshRenderer.materials[2].name.Replace(" (Instance)", "") : null, value => {
+                    (Func<MeshRenderer, ComponentProperty>)(meshRenderer => new ComponentProperty("material3", () => meshRenderer.materials.Length > 2 ? meshRenderer.materials[2].name.Replace(" (Instance)", "") : null, value => {
                         string currentMaterialName = meshRenderer.materials.Length > 2 ? meshRenderer.materials[2].name.Replace(" (Instance)", "") : null;
                         if (value == null || (string)value == currentMaterialName) return;
                         Material[] materials = meshRenderer.materials;
@@ -211,7 +102,7 @@ namespace Sven.Content
                         materials[2] = Resources.Load<Material>($"Materials/{(string)value}");
                         meshRenderer.materials = materials;
                     }, 1)),
-                    (Func<MeshRenderer, PropertyDescription>)(meshRenderer => new PropertyDescription("material4", () => meshRenderer.materials.Length > 3 ? meshRenderer.materials[3].name.Replace(" (Instance)", "") : null, value => {
+                    (Func<MeshRenderer, ComponentProperty>)(meshRenderer => new ComponentProperty("material4", () => meshRenderer.materials.Length > 3 ? meshRenderer.materials[3].name.Replace(" (Instance)", "") : null, value => {
                         string currentMaterialName = meshRenderer.materials.Length > 3 ? meshRenderer.materials[3].name.Replace(" (Instance)", "") : null;
                         if (value == null || (string)value == currentMaterialName) return;
                         Material[] materials = meshRenderer.materials;
@@ -226,16 +117,16 @@ namespace Sven.Content
                 typeof(SpriteRenderer), new("2DRender",
                 new List<Delegate>
                 {
-                    (Func<SpriteRenderer, PropertyDescription>)(spriteRenderer => new PropertyDescription("enabled", () => spriteRenderer.enabled, value => spriteRenderer.enabled = value.ToString().ToLower() == "true", 1)),
-                    (Func<SpriteRenderer, PropertyDescription>)(spriteRenderer => new PropertyDescription("color", () => spriteRenderer.color, value => spriteRenderer.color = (Color)value, 1/*, "virtualColor"*/)),
-                    (Func<SpriteRenderer, PropertyDescription>)(spriteRenderer => new PropertyDescription("sprite", () => spriteRenderer.sprite.name, value => spriteRenderer.sprite = Resources.Load<Sprite>((string)value), 1)),
+                    (Func<SpriteRenderer, ComponentProperty>)(spriteRenderer => new ComponentProperty("enabled", () => spriteRenderer.enabled, value => spriteRenderer.enabled = value.ToString().ToLower() == "true", 1)),
+                    (Func<SpriteRenderer, ComponentProperty>)(spriteRenderer => new ComponentProperty("color", () => spriteRenderer.color, value => spriteRenderer.color = (Color)value, 1/*, "virtualColor"*/)),
+                    (Func<SpriteRenderer, ComponentProperty>)(spriteRenderer => new ComponentProperty("sprite", () => spriteRenderer.sprite.name, value => spriteRenderer.sprite = Resources.Load<Sprite>((string)value), 1)),
                 })
             },
             {
                 typeof(ParticleSystem), new("Particle",
                 new List<Delegate>
                 {
-                    (Func<ParticleSystem, PropertyDescription>)(particleSystem => new PropertyDescription("playing", () => particleSystem.isPlaying, value => {
+                    (Func<ParticleSystem, ComponentProperty>)(particleSystem => new ComponentProperty("playing", () => particleSystem.isPlaying, value => {
                         if (value.ToString().ToLower() == "true")
                             particleSystem.Play();
                         else
@@ -247,7 +138,7 @@ namespace Sven.Content
                 typeof(MeshFilter), new("Shape",
                 new List<Delegate>
                 {
-                    (Func<MeshFilter, PropertyDescription>)(meshFilter => new PropertyDescription("mesh", () => meshFilter.mesh.name.Replace(" Instance", ""), value => {
+                    (Func<MeshFilter, ComponentProperty>)(meshFilter => new ComponentProperty("mesh", () => meshFilter.mesh.name.Replace(" Instance", ""), value => {
                         if (value == null) return;
                         if (meshFilter.mesh != null && meshFilter.mesh.name == (string)value && meshFilter.mesh.uv.Length > 0) return;
                         Mesh mesh = Resources.Load<Mesh>($"Meshes/{(string)value}");
@@ -303,7 +194,7 @@ namespace Sven.Content
             {typeof(ManipulableObject), new("ManipulableObject",
                 new List<Delegate>
                 {
-                    (Func<ManipulableObject, PropertyDescription>)(manipulableObject => new PropertyDescription("enabled", () => manipulableObject.enabled, value => manipulableObject.enabled = value.ToString().ToLower() == "true", 1)),
+                    (Func<ManipulableObject, ComponentProperty>)(manipulableObject => new ComponentProperty("enabled", () => manipulableObject.enabled, value => manipulableObject.enabled = value.ToString().ToLower() == "true", 1)),
                 })},
 
             // Ignore the following components
@@ -311,13 +202,13 @@ namespace Sven.Content
             {typeof(PointOfView), null},
             {typeof(GraspArea), new("GraspArea", new List<Delegate>
             {
-                (Func<GraspArea, PropertyDescription>)(graspArea => new PropertyDescription("enabled", () => graspArea.enabled, value => graspArea.enabled = value.ToString().ToLower() == "true", 1)),
-                (Func<GraspArea, PropertyDescription>)(graspArea => new PropertyDescription("graspDistance", () => graspArea.GraspDistance, value => graspArea.GraspDistance = (float)value, 1)),
+                (Func<GraspArea, ComponentProperty>)(graspArea => new ComponentProperty("enabled", () => graspArea.enabled, value => graspArea.enabled = value.ToString().ToLower() == "true", 1)),
+                (Func<GraspArea, ComponentProperty>)(graspArea => new ComponentProperty("graspDistance", () => graspArea.GraspDistance, value => graspArea.GraspDistance = (float)value, 1)),
             })},
             {typeof(Pointer), new("Pointer", new List<Delegate>
             {
-                (Func<Pointer, PropertyDescription>)(pointer => new PropertyDescription("enabled", () => pointer.enabled, value => pointer.enabled = value.ToString().ToLower() == "true", 1)),
-                (Func<Pointer, PropertyDescription>)(pointer => new PropertyDescription("pointerDistance", () => pointer.PointerDistance, value => pointer.PointerDistance = (float)value, 1)),
+                (Func<Pointer, ComponentProperty>)(pointer => new ComponentProperty("enabled", () => pointer.enabled, value => pointer.enabled = value.ToString().ToLower() == "true", 1)),
+                (Func<Pointer, ComponentProperty>)(pointer => new ComponentProperty("pointerDistance", () => pointer.PointerDistance, value => pointer.PointerDistance = (float)value, 1)),
             })},
         };
 
@@ -326,12 +217,10 @@ namespace Sven.Content
         /// </summary>
         /// <param name="type">The type of the component.</param>
         /// <param name="description">The component description.</param>
-        public static void AddComponentDescription(Type type, ComponentDescription description)
+        public static void AddComponentDescription(Type type, ComponentMapping description)
         {
             if (!Values.ContainsKey(type))
-            {
                 Values[type] = description;
-            }
         }
 
         /// <summary>
@@ -404,7 +293,7 @@ namespace Sven.Content
             if (Values.TryGetValue(component.GetType(), out var componentDescription))
             {
                 foreach (Delegate del in componentDescription.Properties)
-                    if (del.DynamicInvoke(component) is PropertyDescription propertyDescription)
+                    if (del.DynamicInvoke(component) is ComponentProperty propertyDescription)
                         setters.Add(propertyDescription.PredicateName, new(propertyDescription.Priority, propertyDescription.Setter));
             }
             return setters;
@@ -416,7 +305,7 @@ namespace Sven.Content
             if (Values.TryGetValue(component.GetType(), out var componentDescription))
             {
                 foreach (Delegate del in componentDescription.Properties)
-                    if (del.DynamicInvoke(component) is PropertyDescription propertyDescription)
+                    if (del.DynamicInvoke(component) is ComponentProperty propertyDescription)
                         getters.Add(propertyDescription.PredicateName, new(propertyDescription.Priority, propertyDescription.Getter));
             }
             return getters;
@@ -442,7 +331,7 @@ namespace Sven.Content
         /// </summary>
         /// <param name="type">Type of the component.</param>
         /// <returns>List of properties of the component.</returns>
-        public static ComponentDescription GetValue(Type type)
+        public static ComponentMapping GetValue(Type type)
         {
             if (Values.TryGetValue(type, out var value))
                 return value;
@@ -458,7 +347,7 @@ namespace Sven.Content
         /// <param name="type">Type of the component.</param>
         /// <param name="componentDescription">Component description.</param>
         /// <returns>True if the component was found, false otherwise.</returns> 
-        public static bool TryGetValue(Type type, out ComponentDescription componentDescription)
+        public static bool TryGetValue(Type type, out ComponentMapping componentDescription)
         {
             if (Values.TryGetValue(type, out componentDescription))
                 return true;
@@ -506,7 +395,7 @@ namespace Sven.Content
                     if (typeNameKey == typeName)
                         return Values[key] != null ? new Tuple<Type, int>(key, Values[key].SortOrder) : null;
                 }
-                Debug.LogWarning($"Type {typeName} not found in mapped components.");
+                //Debug.LogWarning($"Type {typeName} not found in mapped components.");
                 return null;
             }
             catch (Exception e)
@@ -514,6 +403,59 @@ namespace Sven.Content
                 Debug.LogError($"Error getting type {typeName}: {e.Message}");
                 return null;
             }
+        }
+
+        public static void AddMapping(Type type, int sortOrder = 0)
+        {
+            try
+            {
+                if (type.GetInterface(nameof(IComponentMapping)) == null) return;
+
+                Debug.Log($"Adding mapping for type {type.Name} with sort order {sortOrder}");
+
+                var method = type.GetMethod("ComponentMapping", System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static)
+                    ?? throw new MissingMethodException($"Type {type.FullName} must implement a public static method 'ComponentMapping'.");
+                ComponentMapping mapping = method.Invoke(null, null) as ComponentMapping
+                    ?? throw new InvalidOperationException($"The 'ComponentMapping' method of {type.FullName} must return a valid ComponentMapping object.");
+                AddComponentDescription(type, mapping);
+            }
+            catch (Exception e)
+            {
+                Debug.LogError($"Error adding mapping for type {type.Name}: {e.Message}");
+            }
+        }
+
+        public static void LoadAllMappedComponents()
+        {
+            var assemblies = AppDomain.CurrentDomain.GetAssemblies()
+                .Where(a => !a.FullName.StartsWith("System.") && !a.FullName.StartsWith("Unity") && !a.IsDynamic);
+
+            var types = new List<Type>();
+            foreach (var assembly in assemblies)
+            {
+                try
+                {
+                    types.AddRange(
+                        assembly.GetTypes()
+                        .Where(type => typeof(IComponentMapping).IsAssignableFrom(type) && !type.IsInterface && !type.IsAbstract)
+                    );
+                }
+                catch (System.Reflection.ReflectionTypeLoadException ex)
+                {
+                    types.AddRange(
+                        ex.Types
+                        .Where(type => type != null && typeof(IComponentMapping).IsAssignableFrom(type) && !type.IsInterface && !type.IsAbstract)
+                    );
+                }
+                catch
+                {
+                    Debug.LogWarning($"Could not load types from assembly {assembly.FullName}. This might be due to a missing dependency or an unsupported type.");
+                    continue;
+                }
+            }
+
+            foreach (Type type in types)
+                AddMapping(type);
         }
     }
 }

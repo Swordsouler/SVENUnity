@@ -3,9 +3,10 @@
 // Licensed under the MIT License. See LICENSE file in the project root for full license information.
 
 using NaughtyAttributes;
+using Sven.GraphManagement;
+using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
-using UnityEngine;
 #if UNITY_WEBGL && !UNITY_EDITOR
 using VDS.RDF;
 using System.Text;
@@ -36,7 +37,7 @@ namespace Sven.Demo
         private void InitializeButtons()
         {
             if (downloadingActivityIndicator != null) downloadingActivityIndicator.SetActive(false);
-            if (printResultButton != null) printResultButton.onClick.AddListener(graphReader.PrintExperimentResults);
+            if (printResultButton != null) printResultButton.onClick.AddListener(GraphManager.PrintExperimentResults);
             if (downloadButton != null) downloadButton.onClick.AddListener(OnDownloadButtonClicked);
             if (quitButton != null) quitButton.onClick.AddListener(OnQuitButtonClicked);
         }
