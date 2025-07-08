@@ -24,7 +24,6 @@ using VDS.RDF.Query;
 using VDS.RDF.Query.Inference;
 using VDS.RDF.Writing;
 #if UNITY_WEBGL && !UNITY_EDITOR
-using System.Threading.Tasks;
 using UnityEngine.Networking;
 #endif
 
@@ -42,12 +41,14 @@ namespace Sven.GraphManagement
         public static float Duration => (float)(EndedAt - StartedAt).TotalSeconds;
         public static Instant CurrentInstantLoaded { get; private set; } = null;
         public static string BaseUri => _instance.BaseUri?.AbsoluteUri ?? string.Empty;
+        public static string GraphName => BaseUri.Split("/")[^2];
 
         public static void SetAuthenticationHeaderValue(string username, string password)
         {
             if (string.IsNullOrEmpty(username)) throw new ArgumentNullException(nameof(username) + " is null or empty.");
             if (string.IsNullOrEmpty(password)) throw new ArgumentNullException(nameof(password) + " is null or empty.");
             _authenticationHeaderValue = new AuthenticationHeaderValue("Basic", Convert.ToBase64String(Encoding.UTF8.GetBytes($"{username}:{password}")));
+            Debug.Log(Convert.ToBase64String(Encoding.UTF8.GetBytes($"{username}:{password}")));
         }
 
         public static void Clear()
@@ -87,27 +88,45 @@ namespace Sven.GraphManagement
             _instance.NamespaceMap.AddNamespace(prefix, UriFactory.Create(uri));
         }
 
-        public static void LoadOntology(string ontologyName, string ontologyFileName)
+        public static async Task LoadOntologyAsync(string ontologyName, string ontologyFileName)
         {
             if (string.IsNullOrEmpty(ontologyName)) throw new ArgumentNullException(nameof(ontologyName) + " is null or empty.");
             if (string.IsNullOrEmpty(ontologyFileName)) throw new ArgumentNullException(nameof(ontologyFileName) + " is null or empty.");
             if (_ontologies.ContainsKey(ontologyName)) throw new ArgumentException($"Ontology '{ontologyName}' already exists.");
-            //Graph ontologyGraph = new();
-            TurtleParser turtleParser = new();
-            turtleParser.Load(_instance, ontologyFileName);
-            //instance.Merge(ontologyGraph);
+
+#if UNITY_WEBGL && !UNITY_EDITOR
+            using (UnityEngine.Networking.UnityWebRequest request = UnityEngine.Networking.UnityWebRequest.Get(ontologyFileName))
+            {
+                await request.SendWebRequest();
+                if (request.result != UnityEngine.Networking.UnityWebRequest.Result.Success)
+                    throw new Exception("Failed to load ontology: " + request.error);
+
+                string ttlContent = request.downloadHandler.text;
+                TurtleParser turtleParser = new();
+                using (var reader = new System.IO.StringReader(ttlContent))
+                {
+                    turtleParser.Load(_instance, reader);
+                }
+            }
+#else
+            await Task.Run(() =>
+            {
+                TurtleParser turtleParser = new();
+                turtleParser.Load(_instance, ontologyFileName);
+            });
+#endif
             _ontologies.Add(ontologyName, ontologyFileName);
         }
 
-        public static void LoadOntologies()
+        public static async void LoadOntologiesAsync()
         {
             MapppedComponents.LoadAllMappedComponents();
-            Dictionary<string, string> ontologies = SvenSettings.Ontologies;
+            Dictionary<string, string> ontologies = await SvenSettings.GetOntologiesAsync();
             foreach (KeyValuePair<string, string> ontology in ontologies)
-                GraphManager.LoadOntology(ontology.Key, ontology.Value);
+                await LoadOntologyAsync(ontology.Key, ontology.Value);
         }
 
-        public static void ApplyRules()
+        public static async Task ApplyRulesAsync()
         {
             if (_instance == null) throw new InvalidOperationException("Graph instance is not initialized.");
 
@@ -117,8 +136,27 @@ namespace Sven.GraphManagement
             {
                 try
                 {
-                    TurtleParser turtleParser = new();
-                    turtleParser.Load(ontologyGraph, ontology.Value);
+#if UNITY_WEBGL && !UNITY_EDITOR
+            using (UnityEngine.Networking.UnityWebRequest request = UnityEngine.Networking.UnityWebRequest.Get(ontology.Value))
+            {
+                await request.SendWebRequest();
+                if (request.result != UnityEngine.Networking.UnityWebRequest.Result.Success)
+                    throw new Exception("Failed to load ontology: " + request.error);
+
+                string ttlContent = request.downloadHandler.text;
+                TurtleParser turtleParser = new();
+                using (var reader = new System.IO.StringReader(ttlContent))
+                {
+                    turtleParser.Load(ontologyGraph, reader);
+                }
+            }
+#else
+                    await Task.Run(() =>
+                    {
+                        TurtleParser turtleParser = new();
+                        turtleParser.Load(ontologyGraph, ontology.Value);
+                    });
+#endif
                     reasoner.Initialise(ontologyGraph);
                     reasoner.Apply(_instance);
                 }
@@ -175,7 +213,7 @@ namespace Sven.GraphManagement
 
                 throw new Exception("Failed to save the graph to the endpoint. " + httpResponseMessage.ReasonPhrase);
 #else
-                using UnityWebRequest request = new UnityWebRequest(serviceUrl, UnityWebRequest.kHttpVerbPUT)
+                using UnityWebRequest request = new(serviceUrl, UnityWebRequest.kHttpVerbPUT)
                 {
                     uploadHandler = new UploadHandlerRaw(Encoding.UTF8.GetBytes(turtleContent))
                     {
@@ -185,6 +223,7 @@ namespace Sven.GraphManagement
                 };
                 request.SetRequestHeader("Access-Control-Allow-Origin", "*");
                 request.SetRequestHeader("Accept", writerMimeTypeDefinition.CanonicalMimeType);
+                request.SetRequestHeader("Authorization", _authenticationHeaderValue.ToString());
 
                 UnityWebRequestAsyncOperation operation = request.SendWebRequest();
                 while (!operation.isDone)
@@ -203,7 +242,7 @@ namespace Sven.GraphManagement
             }
             catch (Exception ex)
             {
-                throw new InvalidOperationException($"Failed to save graph to endpoint: {ex.Message}", ex);
+                throw new InvalidOperationException($"Failed to save graph to endpoint: {ex}", ex);
             }
         }
 
@@ -245,10 +284,10 @@ WHERE {
             _instance.LoadFromFile(absolutePath);
         }
 
-        public static SparqlResultSet Query(string query, bool withReasoning)
+        public static async Task<SparqlResultSet> QueryAsync(string query, bool withReasoning)
         {
             if (string.IsNullOrEmpty(query)) throw new ArgumentNullException(nameof(query) + " is null or empty.");
-            if (withReasoning) ApplyRules();
+            if (withReasoning) await ApplyRulesAsync();
             SparqlQueryParser parser = new();
             SparqlQuery sparqlQuery = parser.ParseFromString(query) ?? throw new InvalidOperationException("Failed to parse SPARQL query.");
             try
@@ -879,11 +918,11 @@ WHERE {{
             string ttlContent = await sparqlQueryClient.QueryWebGLWithResultTTLAsync(query);
 #else
             IGraph resultGraph = await sparqlQueryClient.QueryWithResultGraphAsync(query);
-            /*foreach (GraphNamespace graphNamespace in ontologyDescription.Namespaces)
+            foreach (string prefix in _instance.NamespaceMap.Prefixes)
             {
-                if (!resultGraph.NamespaceMap.HasNamespace(graphNamespace.Name))
-                    resultGraph.NamespaceMap.AddNamespace(graphNamespace.Name, new Uri(graphNamespace.Uri));
-            }*/
+                Uri uri = _instance.NamespaceMap.GetNamespaceUri(prefix);
+                resultGraph.NamespaceMap.AddNamespace(prefix, uri);
+            }
 
             string ttlContent = DecodeGraph(resultGraph);
 #endif

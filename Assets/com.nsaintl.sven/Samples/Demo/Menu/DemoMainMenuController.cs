@@ -42,7 +42,7 @@ namespace Sven.Demo
         private DemoMainMenuPage _currentPage = null;
         private Dictionary<string, string> _dropdownOptions = new();
 
-        private void Awake()
+        private void Start()
         {
             if (semantisationFrequencySlider != null) semantisationFrequencySlider.value = SvenSettings.SemanticizeFrequency; //DemoGraphConfig.semantisationFrequency;
             InitializeButtons();

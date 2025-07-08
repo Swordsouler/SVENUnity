@@ -422,6 +422,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Dropdown ActivityIndicator
       objectReference: {fileID: 0}
+    - target: {fileID: 7394518220285851415, guid: 97ded2e0f0b7812489a982859e49c997, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []

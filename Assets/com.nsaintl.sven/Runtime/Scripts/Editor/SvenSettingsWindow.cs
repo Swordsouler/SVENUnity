@@ -5,6 +5,8 @@
 #if UNITY_EDITOR
 using Sven.Utils;
 using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using UnityEditor;
 using UnityEngine;
 
@@ -96,6 +98,24 @@ namespace Sven.Editor
                 refresh = true;
             }
 
+            string username = SvenSettings.Username;
+            string newUsername = EditorGUILayout.TextField("Username", username);
+            if (newUsername != username)
+            {
+                SvenSettings.Username = newUsername;
+                EditorPrefs.SetString(SvenSettings._usernameKey, newUsername);
+                refresh = true;
+            }
+
+            string password = SvenSettings.Password;
+            string newPassword = EditorGUILayout.PasswordField("Password", password);
+            if (newPassword != password)
+            {
+                SvenSettings.Password = newPassword;
+                EditorPrefs.SetString(SvenSettings._passwordKey, newPassword);
+                refresh = true;
+            }
+
             int semanticizeFrequency = SvenSettings.SemanticizeFrequency;
             int newSemanticizeFrequency = EditorGUILayout.IntSlider("Semanticize Frequency (record/second)", semanticizeFrequency, 1, 60);
             if (newSemanticizeFrequency != semanticizeFrequency)
@@ -156,6 +176,7 @@ namespace Sven.Editor
             {
                 SvenSettings.Ontologies.Clear();
                 SvenSettings.RefreshConfig();
+                RegenerateIndex();
             }
             // import ontology button (select .ttl file, copy it into StreamingAssets/Ontologies, and refresh Ontologies)
             if (GUILayout.Button("Import Ontology"))
@@ -169,6 +190,7 @@ namespace Sven.Editor
                     System.IO.File.Copy(path, destinationPath, true);
                     SvenSettings.Ontologies.Clear();
                     SvenSettings.RefreshConfig();
+                    RegenerateIndex();
                 }
             }
             if (GUILayout.Button("Open Ontologies Folder"))
@@ -185,6 +207,28 @@ namespace Sven.Editor
             }
 
             if (refresh) SvenSettings.RefreshConfig();
+        }
+
+        public static void RegenerateIndex()
+        {
+            string ontologiesPath = Path.Combine(Application.streamingAssetsPath, "Ontologies");
+            if (!Directory.Exists(ontologiesPath))
+                Directory.CreateDirectory(ontologiesPath);
+
+            var files = Directory.GetFiles(ontologiesPath, "*.ttl")
+                .Select(Path.GetFileName)
+                .ToArray();
+
+            string json = JsonUtility.ToJson(new OntologyIndex { files = files }, true);
+            File.WriteAllText(Path.Combine(ontologiesPath, "ontologies_index.json"), json);
+
+            AssetDatabase.Refresh();
+        }
+
+        [System.Serializable]
+        public class OntologyIndex
+        {
+            public string[] files;
         }
     }
 }

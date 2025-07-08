@@ -70,7 +70,7 @@ namespace Sven.Demo
 
             // in webgl build, download the turtleContent as txt file
 #if UNITY_WEBGL && !UNITY_EDITOR
-            string fileName = $"sven-{DemoManager.graphName}.ttl";
+            string fileName = $"sven-{GraphManager.GraphName}.ttl";
             Application.ExternalCall("downloadFile", turtleContent, fileName);
 #else
             Debug.Log("Graph content:\n" + turtleContent);
@@ -92,7 +92,7 @@ namespace Sven.Demo
             if (saveQuitButton != null) saveQuitButton.gameObject.SetActive(false);
             if (sendingActivityIndicator != null) sendingActivityIndicator.SetActive(true);
 
-            GraphManager.ApplyRules();
+            await GraphManager.ApplyRulesAsync();
             await GraphManager.SaveToEndpoint();
             SceneManager.LoadScene("Demo Menu", LoadSceneMode.Single);
         }

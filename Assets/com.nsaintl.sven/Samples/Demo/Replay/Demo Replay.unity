@@ -236,50 +236,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!1 &66225917
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 66225918}
-  - component: {fileID: 66225919}
-  m_Layer: 0
-  m_Name: Graph Reader
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &66225918
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 66225917}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &66225919
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 66225917}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5b02d626b8e60bf42b1b66fef0c3e2ac, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &83649950
 GameObject:
   m_ObjectHideFlags: 0
@@ -571,7 +527,6 @@ MonoBehaviour:
   downloadButton: {fileID: 17240528}
   quitButton: {fileID: 514516771}
   downloadingActivityIndicator: {fileID: 1264458231}
-  graphReader: {fileID: 66225919}
 --- !u!1001 &356789291
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -874,37 +829,6 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 6274635791047261032, guid: 61c9fc94722252041860dbe7556f3e96, type: 3}
   m_PrefabInstance: {fileID: 514516770}
   m_PrefabAsset: {fileID: 0}
---- !u!1 &769182789
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 769182790}
-  m_Layer: 0
-  m_Name: ----- GRAPH -----
-  m_TagString: EditorOnly
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &769182790
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 769182789}
-  serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &895717614
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1263,7 +1187,7 @@ PrefabInstance:
     - target: {fileID: 8760090630067480173, guid: 9aeb503dff9b0f04099e5efc05052d3e, type: 3}
       propertyPath: _graphReader
       value: 
-      objectReference: {fileID: 66225919}
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects:
@@ -1949,5 +1873,3 @@ SceneRoots:
   - {fileID: 83649951}
   - {fileID: 331900385}
   - {fileID: 403065285}
-  - {fileID: 769182790}
-  - {fileID: 66225918}

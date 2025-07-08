@@ -4,6 +4,7 @@
 
 using NaughtyAttributes;
 using Sven.Content;
+using Sven.Utils;
 using System.Threading;
 using System.Threading.Tasks;
 using UnityEngine;
@@ -31,9 +32,10 @@ namespace Sven.GraphManagement
         {
             if (GraphManager.Count != 0) return;
             GraphManager.Clear();
-            GraphManager.LoadOntologies();
+            GraphManager.LoadOntologiesAsync();
             GraphManager.SetBaseUri(BaseUri);
             GraphManager.SetNamespace("", BaseUri);
+            GraphManager.SetAuthenticationHeaderValue(SvenSettings.Username, SvenSettings.Password);
         }
 
         public async Task SaveGraph()
@@ -49,7 +51,7 @@ namespace Sven.GraphManagement
 #if !UNITY_WEBGL || UNITY_EDITOR
             });
 #endif
-            GraphManager.ApplyRules();
+            await GraphManager.ApplyRulesAsync();
             await GraphManager.SaveToEndpoint();
         }
 

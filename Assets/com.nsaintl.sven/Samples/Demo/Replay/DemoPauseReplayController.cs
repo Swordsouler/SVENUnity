@@ -4,6 +4,7 @@
 
 using NaughtyAttributes;
 using Sven.GraphManagement;
+using Sven.Utils;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -23,8 +24,6 @@ namespace Sven.Demo
         [BoxGroup("View")] public Button downloadButton;
         [BoxGroup("View")] public Button quitButton;
         [BoxGroup("View")] public GameObject downloadingActivityIndicator;
-
-        [BoxGroup("Controller")] public DemoGraphReader graphReader;
 
         private bool _isDownloading = false;
 
@@ -48,11 +47,11 @@ namespace Sven.Demo
             _isDownloading = true;
             if (downloadingActivityIndicator != null) downloadingActivityIndicator.SetActive(true);
             if (downloadButton != null) downloadButton.gameObject.SetActive(false);
-            string turtleContent = await graphReader.GetTTL();
+            string turtleContent = await GraphManager.DownloadTTLFromEndpoint(SvenSettings.EndpointUrl);
 
             // in webgl build, download the turtleContent ass txt file
 #if UNITY_WEBGL && !UNITY_EDITOR
-            string fileName = $"sven-{DemoManager.graphName}.ttl";
+            string fileName = $"sven-{GraphManager.GraphName}.ttl";
             Application.ExternalCall("downloadFile", turtleContent, fileName);
 #else
             Debug.Log("Graph content:\n" + turtleContent);
