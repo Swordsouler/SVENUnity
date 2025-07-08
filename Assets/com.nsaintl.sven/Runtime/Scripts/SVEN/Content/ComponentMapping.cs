@@ -44,9 +44,8 @@ namespace Sven.Content
                         if (typeof(MonoBehaviour).IsAssignableFrom(propertyType))
                         {
                             if (SvenSettings.Debug) Debug.Log("Creating instance of MonoBehaviour: " + propertyType.Name);
-                            continue;
-                            /*GameObject tempGameObject = new("Temp_" + propertyType.Name);
-                            instance = tempGameObject.AddComponent(propertyType);*/
+                            GameObject tempGameObject = new("Temp_" + propertyType.Name);
+                            instance = tempGameObject.AddComponent(propertyType);
                         }
                         else
                         {
@@ -60,12 +59,14 @@ namespace Sven.Content
                     }
                     finally
                     {
+                        if (property.DynamicInvoke(instance) is ComponentProperty propertyDescription)
+                        {
+                            CachedProperties.Add(propertyDescription.PredicateName, propertyDescription);
+                        }
+
                         if (instance is MonoBehaviour monoBehaviourInstance)
                             GameObject.DestroyImmediate(monoBehaviourInstance.gameObject);
                     }
-
-                    if (property.DynamicInvoke(instance) is ComponentProperty propertyDescription)
-                        CachedProperties.Add(propertyDescription.PredicateName, propertyDescription);
                 }
                 else
                 {

@@ -531,9 +531,7 @@ WHERE {{
                     Tuple<Type, int> componentData = MapppedComponents.GetData(componentStringType);
                     Type componentType = componentData.Item1;
                     int componentSortOrder = componentData.Item2;
-                    Debug.Log($"Component: {componentStringType} {componentData != null} {componentType == null} {!MapppedComponents.HasProperty(componentType, propertyName)}");
                     if (componentType == null || !MapppedComponents.HasProperty(componentType, propertyName)) continue;
-                    Debug.Log($"Component: {componentStringType}");
                     //Debug.Log($"Component: {componentType} {propertyName}");
 
                     Type propertyType = MapppedProperties.GetType(propertyStringType) ?? Type.GetType(propertyStringType);
