@@ -159,6 +159,7 @@ namespace Sven.Content
 #if !UNITY_WEBGL || UNITY_EDITOR
             });
 #endif
+            await Task.Yield();
             _isCheckingForChanges = false;
         }
 

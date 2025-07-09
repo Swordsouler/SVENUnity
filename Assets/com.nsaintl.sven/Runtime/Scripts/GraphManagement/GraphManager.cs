@@ -598,6 +598,7 @@ WHERE {{
                 return sceneContent;
             });
 #endif
+            await Task.Yield();
 
             return sceneContent;
         }
