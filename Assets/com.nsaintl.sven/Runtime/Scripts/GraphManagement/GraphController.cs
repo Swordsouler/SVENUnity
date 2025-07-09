@@ -30,9 +30,14 @@ namespace Sven.GraphManagement
 
         private void Awake()
         {
+            Load();
+        }
+
+        private async void Load()
+        {
             if (GraphManager.Count != 0) return;
             GraphManager.Clear();
-            GraphManager.LoadOntologiesAsync();
+            await GraphManager.LoadOntologiesAsync();
             GraphManager.SetBaseUri(BaseUri);
             GraphManager.SetNamespace("", BaseUri);
             GraphManager.SetAuthenticationHeaderValue(SvenSettings.Username, SvenSettings.Password);

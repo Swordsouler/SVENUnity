@@ -123,7 +123,7 @@ namespace Sven.GraphManagement
             _ontologies.Add(ontologyName, ontologyFileName);
         }
 
-        public static async void LoadOntologiesAsync()
+        public static async Task LoadOntologiesAsync()
         {
             MapppedComponents.LoadAllMappedComponents();
             Dictionary<string, string> ontologies = await SvenSettings.GetOntologiesAsync();
@@ -133,6 +133,7 @@ namespace Sven.GraphManagement
 
         public static async Task ApplyRulesAsync()
         {
+            return;
             if (_instance == null) throw new InvalidOperationException("Graph instance is not initialized.");
 
             Graph ontologyGraph = new();
@@ -401,14 +402,20 @@ WHERE {
 #endif
         }
 
-        public static SparqlResultSet QueryMemory(string query)
+        public static async Task<SparqlResultSet> QueryMemoryAsync(string query)
         {
             if (string.IsNullOrEmpty(query)) throw new ArgumentNullException(nameof(query) + " is null or empty.");
             SparqlQueryParser parser = new();
             SparqlQuery sparqlQuery = parser.ParseFromString(query) ?? throw new InvalidOperationException("Failed to parse SPARQL query.");
             try
             {
-                return _instance.ExecuteQuery(sparqlQuery) as SparqlResultSet;
+                SparqlResultSet result = await Task.Run(() =>
+                {
+                    if (SvenSettings.Debug) Debug.Log($"Graph query: {query}");
+                    return _instance.ExecuteQuery(query) as SparqlResultSet;
+                });
+                Debug.Log(result.Count);
+                return result;
             }
             catch (RdfQueryException ex)
             {
@@ -453,13 +460,7 @@ WHERE {{
             LoadInstants(results);
         }
 
-        public static void LoadInstantsFromMemory()
-        {
-            SparqlResultSet results = QueryMemory(LoadInstantsQuery);
-            LoadInstants(results);
-        }
-
-        private static string RetrieveInstantQueryTime(Instant instant)
+        private static string RetrieveInstantQueryTime(Instant instant, bool withFrom)
         {
             return SvenSettings.UseInside ?
                 $"?interval time:inside <{instant.UriNode}> ." :
@@ -479,7 +480,7 @@ WHERE {{
     }}";
         }
 
-        private static string RetrieveSceneQuery(Instant instant)
+        private static string RetrieveSceneQuery(Instant instant, bool withFrom)
         {
             return $@"PREFIX : <{BaseUri}>
 PREFIX time: <http://www.w3.org/2006/time#>
@@ -488,7 +489,7 @@ PREFIX sven: <https://sven.lisn.upsaclay.fr/ontology#>
 PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
 
 SELECT DISTINCT ?object ?component ?componentType ?property ?propertyName ?propertyNestedName ?propertyValue ?propertyType
-FROM :
+{(withFrom ? "FROM :" : "")}
 WHERE {{
     {{
         VALUES ?propertyName {{
@@ -516,7 +517,7 @@ WHERE {{
         ?propertyNestedName rdfs:subPropertyOf sven:propertyData .
         FILTER(?propertyNestedName != sven:propertyData)
     }}
-    {RetrieveInstantQueryTime(instant)}
+    {RetrieveInstantQueryTime(instant, withFrom)}
 }}";
         }
 
@@ -639,7 +640,7 @@ WHERE {{
             string endpointUrl = SvenSettings.EndpointUrl;
 
             stopwatch.Restart();
-            SparqlResultSet results = await QueryEndpoint(endpointUrl, RetrieveSceneQuery(instant));
+            SparqlResultSet results = await QueryEndpoint(endpointUrl, RetrieveSceneQuery(instant, true));
             stopwatch.Stop();
             double queryEndpointElapsed = stopwatch.ElapsedMilliseconds;
 
@@ -661,12 +662,31 @@ WHERE {{
 
         public static async Task RetrieveSceneFromMemory(Instant instant)
         {
+            var stopwatch = System.Diagnostics.Stopwatch.StartNew();
+
             CurrentInstantLoaded = instant;
             if (instant == null) return;
 
-            SparqlResultSet results = QueryMemory(RetrieveSceneQuery(instant));
+            stopwatch.Restart();
+            //await ApplyRulesAsync();
+            SparqlResultSet results = await QueryMemoryAsync(RetrieveSceneQuery(instant, false));
+            stopwatch.Stop();
+            double queryMemoryElapsed = stopwatch.ElapsedMilliseconds;
+
+            stopwatch.Restart();
             SceneContent targetSceneContent = await GetSceneContent(results);
             ReconstructScene(targetSceneContent);
+            stopwatch.Stop();
+            double reconstructSceneElapsed = stopwatch.ElapsedMilliseconds;
+            double totalElapsed = queryMemoryElapsed + reconstructSceneElapsed;
+
+            ProcessingData processedData = new()
+            {
+                queryTime = queryMemoryElapsed,
+                sceneUpdateTime = reconstructSceneElapsed,
+                totalProcessingTime = totalElapsed
+            };
+            processedDatas.Add(processedData);
         }
 
         private static SceneContent GetSceneContent()
