@@ -6,6 +6,7 @@ using Sven.Content;
 using Sven.GraphManagement;
 using Sven.Utils;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using UnityEngine;
 using VDS.RDF;
 
@@ -47,14 +48,27 @@ namespace Sven.Context
         /// </summary>
         public void Start()
         {
-            Initialize();
+            InitializeAsync();
         }
 
         /// <summary>
         /// Initializes the user.
         /// </summary>
-        private void Initialize()
+        private async void InitializeAsync()
         {
+            bool isGraphInitialized = false;
+            for (int i = 0; i < 5; i++)
+            {
+                isGraphInitialized = GraphManager.IsGraphInitialized;
+                if (isGraphInitialized)
+                    break;
+                else await Task.Delay(2000);
+            }
+            if (!isGraphInitialized)
+            {
+                Debug.LogError("GraphManager is not initialized. Please check your settings.");
+                return;
+            }
             IUriNode userNode = GraphManager.CreateUriNode(":" + UUID);
 
             GraphManager.Assert(new Triple(userNode, GraphManager.CreateUriNode("rdf:type"), GraphManager.CreateUriNode("sven:User")));

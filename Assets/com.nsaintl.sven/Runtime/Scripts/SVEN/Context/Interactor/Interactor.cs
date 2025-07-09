@@ -7,6 +7,7 @@ using Sven.GraphManagement;
 using Sven.Utils;
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using UnityEngine;
 
 namespace Sven.Context
@@ -71,6 +72,23 @@ namespace Sven.Context
         {
             //if (_graphBuffer == null) return;
             if (_checkInteractorCoroutine != null) StopCoroutine(_checkInteractorCoroutine);
+            InitializeAsync();
+        }
+        private async void InitializeAsync()
+        {
+            bool isGraphInitialized = false;
+            for (int i = 0; i < 5; i++)
+            {
+                isGraphInitialized = GraphManager.IsGraphInitialized;
+                if (isGraphInitialized)
+                    break;
+                else await Task.Delay(2000);
+            }
+            if (!isGraphInitialized)
+            {
+                Debug.LogError("GraphManager is not initialized. Please check your settings.");
+                return;
+            }
             _checkInteractorCoroutine = StartCoroutine(CheckInteractor(1.0f / SvenSettings.SemanticizeFrequency));
             _isInitialized = true;
         }

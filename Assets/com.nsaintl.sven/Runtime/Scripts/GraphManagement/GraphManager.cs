@@ -42,15 +42,20 @@ namespace Sven.GraphManagement
         public static Instant CurrentInstantLoaded { get; private set; } = null;
         public static string BaseUri => _instance.BaseUri?.AbsoluteUri ?? string.Empty;
         public static string GraphName => BaseUri.Split("/")[^2];
+        public static bool IsGraphInitialized => HasNamespace("sven");
 
         public static void SetAuthenticationHeaderValue(string username, string password)
         {
             if (string.IsNullOrEmpty(username)) throw new ArgumentNullException(nameof(username) + " is null or empty.");
             if (string.IsNullOrEmpty(password)) throw new ArgumentNullException(nameof(password) + " is null or empty.");
             _authenticationHeaderValue = new AuthenticationHeaderValue("Basic", Convert.ToBase64String(Encoding.UTF8.GetBytes($"{username}:{password}")));
-            Debug.Log(Convert.ToBase64String(Encoding.UTF8.GetBytes($"{username}:{password}")));
         }
 
+        public static bool HasNamespace(string prefix)
+        {
+            if (string.IsNullOrEmpty(prefix)) throw new ArgumentNullException(nameof(prefix) + " is null or empty.");
+            return _instance.NamespaceMap.HasNamespace(prefix);
+        }
         public static void Clear()
         {
             _instance.Clear();

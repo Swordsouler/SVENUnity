@@ -7,6 +7,7 @@ using Sven.OwlTime;
 using Sven.Utils;
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using UnityEngine;
 using VDS.RDF;
 
@@ -42,15 +43,27 @@ namespace Sven.Content
         {
             Component component = GetComponent<Component>();
             componentsToSemanticize.RemoveAll(c => c == null || c.Component == null || !component.gameObject.Equals(c.Component.gameObject));
-            Initialize();
-            _checkForChangesCoroutine = StartCoroutine(LoopCheckForChanges(1.0f / SvenSettings.SemanticizeFrequency));
+            InitializeAsync();
         }
 
         /// <summary>
         /// Initializes the semantization of the GameObject, his components and setup the properties observers.
         /// </summary>
-        private void Initialize()
+        private async void InitializeAsync()
         {
+            bool isGraphInitialized = false;
+            for (int i = 0; i < 5; i++)
+            {
+                isGraphInitialized = GraphManager.IsGraphInitialized;
+                if (isGraphInitialized)
+                    break;
+                else await Task.Delay(2000);
+            }
+            if (!isGraphInitialized)
+            {
+                Debug.LogError("GraphManager is not initialized. Please check your settings.");
+                return;
+            }
             try
             {
                 // Semantize the GameObject attached to his properties and components
@@ -70,6 +83,7 @@ namespace Sven.Content
                         Properties = component.Component.SemanticObserve()
                     });
 
+                _checkForChangesCoroutine = StartCoroutine(LoopCheckForChanges(1.0f / SvenSettings.SemanticizeFrequency));
             }
             catch (System.Exception e)
             {
