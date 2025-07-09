@@ -4,16 +4,9 @@
 
 using UnityEngine;
 using System;
-
 using System.Linq;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-
-
-
-
-
-
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
@@ -65,7 +58,7 @@ namespace Sven.Utils
                 if (!string.IsNullOrEmpty(argsEndpointUrl) && Uri.TryCreate(argsEndpointUrl, UriKind.Absolute, out Uri parsedUri))
                     _endpointUrl = parsedUri.ToString();
                 else
-                    _endpointUrl = "http://localhost:7200/repositories/Demo-Scene";
+                    _endpointUrl = "http://localhost:7200/repositories/SVEN";
                 return _endpointUrl;
             }
             set
