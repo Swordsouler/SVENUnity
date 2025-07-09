@@ -1,0 +1,51 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+    tags:
+      - '*'
+
+jobs:
+  update_upm_branch:
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install git
+        run: sudo apt-get update && sudo apt-get install -y git
+
+      - name: Show head info
+        run: git log -1
+
+      - name: Create upm branch if not exists
+        run: |
+          if git show-ref --quiet refs/heads/upm; then git branch -D upm; fi
+
+      - name: Split upm branch
+        run: git subtree split -P "Assets/com.nsaintl.sven" -b upm
+
+      - name: Update remote upm branch
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          git push --force https://x-access-token:${GITHUB_TOKEN}@github.com/${{ github.repository }}.git upm
+
+  create_release:
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags/')
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ github.ref_name }}
+          name: Release ${{ github.ref_name }}
+          body: Release description
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
