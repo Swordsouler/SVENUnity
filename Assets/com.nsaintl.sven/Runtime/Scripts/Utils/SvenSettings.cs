@@ -217,12 +217,36 @@ namespace Sven.Utils
             {
                 if (_ontologies.Count == 0)
                 {
-                    string[] ontologyFiles = System.IO.Directory.GetFiles(Application.streamingAssetsPath + "/Ontologies", "*.ttl");
-                    foreach (string file in ontologyFiles)
+                    string ontologiesPath = Application.streamingAssetsPath + "/Ontologies";
+                    if (System.IO.Directory.Exists(ontologiesPath))
                     {
-                        string ontologyName = System.IO.Path.GetFileNameWithoutExtension(file);
-                        string absolutePath = System.IO.Path.GetFullPath(file);
-                        _ontologies[ontologyName] = absolutePath;
+                        string[] ontologyFiles = System.IO.Directory.GetFiles(ontologiesPath, "*.ttl");
+                        foreach (string file in ontologyFiles)
+                        {
+                            string ontologyName = System.IO.Path.GetFileNameWithoutExtension(file);
+                            string absolutePath = System.IO.Path.GetFullPath(file);
+                            _ontologies[ontologyName] = absolutePath;
+                        }
+                    }
+                    else
+                    {
+                        System.IO.Directory.CreateDirectory(ontologiesPath);
+
+                        string svenTtlPath = System.IO.Path.Combine(ontologiesPath, "sven.ttl");
+                        try
+                        {
+                            using (var client = new System.Net.WebClient())
+                            {
+                                client.DownloadFile("https://sven.lisn.upsaclay.fr/ontology#", svenTtlPath);
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            UnityEngine.Debug.LogError("Failed to download SVEN ontology: " + ex.Message);
+                            System.IO.File.WriteAllText(svenTtlPath, "# SVEN ontology\n# Voir : https://sven.lisn.upsaclay.fr/ontology#\n");
+                        }
+
+                        _ontologies["sven"] = System.IO.Path.GetFullPath(svenTtlPath);
                     }
                 }
                 return _ontologies;
