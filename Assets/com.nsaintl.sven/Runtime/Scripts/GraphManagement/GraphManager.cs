@@ -618,6 +618,18 @@ WHERE {{
             return searchedInstant;
         }
 
+
+        public static Instant SearchInstant(DateTime date)
+        {
+            Instant searchedInstant = _instants.LastOrDefault(x => x.inXSDDateTime <= date);
+            if (searchedInstant == null)
+            {
+                Debug.LogWarning($"No instant found for date {date}. Returning the first instant.");
+                searchedInstant = _instants.FirstOrDefault();
+            }
+            return searchedInstant;
+        }
+
         public static async Task RetrieveSceneFromEndpoint(Instant instant)
         {
             var stopwatch = System.Diagnostics.Stopwatch.StartNew();
