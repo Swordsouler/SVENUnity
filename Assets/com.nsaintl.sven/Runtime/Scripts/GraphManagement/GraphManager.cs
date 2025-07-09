@@ -133,7 +133,6 @@ namespace Sven.GraphManagement
 
         public static async Task ApplyRulesAsync()
         {
-            return;
             if (_instance == null) throw new InvalidOperationException("Graph instance is not initialized.");
 
             Graph ontologyGraph = new();
