@@ -72,11 +72,11 @@ namespace Sven.Context
             IUriNode userNode = GraphManager.CreateUriNode(":" + UUID);
 
             GraphManager.Assert(new Triple(userNode, GraphManager.CreateUriNode("rdf:type"), GraphManager.CreateUriNode("sven:User")));
-            if (pointOfView != null) GraphManager.Assert(new Triple(userNode, GraphManager.CreateUriNode("sven:pointOfView"), GraphManager.CreateUriNode("sven:" + pointOfView.GetComponent<SemantizationCore>().GetUUID())));
-            if (graspArea != null) GraphManager.Assert(new Triple(userNode, GraphManager.CreateUriNode("sven:graspArea"), GraphManager.CreateUriNode("sven:" + graspArea.GetComponent<SemantizationCore>().GetUUID())));
+            if (pointOfView != null) GraphManager.Assert(new Triple(userNode, GraphManager.CreateUriNode("sven:pointOfView"), GraphManager.CreateUriNode(":" + pointOfView.GetComponent<SemantizationCore>().GetUUID())));
+            if (graspArea != null) GraphManager.Assert(new Triple(userNode, GraphManager.CreateUriNode("sven:graspArea"), GraphManager.CreateUriNode(":" + graspArea.GetComponent<SemantizationCore>().GetUUID())));
             if (pointers != null)
                 foreach (Pointer pointer in pointers)
-                    GraphManager.Assert(new Triple(userNode, GraphManager.CreateUriNode("sven:pointer"), GraphManager.CreateUriNode("sven:" + pointer.GetComponent<SemantizationCore>().GetUUID())));
+                    GraphManager.Assert(new Triple(userNode, GraphManager.CreateUriNode("sven:pointer"), GraphManager.CreateUriNode(":" + pointer.GetComponent<SemantizationCore>().GetUUID())));
         }
 
         public void OnDestroy()

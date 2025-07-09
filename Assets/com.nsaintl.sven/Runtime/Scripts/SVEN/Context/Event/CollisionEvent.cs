@@ -37,8 +37,8 @@ namespace Sven.Context
         public new IUriNode Semanticize()
         {
             IUriNode eventNode = base.Semanticize();
-            GraphManager.Assert(new Triple(eventNode, GraphManager.CreateUriNode("sven:sender"), GraphManager.CreateUriNode("sven:" + _senderUUID)));
-            GraphManager.Assert(new Triple(eventNode, GraphManager.CreateUriNode("sven:receiver"), GraphManager.CreateUriNode("sven:" + _receiverUUID)));
+            GraphManager.Assert(new Triple(eventNode, GraphManager.CreateUriNode("sven:sender"), GraphManager.CreateUriNode(":" + _senderUUID)));
+            GraphManager.Assert(new Triple(eventNode, GraphManager.CreateUriNode("sven:receiver"), GraphManager.CreateUriNode(":" + _receiverUUID)));
             return eventNode;
         }
     }

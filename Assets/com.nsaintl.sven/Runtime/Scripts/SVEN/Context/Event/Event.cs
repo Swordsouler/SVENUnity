@@ -61,7 +61,7 @@ namespace Sven.Context
             IUriNode eventNode = UriNode;
             GraphManager.Assert(new Triple(eventNode, GraphManager.CreateUriNode("rdf:type"), GraphManager.CreateUriNode($"sven:{GetType().Name}")));
             GraphManager.Assert(new Triple(eventNode, GraphManager.CreateUriNode("sven:hasTemporalExtent"), _interval.Semanticize()));
-            if (_user != null) GraphManager.Assert(new Triple(GraphManager.CreateUriNode("sven:" + _user.UUID), GraphManager.CreateUriNode("sven:perform"), eventNode));
+            if (_user != null) GraphManager.Assert(new Triple(GraphManager.CreateUriNode(":" + _user.UUID), GraphManager.CreateUriNode("sven:perform"), eventNode));
             return eventNode;
         }
     }
