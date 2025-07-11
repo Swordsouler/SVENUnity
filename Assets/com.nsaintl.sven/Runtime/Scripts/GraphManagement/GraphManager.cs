@@ -289,22 +289,6 @@ WHERE {
             _instance.LoadFromFile(absolutePath);
         }
 
-        public static async Task<SparqlResultSet> QueryAsync(string query, bool withReasoning)
-        {
-            if (string.IsNullOrEmpty(query)) throw new ArgumentNullException(nameof(query) + " is null or empty.");
-            if (withReasoning) await ApplyRulesAsync();
-            SparqlQueryParser parser = new();
-            SparqlQuery sparqlQuery = parser.ParseFromString(query) ?? throw new InvalidOperationException("Failed to parse SPARQL query.");
-            try
-            {
-                return _instance.ExecuteQuery(sparqlQuery) as SparqlResultSet;
-            }
-            catch (RdfQueryException ex)
-            {
-                throw new InvalidOperationException($"SPARQL query execution failed: {ex.Message}", ex);
-            }
-        }
-
 
         #region Time Management
 
@@ -459,7 +443,7 @@ WHERE {{
             LoadInstants(results);
         }
 
-        private static string RetrieveInstantQueryTime(Instant instant, bool withFrom)
+        public static string RetrieveIntervalQuery(Instant instant)
         {
             return SvenSettings.UseInside ?
                 $"?interval time:inside <{instant.UriNode}> ." :
@@ -516,7 +500,7 @@ WHERE {{
         ?propertyNestedName rdfs:subPropertyOf sven:propertyData .
         FILTER(?propertyNestedName != sven:propertyData)
     }}
-    {RetrieveInstantQueryTime(instant, withFrom)}
+    {RetrieveIntervalQuery(instant)}
 }}";
         }
 
