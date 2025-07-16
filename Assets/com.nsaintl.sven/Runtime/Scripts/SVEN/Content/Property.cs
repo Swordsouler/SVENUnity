@@ -78,7 +78,7 @@ namespace Sven.Content
             /// <summary>
             /// The callback to invoke when any of the observed properties change.
             /// </summary>
-            public List<Action> Callbacks = new();
+            public Action<IUriNode> Callback;
 
             /// <summary>
             /// The last known values of the observed properties.
@@ -95,14 +95,15 @@ namespace Sven.Content
         /// Initializes a new instance of the <see cref="PropertyObserver"/> class.
         /// </summary>
         /// <param name="getter">A function that returns the value of the property to observe.</param>
-        public Property(string name, Func<object> getter, string simplifiedName = "")
+        public Property(string name, Func<object> getter, Action<IUriNode> callback = null, string simplifiedName = "")
         {
             this.name = name;
             this.simplifiedName = simplifiedName;
             observedProperty = new ObservedProperty
             {
                 Getter = getter,
-                LastValue = null
+                LastValue = null,
+                Callback = callback
             };
         }
 
@@ -243,22 +244,30 @@ namespace Sven.Content
             IUriNode intervalNode = interval.Semanticize();
             GraphManager.Assert(new Triple(propertyNode, GraphManager.CreateUriNode("sven:hasTemporalExtent"), intervalNode));
 
-            Dictionary<string, object> values = observedProperty.LastValue.GetSemantizableValues();
-            foreach (KeyValuePair<string, object> value in values)
+            if (observedProperty.Callback != null)
             {
-                string stringValue = value.Value.ToRdfString();
-                string XmlSchemaDataType = value.Value.GetXmlSchemaTypes();
-                if (XmlSchemaDataType == XmlSpecsHelper.XmlSchemaDataTypeBoolean) stringValue = stringValue.ToLower();
-                ILiteralNode literalNode = GraphManager.CreateLiteralNode(stringValue, new Uri(XmlSchemaDataType));
-                GraphManager.Assert(new Triple(propertyNode, GraphManager.CreateUriNode(value.Key.Contains(":") ? value.Key : "sven:" + value.Key), literalNode));
-
-                if (simplifiedName != "")
+                observedProperty.Callback(propertyNode);
+            }
+            else
+            {
+                Dictionary<string, object> values = observedProperty.LastValue.GetSemantizableValues();
+                foreach (KeyValuePair<string, object> value in values)
                 {
-                    string simplifiedType = value.Key == "value" ? "" : value.Key.ToUpper();
-                    Triple triple = new(ParentObjectNode, GraphManager.CreateUriNode("sven:" + simplifiedName + simplifiedType), literalNode);
-                    GraphManager.Assert(triple);
-                    GraphManager.Assert(new Triple(GraphManager.CreateTripleNode(triple), GraphManager.CreateUriNode("sven:hasTemporalExtent"), intervalNode));
+                    string stringValue = value.Value.ToRdfString();
+                    string XmlSchemaDataType = value.Value.GetXmlSchemaTypes();
+                    if (XmlSchemaDataType == XmlSpecsHelper.XmlSchemaDataTypeBoolean) stringValue = stringValue.ToLower();
+                    ILiteralNode literalNode = GraphManager.CreateLiteralNode(stringValue, new Uri(XmlSchemaDataType));
+                    GraphManager.Assert(new Triple(propertyNode, GraphManager.CreateUriNode(value.Key.Contains(":") ? value.Key : "sven:" + value.Key), literalNode));
+
+                    if (simplifiedName != "")
+                    {
+                        string simplifiedType = value.Key == "value" ? "" : value.Key.ToUpper();
+                        Triple triple = new(ParentObjectNode, GraphManager.CreateUriNode("sven:" + simplifiedName + simplifiedType), literalNode);
+                        GraphManager.Assert(triple);
+                        GraphManager.Assert(new Triple(GraphManager.CreateTripleNode(triple), GraphManager.CreateUriNode("sven:hasTemporalExtent"), intervalNode));
+                    }
                 }
+
             }
         }
 

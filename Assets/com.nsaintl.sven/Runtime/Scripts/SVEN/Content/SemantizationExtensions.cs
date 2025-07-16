@@ -165,7 +165,7 @@ namespace Sven.Content
                 foreach (Delegate del in MapppedComponents.GetValue(type).Properties)
                 {
                     ComponentProperty propertyDescription = del.DynamicInvoke(component) as ComponentProperty;
-                    properties.Add(new Property(propertyDescription.PredicateName, propertyDescription.Getter, propertyDescription.SimplifiedName));
+                    properties.Add(new Property(propertyDescription.PredicateName, propertyDescription.Getter, propertyDescription.OnSemanticize, propertyDescription.SimplifiedName));
                 }
                 return properties;
             }
