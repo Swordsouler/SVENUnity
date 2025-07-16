@@ -21,7 +21,7 @@ namespace Sven.Editor
         private readonly Dictionary<string, Vector2> ontologiesScrollPosition = new();
         private readonly Dictionary<string, bool> ontologiesIsShown = new();
 
-        [MenuItem("Window/SVEN/Settings")]
+        [MenuItem("Window/SVEN Settings")]
         public static void ShowWindow()
         {
             GetWindow<SvenSettingsWindow>("SVEN Settings");
