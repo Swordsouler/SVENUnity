@@ -9,7 +9,7 @@ namespace Sven.Content
 {
     public interface IComponentMapping
     {
-        public abstract string SemanticTypeName { get; }
+        public static string SemanticTypeName => throw new NotImplementedException();
         public static ComponentMapping ComponentMapping() => throw new NotImplementedException();
         public static Type GetType(string semanticTypeName)
         {
