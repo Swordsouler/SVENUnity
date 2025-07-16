@@ -81,15 +81,26 @@ namespace Sven.GraphManagement
             return DecodeGraph(_instance);
         }
 
+        public static async Task Reload()
+        {
+            Clear();
+            await LoadOntologiesAsync();
+            SetBaseUri(SvenSettings.BaseUri);
+            SetNamespace("", SvenSettings.BaseUri);
+            SetAuthenticationHeaderValue(SvenSettings.Username, SvenSettings.Password);
+        }
+
         public static void SetBaseUri(string baseUri)
         {
             if (string.IsNullOrEmpty(baseUri)) throw new ArgumentNullException(nameof(baseUri) + " is null or empty.");
+            if (_instance == null) throw new InvalidOperationException("Graph instance is not initialized.");
             _instance.BaseUri = new Uri(baseUri);
         }
 
         public static void SetNamespace(string prefix, string uri)
         {
             if (string.IsNullOrEmpty(uri)) throw new ArgumentNullException(nameof(uri) + " is null or empty.");
+            if (_instance == null) throw new InvalidOperationException("Graph instance is not initialized.");
             _instance.NamespaceMap.AddNamespace(prefix, UriFactory.Create(uri));
         }
 

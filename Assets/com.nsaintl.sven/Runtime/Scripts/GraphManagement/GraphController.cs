@@ -2,9 +2,7 @@
 // Author: Nicolas SAINT-LÉGER
 // Licensed under the MIT License. See LICENSE file in the project root for full license information.
 
-using NaughtyAttributes;
 using Sven.Content;
-using Sven.Utils;
 using System.Threading;
 using System.Threading.Tasks;
 using UnityEngine;
@@ -13,34 +11,10 @@ namespace Sven.GraphManagement
 {
     public class GraphController : MonoBehaviour
     {
-        [ShowNativeProperty] private string BaseUri => "https://sven.lisn.upsaclay.fr/ve/" + _graphName + "/";
-        [SerializeField] private string _graphName = "Default";
-        public string GraphName
-        {
-            get => _graphName;
-            set
-            {
-                if (string.IsNullOrEmpty(value)) return;
-                if (_graphName == value) return;
-                _graphName = value;
-                GraphManager.SetBaseUri(BaseUri);
-                GraphManager.SetNamespace("", BaseUri);
-            }
-        }
-
         private void Awake()
         {
-            Load();
-        }
-
-        private async void Load()
-        {
             if (GraphManager.Count != 0) return;
-            GraphManager.Clear();
-            await GraphManager.LoadOntologiesAsync();
-            GraphManager.SetBaseUri(BaseUri);
-            GraphManager.SetNamespace("", BaseUri);
-            GraphManager.SetAuthenticationHeaderValue(SvenSettings.Username, SvenSettings.Password);
+            _ = GraphManager.Reload();
         }
 
         public async Task SaveGraph()

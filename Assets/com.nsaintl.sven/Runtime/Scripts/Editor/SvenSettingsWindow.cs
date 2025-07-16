@@ -98,6 +98,22 @@ namespace Sven.Editor
                 refresh = true;
             }
 
+            string graphName = SvenSettings.GraphName;
+            string newGraphName = EditorGUILayout.TextField("Graph Name", graphName);
+            if (newGraphName != graphName)
+            {
+                SvenSettings.GraphName = newGraphName;
+                EditorPrefs.SetString(SvenSettings._graphNameKey, newGraphName);
+                refresh = true;
+            }
+
+            string baseUri = SvenSettings.BaseUri;
+            EditorGUILayout.LabelField("Base URI", baseUri);
+            if (GUILayout.Button("Copy Base URI"))
+            {
+                EditorGUIUtility.systemCopyBuffer = baseUri;
+            }
+
             string username = SvenSettings.Username;
             string newUsername = EditorGUILayout.TextField("Username", username);
             if (newUsername != username)

@@ -1363,6 +1363,7 @@ MonoBehaviour:
   downloadingActivityIndicator: {fileID: 155265817}
   sendingActivityIndicator: {fileID: 946481031}
   demoCharacterController: {fileID: 1166260532}
+  graphController: {fileID: 0}
 --- !u!224 &524818015 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 5538794639552533895, guid: 7e5758373b1b0054587577e1ed05fac4, type: 3}
@@ -3726,7 +3727,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3f76f747641578c40a97142e96baae7a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _graphName: Default
 --- !u!1 &1687359902
 GameObject:
   m_ObjectHideFlags: 0

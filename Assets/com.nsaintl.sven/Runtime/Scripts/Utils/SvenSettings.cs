@@ -7,6 +7,10 @@ using System;
 using System.Linq;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using NaughtyAttributes;
+
+using Sven.GraphManagement;
+
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
@@ -188,6 +192,26 @@ namespace Sven.Utils
         public static readonly string _ontologiesKey = "SVEN_Ontologies";
         #endregion
 
+        #region BaseUri
+
+
+        [ShowNativeProperty] public static string BaseUri => "https://sven.lisn.upsaclay.fr/ve/" + _graphName + "/";
+        [SerializeField] private static string _graphName = "Default";
+        public static readonly string _graphNameKey = "SVEN_GraphName";
+        public static string GraphName
+        {
+            get => _graphName;
+            set
+            {
+                if (string.IsNullOrEmpty(value)) return;
+                if (_graphName == value) return;
+                _graphName = value;
+                GraphManager.SetBaseUri(BaseUri);
+                GraphManager.SetNamespace("", BaseUri);
+            }
+        }
+
+        #endregion
 
 #if UNITY_EDITOR
         public static void RefreshConfig()
@@ -204,6 +228,7 @@ namespace Sven.Utils
                 _password = EditorPrefs.GetString(_passwordKey, Password);
                 _semanticizeFrequency = EditorPrefs.GetInt(_semanticizeFrequencyKey, SemanticizeFrequency);
                 _ontologies = Ontologies;
+                _graphName = EditorPrefs.GetString(_graphNameKey, GraphName);
             }
             catch { }
         }
