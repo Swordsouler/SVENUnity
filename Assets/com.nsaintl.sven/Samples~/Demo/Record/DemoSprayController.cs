@@ -11,6 +11,8 @@ namespace Sven.Demo
 {
     public class DemoSprayController : MonoBehaviour, IComponentMapping
     {
+        public string SemanticTypeName => "sven:Spray";
+
         public static ComponentMapping ComponentMapping()
         {
             return new("Spray",

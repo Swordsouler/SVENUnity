@@ -8,6 +8,7 @@ namespace Sven.Content
 {
     public interface IComponentMapping
     {
+        public abstract string SemanticTypeName { get; }
         public static ComponentMapping ComponentMapping() => throw new NotImplementedException();
     }
 }
