@@ -188,15 +188,6 @@ namespace Sven.Multimodality
                     annotator.Annotations.AddRange(finalSelectedAnnotations);
                     EditorUtility.SetDirty(annotator);
                 }
-
-                // Use delayCall to rebuild the inspector, which will close the MaskField popup.
-                EditorApplication.delayCall += () =>
-                {
-                    if (targets.All(t => t != null))
-                    {
-                        ActiveEditorTracker.sharedTracker.ForceRebuild();
-                    }
-                };
             }
 
             if (GUILayout.Button("Refresh annotations"))
