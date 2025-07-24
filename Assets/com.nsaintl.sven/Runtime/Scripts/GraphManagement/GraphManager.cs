@@ -408,7 +408,6 @@ WHERE {
                     if (SvenSettings.Debug) Debug.Log($"Graph query: {query}");
                     return _instance.ExecuteQuery(query) as SparqlResultSet;
                 });
-                Debug.Log(result.Count);
                 return result;
             }
             catch (RdfQueryException ex)
