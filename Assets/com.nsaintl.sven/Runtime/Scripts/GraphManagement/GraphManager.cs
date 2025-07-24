@@ -183,7 +183,7 @@ namespace Sven.GraphManagement
             {
                 StaticRdfsReasoner reasoner = new();
                 reasoner.Initialise(ontologyGraph);
-                reasoner.Apply(_instance);
+                reasoner.Apply(_instance, _instance);
             }
             catch (Exception ex)
             {
