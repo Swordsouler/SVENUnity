@@ -147,25 +147,24 @@ namespace Sven.GraphManagement
             if (_instance == null) throw new InvalidOperationException("Graph instance is not initialized.");
 
             Graph ontologyGraph = new();
-            StaticRdfsReasoner reasoner = new();
             foreach (var ontology in _ontologies)
             {
                 try
                 {
 #if UNITY_WEBGL && !UNITY_EDITOR
-            using (UnityEngine.Networking.UnityWebRequest request = UnityEngine.Networking.UnityWebRequest.Get(ontology.Value))
-            {
-                await request.SendWebRequest();
-                if (request.result != UnityEngine.Networking.UnityWebRequest.Result.Success)
-                    throw new Exception("Failed to load ontology: " + request.error);
+                    using (UnityEngine.Networking.UnityWebRequest request = UnityEngine.Networking.UnityWebRequest.Get(ontology.Value))
+                    {
+                        await request.SendWebRequest();
+                        if (request.result != UnityEngine.Networking.UnityWebRequest.Result.Success)
+                            throw new Exception("Failed to load ontology: " + request.error);
 
-                string ttlContent = request.downloadHandler.text;
-                TurtleParser turtleParser = new();
-                using (var reader = new System.IO.StringReader(ttlContent))
-                {
-                    turtleParser.Load(ontologyGraph, reader);
-                }
-            }
+                        string ttlContent = request.downloadHandler.text;
+                        TurtleParser turtleParser = new();
+                        using (var reader = new System.IO.StringReader(ttlContent))
+                        {
+                            turtleParser.Load(ontologyGraph, reader);
+                        }
+                    }
 #else
                     await Task.Run(() =>
                     {
@@ -173,13 +172,22 @@ namespace Sven.GraphManagement
                         turtleParser.Load(ontologyGraph, ontology.Value);
                     });
 #endif
-                    reasoner.Initialise(ontologyGraph);
-                    reasoner.Apply(_instance);
                 }
                 catch (Exception ex)
                 {
                     throw new InvalidOperationException($"Failed to load ontology \"{ontology.Key}\": {ex.Message}", ex);
                 }
+            }
+
+            try
+            {
+                StaticRdfsReasoner reasoner = new();
+                reasoner.Initialise(ontologyGraph);
+                reasoner.Apply(_instance);
+            }
+            catch (Exception ex)
+            {
+                throw new InvalidOperationException($"Failed to apply reasoning rules: {ex.Message}", ex);
             }
         }
 
