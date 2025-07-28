@@ -142,7 +142,7 @@ namespace Sven.GraphManagement
                 await LoadOntologyAsync(ontology.Key, ontology.Value);
         }
 
-        public static async Task ApplyRulesAsync()
+        public static async Task<Graph> GetInferredGraphAsync()
         {
             if (_instance == null) throw new InvalidOperationException("Graph instance is not initialized.");
 
@@ -179,19 +179,20 @@ namespace Sven.GraphManagement
                 }
             }
 
+            // inferred graph is a copy of _instance with inferrences applied
+            Graph inferredGraph = new();
             try
             {
                 StaticRdfsReasoner reasoner = new();
                 reasoner.Initialise(ontologyGraph);
-                reasoner.Apply(_instance, _instance);
-                //Graph inferredGraph = new();
-                //reasoner.Apply(_instance, inferredGraph);
-                //_instance.Merge(inferredGraph);
+                reasoner.Apply(_instance, inferredGraph);
+                _instance.Merge(inferredGraph);
             }
             catch (Exception ex)
             {
                 throw new InvalidOperationException($"Failed to apply reasoning rules: {ex.Message}", ex);
             }
+            return inferredGraph;
         }
 
         public static void SaveToFile(string absolutePath)
@@ -217,7 +218,7 @@ namespace Sven.GraphManagement
             if (!Uri.IsWellFormedUriString(endpointUrl, UriKind.Absolute)) throw new ArgumentException("The endpoint URL is not valid.", nameof(endpointUrl));
 
             MimeTypeDefinition writerMimeTypeDefinition = MimeTypesHelper.GetDefinitions("application/x-turtle").First();
-            string turtleContent = DecodeGraph();
+            string turtleContent = DecodeGraph(await GetInferredGraphAsync());
             string serviceUrl = $"{endpointUrl}/rdf-graphs/service?graph={Uri.EscapeDataString(_instance.BaseUri.AbsoluteUri)}";
             try
             {
@@ -407,16 +408,19 @@ WHERE {
 #endif
         }
 
-        public static async Task<SparqlResultSet> QueryMemoryAsync(string query)
+        public static async Task<SparqlResultSet> QueryMemoryAsync(string query, bool withInference)
         {
             if (string.IsNullOrEmpty(query)) throw new ArgumentNullException(nameof(query) + " is null or empty.");
             SparqlQueryParser parser = new();
             SparqlQuery sparqlQuery = parser.ParseFromString(query) ?? throw new InvalidOperationException("Failed to parse SPARQL query.");
             try
             {
-                SparqlResultSet result = await Task.Run(() =>
+                SparqlResultSet result = await Task.Run(async () =>
                 {
                     if (SvenSettings.Debug) Debug.Log($"Graph query: {query}");
+                    Graph queryGraph = withInference ?
+                            await GetInferredGraphAsync() :
+                            _instance;
                     return _instance.ExecuteQuery(query) as SparqlResultSet;
                 });
                 return result;
@@ -673,7 +677,7 @@ WHERE {{
 
             stopwatch.Restart();
             //await ApplyRulesAsync();
-            SparqlResultSet results = await QueryMemoryAsync(RetrieveSceneQuery(instant, false));
+            SparqlResultSet results = await QueryMemoryAsync(RetrieveSceneQuery(instant, false), false);
             stopwatch.Stop();
             double queryMemoryElapsed = stopwatch.ElapsedMilliseconds;
 

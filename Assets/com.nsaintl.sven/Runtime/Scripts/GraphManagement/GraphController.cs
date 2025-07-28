@@ -30,7 +30,6 @@ namespace Sven.GraphManagement
 #if !UNITY_WEBGL || UNITY_EDITOR
             });
 #endif
-            await GraphManager.ApplyRulesAsync();
             await GraphManager.SaveToEndpoint();
         }
 
