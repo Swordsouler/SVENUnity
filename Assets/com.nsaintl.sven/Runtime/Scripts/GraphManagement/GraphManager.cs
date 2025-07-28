@@ -425,7 +425,7 @@ WHERE {
                     Graph queryGraph = withInference ?
                             await GetInferredGraphAsync() :
                             _instance;
-                    return _instance.ExecuteQuery(query) as SparqlResultSet;
+                    return queryGraph.ExecuteQuery(query) as SparqlResultSet;
                 });
                 return result;
             }
