@@ -186,7 +186,7 @@ namespace Sven.GraphManagement
                 StaticRdfsReasoner reasoner = new();
                 reasoner.Initialise(ontologyGraph);
                 reasoner.Apply(_instance, inferredGraph);
-                _instance.Merge(inferredGraph);
+                //_instance.Merge(inferredGraph);
             }
             catch (Exception ex)
             {
