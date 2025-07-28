@@ -179,14 +179,18 @@ namespace Sven.GraphManagement
                 }
             }
 
-            // inferred graph is a copy of _instance with inferrences applied
-            Graph inferredGraph = new();
+            Graph inferredGraph = new()
+            {
+                BaseUri = _instance.BaseUri
+            };
+            inferredGraph.NamespaceMap.Import(_instance.NamespaceMap);
+            foreach (var triple in _instance.Triples.ToList())
+                inferredGraph.Assert(triple);
             try
             {
                 StaticRdfsReasoner reasoner = new();
                 reasoner.Initialise(ontologyGraph);
-                reasoner.Apply(_instance, inferredGraph);
-                //_instance.Merge(inferredGraph);
+                reasoner.Apply(inferredGraph);
             }
             catch (Exception ex)
             {
