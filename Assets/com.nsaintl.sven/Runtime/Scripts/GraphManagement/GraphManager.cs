@@ -32,7 +32,17 @@ namespace Sven.GraphManagement
     public static class GraphManager
     {
         private static readonly Graph _instance = new();
-        public static int Count => _instance.Triples.Count;
+        private static readonly object _graphLock = new();
+        public static int Count
+        {
+            get
+            {
+                lock (_graphLock)
+                {
+                    return _instance.Triples.Count;
+                }
+            }
+        }
         private static readonly Dictionary<string, string> _ontologies = new();
         private static readonly List<Instant> _instants = new();
         private static AuthenticationHeaderValue _authenticationHeaderValue = null;
@@ -40,7 +50,16 @@ namespace Sven.GraphManagement
         public static DateTime EndedAt => _instants.Count > 0 ? _instants[^1].inXSDDateTime : DateTime.Now;
         public static float Duration => (float)(EndedAt - StartedAt).TotalSeconds;
         public static Instant CurrentInstantLoaded { get; private set; } = null;
-        public static string BaseUri => _instance.BaseUri?.AbsoluteUri ?? string.Empty;
+        public static string BaseUri
+        {
+            get
+            {
+                lock (_graphLock)
+                {
+                    return _instance.BaseUri?.AbsoluteUri ?? string.Empty;
+                }
+            }
+        }
         public static string GraphName => BaseUri.Split("/")[^2];
         public static bool IsGraphInitialized => HasNamespace("sven");
 
@@ -54,11 +73,17 @@ namespace Sven.GraphManagement
         public static bool HasNamespace(string prefix)
         {
             if (string.IsNullOrEmpty(prefix)) throw new ArgumentNullException(nameof(prefix) + " is null or empty.");
-            return _instance.NamespaceMap.HasNamespace(prefix);
+            lock (_graphLock)
+            {
+                return _instance.NamespaceMap.HasNamespace(prefix);
+            }
         }
         public static void Clear()
         {
-            _instance.Clear();
+            lock (_graphLock)
+            {
+                _instance.Clear();
+            }
             _ontologies.Clear();
             _instants.Clear();
         }
@@ -78,7 +103,10 @@ namespace Sven.GraphManagement
         }
         public static string DecodeGraph()
         {
-            return DecodeGraph(_instance);
+            lock (_graphLock)
+            {
+                return DecodeGraph(_instance);
+            }
         }
 
         public static async Task Reload()
@@ -94,14 +122,20 @@ namespace Sven.GraphManagement
         {
             if (string.IsNullOrEmpty(baseUri)) throw new ArgumentNullException(nameof(baseUri) + " is null or empty.");
             if (_instance == null) throw new InvalidOperationException("Graph instance is not initialized.");
-            _instance.BaseUri = new Uri(baseUri);
+            lock (_graphLock)
+            {
+                _instance.BaseUri = new Uri(baseUri);
+            }
         }
 
         public static void SetNamespace(string prefix, string uri)
         {
             if (string.IsNullOrEmpty(uri)) throw new ArgumentNullException(nameof(uri) + " is null or empty.");
             if (_instance == null) throw new InvalidOperationException("Graph instance is not initialized.");
-            _instance.NamespaceMap.AddNamespace(prefix, UriFactory.Create(uri));
+            lock (_graphLock)
+            {
+                _instance.NamespaceMap.AddNamespace(prefix, UriFactory.Create(uri));
+            }
         }
 
         public static async Task LoadOntologyAsync(string ontologyName, string ontologyFileName)
@@ -121,14 +155,20 @@ namespace Sven.GraphManagement
                 TurtleParser turtleParser = new();
                 using (var reader = new System.IO.StringReader(ttlContent))
                 {
-                    turtleParser.Load(_instance, reader);
+                    lock (_graphLock)
+                    {
+                        turtleParser.Load(_instance, reader);
+                    }
                 }
             }
 #else
             await Task.Run(() =>
             {
                 TurtleParser turtleParser = new();
-                turtleParser.Load(_instance, ontologyFileName);
+                lock (_graphLock)
+                {
+                    turtleParser.Load(_instance, ontologyFileName);
+                }
             });
 #endif
             _ontologies.Add(ontologyName, ontologyFileName);
@@ -181,11 +221,16 @@ namespace Sven.GraphManagement
 
             Graph inferredGraph = new()
             {
-                BaseUri = _instance.BaseUri
+                BaseUri = null
             };
-            inferredGraph.NamespaceMap.Import(_instance.NamespaceMap);
-            foreach (var triple in _instance.Triples.ToList())
-                inferredGraph.Assert(triple);
+            lock (_graphLock)
+            {
+                inferredGraph.BaseUri = _instance.BaseUri;
+                inferredGraph.NamespaceMap.Import(_instance.NamespaceMap);
+                var triplesCopy = _instance.Triples.ToList();
+                foreach (var triple in triplesCopy)
+                    inferredGraph.Assert(triple);
+            }
             try
             {
                 StaticRdfsReasoner reasoner = new();
@@ -205,7 +250,11 @@ namespace Sven.GraphManagement
             if (!System.IO.Path.IsPathRooted(absolutePath)) throw new ArgumentException("The path must be absolute.", nameof(absolutePath));
             try
             {
-                string turtleContent = DecodeGraph();
+                string turtleContent;
+                lock (_graphLock)
+                {
+                    turtleContent = DecodeGraph(_instance);
+                }
                 File.WriteAllText(absolutePath, turtleContent, Encoding.UTF8);
             }
             catch (Exception ex)
@@ -223,7 +272,7 @@ namespace Sven.GraphManagement
 
             MimeTypeDefinition writerMimeTypeDefinition = MimeTypesHelper.GetDefinitions("application/x-turtle").First();
             string turtleContent = DecodeGraph(await GetInferredGraphAsync());
-            string serviceUrl = $"{endpointUrl}/rdf-graphs/service?graph={Uri.EscapeDataString(_instance.BaseUri.AbsoluteUri)}";
+            string serviceUrl = $"{endpointUrl}/rdf-graphs/service?graph={Uri.EscapeDataString(BaseUri)}";
             try
             {
 #if !UNITY_WEBGL || UNITY_EDITOR
@@ -296,14 +345,17 @@ WHERE {
                 Debug.LogWarning("No results found in the graph at the endpoint.");
                 return;
             }
-            foreach (var result in results)
+            lock (_graphLock)
             {
-                INode subject = result["s"];
-                INode predicate = result["p"];
-                INode @object = result["o"];
-                if (subject != null && predicate != null && @object != null)
+                foreach (var result in results)
                 {
-                    _instance.Assert(new Triple(subject, predicate, @object));
+                    INode subject = result["s"];
+                    INode predicate = result["p"];
+                    INode @object = result["o"];
+                    if (subject != null && predicate != null && @object != null)
+                    {
+                        _instance.Assert(new Triple(subject, predicate, @object));
+                    }
                 }
             }
         }
@@ -313,7 +365,10 @@ WHERE {
             if (string.IsNullOrEmpty(absolutePath)) throw new ArgumentNullException(nameof(absolutePath) + " is null or empty.");
             if (!System.IO.Path.IsPathRooted(absolutePath)) throw new ArgumentException("The path must be absolute.", nameof(absolutePath));
             if (!File.Exists(absolutePath)) throw new FileNotFoundException($"File not found: {absolutePath}");
-            _instance.LoadFromFile(absolutePath);
+            lock (_graphLock)
+            {
+                _instance.LoadFromFile(absolutePath);
+            }
         }
 
 
@@ -357,32 +412,47 @@ WHERE {
         public static IUriNode Assert(Triple t)
         {
             IUriNode subject = t.Subject as IUriNode ?? throw new ArgumentException("The subject of the triple must be an IUriNode.", nameof(t));
-            _instance.Assert(t);
+            lock (_graphLock)
+            {
+                _instance.Assert(t);
+            }
             return subject;
         }
 
         public static IUriNode CreateUriNode(string uri)
         {
             if (string.IsNullOrEmpty(uri)) throw new ArgumentNullException(nameof(uri) + " is null or empty.");
-            return _instance.CreateUriNode(uri);
+            lock (_graphLock)
+            {
+                return _instance.CreateUriNode(uri);
+            }
         }
 
         public static ILiteralNode CreateLiteralNode(string name)
         {
             if (string.IsNullOrEmpty(name)) name = string.Empty;
-            return _instance.CreateLiteralNode(name);
+            lock (_graphLock)
+            {
+                return _instance.CreateLiteralNode(name);
+            }
         }
 
         public static ILiteralNode CreateLiteralNode(string name, Uri uri)
         {
             if (string.IsNullOrEmpty(name)) name = string.Empty;
             if (uri == null) throw new ArgumentNullException(nameof(uri) + " is null.");
-            return _instance.CreateLiteralNode(name, uri);
+            lock (_graphLock)
+            {
+                return _instance.CreateLiteralNode(name, uri);
+            }
         }
 
         public static INode CreateTripleNode(Triple triple)
         {
-            return _instance.CreateTripleNode(triple);
+            lock (_graphLock)
+            {
+                return _instance.CreateTripleNode(triple);
+            }
         }
 
         public static async Task<SparqlResultSet> QueryEndpoint(string endpointUrl, string query)
@@ -424,8 +494,18 @@ WHERE {
                     if (SvenSettings.Debug) Debug.Log($"Graph query: {query}");
                     Graph queryGraph = withInference ?
                             await GetInferredGraphAsync() :
-                            _instance;
-                    return queryGraph.ExecuteQuery(query) as SparqlResultSet;
+                            null;
+                    if (withInference)
+                    {
+                        return queryGraph.ExecuteQuery(query) as SparqlResultSet;
+                    }
+                    else
+                    {
+                        lock (_graphLock)
+                        {
+                            return _instance.ExecuteQuery(query) as SparqlResultSet;
+                        }
+                    }
                 });
                 return result;
             }
