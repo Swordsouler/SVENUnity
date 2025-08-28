@@ -17,7 +17,7 @@ namespace Sven.GraphManagement
             _ = GraphManager.Reload();
         }
 
-        public async Task SaveGraph()
+        public async Task SaveGraphToEndpoint()
         {
             SemantizationCore[] semantizationCores = FindObjectsByType<SemantizationCore>(FindObjectsSortMode.None);
             SynchronizationContext context = SynchronizationContext.Current;
@@ -33,9 +33,40 @@ namespace Sven.GraphManagement
             await GraphManager.SaveToEndpoint();
         }
 
+        public async Task SaveGraphToFile()
+        {
+            SemantizationCore[] semantizationCores = FindObjectsByType<SemantizationCore>(FindObjectsSortMode.None);
+            SynchronizationContext context = SynchronizationContext.Current;
+#if !UNITY_WEBGL || UNITY_EDITOR
+            await Task.Run(() =>
+            {
+#endif
+                foreach (SemantizationCore semantizationCore in semantizationCores)
+                    context.Send(_ => semantizationCore.OnDestroy(), null);
+#if !UNITY_WEBGL || UNITY_EDITOR
+            });
+#endif
+            // save to streaming assets persistent data path
+            string path = Application.streamingAssetsPath;
+            GraphManager.SaveToFile(path);
+        }
+
         public async void SaveAndQuitGraph()
         {
-            await SaveGraph();
+            await SaveGraphToEndpoint();
+            await SaveGraphToFile();
+            GraphManager.Clear();
+        }
+
+        public async void SaveAndQuitGraphToEndpoint()
+        {
+            await SaveGraphToEndpoint();
+            GraphManager.Clear();
+        }
+
+        public async void SaveAndQuitGraphToFile()
+        {
+            await SaveGraphToFile();
             GraphManager.Clear();
         }
     }
