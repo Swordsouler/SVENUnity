@@ -17,12 +17,12 @@ Unity **2022.3** or later versions.
 
 ## Installation
 
-1. The package is available in **Releases** section. You can download the latest version from [here](https://gitlab.lisn.upsaclay.fr/nsaintl/SVENUnity/-/releases/permalink/latest), then import it into your Unity project.
+1. The package is available in **Releases** section. You can download the latest version from [here](https://github.com/Swordsouler/SVENUnity/releases/latest), then import it into your Unity project.
 
 2. You can also install via git url by adding this entry in your **Packages/manifest.json**
 
 ```
-"com.nsaintl.sven": "https://gitlab.lisn.upsaclay.fr/nsaintl/SVENUnity.git#upm"
+"com.nsaintl.sven": "https://github.com/Swordsouler/SVENUnity.git#upm"
 ```
 
 If you don't have openUPM CLI, you will need to install it first by following the instructions [here](https://openupm.com/docs/getting-started.html), or by adding this entry in your **Packages/manifest.json**. This step is important, otherwise the dependencies will not install properly.
