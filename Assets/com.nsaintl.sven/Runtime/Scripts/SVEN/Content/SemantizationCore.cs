@@ -232,6 +232,11 @@ namespace Sven.Content
             }
         }
 
+        public void Destroy()
+        {
+            Destroy(gameObject);
+        }
+
         #endregion
     }
 }
