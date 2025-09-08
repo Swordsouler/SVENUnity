@@ -145,6 +145,30 @@ namespace Sven.Utils
         public static readonly string _semanticizeFrequencyKey = "SVEN_SemanticizeFrequency";
         #endregion
 
+        #region BufferSize
+        public static int BufferSize
+        {
+            get
+            {
+                if (10000 < _bufferSize && _bufferSize <= 100000) return _bufferSize;
+                string argsBufferSize = Environment.GetCommandLineArgs().FirstOrDefault(arg => arg.StartsWith("--buffer-size="))?.Split('=')[1];
+                if (int.TryParse(argsBufferSize, out int parsedSize) && parsedSize > 0 && parsedSize <= 60)
+                    _bufferSize = parsedSize;
+                else
+                    _bufferSize = 20000;
+                return _bufferSize;
+            }
+            set
+            {
+                if (_bufferSize == value) return;
+                if (value < 10000 || value > 100000) throw new ArgumentOutOfRangeException(nameof(value), "Buffer size must be between 10,000 and 100,000 triples.");
+                _bufferSize = value;
+            }
+        }
+        private static int _bufferSize = 0;
+        public static readonly string _bufferSizeKey = "SVEN_BufferSize";
+        #endregion
+
         #region Ontologies
         public static Dictionary<string, string> Ontologies
         {
@@ -192,6 +216,8 @@ namespace Sven.Utils
         public static readonly string _ontologiesKey = "SVEN_Ontologies";
         #endregion
 
+
+
         #region BaseUri
 
 
@@ -227,6 +253,7 @@ namespace Sven.Utils
                 _username = EditorPrefs.GetString(_usernameKey, Username);
                 _password = EditorPrefs.GetString(_passwordKey, Password);
                 _semanticizeFrequency = EditorPrefs.GetInt(_semanticizeFrequencyKey, SemanticizeFrequency);
+                _bufferSize = EditorPrefs.GetInt(_bufferSizeKey, BufferSize);
                 _ontologies = Ontologies;
                 _graphName = EditorPrefs.GetString(_graphNameKey, GraphName);
             }

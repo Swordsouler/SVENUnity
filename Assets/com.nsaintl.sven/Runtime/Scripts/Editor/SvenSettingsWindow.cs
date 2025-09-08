@@ -141,6 +141,15 @@ namespace Sven.Editor
                 refresh = true;
             }
 
+            int bufferSize = SvenSettings.BufferSize;
+            int newBufferSize = EditorGUILayout.IntSlider("Buffer Size (max number of triples stored locally)", bufferSize, 10000, 100000);
+            if (newBufferSize != bufferSize)
+            {
+                SvenSettings.BufferSize = newBufferSize;
+                EditorPrefs.SetInt(SvenSettings._bufferSizeKey, newBufferSize);
+                refresh = true;
+            }
+
             // ontologies
             EditorGUILayout.LabelField("Ontologies", EditorStyles.boldLabel);
             // create a copy
