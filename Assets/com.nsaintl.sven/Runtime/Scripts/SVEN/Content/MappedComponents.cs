@@ -411,7 +411,7 @@ namespace Sven.Content
             {
                 if (type.GetInterface(nameof(IComponentMapping)) == null) return;
 
-                Debug.Log($"Adding mapping for type {type.Name} with sort order {sortOrder}");
+                if (SvenSettings.Debug) Debug.Log($"Adding mapping for type {type.Name} with sort order {sortOrder}");
 
                 var method = type.GetMethod("ComponentMapping", System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static)
                     ?? throw new MissingMethodException($"Type {type.FullName} must implement a public static method 'ComponentMapping'.");

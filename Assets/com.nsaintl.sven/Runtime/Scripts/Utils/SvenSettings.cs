@@ -150,7 +150,7 @@ namespace Sven.Utils
         {
             get
             {
-                if (10000 < _bufferSize && _bufferSize <= 100000) return _bufferSize;
+                if (10000 <= _bufferSize && _bufferSize <= 100000) return _bufferSize;
                 string argsBufferSize = Environment.GetCommandLineArgs().FirstOrDefault(arg => arg.StartsWith("--buffer-size="))?.Split('=')[1];
                 if (int.TryParse(argsBufferSize, out int parsedSize) && parsedSize > 0 && parsedSize <= 60)
                     _bufferSize = parsedSize;

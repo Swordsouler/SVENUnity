@@ -22,6 +22,7 @@ using VDS.RDF.Nodes;
 using VDS.RDF.Parsing;
 using VDS.RDF.Query;
 using VDS.RDF.Query.Inference;
+using VDS.RDF.Update;
 using VDS.RDF.Writing;
 #if UNITY_WEBGL && !UNITY_EDITOR
 using UnityEngine.Networking;
@@ -33,6 +34,7 @@ namespace Sven.GraphManagement
     {
         private static readonly Graph _instance = new();
         private static readonly object _graphLock = new();
+        private static bool _isFlushing = false;
         public static int Count
         {
             get
@@ -263,6 +265,39 @@ namespace Sven.GraphManagement
             }
         }
 
+        public static async Task AddToEndpoint()
+        {
+            string endpointUrl = SvenSettings.EndpointUrl;
+            Debug.Log($"Saving graph to endpoint: {endpointUrl}");
+            if (string.IsNullOrEmpty(endpointUrl)) throw new ArgumentNullException(nameof(endpointUrl) + " is null or empty.");
+            if (!Uri.IsWellFormedUriString(endpointUrl, UriKind.Absolute)) throw new ArgumentException("The endpoint URL is not valid.", nameof(endpointUrl));
+
+            // call insert service with all the content of the graph
+            MimeTypeDefinition writerMimeTypeDefinition = MimeTypesHelper.GetDefinitions("application/x-turtle").First();
+            string turtleContent = DecodeGraph(await GetInferredGraphAsync());
+            string serviceUrl = $"{endpointUrl}/rdf-graphs/service?graph={Uri.EscapeDataString(BaseUri)}";
+            try
+            {
+                using HttpClient httpClient = new();
+                httpClient.DefaultRequestHeaders.Authorization = _authenticationHeaderValue;
+                HttpRequestMessage request = new(HttpMethod.Post, serviceUrl)
+                {
+                    Content = new StringContent(turtleContent, Encoding.UTF8, writerMimeTypeDefinition.CanonicalMimeType)
+                };
+                using HttpResponseMessage httpResponseMessage = await httpClient.SendAsync(request);
+                if (httpResponseMessage.IsSuccessStatusCode)
+                {
+                    Debug.Log("Graph added to endpoint.");
+                    return;
+                }
+                throw new Exception("Failed to add the graph to the endpoint. " + httpResponseMessage.ReasonPhrase);
+            }
+            catch (Exception ex)
+            {
+                throw new InvalidOperationException($"Failed to add graph to endpoint: {ex}", ex);
+            }
+        }
+
         public static async Task SaveToEndpoint()
         {
             string endpointUrl = SvenSettings.EndpointUrl;
@@ -415,8 +450,63 @@ WHERE {
             lock (_graphLock)
             {
                 _instance.Assert(t);
+                if (_instance.Triples.Count >= SvenSettings.BufferSize && !_isFlushing)
+                {
+                    _isFlushing = true;
+                    FlushBufferToEndpointAsync().FireAndForget();
+                }
             }
             return subject;
+        }
+
+        public static async Task FlushBufferToEndpointAsync()
+        {
+            try
+            {
+                string endpointUrl = SvenSettings.EndpointUrl;
+                if (string.IsNullOrEmpty(endpointUrl) || !Uri.IsWellFormedUriString(endpointUrl, UriKind.Absolute))
+                {
+                    Debug.LogError("L'URL du point de terminaison n'est pas valide. Impossible de vider le tampon.");
+                    return;
+                }
+
+                await AddToEndpoint();
+                Debug.Log("Buffer memory added to endpoint.");
+
+                string deleteQuery = $@"PREFIX time: <http://www.w3.org/2006/time#>
+PREFIX : <https://sven.lisn.upsaclay.fr/ontology#>
+
+DELETE {{
+    ?s ?p ?o .
+    ?interval ?ip ?io .
+    ?instant ?iip ?iio .
+}}
+WHERE {{
+    {{
+        ?s ?p ?o ;
+        	:hasTemporalExtent ?interval .
+        ?interval time:hasEnd ?end .
+        ?interval ?ip ?io .
+    }} UNION {{
+        ?instant a time:Instant .
+        ?instant ?iip ?iio .
+    	FILTER(NOT EXISTS {{ ?i time:hasEnd ?instant . }} && NOT EXISTS {{ ?i time:hasBeginning ?instant . }})
+    }}
+}}";
+
+                // call query in local memory to clear the buffer
+                await UpdateMemoryAsync(deleteQuery);
+
+                Debug.Log("Buffer cleared from memory. Now contains " + Count + " triples.");
+            }
+            catch (Exception ex)
+            {
+                Debug.LogError($"Une erreur est survenue lors du vidage du tampon vers le point de terminaison : {ex}");
+            }
+            finally
+            {
+                _isFlushing = false;
+            }
         }
 
         public static IUriNode CreateUriNode(string uri)
@@ -480,6 +570,27 @@ WHERE {
 #if !UNITY_WEBGL || UNITY_EDITOR
             });
 #endif
+        }
+
+        public static async Task UpdateMemoryAsync(string updateQuery)
+        {
+            if (string.IsNullOrEmpty(updateQuery)) throw new ArgumentNullException(nameof(updateQuery) + " is null or empty.");
+            SparqlUpdateParser parser = new();
+            SparqlUpdateCommandSet sparqlUpdate = parser.ParseFromString(updateQuery) ?? throw new InvalidOperationException("Failed to parse SPARQL update query.");
+            await Task.Run(() =>
+            {
+                // apply the update to the graph
+                lock (_graphLock)
+                {
+                    TripleStore store = new();
+                    store.Add(_instance, true);
+                    LeviathanUpdateProcessor processor = new(store, options =>
+                    {
+                        options.UpdateExecutionTimeout = 60 * 1000;
+                    });
+                    processor.ProcessCommandSet(sparqlUpdate);
+                }
+            });
         }
 
         public static async Task<SparqlResultSet> QueryMemoryAsync(string query, bool withInference)
@@ -1094,6 +1205,25 @@ WHERE {{
             results += "TotalProcessing-Max: " + processedDatas.Max(x => x.totalProcessingTime) + " ms\n";
 
             Debug.Log("Experiment results:\n" + results);
+        }
+    }
+
+    public static class TaskExtensions
+    {
+        /// <summary>
+        /// Executes a task without awaiting it, handling any exceptions that may occur.
+        /// </summary>
+        /// <param name="task">The task to execute.</param>
+        public static async void FireAndForget(this Task task)
+        {
+            try
+            {
+                await task;
+            }
+            catch (Exception e)
+            {
+                Debug.LogError($"Exception in FireAndForget task: {e}");
+            }
         }
     }
 }
