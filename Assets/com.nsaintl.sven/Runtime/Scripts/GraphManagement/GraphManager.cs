@@ -473,26 +473,46 @@ WHERE {
                 await AddToEndpoint();
                 Debug.Log("Buffer memory added to endpoint.");
 
-                string deleteQuery = $@"PREFIX time: <http://www.w3.org/2006/time#>
-PREFIX : <https://sven.lisn.upsaclay.fr/ontology#>
+                string deleteQuery = $@"PREFIX : <https://sven.lisn.upsaclay.fr/ontology#>
+PREFIX time: <http://www.w3.org/2006/time#>
 
 DELETE {{
     ?s ?p ?o .
+    ?parent ?link ?s .
     ?interval ?ip ?io .
-    ?instant ?iip ?iio .
+}} WHERE {{
+    ?s :hasTemporalExtent ?interval .
+    ?interval time:hasEnd ?end .
+    ?s ?p ?o .
+    ?parent ?link ?s .
+    ?interval ?ip ?io .
+}};
+DELETE {{
+    ?s ?p ?o .
+    ?interval ?ip ?io .
 }}
 WHERE {{
-    {{
-        ?s ?p ?o ;
-        	:hasTemporalExtent ?interval .
-        ?interval time:hasEnd ?end .
-        ?interval ?ip ?io .
-    }} UNION {{
-        ?instant a time:Instant .
-        ?instant ?iip ?iio .
-    	FILTER(NOT EXISTS {{ ?i time:hasEnd ?instant . }} && NOT EXISTS {{ ?i time:hasBeginning ?instant . }})
-    }}
-}}";
+    ?s a :CollisionEvent ;
+       ?p ?o ;
+       :hasTemporalExtent ?interval .
+    ?interval ?ip ?io .
+}};
+DELETE {{
+    ?s ?p ?o .
+    ?interval ?ip ?io .
+}} WHERE {{
+    ?s a :InputEvent ;
+       ?p ?o ;
+       :hasTemporalExtent ?interval .
+    ?interval ?ip ?io .
+}};
+DELETE {{
+    ?s ?p ?o .
+}} WHERE {{
+    ?s a time:Instant .
+    FILTER(NOT EXISTS {{ ?i time:hasEnd ?s . }} && NOT EXISTS {{ ?i time:hasBeginning ?s . }})
+    ?s ?p ?o .
+}};";
 
                 // call query in local memory to clear the buffer
                 await UpdateMemoryAsync(deleteQuery);
