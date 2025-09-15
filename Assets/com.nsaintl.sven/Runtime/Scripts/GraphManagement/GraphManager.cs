@@ -105,10 +105,14 @@ namespace Sven.GraphManagement
         }
         public static string DecodeGraph()
         {
+            Graph g = new();
             lock (_graphLock)
             {
-                return DecodeGraph(_instance);
+                g.NamespaceMap.Import(_instance.NamespaceMap);
+                g.BaseUri = _instance.BaseUri;
+                g.Assert(_instance.Triples);
             }
+            return DecodeGraph(g);
         }
 
         public static async Task Reload()
@@ -154,14 +158,16 @@ namespace Sven.GraphManagement
                     throw new Exception("Failed to load ontology: " + request.error);
 
                 string ttlContent = request.downloadHandler.text;
-                TurtleParser turtleParser = new();
-                using (var reader = new System.IO.StringReader(ttlContent))
-                {
-                    lock (_graphLock)
+                await Task.Run(() => {
+                    TurtleParser turtleParser = new();
+                    using (var reader = new System.IO.StringReader(ttlContent))
                     {
-                        turtleParser.Load(_instance, reader);
+                        lock (_graphLock)
+                        {
+                            turtleParser.Load(_instance, reader);
+                        }
                     }
-                }
+                });
             }
 #else
             await Task.Run(() =>
@@ -201,11 +207,13 @@ namespace Sven.GraphManagement
                             throw new Exception("Failed to load ontology: " + request.error);
 
                         string ttlContent = request.downloadHandler.text;
-                        TurtleParser turtleParser = new();
-                        using (var reader = new System.IO.StringReader(ttlContent))
-                        {
-                            turtleParser.Load(ontologyGraph, reader);
-                        }
+                        await Task.Run(() => {
+                            TurtleParser turtleParser = new();
+                            using (var reader = new System.IO.StringReader(ttlContent))
+                            {
+                                turtleParser.Load(ontologyGraph, reader);
+                            }
+                        });
                     }
 #else
                     await Task.Run(() =>
@@ -221,23 +229,21 @@ namespace Sven.GraphManagement
                 }
             }
 
-            Graph inferredGraph = new()
-            {
-                BaseUri = null
-            };
+            Graph inferredGraph = new();
             lock (_graphLock)
             {
                 inferredGraph.BaseUri = _instance.BaseUri;
                 inferredGraph.NamespaceMap.Import(_instance.NamespaceMap);
-                var triplesCopy = _instance.Triples.ToList();
-                foreach (var triple in triplesCopy)
-                    inferredGraph.Assert(triple);
+                inferredGraph.Assert(_instance.Triples);
             }
             try
             {
-                StaticRdfsReasoner reasoner = new();
-                reasoner.Initialise(ontologyGraph);
-                reasoner.Apply(inferredGraph);
+                await Task.Run(() =>
+                {
+                    StaticRdfsReasoner reasoner = new();
+                    reasoner.Initialise(ontologyGraph);
+                    reasoner.Apply(inferredGraph);
+                });
             }
             catch (Exception ex)
             {
@@ -246,18 +252,14 @@ namespace Sven.GraphManagement
             return inferredGraph;
         }
 
-        public static void SaveToFile(string absolutePath)
+        public static async Task SaveToFile(string absolutePath)
         {
             if (string.IsNullOrEmpty(absolutePath)) throw new ArgumentNullException(nameof(absolutePath) + " is null or empty.");
             if (!System.IO.Path.IsPathRooted(absolutePath)) throw new ArgumentException("The path must be absolute.", nameof(absolutePath));
             try
             {
-                string turtleContent;
-                lock (_graphLock)
-                {
-                    turtleContent = DecodeGraph(_instance);
-                }
-                File.WriteAllText(absolutePath, turtleContent, Encoding.UTF8);
+                string turtleContent = await Task.Run(() => DecodeGraph());
+                await File.WriteAllTextAsync(absolutePath, turtleContent, Encoding.UTF8);
             }
             catch (Exception ex)
             {
@@ -274,7 +276,7 @@ namespace Sven.GraphManagement
 
             // call insert service with all the content of the graph
             MimeTypeDefinition writerMimeTypeDefinition = MimeTypesHelper.GetDefinitions("application/x-turtle").First();
-            string turtleContent = DecodeGraph(await GetInferredGraphAsync());
+            string turtleContent = await Task.Run(async () => DecodeGraph(await GetInferredGraphAsync()));
             string serviceUrl = $"{endpointUrl}/rdf-graphs/service?graph={Uri.EscapeDataString(BaseUri)}";
             try
             {
@@ -306,7 +308,7 @@ namespace Sven.GraphManagement
             if (!Uri.IsWellFormedUriString(endpointUrl, UriKind.Absolute)) throw new ArgumentException("The endpoint URL is not valid.", nameof(endpointUrl));
 
             MimeTypeDefinition writerMimeTypeDefinition = MimeTypesHelper.GetDefinitions("application/x-turtle").First();
-            string turtleContent = DecodeGraph(await GetInferredGraphAsync());
+            string turtleContent = await Task.Run(async () => DecodeGraph(await GetInferredGraphAsync()));
             string serviceUrl = $"{endpointUrl}/rdf-graphs/service?graph={Uri.EscapeDataString(BaseUri)}";
             try
             {
@@ -362,7 +364,7 @@ namespace Sven.GraphManagement
             }
         }
 
-        public static async void LoadFromEndpoint(string endpointUrl)
+        public static async Task LoadFromEndpointAsync(string endpointUrl)
         {
             if (string.IsNullOrEmpty(endpointUrl)) throw new ArgumentNullException(nameof(endpointUrl) + " is null or empty.");
             if (!Uri.IsWellFormedUriString(endpointUrl, UriKind.Absolute)) throw new ArgumentException("The endpoint URL is not valid.", nameof(endpointUrl));
@@ -380,30 +382,36 @@ WHERE {
                 Debug.LogWarning("No results found in the graph at the endpoint.");
                 return;
             }
-            lock (_graphLock)
+            await Task.Run(() =>
             {
-                foreach (var result in results)
+                lock (_graphLock)
                 {
-                    INode subject = result["s"];
-                    INode predicate = result["p"];
-                    INode @object = result["o"];
-                    if (subject != null && predicate != null && @object != null)
+                    foreach (var result in results)
                     {
-                        _instance.Assert(new Triple(subject, predicate, @object));
+                        INode subject = result["s"];
+                        INode predicate = result["p"];
+                        INode @object = result["o"];
+                        if (subject != null && predicate != null && @object != null)
+                        {
+                            _instance.Assert(new Triple(subject, predicate, @object));
+                        }
                     }
                 }
-            }
+            });
         }
 
-        public static void LoadFromFile(string absolutePath)
+        public static async Task LoadFromFileAsync(string absolutePath)
         {
             if (string.IsNullOrEmpty(absolutePath)) throw new ArgumentNullException(nameof(absolutePath) + " is null or empty.");
             if (!System.IO.Path.IsPathRooted(absolutePath)) throw new ArgumentException("The path must be absolute.", nameof(absolutePath));
             if (!File.Exists(absolutePath)) throw new FileNotFoundException($"File not found: {absolutePath}");
-            lock (_graphLock)
+            await Task.Run(() =>
             {
-                _instance.LoadFromFile(absolutePath);
-            }
+                lock (_graphLock)
+                {
+                    _instance.LoadFromFile(absolutePath);
+                }
+            });
         }
 
 
@@ -580,7 +588,7 @@ DELETE {{
 
                 SparqlQueryClient sparqlQueryClient = new(httpClient, endpointUri);
                 if (SvenSettings.Debug) Debug.Log($"Graph query: {query}");
-#if UNITY_WEBGL
+#if UNITY_WEBGL && !UNITY_EDITOR
                 SparqlResultSet results = await sparqlQueryClient.QueryWebGLWithResultSetAsync(query);
 #else
                 SparqlResultSet results = await sparqlQueryClient.QueryWithResultSetAsync(query);
@@ -595,10 +603,10 @@ DELETE {{
         public static async Task UpdateMemoryAsync(string updateQuery)
         {
             if (string.IsNullOrEmpty(updateQuery)) throw new ArgumentNullException(nameof(updateQuery) + " is null or empty.");
-            SparqlUpdateParser parser = new();
-            SparqlUpdateCommandSet sparqlUpdate = parser.ParseFromString(updateQuery) ?? throw new InvalidOperationException("Failed to parse SPARQL update query.");
             await Task.Run(() =>
             {
+                SparqlUpdateParser parser = new();
+                SparqlUpdateCommandSet sparqlUpdate = parser.ParseFromString(updateQuery) ?? throw new InvalidOperationException("Failed to parse SPARQL update query.");
                 // apply the update to the graph
                 lock (_graphLock)
                 {
@@ -616,26 +624,30 @@ DELETE {{
         public static async Task<SparqlResultSet> QueryMemoryAsync(string query, bool withInference)
         {
             if (string.IsNullOrEmpty(query)) throw new ArgumentNullException(nameof(query) + " is null or empty.");
-            SparqlQueryParser parser = new();
-            SparqlQuery sparqlQuery = parser.ParseFromString(query) ?? throw new InvalidOperationException("Failed to parse SPARQL query.");
+
             try
             {
                 SparqlResultSet result = await Task.Run(async () =>
                 {
+                    SparqlQueryParser parser = new();
+                    SparqlQuery sparqlQuery = parser.ParseFromString(query) ?? throw new InvalidOperationException("Failed to parse SPARQL query.");
                     if (SvenSettings.Debug) Debug.Log($"Graph query: {query}");
-                    Graph queryGraph = withInference ?
-                            await GetInferredGraphAsync() :
-                            null;
+
                     if (withInference)
                     {
+                        Graph queryGraph = await GetInferredGraphAsync();
                         return queryGraph.ExecuteQuery(query) as SparqlResultSet;
                     }
                     else
                     {
+                        Graph g = new();
                         lock (_graphLock)
                         {
-                            return _instance.ExecuteQuery(query) as SparqlResultSet;
+                            g.NamespaceMap.Import(_instance.NamespaceMap);
+                            g.BaseUri = _instance.BaseUri;
+                            g.Assert(_instance.Triples);
                         }
+                        return g.ExecuteQuery(query) as SparqlResultSet;
                     }
                 });
                 return result;
@@ -746,11 +758,9 @@ WHERE {{
 
         private static async Task<SceneContent> GetSceneContent(SparqlResultSet resultSet)
         {
-#if !UNITY_WEBGL || UNITY_EDITOR
             SceneContent sceneContent = await Task.Run(() =>
             {
-#endif
-                SceneContent sceneContent = new();
+                SceneContent sc = new();
 
                 foreach (SparqlResult result in resultSet.Cast<SparqlResult>())
                 {
@@ -774,22 +784,22 @@ WHERE {{
                     }
                     catch
                     {
-                        if (!sceneContent.GameObjects.ContainsKey(objectUUID))
-                            sceneContent.GameObjects[objectUUID] = new(objectUUID);
+                        if (!sc.GameObjects.ContainsKey(objectUUID))
+                            sc.GameObjects[objectUUID] = new(objectUUID);
 
                         switch (propertyName)
                         {
                             case "active":
-                                sceneContent.GameObjects[objectUUID].Active = result["propertyValue"].AsValuedNode().AsString() == "true";
+                                sc.GameObjects[objectUUID].Active = result["propertyValue"].AsValuedNode().AsString() == "true";
                                 continue;
                             case "layer":
-                                sceneContent.GameObjects[objectUUID].Layer = result["propertyValue"].AsValuedNode().AsString();
+                                sc.GameObjects[objectUUID].Layer = result["propertyValue"].AsValuedNode().AsString();
                                 continue;
                             case "tag":
-                                sceneContent.GameObjects[objectUUID].Tag = result["propertyValue"].AsValuedNode().AsString();
+                                sc.GameObjects[objectUUID].Tag = result["propertyValue"].AsValuedNode().AsString();
                                 continue;
                             case "name":
-                                sceneContent.GameObjects[objectUUID].Name = result["propertyValue"].AsValuedNode().AsString();
+                                sc.GameObjects[objectUUID].Name = result["propertyValue"].AsValuedNode().AsString();
                                 continue;
                         }
                         continue;
@@ -810,23 +820,21 @@ WHERE {{
                     //if (propertyName == "position")
                     //Debug.Log(propertyName + " " + propertyNestedName + " " + propertyValue + " " + result["propertyValue"].AsValuedNode());
 
-                    if (!sceneContent.GameObjects.ContainsKey(objectUUID))
-                        sceneContent.GameObjects[objectUUID] = new(objectUUID);
+                    if (!sc.GameObjects.ContainsKey(objectUUID))
+                        sc.GameObjects[objectUUID] = new(objectUUID);
 
-                    if (!sceneContent.GameObjects[objectUUID].Components.ContainsKey(componentUUID))
-                        sceneContent.GameObjects[objectUUID].Components[componentUUID] = new(componentUUID, componentType, componentSortOrder);
+                    if (!sc.GameObjects[objectUUID].Components.ContainsKey(componentUUID))
+                        sc.GameObjects[objectUUID].Components[componentUUID] = new(componentUUID, componentType, componentSortOrder);
 
-                    if (!sceneContent.GameObjects[objectUUID].Components[componentUUID].Properties.ContainsKey(propertyName))
-                        sceneContent.GameObjects[objectUUID].Components[componentUUID].Properties[propertyName] = new(propertyUUID, propertyName, propertyType);
+                    if (!sc.GameObjects[objectUUID].Components[componentUUID].Properties.ContainsKey(propertyName))
+                        sc.GameObjects[objectUUID].Components[componentUUID].Properties[propertyName] = new(propertyUUID, propertyName, propertyType);
 
-                    if (!sceneContent.GameObjects[objectUUID].Components[componentUUID].Properties[propertyName].Values.ContainsKey(propertyNestedName))
-                        sceneContent.GameObjects[objectUUID].Components[componentUUID].Properties[propertyName].Values[propertyNestedName] = propertyValue;
+                    if (!sc.GameObjects[objectUUID].Components[componentUUID].Properties[propertyName].Values.ContainsKey(propertyNestedName))
+                        sc.GameObjects[objectUUID].Components[componentUUID].Properties[propertyName].Values[propertyNestedName] = propertyValue;
                     else Debug.LogWarning($"Property {propertyNestedName} already exists in {propertyName} of {componentType} in {objectUUID}");
                 }
-#if !UNITY_WEBGL || UNITY_EDITOR
-                return sceneContent;
+                return sc;
             });
-#endif
             await Task.Yield();
 
             return sceneContent;
