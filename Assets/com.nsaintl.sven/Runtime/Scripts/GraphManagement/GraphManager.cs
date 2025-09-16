@@ -190,18 +190,16 @@ namespace Sven.GraphManagement
                 await LoadOntologyAsync(ontology.Key, ontology.Value);
         }
 
-        public static async Task<Graph> GetInferredGraphAsync(List<Triple> triples)
+        public static async Task<Graph> GetInferredGraphAsync(List<Triple> triples, Uri baseUri, NamespaceMapper nsMap)
         {
             Graph workGraph = new();
-            // Utiliser les métadonnées du graphe principal mais les données isolées
-            lock (_graphLock)
-            {
-                workGraph.BaseUri = _instance.BaseUri;
-                workGraph.NamespaceMap.Import(_instance.NamespaceMap);
-            }
+            // Utiliser les métadonnées fournies, sans aucun accès au graphe global.
+            workGraph.BaseUri = baseUri;
+            workGraph.NamespaceMap.Import(nsMap);
             workGraph.Assert(triples);
 
             Graph ontologyGraph = new();
+            // Le chargement des ontologies est déjà thread-safe.
             foreach (var ontology in _ontologies)
             {
                 try
@@ -238,11 +236,12 @@ namespace Sven.GraphManagement
 
             try
             {
+                // L'inférence est l'opération la plus lourde. Elle se fait ici en totale isolation.
                 await Task.Run(() =>
                 {
                     StaticRdfsReasoner reasoner = new();
                     reasoner.Initialise(ontologyGraph);
-                    reasoner.Apply(workGraph); // Appliquer l'inférence sur le graphe de travail
+                    reasoner.Apply(workGraph);
                 });
             }
             catch (Exception ex)
@@ -267,7 +266,7 @@ namespace Sven.GraphManagement
             }
         }
 
-        public static async Task AddToEndpoint(List<Triple> triplesToFlush)
+        public static async Task AddToEndpoint(List<Triple> triplesToFlush, Uri baseUri, NamespaceMapper nsMap)
         {
             var totalStopwatch = System.Diagnostics.Stopwatch.StartNew();
             string endpointUrl = SvenSettings.EndpointUrl;
@@ -279,13 +278,22 @@ namespace Sven.GraphManagement
             MimeTypeDefinition writerMimeTypeDefinition = MimeTypesHelper.GetDefinitions("application/x-turtle").First();
 
             var graphPrepStopwatch = System.Diagnostics.Stopwatch.StartNew();
-            // L'inférence et le décodage se font sur les triplets copiés
-            IGraph inferredGraph = await GetInferredGraphAsync(triplesToFlush);
-            string turtleContent = DecodeGraph(inferredGraph);
-            graphPrepStopwatch.Stop();
-            UnityMainThreadDispatcher.Instance.Enqueue(() => Debug.Log($"[Performance] Total graph preparation (inference + decoding) took: {graphPrepStopwatch.ElapsedMilliseconds} ms"));
 
-            string serviceUrl = $"{endpointUrl}/rdf-graphs/service?graph={Uri.EscapeDataString(BaseUri)}";
+            // --- MODIFICATION CLÉ : Ne plus faire d'inférence ---
+            // Créer un graphe temporaire simple, sans l'étape coûteuse de GetInferredGraphAsync.
+            Graph graphToSend = new Graph();
+            graphToSend.Assert(triplesToFlush);
+            graphToSend.BaseUri = baseUri;
+            graphToSend.NamespaceMap.Import(nsMap);
+
+            string turtleContent = DecodeGraph(graphToSend);
+            Debug.Log($"Graph prepared with {graphToSend.Triples.Count} triples to send to endpoint.");
+            // ----------------------------------------------------
+
+            graphPrepStopwatch.Stop();
+            UnityMainThreadDispatcher.Instance.Enqueue(() => Debug.Log($"[Performance] Total graph preparation (SIMPLE decoding) took: {graphPrepStopwatch.ElapsedMilliseconds} ms"));
+
+            string serviceUrl = $"{endpointUrl}/rdf-graphs/service?graph={Uri.EscapeDataString(baseUri.AbsoluteUri)}";
             try
             {
                 using HttpClient httpClient = new();
@@ -296,6 +304,7 @@ namespace Sven.GraphManagement
                 };
 
                 var networkStopwatch = System.Diagnostics.Stopwatch.StartNew();
+                // Cette ligne ne devrait plus causer de gel car la pression mémoire/CPU est bien plus faible.
                 using HttpResponseMessage httpResponseMessage = await httpClient.SendAsync(request).ConfigureAwait(false);
                 networkStopwatch.Stop();
                 UnityMainThreadDispatcher.Instance.Enqueue(() => Debug.Log($"[Performance] httpClient.SendAsync took: {networkStopwatch.ElapsedMilliseconds} ms"));
@@ -328,7 +337,20 @@ namespace Sven.GraphManagement
             if (!Uri.IsWellFormedUriString(endpointUrl, UriKind.Absolute)) throw new ArgumentException("The endpoint URL is not valid.", nameof(endpointUrl));
 
             MimeTypeDefinition writerMimeTypeDefinition = MimeTypesHelper.GetDefinitions("application/x-turtle").First();
-            string turtleContent = await Task.Run(async () => DecodeGraph(await GetInferredGraphAsync(_instance.Triples.ToList())));
+            string turtleContent = await Task.Run(async () =>
+            {
+                List<Triple> triples;
+                Uri baseUri;
+                NamespaceMapper nsMap;
+                lock (_graphLock)
+                {
+                    triples = _instance.Triples.ToList();
+                    baseUri = _instance.BaseUri;
+                    nsMap = new NamespaceMapper();
+                    nsMap.Import(_instance.NamespaceMap);
+                }
+                return DecodeGraph(await GetInferredGraphAsync(triples, baseUri, nsMap));
+            });
             string serviceUrl = $"{endpointUrl}/rdf-graphs/service?graph={Uri.EscapeDataString(BaseUri)}";
             try
             {
@@ -476,27 +498,32 @@ WHERE {
         {
             IUriNode subject = t.Subject as IUriNode ?? throw new ArgumentException("The subject of the triple must be an IUriNode.", nameof(t));
             List<Triple> triplesToFlush = null;
+            Uri baseUriToFlush = null;
+            NamespaceMapper nsMapToFlush = null;
+
             lock (_graphLock)
             {
                 _instance.Assert(t);
                 if (_instance.Triples.Count >= SvenSettings.BufferSize && !_isFlushing)
                 {
                     _isFlushing = true;
-                    // Copier les triplets à vider et les retirer du graphe principal à l'intérieur du même verrou.
+                    // Copier TOUTES les données nécessaires à l'intérieur d'un seul verrou court.
                     triplesToFlush = new List<Triple>(_instance.Triples);
-                    _instance.Clear();
+                    baseUriToFlush = _instance.BaseUri;
+                    nsMapToFlush = new NamespaceMapper();
+                    nsMapToFlush.Import(_instance.NamespaceMap);
                 }
             }
 
             if (triplesToFlush != null)
             {
-                // Lancer la tâche de fond avec sa propre copie des données.
-                FlushBufferToEndpointAsync(triplesToFlush).FireAndForget();
+                // Lancer la tâche de fond avec sa propre copie de TOUTES les données.
+                FlushBufferToEndpointAsync(triplesToFlush, baseUriToFlush, nsMapToFlush).FireAndForget();
             }
             return subject;
         }
 
-        public static async Task FlushBufferToEndpointAsync(List<Triple> triplesToFlush)
+        public static async Task FlushBufferToEndpointAsync(List<Triple> triplesToFlush, Uri baseUri, NamespaceMapper nsMap)
         {
             try
             {
@@ -507,8 +534,8 @@ WHERE {
                     return;
                 }
 
-                // Préparation et envoi du graphe à partir des triplets fournis
-                await AddToEndpoint(triplesToFlush);
+                // Préparation et envoi du graphe à partir des données fournies
+                await AddToEndpoint(triplesToFlush, baseUri, nsMap);
                 UnityMainThreadDispatcher.Instance.Enqueue(() => Debug.Log("Buffer memory added to endpoint."));
 
                 string deleteQuery = $@"PREFIX : <https://sven.lisn.upsaclay.fr/ontology#>
@@ -633,31 +660,47 @@ DELETE {{
         {
             if (string.IsNullOrEmpty(updateQuery)) throw new ArgumentNullException(nameof(updateQuery) + " is null or empty.");
             var totalStopwatch = System.Diagnostics.Stopwatch.StartNew();
+
+            // Créer une copie du graphe actuel pour travailler dessus
+            Graph graphCopy = new();
+            lock (_graphLock)
+            {
+                graphCopy.Assert(_instance.Triples);
+                graphCopy.NamespaceMap.Import(_instance.NamespaceMap);
+                graphCopy.BaseUri = _instance.BaseUri;
+            }
+
             await Task.Run(() =>
             {
                 var parserStopwatch = System.Diagnostics.Stopwatch.StartNew();
                 SparqlUpdateParser parser = new();
                 SparqlUpdateCommandSet sparqlUpdate = parser.ParseFromString(updateQuery) ?? throw new InvalidOperationException("Failed to parse SPARQL update query.");
                 parserStopwatch.Stop();
-                Debug.Log($"[Performance] UpdateMemoryAsync - Parsing took: {parserStopwatch.ElapsedMilliseconds} ms");
+                // Utiliser le dispatcher pour les logs car nous sommes dans un Task.Run
+                UnityMainThreadDispatcher.Instance.Enqueue(() => Debug.Log($"[Performance] UpdateMemoryAsync - Parsing took: {parserStopwatch.ElapsedMilliseconds} ms"));
 
-                // apply the update to the graph
+                // Appliquer la mise à jour sur la copie du graphe, SANS VERROU
+                var processorStopwatch = System.Diagnostics.Stopwatch.StartNew();
+                TripleStore store = new();
+                store.Add(graphCopy, true); // Opère sur la copie
+                LeviathanUpdateProcessor processor = new(store, options =>
+                {
+                    options.UpdateExecutionTimeout = 60 * 1000;
+                });
+                processor.ProcessCommandSet(sparqlUpdate);
+                processorStopwatch.Stop();
+                UnityMainThreadDispatcher.Instance.Enqueue(() => Debug.Log($"[Performance] UpdateMemoryAsync - Processing command set took: {processorStopwatch.ElapsedMilliseconds} ms"));
+
+                // Mettre à jour le graphe principal avec les résultats, à l'intérieur d'un verrou court
                 lock (_graphLock)
                 {
-                    var processorStopwatch = System.Diagnostics.Stopwatch.StartNew();
-                    TripleStore store = new();
-                    store.Add(_instance, true);
-                    LeviathanUpdateProcessor processor = new(store, options =>
-                    {
-                        options.UpdateExecutionTimeout = 60 * 1000;
-                    });
-                    processor.ProcessCommandSet(sparqlUpdate);
-                    processorStopwatch.Stop();
-                    Debug.Log($"[Performance] UpdateMemoryAsync - Processing command set took: {processorStopwatch.ElapsedMilliseconds} ms");
+                    _instance.Clear();
+                    _instance.Assert(graphCopy.Triples);
                 }
             });
+
             totalStopwatch.Stop();
-            Debug.Log($"[Performance] UpdateMemoryAsync total execution time: {totalStopwatch.ElapsedMilliseconds} ms");
+            UnityMainThreadDispatcher.Instance.Enqueue(() => Debug.Log($"[Performance] UpdateMemoryAsync total execution time: {totalStopwatch.ElapsedMilliseconds} ms"));
         }
 
         public static async Task<SparqlResultSet> QueryMemoryAsync(string query, bool withInference)
@@ -674,7 +717,17 @@ DELETE {{
 
                     if (withInference)
                     {
-                        Graph queryGraph = await GetInferredGraphAsync(_instance.Triples.ToList());
+                        List<Triple> triples;
+                        Uri baseUri;
+                        NamespaceMapper nsMap;
+                        lock (_graphLock)
+                        {
+                            triples = _instance.Triples.ToList();
+                            baseUri = _instance.BaseUri;
+                            nsMap = new NamespaceMapper();
+                            nsMap.Import(_instance.NamespaceMap);
+                        }
+                        Graph queryGraph = await GetInferredGraphAsync(triples, baseUri, nsMap);
                         return queryGraph.ExecuteQuery(query) as SparqlResultSet;
                     }
                     else
