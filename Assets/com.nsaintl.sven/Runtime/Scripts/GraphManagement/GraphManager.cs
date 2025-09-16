@@ -98,10 +98,22 @@ namespace Sven.GraphManagement
         public static string DecodeGraph(IGraph graph)
         {
             if (graph == null) throw new ArgumentNullException(nameof(graph) + " is null.");
-            StringBuilder sb = new();
-            CompressingTurtleWriter writer = new(TurtleSyntax.Rdf11Star);
-            writer.Save(graph, new System.IO.StringWriter(sb));
-            return sb.ToString();
+            using System.IO.StringWriter sw = new();
+            SaveGraph(graph, sw);
+            return sw.ToString();
+        }
+
+        /// <summary>
+        /// Saves a graph to the given TextWriter.
+        /// </summary>
+        /// <param name="graph">The graph to save.</param>
+        /// <param name="writer">The TextWriter to save to.</param>
+        public static void SaveGraph(IGraph graph, TextWriter writer)
+        {
+            if (graph == null) throw new ArgumentNullException(nameof(graph));
+            if (writer == null) throw new ArgumentNullException(nameof(writer));
+            CompressingTurtleWriter turtleWriter = new(TurtleSyntax.Rdf11Star);
+            turtleWriter.Save(graph, writer);
         }
         public static string DecodeGraph()
         {
@@ -279,32 +291,37 @@ namespace Sven.GraphManagement
 
             var graphPrepStopwatch = System.Diagnostics.Stopwatch.StartNew();
 
-            // --- MODIFICATION CLÉ : Ne plus faire d'inférence ---
-            // Créer un graphe temporaire simple, sans l'étape coûteuse de GetInferredGraphAsync.
             Graph graphToSend = new Graph();
             graphToSend.Assert(triplesToFlush);
             graphToSend.BaseUri = baseUri;
             graphToSend.NamespaceMap.Import(nsMap);
 
-            string turtleContent = DecodeGraph(graphToSend);
-            Debug.Log($"Graph prepared with {graphToSend.Triples.Count} triples to send to endpoint.");
-            // ----------------------------------------------------
-
-            graphPrepStopwatch.Stop();
-            UnityMainThreadDispatcher.Instance.Enqueue(() => Debug.Log($"[Performance] Total graph preparation (SIMPLE decoding) took: {graphPrepStopwatch.ElapsedMilliseconds} ms"));
-
-            string serviceUrl = $"{endpointUrl}/rdf-graphs/service?graph={Uri.EscapeDataString(baseUri.AbsoluteUri)}";
+            string tempFilePath = Path.GetTempFileName();
             try
             {
+                // Étape 1: Écrire directement dans un fichier temporaire pour éviter une charge mémoire élevée.
+                using (StreamWriter sw = new StreamWriter(tempFilePath, false, Encoding.UTF8))
+                {
+                    SaveGraph(graphToSend, sw);
+                }
+                graphPrepStopwatch.Stop();
+                UnityMainThreadDispatcher.Instance.Enqueue(() => Debug.Log($"[Performance] Graph serialization to temp file took: {graphPrepStopwatch.ElapsedMilliseconds} ms"));
+
+                string serviceUrl = $"{endpointUrl}/rdf-graphs/service?graph={Uri.EscapeDataString(baseUri.AbsoluteUri)}";
                 using HttpClient httpClient = new();
                 httpClient.DefaultRequestHeaders.Authorization = _authenticationHeaderValue;
+
+                // Étape 2: Utiliser StreamContent pour lire le fichier et l'envoyer sans le charger entièrement en mémoire.
+                using FileStream fs = new FileStream(tempFilePath, FileMode.Open, FileAccess.Read, FileShare.Read, 4096, useAsync: true);
+                using StreamContent streamContent = new StreamContent(fs);
+                streamContent.Headers.ContentType = new MediaTypeHeaderValue(writerMimeTypeDefinition.CanonicalMimeType) { CharSet = "utf-8" };
+
                 HttpRequestMessage request = new(HttpMethod.Post, serviceUrl)
                 {
-                    Content = new StringContent(turtleContent, Encoding.UTF8, writerMimeTypeDefinition.CanonicalMimeType)
+                    Content = streamContent
                 };
 
                 var networkStopwatch = System.Diagnostics.Stopwatch.StartNew();
-                // Cette ligne ne devrait plus causer de gel car la pression mémoire/CPU est bien plus faible.
                 using HttpResponseMessage httpResponseMessage = await httpClient.SendAsync(request).ConfigureAwait(false);
                 networkStopwatch.Stop();
                 UnityMainThreadDispatcher.Instance.Enqueue(() => Debug.Log($"[Performance] httpClient.SendAsync took: {networkStopwatch.ElapsedMilliseconds} ms"));
@@ -317,15 +334,25 @@ namespace Sven.GraphManagement
                         Debug.Log("Graph added to endpoint.");
                         Debug.Log($"[Performance] AddToEndpoint total execution time: {totalStopwatch.ElapsedMilliseconds} ms");
                     });
-                    return;
                 }
-                throw new Exception("Failed to add the graph to the endpoint. " + httpResponseMessage.ReasonPhrase);
+                else
+                {
+                    throw new Exception("Failed to add the graph to the endpoint. " + httpResponseMessage.ReasonPhrase);
+                }
             }
             catch (Exception ex)
             {
                 totalStopwatch.Stop();
                 UnityMainThreadDispatcher.Instance.Enqueue(() => Debug.LogError($"[Performance] AddToEndpoint failed after {totalStopwatch.ElapsedMilliseconds} ms"));
                 throw new InvalidOperationException($"Failed to add graph to endpoint: {ex}", ex);
+            }
+            finally
+            {
+                // Étape 3: Nettoyer le fichier temporaire.
+                if (File.Exists(tempFilePath))
+                {
+                    File.Delete(tempFilePath);
+                }
             }
         }
 

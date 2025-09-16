@@ -4,6 +4,7 @@
 
 using System;
 using System.Collections.Concurrent;
+using System.Threading;
 using UnityEngine;
 
 namespace Sven.Utils
@@ -12,6 +13,12 @@ namespace Sven.Utils
     {
         private static readonly ConcurrentQueue<Action> _executionQueue = new();
         private static UnityMainThreadDispatcher _instance;
+        private static int _mainThreadId;
+
+        /// <summary>
+        /// Indique si le thread actuel est le thread principal de Unity.
+        /// </summary>
+        public static bool IsMainThread => Thread.CurrentThread.ManagedThreadId == _mainThreadId;
 
         public static UnityMainThreadDispatcher Instance
         {
@@ -19,12 +26,30 @@ namespace Sven.Utils
             {
                 if (_instance == null)
                 {
-                    var obj = new GameObject("UnityMainThreadDispatcher");
-                    _instance = obj.AddComponent<UnityMainThreadDispatcher>();
-                    DontDestroyOnLoad(obj);
+                    // Tente de trouver une instance existante avant d'en créer une nouvelle.
+                    _instance = FindFirstObjectByType<UnityMainThreadDispatcher>();
+                    if (_instance == null)
+                    {
+                        var obj = new GameObject("UnityMainThreadDispatcher");
+                        _instance = obj.AddComponent<UnityMainThreadDispatcher>();
+                    }
                 }
                 return _instance;
             }
+        }
+
+        private void Awake()
+        {
+            // Assurer le pattern singleton et ne pas détruire l'objet au changement de scène.
+            if (_instance != null && _instance != this)
+            {
+                Destroy(gameObject);
+                return;
+            }
+
+            _instance = this;
+            _mainThreadId = Thread.CurrentThread.ManagedThreadId;
+            DontDestroyOnLoad(gameObject);
         }
 
         public void Enqueue(Action action)
