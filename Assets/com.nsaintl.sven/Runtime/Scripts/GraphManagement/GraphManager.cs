@@ -282,16 +282,13 @@ namespace Sven.GraphManagement
         {
             await Task.Run(async () =>
             {
-                var totalStopwatch = System.Diagnostics.Stopwatch.StartNew();
                 string endpointUrl = SvenSettings.EndpointUrl;
-                UnityMainThreadDispatcher.Instance.Enqueue(() => Debug.Log($"Saving graph to endpoint: {endpointUrl}"));
+                Debug.Log($"Saving graph to endpoint: {endpointUrl}");
 
                 if (string.IsNullOrEmpty(endpointUrl)) throw new ArgumentNullException(nameof(endpointUrl) + " is null or empty.");
                 if (!Uri.IsWellFormedUriString(endpointUrl, UriKind.Absolute)) throw new ArgumentException("The endpoint URL is not valid.", nameof(endpointUrl));
 
                 MimeTypeDefinition writerMimeTypeDefinition = MimeTypesHelper.GetDefinitions("application/x-turtle").First();
-
-                var graphPrepStopwatch = System.Diagnostics.Stopwatch.StartNew();
 
                 Graph graphToSend = new Graph();
                 graphToSend.Assert(triplesToFlush);
@@ -306,8 +303,6 @@ namespace Sven.GraphManagement
                     {
                         SaveGraph(graphToSend, sw);
                     }
-                    graphPrepStopwatch.Stop();
-                    UnityMainThreadDispatcher.Instance.Enqueue(() => Debug.Log($"[Performance] Graph serialization to temp file took: {graphPrepStopwatch.ElapsedMilliseconds} ms"));
 
                     string serviceUrl = $"{endpointUrl}/rdf-graphs/service?graph={Uri.EscapeDataString(baseUri.AbsoluteUri)}";
                     using HttpClient httpClient = new();
@@ -323,19 +318,11 @@ namespace Sven.GraphManagement
                         Content = streamContent
                     };
 
-                    var networkStopwatch = System.Diagnostics.Stopwatch.StartNew();
                     using HttpResponseMessage httpResponseMessage = await httpClient.SendAsync(request).ConfigureAwait(false);
-                    networkStopwatch.Stop();
-                    UnityMainThreadDispatcher.Instance.Enqueue(() => Debug.Log($"[Performance] httpClient.SendAsync took: {networkStopwatch.ElapsedMilliseconds} ms"));
 
                     if (httpResponseMessage.IsSuccessStatusCode)
                     {
-                        totalStopwatch.Stop();
-                        UnityMainThreadDispatcher.Instance.Enqueue(() =>
-                        {
-                            Debug.Log("Graph added to endpoint.");
-                            Debug.Log($"[Performance] AddToEndpoint total execution time: {totalStopwatch.ElapsedMilliseconds} ms");
-                        });
+                        Debug.Log("Graph added to endpoint.");
                     }
                     else
                     {
@@ -344,8 +331,6 @@ namespace Sven.GraphManagement
                 }
                 catch (Exception ex)
                 {
-                    totalStopwatch.Stop();
-                    UnityMainThreadDispatcher.Instance.Enqueue(() => Debug.LogError($"[Performance] AddToEndpoint failed after {totalStopwatch.ElapsedMilliseconds} ms"));
                     throw new InvalidOperationException($"Failed to add graph to endpoint: {ex}", ex);
                 }
                 finally
@@ -560,13 +545,13 @@ WHERE {
                 string endpointUrl = SvenSettings.EndpointUrl;
                 if (string.IsNullOrEmpty(endpointUrl) || !Uri.IsWellFormedUriString(endpointUrl, UriKind.Absolute))
                 {
-                    UnityMainThreadDispatcher.Instance.Enqueue(() => Debug.LogError("L'URL du point de terminaison n'est pas valide. Impossible de vider le tampon."));
+                    Debug.LogError("L'URL du point de terminaison n'est pas valide. Impossible de vider le tampon.");
                     return;
                 }
 
                 // Préparation et envoi du graphe à partir des données fournies
                 await AddToEndpoint(triplesToFlush, baseUri, nsMap);
-                UnityMainThreadDispatcher.Instance.Enqueue(() => Debug.Log("Buffer memory added to endpoint."));
+                Debug.Log("Buffer memory added to endpoint.");
 
                 string deleteQuery = $@"PREFIX : <https://sven.lisn.upsaclay.fr/ontology#>
 PREFIX time: <http://www.w3.org/2006/time#>
@@ -611,11 +596,11 @@ DELETE {{
 
                 // call query in local memory to clear the buffer
                 await UpdateMemoryAsync(deleteQuery);
-                UnityMainThreadDispatcher.Instance.Enqueue(() => Debug.Log("Buffer memory cleared. Now contains " + Count + " triples."));
+                Debug.Log("Buffer memory cleared. Now contains " + Count + " triples.");
             }
             catch (Exception ex)
             {
-                UnityMainThreadDispatcher.Instance.Enqueue(() => Debug.LogError($"Une erreur est survenue lors du vidage du tampon vers le point de terminaison : {ex}"));
+                Debug.LogError($"Une erreur est survenue lors du vidage du tampon vers le point de terminaison : {ex}");
             }
             finally
             {
@@ -689,7 +674,6 @@ DELETE {{
         public static async Task UpdateMemoryAsync(string updateQuery)
         {
             if (string.IsNullOrEmpty(updateQuery)) throw new ArgumentNullException(nameof(updateQuery) + " is null or empty.");
-            var totalStopwatch = System.Diagnostics.Stopwatch.StartNew();
 
             // Créer une copie du graphe actuel pour travailler dessus
             Graph graphCopy = new();
@@ -702,15 +686,11 @@ DELETE {{
 
             await Task.Run(() =>
             {
-                var parserStopwatch = System.Diagnostics.Stopwatch.StartNew();
                 SparqlUpdateParser parser = new();
                 SparqlUpdateCommandSet sparqlUpdate = parser.ParseFromString(updateQuery) ?? throw new InvalidOperationException("Failed to parse SPARQL update query.");
-                parserStopwatch.Stop();
                 // Utiliser le dispatcher pour les logs car nous sommes dans un Task.Run
-                UnityMainThreadDispatcher.Instance.Enqueue(() => Debug.Log($"[Performance] UpdateMemoryAsync - Parsing took: {parserStopwatch.ElapsedMilliseconds} ms"));
 
                 // Appliquer la mise à jour sur la copie du graphe, SANS VERRO
-                var processorStopwatch = System.Diagnostics.Stopwatch.StartNew();
                 TripleStore store = new();
                 store.Add(graphCopy, true); // Opère sur la copie
                 LeviathanUpdateProcessor processor = new(store, options =>
@@ -718,8 +698,6 @@ DELETE {{
                     options.UpdateExecutionTimeout = 60 * 1000;
                 });
                 processor.ProcessCommandSet(sparqlUpdate);
-                processorStopwatch.Stop();
-                UnityMainThreadDispatcher.Instance.Enqueue(() => Debug.Log($"[Performance] UpdateMemoryAsync - Processing command set took: {processorStopwatch.ElapsedMilliseconds} ms"));
 
                 // Mettre à jour le graphe principal avec les résultats, à l'intérieur d'un verrou court
                 lock (_graphLock)
@@ -728,9 +706,6 @@ DELETE {{
                     _instance.Assert(graphCopy.Triples);
                 }
             });
-
-            totalStopwatch.Stop();
-            UnityMainThreadDispatcher.Instance.Enqueue(() => Debug.Log($"[Performance] UpdateMemoryAsync total execution time: {totalStopwatch.ElapsedMilliseconds} ms"));
         }
 
         public static async Task<SparqlResultSet> QueryMemoryAsync(string query, bool withInference)
@@ -986,60 +961,23 @@ WHERE {{
 
         public static async Task RetrieveSceneFromEndpoint(Instant instant)
         {
-            var stopwatch = System.Diagnostics.Stopwatch.StartNew();
-
             CurrentInstantLoaded = instant;
             if (instant == null) return;
             string endpointUrl = SvenSettings.EndpointUrl;
 
-            stopwatch.Restart();
             SparqlResultSet results = await QueryEndpoint(endpointUrl, RetrieveSceneQuery(instant, true));
-            stopwatch.Stop();
-            double queryEndpointElapsed = stopwatch.ElapsedMilliseconds;
-
-            stopwatch.Restart();
             SceneContent targetSceneContent = await GetSceneContent(results);
             ReconstructScene(targetSceneContent);
-            stopwatch.Stop();
-            double reconstructSceneElapsed = stopwatch.ElapsedMilliseconds;
-            double totalElapsed = queryEndpointElapsed + reconstructSceneElapsed;
-
-            ProcessingData processedData = new()
-            {
-                queryTime = queryEndpointElapsed,
-                sceneUpdateTime = reconstructSceneElapsed,
-                totalProcessingTime = totalElapsed
-            };
-            processedDatas.Add(processedData);
         }
 
         public static async Task RetrieveSceneFromMemory(Instant instant)
         {
-            var stopwatch = System.Diagnostics.Stopwatch.StartNew();
-
             CurrentInstantLoaded = instant;
             if (instant == null) return;
 
-            stopwatch.Restart();
-            //await ApplyRulesAsync();
             SparqlResultSet results = await QueryMemoryAsync(RetrieveSceneQuery(instant, false), false);
-            stopwatch.Stop();
-            double queryMemoryElapsed = stopwatch.ElapsedMilliseconds;
-
-            stopwatch.Restart();
             SceneContent targetSceneContent = await GetSceneContent(results);
             ReconstructScene(targetSceneContent);
-            stopwatch.Stop();
-            double reconstructSceneElapsed = stopwatch.ElapsedMilliseconds;
-            double totalElapsed = queryMemoryElapsed + reconstructSceneElapsed;
-
-            ProcessingData processedData = new()
-            {
-                queryTime = queryMemoryElapsed,
-                sceneUpdateTime = reconstructSceneElapsed,
-                totalProcessingTime = totalElapsed
-            };
-            processedDatas.Add(processedData);
         }
 
         private static SceneContent GetSceneContent()
@@ -1383,7 +1321,7 @@ WHERE {{
                     }
                     else
                     {
-                        UnityMainThreadDispatcher.Instance.Enqueue(() => Debug.LogError($"Exception in FireAndForget task: {e}"));
+                        Debug.LogError($"Exception in FireAndForget task: {e}");
                     }
                 }
             });
