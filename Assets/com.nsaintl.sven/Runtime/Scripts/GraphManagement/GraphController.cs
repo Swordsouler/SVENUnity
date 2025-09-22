@@ -48,7 +48,7 @@ namespace Sven.GraphManagement
 #endif
             // save to streaming assets persistent data path
             string path = Application.streamingAssetsPath;
-            GraphManager.SaveToFile(path);
+            await GraphManager.SaveToFile(path);
         }
 
         public async void SaveAndQuitGraph()

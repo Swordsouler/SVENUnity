@@ -280,80 +280,83 @@ namespace Sven.GraphManagement
 
         public static async Task AddToEndpoint(List<Triple> triplesToFlush, Uri baseUri, NamespaceMapper nsMap)
         {
-            var totalStopwatch = System.Diagnostics.Stopwatch.StartNew();
-            string endpointUrl = SvenSettings.EndpointUrl;
-            UnityMainThreadDispatcher.Instance.Enqueue(() => Debug.Log($"Saving graph to endpoint: {endpointUrl}"));
-
-            if (string.IsNullOrEmpty(endpointUrl)) throw new ArgumentNullException(nameof(endpointUrl) + " is null or empty.");
-            if (!Uri.IsWellFormedUriString(endpointUrl, UriKind.Absolute)) throw new ArgumentException("The endpoint URL is not valid.", nameof(endpointUrl));
-
-            MimeTypeDefinition writerMimeTypeDefinition = MimeTypesHelper.GetDefinitions("application/x-turtle").First();
-
-            var graphPrepStopwatch = System.Diagnostics.Stopwatch.StartNew();
-
-            Graph graphToSend = new Graph();
-            graphToSend.Assert(triplesToFlush);
-            graphToSend.BaseUri = baseUri;
-            graphToSend.NamespaceMap.Import(nsMap);
-
-            string tempFilePath = Path.GetTempFileName();
-            try
+            await Task.Run(async () =>
             {
-                // Étape 1: Écrire directement dans un fichier temporaire pour éviter une charge mémoire élevée.
-                using (StreamWriter sw = new StreamWriter(tempFilePath, false, Encoding.UTF8))
+                var totalStopwatch = System.Diagnostics.Stopwatch.StartNew();
+                string endpointUrl = SvenSettings.EndpointUrl;
+                UnityMainThreadDispatcher.Instance.Enqueue(() => Debug.Log($"Saving graph to endpoint: {endpointUrl}"));
+
+                if (string.IsNullOrEmpty(endpointUrl)) throw new ArgumentNullException(nameof(endpointUrl) + " is null or empty.");
+                if (!Uri.IsWellFormedUriString(endpointUrl, UriKind.Absolute)) throw new ArgumentException("The endpoint URL is not valid.", nameof(endpointUrl));
+
+                MimeTypeDefinition writerMimeTypeDefinition = MimeTypesHelper.GetDefinitions("application/x-turtle").First();
+
+                var graphPrepStopwatch = System.Diagnostics.Stopwatch.StartNew();
+
+                Graph graphToSend = new Graph();
+                graphToSend.Assert(triplesToFlush);
+                graphToSend.BaseUri = baseUri;
+                graphToSend.NamespaceMap.Import(nsMap);
+
+                string tempFilePath = Path.GetTempFileName();
+                try
                 {
-                    SaveGraph(graphToSend, sw);
+                    // Étape 1: Écrire directement dans un fichier temporaire pour éviter une charge mémoire élevée.
+                    using (StreamWriter sw = new StreamWriter(tempFilePath, false, Encoding.UTF8))
+                    {
+                        SaveGraph(graphToSend, sw);
+                    }
+                    graphPrepStopwatch.Stop();
+                    UnityMainThreadDispatcher.Instance.Enqueue(() => Debug.Log($"[Performance] Graph serialization to temp file took: {graphPrepStopwatch.ElapsedMilliseconds} ms"));
+
+                    string serviceUrl = $"{endpointUrl}/rdf-graphs/service?graph={Uri.EscapeDataString(baseUri.AbsoluteUri)}";
+                    using HttpClient httpClient = new();
+                    httpClient.DefaultRequestHeaders.Authorization = _authenticationHeaderValue;
+
+                    // Étape 2: Utiliser StreamContent pour lire le fichier et l'envoyer sans le charger entièrement en mémoire.
+                    using FileStream fs = new FileStream(tempFilePath, FileMode.Open, FileAccess.Read, FileShare.Read, 4096, useAsync: true);
+                    using StreamContent streamContent = new StreamContent(fs);
+                    streamContent.Headers.ContentType = new MediaTypeHeaderValue(writerMimeTypeDefinition.CanonicalMimeType) { CharSet = "utf-8" };
+
+                    HttpRequestMessage request = new(HttpMethod.Post, serviceUrl)
+                    {
+                        Content = streamContent
+                    };
+
+                    var networkStopwatch = System.Diagnostics.Stopwatch.StartNew();
+                    using HttpResponseMessage httpResponseMessage = await httpClient.SendAsync(request).ConfigureAwait(false);
+                    networkStopwatch.Stop();
+                    UnityMainThreadDispatcher.Instance.Enqueue(() => Debug.Log($"[Performance] httpClient.SendAsync took: {networkStopwatch.ElapsedMilliseconds} ms"));
+
+                    if (httpResponseMessage.IsSuccessStatusCode)
+                    {
+                        totalStopwatch.Stop();
+                        UnityMainThreadDispatcher.Instance.Enqueue(() =>
+                        {
+                            Debug.Log("Graph added to endpoint.");
+                            Debug.Log($"[Performance] AddToEndpoint total execution time: {totalStopwatch.ElapsedMilliseconds} ms");
+                        });
+                    }
+                    else
+                    {
+                        throw new Exception("Failed to add the graph to the endpoint. " + httpResponseMessage.ReasonPhrase);
+                    }
                 }
-                graphPrepStopwatch.Stop();
-                UnityMainThreadDispatcher.Instance.Enqueue(() => Debug.Log($"[Performance] Graph serialization to temp file took: {graphPrepStopwatch.ElapsedMilliseconds} ms"));
-
-                string serviceUrl = $"{endpointUrl}/rdf-graphs/service?graph={Uri.EscapeDataString(baseUri.AbsoluteUri)}";
-                using HttpClient httpClient = new();
-                httpClient.DefaultRequestHeaders.Authorization = _authenticationHeaderValue;
-
-                // Étape 2: Utiliser StreamContent pour lire le fichier et l'envoyer sans le charger entièrement en mémoire.
-                using FileStream fs = new FileStream(tempFilePath, FileMode.Open, FileAccess.Read, FileShare.Read, 4096, useAsync: true);
-                using StreamContent streamContent = new StreamContent(fs);
-                streamContent.Headers.ContentType = new MediaTypeHeaderValue(writerMimeTypeDefinition.CanonicalMimeType) { CharSet = "utf-8" };
-
-                HttpRequestMessage request = new(HttpMethod.Post, serviceUrl)
-                {
-                    Content = streamContent
-                };
-
-                var networkStopwatch = System.Diagnostics.Stopwatch.StartNew();
-                using HttpResponseMessage httpResponseMessage = await httpClient.SendAsync(request).ConfigureAwait(false);
-                networkStopwatch.Stop();
-                UnityMainThreadDispatcher.Instance.Enqueue(() => Debug.Log($"[Performance] httpClient.SendAsync took: {networkStopwatch.ElapsedMilliseconds} ms"));
-
-                if (httpResponseMessage.IsSuccessStatusCode)
+                catch (Exception ex)
                 {
                     totalStopwatch.Stop();
-                    UnityMainThreadDispatcher.Instance.Enqueue(() =>
+                    UnityMainThreadDispatcher.Instance.Enqueue(() => Debug.LogError($"[Performance] AddToEndpoint failed after {totalStopwatch.ElapsedMilliseconds} ms"));
+                    throw new InvalidOperationException($"Failed to add graph to endpoint: {ex}", ex);
+                }
+                finally
+                {
+                    // Étape 3: Nettoyer le fichier temporaire.
+                    if (File.Exists(tempFilePath))
                     {
-                        Debug.Log("Graph added to endpoint.");
-                        Debug.Log($"[Performance] AddToEndpoint total execution time: {totalStopwatch.ElapsedMilliseconds} ms");
-                    });
+                        File.Delete(tempFilePath);
+                    }
                 }
-                else
-                {
-                    throw new Exception("Failed to add the graph to the endpoint. " + httpResponseMessage.ReasonPhrase);
-                }
-            }
-            catch (Exception ex)
-            {
-                totalStopwatch.Stop();
-                UnityMainThreadDispatcher.Instance.Enqueue(() => Debug.LogError($"[Performance] AddToEndpoint failed after {totalStopwatch.ElapsedMilliseconds} ms"));
-                throw new InvalidOperationException($"Failed to add graph to endpoint: {ex}", ex);
-            }
-            finally
-            {
-                // Étape 3: Nettoyer le fichier temporaire.
-                if (File.Exists(tempFilePath))
-                {
-                    File.Delete(tempFilePath);
-                }
-            }
+            }).ConfigureAwait(false);
         }
 
         public static async Task SaveToEndpoint()
@@ -706,7 +709,7 @@ DELETE {{
                 // Utiliser le dispatcher pour les logs car nous sommes dans un Task.Run
                 UnityMainThreadDispatcher.Instance.Enqueue(() => Debug.Log($"[Performance] UpdateMemoryAsync - Parsing took: {parserStopwatch.ElapsedMilliseconds} ms"));
 
-                // Appliquer la mise à jour sur la copie du graphe, SANS VERROU
+                // Appliquer la mise à jour sur la copie du graphe, SANS VERRO
                 var processorStopwatch = System.Diagnostics.Stopwatch.StartNew();
                 TripleStore store = new();
                 store.Add(graphCopy, true); // Opère sur la copie
