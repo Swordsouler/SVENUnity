@@ -592,7 +592,39 @@ DELETE {{
     ?s a time:Instant .
     FILTER(NOT EXISTS {{ ?i time:hasEnd ?s . }} && NOT EXISTS {{ ?i time:hasBeginning ?s . }})
     ?s ?p ?o .
-}};";
+}};
+DELETE {{
+    ?s time:before ?interval .
+}} WHERE {{
+    ?s time:before ?interval .
+    FILTER NOT EXISTS {{
+        ?interval ?p ?o .
+    }}
+}};
+DELETE {{
+    ?s time:after ?interval .
+}} WHERE {{
+    ?s time:after ?interval .
+    FILTER NOT EXISTS {{
+        ?interval ?p ?o .
+    }}
+}};
+DELETE {{
+    ?interval ?p ?o .
+}} WHERE {{
+    ?interval a time:Interval .
+    FILTER NOT EXISTS {{
+    	?s :hasTemporalExtent ?interval .
+    }}
+    ?interval ?p ?o .
+}};
+DELETE {{
+    ?s ?p ?o .
+}}
+WHERE {{
+    ?s ?p ?o .
+    FILTER(isBLANK(?s) || isBLANK(?o))
+}}";
 
                 // call query in local memory to clear the buffer
                 await UpdateMemoryAsync(deleteQuery);
