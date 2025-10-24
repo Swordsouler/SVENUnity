@@ -93,7 +93,7 @@ namespace Sven.Demo
             if (sendingActivityIndicator != null) sendingActivityIndicator.SetActive(true);
 
             //await GraphManager.ApplyRulesAsync();
-            await GraphManager.SaveToEndpoint();
+            await GraphManager.AddToEndpoint();
 
             SceneManager.LoadScene("Demo Menu", LoadSceneMode.Single);
         }

@@ -8,7 +8,11 @@
         "Unity.TextMeshPro",
         "Unity.TextMeshPro.Editor",
         "Unity.TextMeshPro.Editor.Tests",
-        "Unity.TextMeshPro.Tests"
+        "Unity.TextMeshPro.Tests",
+        "PrimeTween.Editor",
+        "PrimeTween.Runtime",
+        "PrimeTween.Tests",
+        "PrimeTween.Tests.Editor"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

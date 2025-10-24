@@ -2,7 +2,7 @@
 // Author: Nicolas SAINT-LÉGER
 // Licensed under the MIT License. See LICENSE file in the project root for full license information.
 
-using DG.Tweening;
+using PrimeTween;
 using Sven.Content;
 using Sven.GraphManagement.Description;
 using Sven.OwlTime;
@@ -129,6 +129,7 @@ namespace Sven.GraphManagement
 
         public static async Task Reload()
         {
+            PrimeTweenConfig.warnEndValueEqualsCurrent = false;
             Clear();
             await LoadOntologiesAsync();
             SetBaseUri(SvenSettings.BaseUri);
@@ -260,7 +261,7 @@ namespace Sven.GraphManagement
             {
                 throw new InvalidOperationException($"Failed to apply reasoning rules: {ex.Message}", ex);
             }
-            return workGraph as Graph;
+            return workGraph;
         }
 
         public static async Task SaveToFile(string absolutePath)
@@ -278,6 +279,21 @@ namespace Sven.GraphManagement
             }
         }
 
+        public static async Task AddToEndpoint()
+        {
+            List<Triple> triplesToFlush;
+            Uri baseUriToFlush;
+            NamespaceMapper nsMapToFlush;
+            lock (_graphLock)
+            {
+                triplesToFlush = new List<Triple>(_instance.Triples);
+                baseUriToFlush = _instance.BaseUri;
+                nsMapToFlush = new NamespaceMapper();
+                nsMapToFlush.Import(_instance.NamespaceMap);
+            }
+            await AddToEndpoint(triplesToFlush, baseUriToFlush, nsMapToFlush);
+        }
+
         public static async Task AddToEndpoint(List<Triple> triplesToFlush, Uri baseUri, NamespaceMapper nsMap)
         {
             await Task.Run(async () =>
@@ -290,7 +306,7 @@ namespace Sven.GraphManagement
 
                 MimeTypeDefinition writerMimeTypeDefinition = MimeTypesHelper.GetDefinitions("application/x-turtle").First();
 
-                Graph graphToSend = new Graph();
+                Graph graphToSend = new();
                 graphToSend.Assert(triplesToFlush);
                 graphToSend.BaseUri = baseUri;
                 graphToSend.NamespaceMap.Import(nsMap);
@@ -299,7 +315,7 @@ namespace Sven.GraphManagement
                 try
                 {
                     // Étape 1: Écrire directement dans un fichier temporaire pour éviter une charge mémoire élevée.
-                    using (StreamWriter sw = new StreamWriter(tempFilePath, false, Encoding.UTF8))
+                    using (StreamWriter sw = new(tempFilePath, false, Encoding.UTF8))
                     {
                         SaveGraph(graphToSend, sw);
                     }
@@ -309,8 +325,8 @@ namespace Sven.GraphManagement
                     httpClient.DefaultRequestHeaders.Authorization = _authenticationHeaderValue;
 
                     // Étape 2: Utiliser StreamContent pour lire le fichier et l'envoyer sans le charger entièrement en mémoire.
-                    using FileStream fs = new FileStream(tempFilePath, FileMode.Open, FileAccess.Read, FileShare.Read, 4096, useAsync: true);
-                    using StreamContent streamContent = new StreamContent(fs);
+                    using FileStream fs = new(tempFilePath, FileMode.Open, FileAccess.Read, FileShare.Read, 4096, useAsync: true);
+                    using StreamContent streamContent = new(fs);
                     streamContent.Headers.ContentType = new MediaTypeHeaderValue(writerMimeTypeDefinition.CanonicalMimeType) { CharSet = "utf-8" };
 
                     HttpRequestMessage request = new(HttpMethod.Post, serviceUrl)
@@ -551,7 +567,7 @@ WHERE {
 
                 // Préparation et envoi du graphe à partir des données fournies
                 await AddToEndpoint(triplesToFlush, baseUri, nsMap);
-                Debug.Log("Buffer memory added to endpoint.");
+                /*Debug.Log("Buffer memory added to endpoint.");
 
                 string deleteQuery = $@"PREFIX : <https://sven.lisn.upsaclay.fr/ontology#>
 PREFIX time: <http://www.w3.org/2006/time#>
@@ -627,7 +643,15 @@ WHERE {{
 }}";
 
                 // call query in local memory to clear the buffer
-                await UpdateMemoryAsync(deleteQuery);
+                await UpdateMemoryAsync(deleteQuery);*/
+                // delete triplesttoFlush from memory
+                lock (_graphLock)
+                {
+                    foreach (Triple t in triplesToFlush)
+                    {
+                        _instance.Retract(t);
+                    }
+                }
                 Debug.Log("Buffer memory cleared. Now contains " + Count + " triples.");
             }
             catch (Exception ex)
@@ -1305,6 +1329,11 @@ WHERE {{
 
         public static void PrintExperimentResults()
         {
+            if (processedDatas.Count == 0)
+            {
+                Debug.Log("No experiment data to process.");
+                return;
+            }
             string results = "";
 
             results += "SPARQL-Sampled: " + processedDatas.Count + "\n";
