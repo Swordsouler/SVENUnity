@@ -14,11 +14,13 @@ namespace Sven.Context
         /// The time at which the event occurred.
         /// </summary>
         private Interval _interval;
+        protected Interval Interval => _interval;
 
         /// <summary>
         /// The unique identifier of the event.
         /// </summary>
         private readonly string _uuid;
+        protected string UUID => _uuid;
 
         /// <summary>
         /// The user that triggered the event.
