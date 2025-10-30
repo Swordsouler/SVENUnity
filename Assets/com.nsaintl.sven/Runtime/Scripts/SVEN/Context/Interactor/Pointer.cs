@@ -14,7 +14,7 @@ namespace Sven.Context
     /// <summary>
     /// Represents the pointer in the scene.
     /// </summary>
-    public class Pointer : Interactor, IComponentMapping
+    public class Pointer : Interactor
     {
         /// <summary>
         /// The maximum distance for the pointer.
