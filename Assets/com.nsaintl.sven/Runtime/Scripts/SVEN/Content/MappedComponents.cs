@@ -209,6 +209,9 @@ namespace Sven.Content
             {
                 (Func<Pointer, ComponentProperty>)(pointer => new ComponentProperty("enabled", () => pointer.enabled, value => pointer.enabled = value.ToString().ToLower() == "true", 1)),
                 (Func<Pointer, ComponentProperty>)(pointer => new ComponentProperty("pointerDistance", () => pointer.PointerDistance, value => pointer.PointerDistance = (float)value, 1)),
+                (Func<Pointer, ComponentProperty>)(pointer => new ComponentProperty("pointerPosition", () => pointer.PointerPosition, value => pointer.PointerPosition = (Vector3)value, 1)),
+                (Func<Pointer, ComponentProperty>)(pointer => new ComponentProperty("pointerDirection", () => pointer.PointerDirection, value => pointer.PointerDirection = (Vector3)value, 1)),
+                (Func<Pointer, ComponentProperty>)(pointer => new ComponentProperty("pointerHit", () => pointer.PointerHit, value => pointer.PointerHit = (Vector3)value, 1)),
             })},
         };
 

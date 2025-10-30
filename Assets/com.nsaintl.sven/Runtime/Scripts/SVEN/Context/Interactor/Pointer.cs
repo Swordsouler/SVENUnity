@@ -14,24 +14,52 @@ namespace Sven.Context
     /// <summary>
     /// Represents the pointer in the scene.
     /// </summary>
-    public class Pointer : Interactor
+    public class Pointer : Interactor, IComponentMapping
     {
         /// <summary>
         /// The maximum distance for the pointer.
         /// </summary>
         [field: SerializeField]
         public float PointerDistance { get; set; } = 20f;
+        [field: SerializeField]
+        public Vector3 PointerPosition { get; set; } = Vector3.zero;
+        [field: SerializeField]
+        public Vector3 PointerDirection { get; set; } = Vector3.forward;
+        [field: SerializeField]
+        public Vector3 PointerHit { get; set; } = Vector3.zero;
 
         protected override IEnumerator CheckInteractor(float i)
         {
             while (true)
             {
-                Vector3 pointerPosition = transform.position;
-                Vector3 pointerDirection = transform.forward;
+                PointerPosition = transform.position;
+                PointerDirection = transform.forward;
                 float visionDistance = PointerDistance;
 
-                Ray ray = new(pointerPosition, pointerDirection);
+                Ray ray = new(PointerPosition, PointerDirection);
                 RaycastHit[] hits = Physics.RaycastAll(ray, visionDistance);
+
+                // Détermine le point le plus proche touché par le rayon ; si aucun hit, prend le point à la distance maximale du pointer
+                if (hits != null && hits.Length > 0)
+                {
+                    float minDist = float.MaxValue;
+                    Vector3 closestPoint = PointerPosition + PointerDirection.normalized * visionDistance;
+                    for (int k = 0; k < hits.Length; k++)
+                    {
+                        RaycastHit h = hits[k];
+                        if (h.distance < minDist)
+                        {
+                            minDist = h.distance;
+                            closestPoint = h.point;
+                        }
+                    }
+                    PointerHit = closestPoint;
+                }
+                else
+                {
+                    PointerHit = PointerPosition + PointerDirection.normalized * visionDistance;
+                }
+
                 HashSet<SemantizationCore> newVisibleObjects = new();
 
                 for (int j = 0; j < hits.Length; j++)
@@ -77,7 +105,7 @@ namespace Sven.Context
                 }
                 // sort the hashset by distance to the pointer
                 List<SemantizationCore> sortedVisibleObjects = new(newVisibleObjects);
-                sortedVisibleObjects.Sort((a, b) => Vector3.Distance(a.transform.position, pointerPosition).CompareTo(Vector3.Distance(b.transform.position, pointerPosition)));
+                sortedVisibleObjects.Sort((a, b) => Vector3.Distance(a.transform.position, PointerPosition).CompareTo(Vector3.Distance(b.transform.position, PointerPosition)));
                 // Update the list of currently interacted objects
                 currentInteractedObjects.Clear();
                 currentInteractedObjects.UnionWith(sortedVisibleObjects);
