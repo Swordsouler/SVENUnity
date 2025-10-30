@@ -26,7 +26,7 @@ namespace Sven.Context
         [field: SerializeField]
         public Vector3 PointerDirection { get; set; } = Vector3.forward;
         [field: SerializeField]
-        public Vector3 PointerHit { get; set; } = Vector3.zero;
+        public Vector3 PointerHitPosition { get; set; } = Vector3.zero;
 
         protected override IEnumerator CheckInteractor(float i)
         {
@@ -53,11 +53,11 @@ namespace Sven.Context
                             closestPoint = h.point;
                         }
                     }
-                    PointerHit = closestPoint;
+                    PointerHitPosition = closestPoint;
                 }
                 else
                 {
-                    PointerHit = PointerPosition + PointerDirection.normalized * visionDistance;
+                    PointerHitPosition = PointerPosition + PointerDirection.normalized * visionDistance;
                 }
 
                 HashSet<SemantizationCore> newVisibleObjects = new();
