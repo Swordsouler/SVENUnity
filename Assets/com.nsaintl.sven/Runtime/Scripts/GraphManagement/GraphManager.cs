@@ -529,7 +529,10 @@ WHERE {
         public static void Assert(IEnumerable<Triple> triples)
         {
             foreach (Triple t in triples)
+            {
+                Debug.Log(t.ToString());
                 Assert(t);
+            }
         }
 
         public static IUriNode Assert(Triple t)
