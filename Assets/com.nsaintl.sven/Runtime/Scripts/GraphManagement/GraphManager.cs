@@ -525,6 +525,13 @@ WHERE {
 
         #endregion
 
+
+        public static void Assert(IEnumerable<Triple> triples)
+        {
+            foreach (Triple t in triples)
+                Assert(t);
+        }
+
         public static IUriNode Assert(Triple t)
         {
             IUriNode subject = t.Subject as IUriNode ?? throw new ArgumentException("The subject of the triple must be an IUriNode.", nameof(t));
