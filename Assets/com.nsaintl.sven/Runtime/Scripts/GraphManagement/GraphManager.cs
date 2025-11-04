@@ -530,13 +530,22 @@ WHERE {
         {
             foreach (Triple t in triples)
             {
-                Debug.Log(t.ToString());
-                Assert(t);
+                try
+                {
+                    Assert(t);
+                }
+                catch (Exception e)
+                {
+                    if (SvenSettings.Debug)
+                        Debug.LogError($"Failed to assert triple {t}: {e}");
+                }
             }
         }
 
         public static IUriNode Assert(Triple t)
         {
+            if (t == null) throw new ArgumentNullException(nameof(t));
+
             IUriNode subject = t.Subject as IUriNode ?? throw new ArgumentException("The subject of the triple must be an IUriNode.", nameof(t));
             List<Triple> triplesToFlush = null;
             Uri baseUriToFlush = null;
