@@ -33,6 +33,7 @@ namespace Sven.GraphManagement
     public static class GraphManager
     {
         private static readonly Graph _instance = new();
+        public static Graph Instance => _instance;
         private static readonly object _graphLock = new();
         private static bool _isFlushing = false;
         public static int Count
