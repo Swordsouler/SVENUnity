@@ -1375,6 +1375,11 @@ WHERE {{
 
             Debug.Log("Experiment results:\n" + results);
         }
+
+        public static async Task SynchronizeAsync()
+        {
+            await RetrieveSceneFromMemory(new Instant(DateTime.Now));
+        }
     }
 
     public static class TaskExtensions
