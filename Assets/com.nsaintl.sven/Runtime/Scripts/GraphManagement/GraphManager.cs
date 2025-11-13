@@ -1051,8 +1051,8 @@ WHERE {{
             CurrentInstantLoaded = instant;
             if (instant == null) return;
 
-            Debug.Log(RetrieveSceneQuery(instant, false));
             SparqlResultSet results = await QueryMemoryAsync(RetrieveSceneQuery(instant, false), false);
+            Debug.Log("Results count: " + results.Count);
             SceneContent targetSceneContent = await GetSceneContent(results);
             ReconstructScene(targetSceneContent);
         }
