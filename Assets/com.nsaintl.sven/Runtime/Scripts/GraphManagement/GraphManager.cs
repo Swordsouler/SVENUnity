@@ -574,6 +574,21 @@ WHERE {
             return subject;
         }
 
+        public static async Task ForceFlushToEndpointAsync()
+        {
+            List<Triple> triplesToFlush;
+            Uri baseUriToFlush;
+            NamespaceMapper nsMapToFlush;
+            lock (_graphLock)
+            {
+                triplesToFlush = new List<Triple>(_instance.Triples);
+                baseUriToFlush = _instance.BaseUri;
+                nsMapToFlush = new NamespaceMapper();
+                nsMapToFlush.Import(_instance.NamespaceMap);
+            }
+            await FlushBufferToEndpointAsync(triplesToFlush, baseUriToFlush, nsMapToFlush);
+        }
+
         public static async Task FlushBufferToEndpointAsync(List<Triple> triplesToFlush, Uri baseUri, NamespaceMapper nsMap)
         {
             try
@@ -1379,7 +1394,7 @@ WHERE {{
 
         public static async Task SynchronizeAsync()
         {
-            await RetrieveSceneFromMemory(new Instant(DateTime.Now));
+            await RetrieveSceneFromEndpoint(new Instant(DateTime.Now));
         }
     }
 
