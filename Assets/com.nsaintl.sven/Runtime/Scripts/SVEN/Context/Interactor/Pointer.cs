@@ -20,6 +20,8 @@ namespace Sven.Context
         /// The maximum distance for the pointer.
         /// </summary>
         [field: SerializeField]
+        public int PointerIndex { get; set; } = 0;
+        [field: SerializeField]
         public float PointerDistance { get; set; } = 20f;
         [field: SerializeField]
         public Vector3 PointerPosition { get; set; } = Vector3.zero;
