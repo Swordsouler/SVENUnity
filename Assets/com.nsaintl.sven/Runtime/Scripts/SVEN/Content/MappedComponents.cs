@@ -212,6 +212,7 @@ namespace Sven.Content
                 (Func<Pointer, ComponentProperty>)(pointer => new ComponentProperty("pointerPosition", () => pointer.PointerPosition, value => pointer.PointerPosition = (Vector3)value, 1)),
                 (Func<Pointer, ComponentProperty>)(pointer => new ComponentProperty("pointerDirection", () => pointer.PointerDirection, value => pointer.PointerDirection = (Vector3)value, 1)),
                 (Func<Pointer, ComponentProperty>)(pointer => new ComponentProperty("pointerHitPosition", () => pointer.PointerHitPosition, value => pointer.PointerHitPosition = (Vector3)value, 1)),
+                (Func<Pointer, ComponentProperty>)(pointer => new ComponentProperty("pointerHitDistance", () => pointer.PointerHitDistance, value => pointer.PointerHitDistance = (float)value, 1)),
             })},
         };
 
