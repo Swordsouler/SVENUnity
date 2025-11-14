@@ -94,6 +94,18 @@ namespace Sven.Content
             return componentUUIDs.FirstOrDefault(x => x.Value.Item1 == UUID).Key;
         }
 
+        public static bool TryGetComponentByUUID(string UUID, out Component component)
+        {
+            var kvp = componentUUIDs.FirstOrDefault(x => x.Value.Item1 == UUID);
+            if (kvp.Key != null)
+            {
+                component = kvp.Key;
+                return true;
+            }
+            component = null;
+            return false;
+        }
+
         /// <summary>
         /// Gets the interval for the component.
         /// </summary>
