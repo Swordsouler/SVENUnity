@@ -687,6 +687,7 @@ WHERE {{
                         _instance.Retract(t);
                     }
                 }
+                await SyncWithEndpoint();
                 Debug.Log("Buffer memory cleared. Now contains " + Count + " triples.");
             }
             catch (Exception ex)
@@ -696,6 +697,38 @@ WHERE {{
             finally
             {
                 _isFlushing = false;
+            }
+        }
+
+        private static async Task SyncWithEndpoint()
+        {
+            string endpointUrl = SvenSettings.EndpointUrl;
+            string query = $@"PREFIX : <{BaseUri}>
+PREFIX time: <http://www.w3.org/2006/time#>
+PREFIX sven: <https://sven.lisn.upsaclay.fr/ontology#>
+
+SELECT DISTINCT ?s ?p ?o
+FROM :
+WHERE {{
+    ?s ?p ?o .
+    ?s sven:hasTemporalExtent ?interval .
+    FILTER NOT EXISTS {{
+    	?interval time:hasEnd ?hasEnd .
+    }}
+}} LIMIT {SvenSettings.BufferSize}";
+            SparqlResultSet results = await QueryEndpoint(endpointUrl, query);
+            lock (_graphLock)
+            {
+                foreach (var result in results)
+                {
+                    INode subject = result["s"];
+                    INode predicate = result["p"];
+                    INode @object = result["o"];
+                    if (subject != null && predicate != null && @object != null)
+                    {
+                        _instance.Assert(new Triple(subject, predicate, @object));
+                    }
+                }
             }
         }
 
