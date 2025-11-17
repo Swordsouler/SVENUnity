@@ -729,6 +729,9 @@ WHERE {{
                         _instance.Assert(new Triple(subject, predicate, @object));
                     }
                 }
+                await LoadOntologiesAsync();
+                SetBaseUri(SvenSettings.BaseUri);
+                SetNamespace("", SvenSettings.BaseUri);
             }
         }
 
