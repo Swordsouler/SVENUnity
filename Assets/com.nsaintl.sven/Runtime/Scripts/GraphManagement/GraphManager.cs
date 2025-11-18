@@ -729,10 +729,10 @@ WHERE {{
                         _instance.Assert(new Triple(subject, predicate, @object));
                     }
                 }
-                await LoadOntologiesAsync();
-                SetBaseUri(SvenSettings.BaseUri);
-                SetNamespace("", SvenSettings.BaseUri);
             }
+            await LoadOntologiesAsync();
+            SetBaseUri(SvenSettings.BaseUri);
+            SetNamespace("", SvenSettings.BaseUri);
         }
 
         public static IUriNode CreateUriNode(string uri)
