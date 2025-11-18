@@ -1432,6 +1432,18 @@ WHERE {{
         {
             await RetrieveSceneFromEndpoint(new Instant(DateTime.Now));
         }
+
+        public static Graph InstanceCopy()
+        {
+            Graph g = new();
+            lock (_graphLock)
+            {
+                g.NamespaceMap.Import(_instance.NamespaceMap);
+                g.BaseUri = _instance.BaseUri;
+                g.Assert(_instance.Triples);
+            }
+            return g;
+        }
     }
 
     public static class TaskExtensions
