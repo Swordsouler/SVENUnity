@@ -162,7 +162,11 @@ namespace Sven.GraphManagement
         {
             if (string.IsNullOrEmpty(ontologyName)) throw new ArgumentNullException(nameof(ontologyName) + " is null or empty.");
             if (string.IsNullOrEmpty(ontologyFileName)) throw new ArgumentNullException(nameof(ontologyFileName) + " is null or empty.");
-            if (_ontologies.ContainsKey(ontologyName)) throw new ArgumentException($"Ontology '{ontologyName}' already exists.");
+            if (_ontologies.ContainsKey(ontologyName))
+            {
+                Debug.LogWarning($"Ontology '{ontologyName}' is already loaded.");
+                return;
+            }
 
 #if UNITY_WEBGL && !UNITY_EDITOR
             using (UnityEngine.Networking.UnityWebRequest request = UnityEngine.Networking.UnityWebRequest.Get(ontologyFileName))
