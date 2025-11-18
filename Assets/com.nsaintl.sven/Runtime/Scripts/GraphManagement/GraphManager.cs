@@ -162,11 +162,6 @@ namespace Sven.GraphManagement
         {
             if (string.IsNullOrEmpty(ontologyName)) throw new ArgumentNullException(nameof(ontologyName) + " is null or empty.");
             if (string.IsNullOrEmpty(ontologyFileName)) throw new ArgumentNullException(nameof(ontologyFileName) + " is null or empty.");
-            if (_ontologies.ContainsKey(ontologyName))
-            {
-                Debug.LogWarning($"Ontology '{ontologyName}' is already loaded.");
-                return;
-            }
 
 #if UNITY_WEBGL && !UNITY_EDITOR
             using (UnityEngine.Networking.UnityWebRequest request = UnityEngine.Networking.UnityWebRequest.Get(ontologyFileName))
@@ -197,7 +192,8 @@ namespace Sven.GraphManagement
                 }
             });
 #endif
-            _ontologies.Add(ontologyName, ontologyFileName);
+            if (!_ontologies.ContainsKey(ontologyName))
+                _ontologies.Add(ontologyName, ontologyFileName);
         }
 
         public static async Task LoadOntologiesAsync()
