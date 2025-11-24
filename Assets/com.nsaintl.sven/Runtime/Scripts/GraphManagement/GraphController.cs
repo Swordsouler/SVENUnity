@@ -9,6 +9,7 @@ using UnityEngine;
 
 namespace Sven.GraphManagement
 {
+    [DisallowMultipleComponent, AddComponentMenu("SVEN/Graph Controller")]
     public class GraphController : MonoBehaviour
     {
         private void Awake()

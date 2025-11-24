@@ -1,9 +1,9 @@
-# Semantized Virtual ENvironment (SVEN) for Unity
+# Semanticized Virtual ENvironment (SVEN) for Unity
 
 [![Unity 2022.3+](https://img.shields.io/badge/unity-2022.3%2B-blue.svg)](https://unity3d.com/get-unity/download)
 [![License: MIT](https://img.shields.io/badge/License-MIT-brightgreen.svg)](https://gitlab.lisn.upsaclay.fr/nsaintl/SVENUnity/-/blob/main/LICENSE)
 
-SVEN is a Unity package that allows you to semantize your Virtual Environment (VE) into a knowledge graph, making it possible to perform complex queries on your VE during the experience, as well as the ability to replay and analyze it afterwards.
+SVEN is a Unity package that allows you to semanticize your Virtual Environment (VE) into a Knowledge Graph (KG), making it possible to perform complex queries on your VE during the experience, as well as the ability to replay and analyze it afterwards.
 
 It is based on [Semantic Web](https://en.wikipedia.org/wiki/Semantic_Web) and [Linked Data](https://en.wikipedia.org/wiki/Linked_data) technologies and uses the [SPARQL](https://en.wikipedia.org/wiki/SPARQL) query language to query the data. Using such technology enriches your virtual experience in several ways:
 
@@ -33,8 +33,13 @@ If you don't have openUPM CLI, you will need to install it first by following th
         {
             "name": "package.openupm.com",
             "url": "https://package.openupm.com",
-            "scopes": ["com.gamesoft.dotween", "com.dbrizov.naughtyattributes"],
+            "scopes": ["com.dbrizov.naughtyattributes"],
             "overrideBuiltIns": false
+        },
+        {
+            "name": "npm",
+            "url": "https://registry.npmjs.org/",
+            "scopes": ["com.kyrylokuzyk"]
         }
     ]
 }
@@ -46,47 +51,43 @@ This project is developed as part of a PhD thesis at the LISN laboratory of the 
 
 # Overview
 
-## Semantize your Virtual ENvironment (VE) _(write your knowledge graph)_
+## Semanticize your Virtual ENvironment (VE) _(write your knowledge graph)_
 
-To create a semantized virtual environment, follow these steps:
+To create a semanticized virtual environment, follow these steps:
 
-1. Add a **GraphBuffer** component to your scene (GameObject > Semantic > GraphBuffer). This component stores your virtual environment data as a knowledge graph and sends it to a remote server (or a local file) for later analysis or replay.
+1. Edit **SVEN Settings** (Window > SVEN Settings) to configure ontologies, semanticize frequency, buffer size, debugging, and endpoint for your knowledge graph.
 
-![Instantiate GraphBuffer](./Assets/com.nsaintl.sven/Documentation~/instantiate_graphbuffer.png)
+![Instantiate SVEN Settings](./Assets/com.nsaintl.sven/Documentation~/instantiate_svensettings.png)
 
-2. Configure the **GraphBuffer** component according to your needs:
+![SVEN Settings](./Assets/com.nsaintl.sven/Documentation~/svensettings.png)
 
-| Property                 | Description                                                                                                                            |
-| ------------------------ | -------------------------------------------------------------------------------------------------------------------------------------- |
-| **Endpoint**             | The URL of the remote server where the data will be sent (or the path of the local file where the data will be saved)                  |
-| **Storage Name**         | The name of the knowledge graph that will be created on the remote server (or the name of the local file where the data will be saved) |
-| **Instant Per Second**   | The frequency at which the virtual environment data will be checked and saved in the knowledge graph                                   |
-| **Ontology Description** | The description of the ontology used to describe the virtual environment data                                                          |
+| Property                      | Description                                                                                                                         |
+| ----------------------------- | ----------------------------------------------------------------------------------------------------------------------------------- |
+| **Use inside**                | Enables or disables the "inside" mode to query instant (refer to Section 5.3 in article).                                           |
+| **Show debug logs**           | Displays debug logs in the Unity console for troubleshooting SVEN’s behavior.                                                       |
+| **Point of View Debug Color** | Color used to visually display the point-of-view (camera) during debugging Gizmos.                                                  |
+| **Pointer Debug Color**       | Color used to render the pointer (raycast or laser beam) during debugging Gizmos.                                                   |
+| **Grasp Area Debug Color**    | Color used to visualize the grasping/interactable (sphere) during debugging Gizmos.                                                 |
+| **Endpoint URL**              | URL of the GraphDB/triplestore server where the VE sends triples data (e.g. http://localhost:7200/repositories/SVEN).               |
+| **Graph Name**                | Name of the graph into which SVEN will insert generated triples. This is basically the name of your experiment (e.g., Experiment1). |
+| **Base URI**                  | Base URI used to construct the URIs of entities created by the VE (e.g. https://sven.lisn.upsaclay.fr/ve/Experiment1/).             |
+| **Username**                  | Username used for authentication with the triplestore.                                                                              |
+| **Password**                  | Password used for authentication with the triplestore.                                                                              |
+| **Semanticize Frequency**     | Frequency at which each properties are checked to be semanticize in seconds (e.g., 5 check per seconds).                            |
+| **Buffer Size**               | Maximum number of triples the buffer can hold before being flushed to the endpoint triplestore.                                     |
+| **Ontologies**                | List of ontologies currently imported into your VE                                                                                  |
 
-![GraphBuffer](./Assets/com.nsaintl.sven/Documentation~/graphbuffer.png)
+2. Add a **Graph Controller** component to your scene (GameObject > SVEN > Graph Controller). This component initialize your knowledge graph with ontologies, prefixes, endpoint that you defined in **SVEN Settings**.
 
-3. Create an **OntologyDescription** resource in your project (Create > Semantic > OntologyDescription) to describe the ontology configuration used for your virtual environment data.
+![Instantiate Graph Controller](./Assets/com.nsaintl.sven/Documentation~/instantiate_graphcontroller.png)
 
-![Instantiate OntologyDescription](./Assets/com.nsaintl.sven/Documentation~/instantiate_ontologydescription.png)
-
-4. Configure the **OntologyDescription** resource according to your needs:
-
-| Property          | Description                                                                                           |
-| ----------------- | ----------------------------------------------------------------------------------------------------- |
-| **Name**          | The name of the ontology used to describe the virtual environment data                                |
-| **Base Uri**      | The base URI used to describe the virtual environment data                                            |
-| **Namespaces**    | The namespaces used to describe the virtual environment data                                          |
-| **Ontology File** | The **_.ttl_** file containing the ontology description used to describe the virtual environment data |
-
-![OntologyDescription](./Assets/com.nsaintl.sven/Documentation~/ontologydescription.png)
-
-5. Add a **SemantizationCore** component to each object you want to semantize (GameObject > Semantic > SemantizationCore). This component scans the object's components, allowing you to select which properties to observe and modify. You can also choose whether the component should be dynamically observed or considered static and semantized only at creation.
+3. Add a **Semantization Core** component to each object you want to semanticize (GameObject > Semantic > Semantization Core). This component scans the object's components, allowing you to select which properties to observe. You can also choose whether the component should be dynamically observed or considered static and semanticized only at creation.
 
 ![Semantization Core](./Assets/com.nsaintl.sven/Documentation~/semantizationcore.png)
 
-6. Your scene is now ready to be semantized. You can run your application and observe the data from your virtual environment being saved into the knowledge graph at the end of your experience.
+4. Your scene is now ready to be semanticized. You can run your application and observe the data from your virtual environment being saved into the knowledge graph.
 
-The **_.ttl_** files are saved in the **SVENs** folder at the root of your project.
+---
 
 ## Replay your Semantize Virtual ENvironment (SVEN) _(read your knowledge graph)_
 

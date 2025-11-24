@@ -16,8 +16,7 @@ namespace Sven.Content
     /// <summary>
     /// Core component to semantize content.
     /// </summary>
-    [DisallowMultipleComponent,
-    AddComponentMenu("Semantic/Semantization Core")]
+    [DisallowMultipleComponent, AddComponentMenu("SVEN/Semantization Core")]
     public class SemantizationCore : MonoBehaviour
     {
         /// <summary>
