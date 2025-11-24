@@ -87,15 +87,15 @@ To create a semanticized virtual environment, follow these steps:
 
 4. Your scene is now ready to be semanticized. You can run your application and observe the data from your virtual environment being saved into the knowledge graph.
 
----
+## Replay your Semanticized Virtual ENvironment (SVEN) _(read your knowledge graph)_
 
-## Replay your Semantize Virtual ENvironment (SVEN) _(read your knowledge graph)_
+To replay a semanticized virtual environment, follow these steps:
 
-To replay a semantized virtual environment, follow these steps:
+1. Download the **Replay Semanticized Virtual Environment** sample and open the **Replay SVEN** scene.
 
-1. Download the **Replay Semantized Virtual Environment** sample and open the **Replay SVEN** scene.
+--- DE SOUVENIR IL N'Y A PLUS DE NOTION DE GRAPH READER DANS LA SCENE REPLAY SVEN ET ON NE PEUT PLUS LIRE DE GRAPH LOCAL ---
 
-2. Select the **Reader** object in the scene hierarchy and configure the **GraphReader** component according to your needs. This component reads the knowledge graph data and applies it to your virtual environment, allowing you to fully recreate a previously recorded experience. The component can read data from a local file or a remote server depending on the chosen configuration:
+2. Select the **Reader** object in the scene hierarchy and configure the **GraphReader** component according to your needs. This component reads the knowledge graph data and applies it to your VE, allowing you to fully recreate a previously recorded experience. The component can read data from a local file or a remote server depending on the chosen configuration:
 
 ### Remote
 
