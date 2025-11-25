@@ -91,27 +91,9 @@ To create a semanticized virtual environment, follow these steps:
 
 To replay a semanticized virtual environment, follow these steps:
 
-1. Download the **Replay Semanticized Virtual Environment** sample and open the **Replay SVEN** scene.
+1. Download the **Replay Semanticized Virtual ENvironment** sample and open the **Replay SVEN** scene.
 
---- DE SOUVENIR IL N'Y A PLUS DE NOTION DE GRAPH READER DANS LA SCENE REPLAY SVEN ET ON NE PEUT PLUS LIRE DE GRAPH LOCAL ---
-
-2. Select the **Reader** object in the scene hierarchy and configure the **GraphReader** component according to your needs. This component reads the knowledge graph data and applies it to your VE, allowing you to fully recreate a previously recorded experience. The component can read data from a local file or a remote server depending on the chosen configuration:
-
-### Remote
-
-| Property         | Description                                                       |
-| ---------------- | ----------------------------------------------------------------- |
-| **Endpoint**     | The URL of the remote server where the data will be read          |
-| **Storage Name** | The name of the knowledge graph that will be read from the server |
-
-![GraphReader Remote](./Assets/com.nsaintl.sven/Documentation~/graphreader_remote.png)
-
-### Local
-
-In local mode, once the scene is launched, simply press the **Load Graph from file** button to load a **_.ttl_** file containing the knowledge graph data.
-![GraphReader Local](./Assets/com.nsaintl.sven/Documentation~/graphreader_local.png)
-
-3. And that's it! You can now navigate through your virtual environment as it was previously recorded.
+2. Start the scene, and it will read your knowledge graph to load (depending of your **SVEN Settings**) each instant of your virtual environment. You can navigate through the experience using the **Next Instant** and **Previous Instant** buttons, or by using the slider at the bottom.
 
 ![Reader Scene](./Assets/com.nsaintl.sven/Documentation~/reader_scene.png)
 
@@ -120,12 +102,25 @@ In local mode, once the scene is launched, simply press the **Load Graph from fi
 To support non-generic components, you can add their descriptions to the `MapppedComponents` dictionary. For example, to add a description for the `Atom` component, you can use the following code:
 
 ```csharp
-MapppedComponents.AddComponentDescription(typeof(Atom), new("Atom",
-    new List<Delegate>
+public class Atom : MonoBehaviour, IComponentMapping, ISemanticAnnotation
+{
+    public static string SemanticTypeName => "sven:Atom";
+    [SerializeField] private AtomType type;
+    public AtomType Type {
+        get => type;
+        set => type = value;
+    }
+
+    public static ComponentMapping ComponentMapping()
     {
-        (Func<Atom, PropertyDescription>)(atom => new PropertyDescription("enabled", () => atom, value => atom.enabled = value.ToString() == "true", 1)),
-        (Func<Atom, PropertyDescription>)(atom => new PropertyDescription("atomType", () => atom, value => atom.type = value.ToString(), 1)),
-    }));
+        return new("AtomComponent",
+            new List<Delegate>
+            {
+                (Func<Atom, PropertyDescription>)(atom => new PropertyDescription("enabled", () => atom, value => atom.enabled = value.ToString() == "true", 1)),
+                (Func<Atom, PropertyDescription>)(atom => new PropertyDescription("atomType", () => atom, value => atom.type = value.ToString(), 1)),
+            });
+    }
+}
 ```
 
 This code snippet maps the `Atom` component to its properties, allowing SVEN to semantize and interact with it properly. It also enables custom getters and setters for observing their properties. Make sure to call this at the beginning of the scene to ensure everything works correctly.
