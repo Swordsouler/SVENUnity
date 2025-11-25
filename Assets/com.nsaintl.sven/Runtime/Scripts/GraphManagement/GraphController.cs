@@ -31,7 +31,7 @@ namespace Sven.GraphManagement
 #if !UNITY_WEBGL || UNITY_EDITOR
             });
 #endif
-            await GraphManager.SaveToEndpoint();
+            await GraphManager.AddToEndpoint();
         }
 
         public async Task SaveGraphToFile()
@@ -55,7 +55,7 @@ namespace Sven.GraphManagement
         public async void SaveAndQuitGraph()
         {
             await SaveGraphToEndpoint();
-            await SaveGraphToFile();
+            //await SaveGraphToFile();
             GraphManager.Clear();
         }
 

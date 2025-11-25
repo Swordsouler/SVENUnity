@@ -86,7 +86,7 @@ namespace Sven.Utils
         private bool _isRunningQuery = false;
         private float? _pendingSceneValue = null;
 
-        private void Awake()
+        private void Start()
         {
             IsPlaying = false;
             Load();
@@ -94,6 +94,7 @@ namespace Sven.Utils
 
         private async void Load()
         {
+            await GraphManager.Reload();
             await GraphManager.LoadInstantsFromEndpoint();
             ResetController();
             OnSliderValueChanged(0);

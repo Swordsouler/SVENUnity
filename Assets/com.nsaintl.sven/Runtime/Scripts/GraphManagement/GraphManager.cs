@@ -1092,7 +1092,6 @@ WHERE {{
             if (instant == null) return;
             string endpointUrl = SvenSettings.EndpointUrl;
 
-            Debug.Log(RetrieveSceneQuery(instant, false));
             SparqlResultSet results = await QueryEndpoint(endpointUrl, RetrieveSceneQuery(instant, true));
             SceneContent targetSceneContent = await GetSceneContent(results);
             ReconstructScene(targetSceneContent);
