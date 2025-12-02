@@ -41,9 +41,9 @@ namespace Sven.Content
                 typeof(Transform), new("Transform",
                 new List<Delegate>
                 {
-                    (Func<Transform, ComponentProperty>)(transform => new ComponentProperty("position", () => transform.position, value => transform.DOMove((Vector3)value, lerpSpeed), 1/*, "virtualPosition"*/)),
-                    (Func<Transform, ComponentProperty>)(transform => new ComponentProperty("rotation", () => transform.rotation, value => transform.DORotateQuaternion((Quaternion)value, lerpSpeed), 1/*, "virtualRotation"*/)),
-                    (Func<Transform, ComponentProperty>)(transform => new ComponentProperty("scale", () => transform.localScale, value => transform.DOScale((Vector3)value, lerpSpeed), 1/*, "virtualSize"*/)),
+                    (Func<Transform, ComponentProperty>)(transform => new ComponentProperty("position", () => transform.position, value => Tween.Position(transform, (Vector3)value, lerpSpeed), 1/*, "virtualPosition"*/)),
+                    (Func<Transform, ComponentProperty>)(transform => new ComponentProperty("rotation", () => transform.rotation, value => Tween.Rotation(transform, (Quaternion)value, lerpSpeed), 1/*, "virtualRotation"*/)),
+                    (Func<Transform, ComponentProperty>)(transform => new ComponentProperty("scale", () => transform.localScale, value => Tween.Scale(transform, (Vector3)value, lerpSpeed), 1/*, "virtualSize"*/)),
                 })
             },
             {
@@ -74,7 +74,7 @@ namespace Sven.Content
                 new List<Delegate>
                 {
                     (Func<MeshRenderer, ComponentProperty>)(meshRenderer => new ComponentProperty("enabled", () => meshRenderer.enabled, value => meshRenderer.enabled = value.ToString().ToLower() == "true", 1)),
-                    (Func<MeshRenderer, ComponentProperty>)(meshRenderer => new ComponentProperty("color", () => meshRenderer.material.color, value => meshRenderer.material.DOColor((Color)value, lerpSpeed), 1/*, "virtualColor"*/)),
+                    (Func<MeshRenderer, ComponentProperty>)(meshRenderer => new ComponentProperty("color", () => meshRenderer.material.color, value => Tween.MaterialColor(meshRenderer.material, (Color)value, lerpSpeed), 1/*, "virtualColor"*/)),
                     (Func<MeshRenderer, ComponentProperty>)(meshRenderer => new ComponentProperty("material1", () => meshRenderer.materials.Length > 0 ? meshRenderer.materials[0].name.Replace(" (Instance)", "") : null, value => {
                         string currentMaterialName = meshRenderer.materials.Length > 0 ? meshRenderer.materials[0].name.Replace(" (Instance)", "") : null;
                         if (value == null || (string)value == currentMaterialName) return;

@@ -1300,7 +1300,7 @@ WHERE {{
                     {
                         foreach (ComponentDescription componentDescription in gameObjectDescription.Components.Values)
                         {
-                            DOTween.Kill(componentDescription.Component);
+                            Tween.StopAll(componentDescription.Component);
                             if (componentDescription.Type != typeof(Transform))
                                 GameObject.Destroy(componentDescription.Component);
                         }
@@ -1311,7 +1311,7 @@ WHERE {{
                         foreach (ComponentDescription componentDescription in gameObjectDescription.Components.Values)
                             if (!sceneContent.GameObjects[gameObjectDescription.UUID].Components.ContainsKey(componentDescription.UUID))
                             {
-                                DOTween.Kill(componentDescription.Component);
+                                Tween.StopAll(componentDescription.Component);
                                 if (componentDescription.Type != typeof(Transform))
                                     GameObject.Destroy(componentDescription.Component);
                             }
