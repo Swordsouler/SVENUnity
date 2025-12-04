@@ -119,13 +119,58 @@ WHERE {
 
 ### What sequence of actions or events occurs before or after a given instant?
 
-Todo pas trop compliqué.
+```sparql
+SELECT ?event ?occuredBefore ?occuredAfter
+WHERE {
+    BIND("2025-12-04T14:14:34.600+01:00"^^xsd:dateTime AS ?instantTime)
+
+    ?event a sven:Event ;
+    	   sven:hasTemporalExtent ?interval .
+    ?interval time:hasBeginning/time:inXSDDateTime ?startTime .
+
+    BIND(?startTime < ?instantTime AS ?occuredBefore)
+    BIND(?startTime > ?instantTime AS ?occuredAfter)
+}
+```
 
 ### During which intervals are specific objects or users active?
 
 ...
 
 ## Interaction analysis
+
+### Which interactions—such as collisions, grasping, or pointing—take place within a specified time window?
+
+```sparql
+SELECT ?event ?occuredBefore ?occuredAfter
+WHERE {
+    BIND("2025-12-04T14:14:34.600+01:00"^^xsd:dateTime AS ?startTime)
+    BIND("2025-12-04T14:14:38.600+01:00"^^xsd:dateTime AS ?endTime)
+
+    ?event a sven:Event ;
+    	   sven:hasTemporalExtent ?interval .
+    ?interval time:hasBeginning/time:inXSDDateTime ?time .
+
+    FILTER(?startTime <= ?time && ?time <= ?endTime)
+}
+```
+
+### Which entities participate in these interactions?
+
+```sparql
+SELECT ?event ?sender ?receiver
+WHERE {
+    ?event a sven:Event ;
+    	   sven:sender ?sender ;
+    	   sven:receiver ?receiver .
+}
+```
+
+### How are multimodal input events (e.g., gaze, motion, speech) combined to achieve specific outcomes?
+
+...
+
+## User behaviour interpretation
 
 ### What type of food did the user look at the most?
 
@@ -141,21 +186,50 @@ WHERE {
     ?lookedObject a ?objectType .
     ?objectType rdfs:subClassOf sven:Food .
     BIND(ofn:asMillis(?duration) / 1000 AS ?totalSeconds)
+    FILTER(!isBLANK(?objectType))
 }
 GROUP BY ?objectType
 ORDER BY DESC(?sumSeconds)
 ```
 
-### Which interactions—such as collisions, grasping, or pointing—take place within a specified time window?
+### Which categories of domain-specific objects (e.g., tools, fruits, medical items) elicit the highest interaction rates?
 
-### Which entities participate in these interactions, and how frequently do they occur?
-
-### How are multimodal input events (e.g., gaze, motion, speech) combined to achieve specific outcomes?
-
-## User behaviour interpretation
+```sparql
+SELECT DISTINCT ?objectType (SUM(?totalSeconds) AS ?sumSeconds)
+WHERE {
+    ?user a sven:User ;
+          sven:pointOfView ?pov .
+    ?lookEvent a sven:Event ;
+               sven:sender ?pov ;
+               sven:receiver ?lookedObject ;
+               sven:hasTemporalExtent/time:hasXSDDuration ?duration .
+    ?lookedObject a ?objectType .
+    BIND(ofn:asMillis(?duration) / 1000 AS ?totalSeconds)
+    FILTER(!isBLANK(?objectType))
+}
+GROUP BY ?objectType
+ORDER BY DESC(?sumSeconds)
+```
 
 ### Which objects receive the most visual attention or engagement?
 
-### Which categories of domain-specific objects (e.g., tools, fruits, medical items) elicit the highest interaction rates?
+```sparql
+SELECT DISTINCT ?objectType (SUM(?totalSeconds) AS ?sumSeconds)
+WHERE {
+    ?user a sven:User ;
+          sven:own ?modality .
+    ?lookEvent a sven:Event ;
+               sven:sender ?modality ;
+               sven:receiver ?lookedObject ;
+               sven:hasTemporalExtent/time:hasXSDDuration ?duration .
+    ?lookedObject a ?objectType .
+    BIND(ofn:asMillis(?duration) / 1000 AS ?totalSeconds)
+    FILTER(!isBLANK(?objectType))
+}
+GROUP BY ?objectType
+ORDER BY DESC(?sumSeconds)
+```
 
 ### How do user actions correlate with contextual or environmental factors, such as task difficulty or spatial layout?
+
+...
