@@ -91,10 +91,6 @@ WHERE {
 }
 ```
 
-### What spatial relationships (e.g., adjacency, containment, distance) exist between objects in the environment?
-
-...
-
 ## Temporal reasoning
 
 ### How do object states or properties (e.g., position, color, or activation) evolve throughout an experiment?
@@ -111,9 +107,7 @@ WHERE {
     		  sven:x ?x ;
     		  sven:y ?y ;
     		  sven:z ?z .
-    ?interval time:before ?before ;
-    		  time:after ?after ;
-    		  time:hasBeginning/time:inXSDDateTime ?time .
+    ?interval time:hasBeginning/time:inXSDDateTime ?time .
 } ORDER BY ?time
 ```
 
@@ -132,10 +126,6 @@ WHERE {
     BIND(?startTime > ?instantTime AS ?occuredAfter)
 }
 ```
-
-### During which intervals are specific objects or users active?
-
-...
 
 ## Interaction analysis
 
@@ -165,10 +155,6 @@ WHERE {
     	   sven:receiver ?receiver .
 }
 ```
-
-### How are multimodal input events (e.g., gaze, motion, speech) combined to achieve specific outcomes?
-
-...
 
 ## User behaviour interpretation
 
@@ -229,7 +215,3 @@ WHERE {
 GROUP BY ?objectType
 ORDER BY DESC(?sumSeconds)
 ```
-
-### How do user actions correlate with contextual or environmental factors, such as task difficulty or spatial layout?
-
-...
