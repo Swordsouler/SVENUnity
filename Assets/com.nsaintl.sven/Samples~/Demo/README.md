@@ -110,7 +110,7 @@ WHERE {
 	?lookEvent a sven:Event ;
 			   sven:sender ?pov ;
 			   sven:receiver ?lookedObject ;
-			   time:hasTemporalExtent/time:hasXSDDuration ?duration .
+			   sven:hasTemporalExtent/time:hasXSDDuration ?duration .
 	?lookedObject a ?objectType .
 	?objectType rdfs:subClassOf sven:Food .
 	BIND(ofn:asMillis(?duration) / 1000 AS ?totalSeconds)
