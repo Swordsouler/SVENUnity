@@ -95,7 +95,7 @@ To try the query examples present in the article, you need to create a repositor
 ### Try the SPARQL Queries
 
 1. Go to the **SPARQL** tab.
-2. Copy and paste the SPARQL query you want to try into the query editor.
+2. Copy and paste the SPARQL query you want to try into the query editor (or try other SPARQL queries available at [https://github.com/Swordsouler/SVENUnity/blob/main/Assets/com.nsaintl.sven/CompetencyQuestions.md](https://github.com/Swordsouler/SVENUnity/blob/main/Assets/com.nsaintl.sven/CompetencyQuestions.md)).
 
 ```sparql
 PREFIX ofn: <http://www.ontotext.com/sparql/functions/>
