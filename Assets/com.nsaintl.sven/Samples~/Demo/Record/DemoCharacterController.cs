@@ -74,9 +74,9 @@ namespace Sven.Demo
 
             // crouch
             if (Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.LeftShift))
-                pointOfView.cameraComponent.transform.DOLocalMove(new Vector3(0, 0.5f, 0), 0.2f);
+                Tween.LocalPosition(pointOfView.cameraComponent.transform, new Vector3(0, 0.5f, 0), 0.2f);
             else
-                pointOfView.cameraComponent.transform.DOLocalMove(new Vector3(0, 1f, 0), 0.2f);
+                Tween.LocalPosition(pointOfView.cameraComponent.transform, new Vector3(0, 1f, 0), 0.2f);
 
             if (Input.GetKeyDown(KeyCode.F))
             {
