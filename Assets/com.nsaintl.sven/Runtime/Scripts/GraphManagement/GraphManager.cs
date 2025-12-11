@@ -1286,7 +1286,14 @@ WHERE {{
 
                             if (setters.TryGetValue(propertyDescription.Name, out var setter) && setter.Item2 != null)
                             {
-                                setter.Item2(propertyValue);
+                                try
+                                {
+                                    setter.Item2(propertyValue);
+                                }
+                                catch (Exception e)
+                                {
+                                    Debug.LogWarning(e);
+                                }
                             }
                             //else Debug.LogWarning($"Setter not found for {propertyDescription.Type} in {componentDescription.Type} of {gameObjectDescription.UUID}");
                         }
