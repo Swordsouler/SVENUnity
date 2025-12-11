@@ -1292,7 +1292,7 @@ WHERE {{
                                 }
                                 catch (Exception e)
                                 {
-                                    Debug.LogWarning(e);
+                                    Debug.LogWarning($"Info: Could not set property {propertyDescription.Name} of type {propertyDescription.Type} in {componentDescription.Type} of {gameObjectDescription.UUID}: {e}");
                                 }
                             }
                             //else Debug.LogWarning($"Setter not found for {propertyDescription.Type} in {componentDescription.Type} of {gameObjectDescription.UUID}");
