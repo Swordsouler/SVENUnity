@@ -64,7 +64,12 @@ namespace Sven.GraphManagement
             }
         }
         public static string GraphName => BaseUri.Split("/")[^2];
-        public static bool IsGraphInitialized => HasNamespace("sven");
+        private static bool _isGraphInitialized = false;
+        public static bool IsGraphInitialized
+        {
+            get => _isGraphInitialized;
+            set => _isGraphInitialized = value;
+        }
 
         public static void SetAuthenticationHeaderValue(string username, string password)
         {
@@ -136,6 +141,7 @@ namespace Sven.GraphManagement
             SetBaseUri(SvenSettings.BaseUri);
             SetNamespace("", SvenSettings.BaseUri);
             SetAuthenticationHeaderValue(SvenSettings.Username, SvenSettings.Password);
+            IsGraphInitialized = true;
         }
 
         public static void SetBaseUri(string baseUri)
@@ -206,9 +212,11 @@ namespace Sven.GraphManagement
 
         public static async Task<Graph> GetInferredGraphAsync(List<Triple> triples, Uri baseUri, NamespaceMapper nsMap)
         {
-            Graph workGraph = new();
-            // Utiliser les métadonnées fournies, sans aucun accès au graphe global.
-            workGraph.BaseUri = baseUri;
+            Graph workGraph = new()
+            {
+                // Utiliser les métadonnées fournies, sans aucun accès au graphe global.
+                BaseUri = baseUri
+            };
             workGraph.NamespaceMap.Import(nsMap);
             workGraph.Assert(triples);
 
