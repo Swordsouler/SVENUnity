@@ -74,7 +74,7 @@ namespace Sven.Content
                 new List<Delegate>
                 {
                     (Func<MeshRenderer, ComponentProperty>)(meshRenderer => new ComponentProperty("enabled", () => meshRenderer.enabled, value => meshRenderer.enabled = value.ToString().ToLower() == "true", 1)),
-                    (Func<MeshRenderer, ComponentProperty>)(meshRenderer => new ComponentProperty("color", () => meshRenderer.material.color, value => Tween.MaterialColor(meshRenderer.material, (Color)value, lerpSpeed), 1/*, "virtualColor"*/)),
+                    (Func<MeshRenderer, ComponentProperty>)(meshRenderer => new ComponentProperty("color", () => meshRenderer.material.HasProperty("_Color") ? meshRenderer.material.color : (Color?)null, value => { if(meshRenderer.material.HasProperty("_Color")) Tween.MaterialColor(meshRenderer.material, (Color)value, lerpSpeed); }, 1/*, "virtualColor"*/)),
                     (Func<MeshRenderer, ComponentProperty>)(meshRenderer => new ComponentProperty("material1", () => meshRenderer.materials.Length > 0 ? meshRenderer.materials[0].name.Replace(" (Instance)", "") : null, value => {
                         string currentMaterialName = meshRenderer.materials.Length > 0 ? meshRenderer.materials[0].name.Replace(" (Instance)", "") : null;
                         if (value == null || (string)value == currentMaterialName) return;
