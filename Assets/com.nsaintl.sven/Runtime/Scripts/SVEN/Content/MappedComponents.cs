@@ -138,7 +138,18 @@ namespace Sven.Content
                 typeof(MeshFilter), new("Shape",
                 new List<Delegate>
                 {
-                    (Func<MeshFilter, ComponentProperty>)(meshFilter => new ComponentProperty("mesh", () => meshFilter.mesh.name.Replace(" Instance", ""), value => {
+                    (Func<MeshFilter, ComponentProperty>)(meshFilter => new ComponentProperty("mesh", () =>
+                    {
+                        Mesh m = meshFilter.sharedMesh ?? meshFilter.mesh;
+                        if (m == null) return null;
+                        // Tous les meshes sont obligatoirement dans Resources/Meshes, on cherche le mesh exact pour récupérer son nom de fichier (sans extension)
+                        Mesh[] resources = Resources.LoadAll<Mesh>("Meshes");
+                        foreach (var rm in resources)
+                            if (rm == m)
+                                return rm.name;
+                        // fallback si non trouvé (mesh instancié à la volée)
+                        return m.name.Replace(" Instance", "");
+                    }, value => {
                         if (value == null) return;
                         if (meshFilter.mesh != null && meshFilter.mesh.name == (string)value && meshFilter.mesh.uv.Length > 0) return;
                         Mesh mesh = Resources.Load<Mesh>($"Meshes/{(string)value}");
