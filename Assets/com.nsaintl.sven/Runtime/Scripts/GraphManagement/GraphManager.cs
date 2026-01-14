@@ -993,6 +993,7 @@ WHERE {{
             SceneContent sceneContent = await Task.Run(() =>
             {
                 SceneContent sc = new();
+                if (SvenSettings.Debug) Debug.Log("GetSceneContent(resultSet): Starting to process SPARQL results.");
 
                 foreach (SparqlResult result in resultSet.Cast<SparqlResult>())
                 {
@@ -1037,21 +1038,26 @@ WHERE {{
                         continue;
                     }
 
-                    // call in main thread
+                    if (SvenSettings.Debug) Debug.Log($"GetSceneContent(resultSet): Processing component type string: '{componentStringType}'");
                     Tuple<Type, int> componentData = MapppedComponents.GetData(componentStringType);
-                    if (componentData == null) continue;
+                    if (componentData == null)
+                    {
+                        if (SvenSettings.Debug) Debug.LogWarning($"GetSceneContent(resultSet): No component data found for type string '{componentStringType}'. Skipping.");
+                        continue;
+                    }
                     Type componentType = componentData.Item1;
                     int componentSortOrder = componentData.Item2;
-                    if (componentType == null || !MapppedComponents.HasProperty(componentType, propertyName)) continue;
-                    //Debug.Log($"Component: {componentType} {propertyName}");
+                    if (componentType == null || !MapppedComponents.HasProperty(componentType, propertyName))
+                    {
+                        if (SvenSettings.Debug) Debug.LogWarning($"GetSceneContent(resultSet): Component type is null or has no property '{propertyName}' for type string '{componentStringType}'. Skipping.");
+                        continue;
+                    }
 
                     Type propertyType = MapppedProperties.GetType(propertyStringType) ?? Type.GetType(propertyStringType);
                     if (!MapppedProperties.HasNestedProperty(propertyType, propertyNestedName)) continue;
 
                     string propertyUUID = result["property"].ToString()[(result["property"].ToString().LastIndexOf("/") + 1)..];
                     object propertyValue = result["propertyValue"].AsValuedNode().ToValue();
-                    //if (propertyName == "position")
-                    //Debug.Log(propertyName + " " + propertyNestedName + " " + propertyValue + " " + result["propertyValue"].AsValuedNode());
 
                     if (!sc.GameObjects.ContainsKey(objectUUID))
                         sc.GameObjects[objectUUID] = new(objectUUID);
@@ -1066,6 +1072,7 @@ WHERE {{
                         sc.GameObjects[objectUUID].Components[componentUUID].Properties[propertyName].Values[propertyNestedName] = propertyValue;
                     else Debug.LogWarning($"Property {propertyNestedName} already exists in {propertyName} of {componentType} in {objectUUID}");
                 }
+                if (SvenSettings.Debug) Debug.Log("GetSceneContent(resultSet): Finished processing SPARQL results.");
                 return sc;
             });
             await Task.Yield();
@@ -1120,11 +1127,11 @@ WHERE {{
         {
             try
             {
+                if (SvenSettings.Debug) Debug.Log("GetSceneContent(): Starting scene scan.");
                 SceneContent sceneContent = new(CurrentInstant);
-                // get all semantizationCore objects in the scene
                 SemantizationCore[] semantizationCores = UnityEngine.Object.FindObjectsByType<SemantizationCore>(FindObjectsSortMode.None);
-                // iterate over the semantizationCores and get their content
-                // do the things to fill SceneContent
+                if (SvenSettings.Debug) Debug.Log($"GetSceneContent(): Found {semantizationCores.Length} SemantizationCore objects.");
+
                 foreach (SemantizationCore semantizationCore in semantizationCores)
                 {
                     string objectUUID = semantizationCore.GetUUID();
@@ -1144,13 +1151,28 @@ WHERE {{
                     List<Component> components = semantizationCore.GetComponents<Component>().ToList();
                     foreach (Component component in components)
                     {
+                        if (component == null)
+                        {
+                            if (SvenSettings.Debug) Debug.LogWarning($"GetSceneContent(): Found a null component on GameObject {semantizationCore.name}. Skipping.");
+                            continue;
+                        }
+
                         string componentUUID = component.GetUUID();
                         if (!sceneContent.GameObjects[objectUUID].Components.ContainsKey(componentUUID))
                         {
-                            Tuple<Type, int> componentData = MapppedComponents.GetData(component.GetRdfType());
-                            if (componentData == null) continue;
+                            string rdfType = component.GetRdfType();
+                            if (SvenSettings.Debug) Debug.Log($"GetSceneContent(): Processing component '{component.GetType().FullName}' with RDF type '{rdfType}' on GameObject '{semantizationCore.name}'.");
+
+                            Tuple<Type, int> componentData = MapppedComponents.GetData(rdfType);
+                            if (componentData == null)
+                            {
+                                if (SvenSettings.Debug) Debug.Log($"GetSceneContent(): No mapping data for RDF type '{rdfType}'. Skipping component '{component.GetType().FullName}'.");
+                                continue;
+                            }
                             Type componentType = componentData.Item1;
                             int componentSortOrder = componentData.Item2;
+
+                            if (SvenSettings.Debug) Debug.Log($"GetSceneContent(): Successfully mapped RDF type '{rdfType}' to component type '{componentType.FullName}'.");
 
                             if (!sceneContent.GameObjects[objectUUID].Components.ContainsKey(componentUUID))
                                 sceneContent.GameObjects[objectUUID].Components[componentUUID] = new(componentUUID, componentType, componentSortOrder)
@@ -1189,22 +1211,33 @@ WHERE {{
                         }
                     }
                 }
+                if (SvenSettings.Debug) Debug.Log("GetSceneContent(): Finished scene scan.");
                 return sceneContent;
             }
             catch (Exception ex)
             {
-                Debug.LogError(ex);
+                Debug.LogError($"An exception occurred in GetSceneContent(): {ex}");
                 return null;
             }
         }
 
         private static void ReconstructScene(SceneContent sceneContent)
         {
+            if (sceneContent == null)
+            {
+                Debug.LogError("ReconstructScene was called with a null sceneContent.");
+                return;
+            }
             SceneContent currentSceneContent = GetSceneContent();
+            if (currentSceneContent == null)
+            {
+                Debug.LogError("ReconstructScene failed to get current scene content.");
+                return;
+            }
             try
             {
-                if (SvenSettings.Debug) Debug.Log(currentSceneContent);
-                if (SvenSettings.Debug) Debug.Log(sceneContent);
+                if (SvenSettings.Debug) Debug.Log("Current Scene Content:\n" + currentSceneContent);
+                if (SvenSettings.Debug) Debug.Log("Target Scene Content:\n" + sceneContent);
 
                 foreach (GameObjectDescription gameObjectDescription in sceneContent.GameObjects.Values)
                 {
@@ -1336,7 +1369,7 @@ WHERE {{
             }
             catch (Exception ex)
             {
-                Debug.LogError(ex);
+                Debug.LogError($"An exception occurred in ReconstructScene: {ex}");
             }
         }
 
