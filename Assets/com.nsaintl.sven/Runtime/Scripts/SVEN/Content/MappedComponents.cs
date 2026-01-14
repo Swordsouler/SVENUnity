@@ -306,7 +306,7 @@ namespace Sven.Content
         public static Dictionary<string, Tuple<int, Action<object>>> GetSetters(Component component)
         {
             Dictionary<string, Tuple<int, Action<object>>> setters = new();
-            if (TryGetValue(component.GetType(), out var componentDescription))
+            if (Values.TryGetValue(component.GetType(), out var componentDescription))
             {
                 if (componentDescription == null) return setters;
                 foreach (Delegate del in componentDescription.Properties)
@@ -319,7 +319,7 @@ namespace Sven.Content
         public static Dictionary<string, Tuple<int, Func<object>>> GetGetters(Component component)
         {
             Dictionary<string, Tuple<int, Func<object>>> getters = new();
-            if (TryGetValue(component.GetType(), out var componentDescription))
+            if (Values.TryGetValue(component.GetType(), out var componentDescription))
             {
                 if (componentDescription == null) return getters;
                 foreach (Delegate del in componentDescription.Properties)
@@ -336,11 +336,11 @@ namespace Sven.Content
         /// <returns>True if the component is mapped, false otherwise.</returns>
         public static bool ContainsKey(Type type)
         {
-            if (Values.TryGetValue(type, out var componentDescription))
-                return componentDescription != null;
+            if (Values.ContainsKey(type))
+                return true;
             else foreach (var key in Values.Keys)
                     if (key.IsAssignableFrom(type))
-                        return Values[key] != null;
+                        return true;
             return false;
         }
 
