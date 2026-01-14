@@ -1039,6 +1039,7 @@ WHERE {{
 
                     // call in main thread
                     Tuple<Type, int> componentData = MapppedComponents.GetData(componentStringType);
+                    if (componentData == null) continue;
                     Type componentType = componentData.Item1;
                     int componentSortOrder = componentData.Item2;
                     if (componentType == null || !MapppedComponents.HasProperty(componentType, propertyName)) continue;
