@@ -1234,6 +1234,55 @@ WHERE {{
             }
         }
 
+        private static void DebugInspectSceneContent(SceneContent sceneContent, string context)
+        {
+            if (sceneContent == null)
+            {
+                Debug.LogWarning($"DebugInspectSceneContent ({context}): sceneContent is null.");
+                return;
+            }
+            Debug.Log($"--- DebugInspectSceneContent START ({context}) ---");
+            foreach (var goPair in sceneContent.GameObjects)
+            {
+                if (goPair.Value == null)
+                {
+                    Debug.LogWarning($"GameObjectDescription is null for key {goPair.Key}");
+                    continue;
+                }
+                Debug.Log($"GameObject: {goPair.Value.Name} ({goPair.Key})");
+                foreach (var compPair in goPair.Value.Components)
+                {
+                    if (compPair.Value == null)
+                    {
+                        Debug.LogWarning($"ComponentDescription is null for key {compPair.Key} in GameObject {goPair.Key}");
+                        continue;
+                    }
+                    Debug.Log($"  Component: {compPair.Value.Type.Name} ({compPair.Key})");
+                    foreach (var propPair in compPair.Value.Properties)
+                    {
+                        if (propPair.Value == null)
+                        {
+                            Debug.LogWarning($"PropertyDescription is null for key {propPair.Key} in Component {compPair.Key}");
+                            continue;
+                        }
+                        Debug.Log($"    Property: {propPair.Value.Name}");
+                        if (propPair.Value.Values == null)
+                        {
+                            Debug.LogWarning($"      Property '{propPair.Value.Name}' has a null 'Values' dictionary!");
+                            continue;
+                        }
+                        foreach (var valPair in propPair.Value.Values)
+                        {
+                            string keyStr = valPair.Key ?? "NULL_KEY";
+                            string valStr = valPair.Value?.ToString() ?? "NULL_VALUE";
+                            Debug.Log($"      Value: {keyStr} = {valStr}");
+                        }
+                    }
+                }
+            }
+            Debug.Log($"--- DebugInspectSceneContent END ({context}) ---");
+        }
+
         private static void ReconstructScene(SceneContent sceneContent)
         {
             if (sceneContent == null)
@@ -1249,8 +1298,11 @@ WHERE {{
             }
             try
             {
-                if (SvenSettings.Debug) Debug.Log("Current Scene Content:\n" + currentSceneContent);
-                if (SvenSettings.Debug) Debug.Log("Target Scene Content:\n" + sceneContent);
+                if (SvenSettings.Debug)
+                {
+                    DebugInspectSceneContent(currentSceneContent, "Current Scene");
+                    DebugInspectSceneContent(sceneContent, "Target Scene");
+                }
 
                 foreach (GameObjectDescription gameObjectDescription in sceneContent.GameObjects.Values)
                 {
