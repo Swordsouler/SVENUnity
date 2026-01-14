@@ -386,8 +386,11 @@ namespace Sven.Content
         /// <returns>True if the component has the property, false otherwise.</returns>
         public static bool HasProperty(Type type, string propertyName)
         {
-            if (TryGetValue(type, out var componentDescription))
-                return componentDescription != null && componentDescription.CachedProperties.ContainsKey(propertyName);
+            if (Values.TryGetValue(type, out var componentDescription))
+                return componentDescription.CachedProperties.ContainsKey(propertyName);
+            else foreach (Type key in Values.Keys)
+                    if (key.IsAssignableFrom(type))
+                        return Values[key].CachedProperties.ContainsKey(propertyName);
             return false;
         }
 
