@@ -4,8 +4,7 @@
 
 using Sven.OwlTime;
 using System.Collections.Generic;
-using System.Linq;
-using UnityEditor;
+using System.Text;
 
 namespace Sven.GraphManagement.Description
 {
@@ -45,7 +44,27 @@ namespace Sven.GraphManagement.Description
         /// <returns>String representation of the property description.</returns>
         public override string ToString()
         {
-            return $"{Instant?.inXSDDateTime}\n{string.Join($"\n", GameObjects.Select(x => $"---------- {x.Key} ({x.Value.Name}) ----------\n{x.Value}"))}";
+            var sb = new StringBuilder();
+            sb.AppendLine(Instant?.inXSDDateTime.ToString() ?? "No Instant");
+
+            if (GameObjects == null)
+            {
+                sb.AppendLine("GameObjects dictionary is null.");
+                return sb.ToString();
+            }
+
+            foreach (var x in GameObjects)
+            {
+                if (x.Value == null)
+                {
+                    sb.AppendLine($"---------- {x.Key} (GameObjectDescription is null) ----------");
+                    continue;
+                }
+                sb.AppendLine($"---------- {x.Key} ({x.Value.Name ?? "Unnamed"}) ----------");
+                sb.AppendLine(x.Value.ToString());
+            }
+
+            return sb.ToString();
         }
     }
 }
