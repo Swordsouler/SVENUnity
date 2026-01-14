@@ -308,6 +308,7 @@ namespace Sven.Content
             Dictionary<string, Tuple<int, Action<object>>> setters = new();
             if (Values.TryGetValue(component.GetType(), out var componentDescription))
             {
+                if (componentDescription == null) return setters;
                 foreach (Delegate del in componentDescription.Properties)
                     if (del.DynamicInvoke(component) is ComponentProperty propertyDescription)
                         setters.Add(propertyDescription.PredicateName, new(propertyDescription.Priority, propertyDescription.Setter));
@@ -320,6 +321,7 @@ namespace Sven.Content
             Dictionary<string, Tuple<int, Func<object>>> getters = new();
             if (Values.TryGetValue(component.GetType(), out var componentDescription))
             {
+                if (componentDescription == null) return getters;
                 foreach (Delegate del in componentDescription.Properties)
                     if (del.DynamicInvoke(component) is ComponentProperty propertyDescription)
                         getters.Add(propertyDescription.PredicateName, new(propertyDescription.Priority, propertyDescription.Getter));
