@@ -402,12 +402,14 @@ namespace Sven.Content
             try
             {
                 typeName = typeName.Contains(":") ? typeName.Split(':')[1] : typeName;
-                foreach (var kvp in Values)
+                foreach (var key in Values.Keys)
                 {
-                    if (kvp.Value == null) continue;
-                    string typeNameKey = kvp.Value.TypeName.Contains(":") ? kvp.Value.TypeName.Split(':')[1] : kvp.Value.TypeName;
+                    //if (Values[key] == null) continue;
+                    string typeNameKey = Values[key] != null ?
+                        (Values[key].TypeName.Contains(":") ? Values[key].TypeName.Split(':')[1] : Values[key].TypeName) :
+                        key.Name.Split()[^1];
                     if (typeNameKey == typeName)
-                        return new Tuple<Type, int>(kvp.Key, kvp.Value.SortOrder);
+                        return Values[key] != null ? new Tuple<Type, int>(key, Values[key].SortOrder) : null;
                 }
                 //Debug.LogWarning($"Type {typeName} not found in mapped components.");
                 return null;
