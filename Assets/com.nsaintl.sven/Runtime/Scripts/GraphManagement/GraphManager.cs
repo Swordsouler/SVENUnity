@@ -1158,69 +1158,56 @@ WHERE {{
                         }
 
                         string componentUUID = component.GetUUID();
-                        if (sceneContent.GameObjects[objectUUID].Components.ContainsKey(componentUUID)) continue;
-
-                        string rdfType = component.GetRdfType();
-                        if (SvenSettings.Debug) Debug.Log($"GetSceneContent(): Processing component '{component.GetType().FullName}' with RDF type '{rdfType}' on GameObject '{semantizationCore.name}'.");
-
-                        Tuple<Type, int> componentData = MapppedComponents.GetData(rdfType);
-                        if (componentData == null)
+                        if (!sceneContent.GameObjects[objectUUID].Components.ContainsKey(componentUUID))
                         {
-                            if (SvenSettings.Debug) Debug.Log($"GetSceneContent(): No mapping data for RDF type '{rdfType}'. Skipping component '{component.GetType().FullName}'.");
-                            continue;
-                        }
-                        Type componentType = componentData.Item1;
-                        int componentSortOrder = componentData.Item2;
+                            string rdfType = component.GetRdfType();
+                            if (SvenSettings.Debug) Debug.Log($"GetSceneContent(): Processing component '{component.GetType().FullName}' with RDF type '{rdfType}' on GameObject '{semantizationCore.name}'.");
 
-                        if (SvenSettings.Debug) Debug.Log($"GetSceneContent(): Successfully mapped RDF type '{rdfType}' to component type '{componentType.FullName}'.");
-
-                        Dictionary<string, Tuple<int, Func<object>>> getters = MapppedComponents.GetGetters(component);
-                        if (getters == null || getters.Count == 0)
-                        {
-                            if (SvenSettings.Debug) Debug.Log($"GetSceneContent(): No getters found for component type '{componentType.FullName}'. Skipping component description.");
-                            continue;
-                        }
-
-                        ComponentDescription componentDescription = new(componentUUID, componentType, componentSortOrder)
-                        {
-                            Component = component
-                        };
-
-                        foreach (KeyValuePair<string, Tuple<int, Func<object>>> getter in getters)
-                        {
-                            string propertyName = getter.Key;
-                            Func<object> getterFunc = getter.Value.Item2;
-                            object propertyValue = getterFunc();
-                            if (propertyValue == null) continue;
-                            Type propertyType = propertyValue.GetType();
-
-                            PropertyDescription propertyDescription = new(propertyName, propertyName, propertyType);
-                            componentDescription.Properties[propertyName] = propertyDescription;
-
-                            List<string> nestedProperties = MapppedProperties.GetNestedProperties(propertyValue.GetType());
-                            foreach (string nestedProperty in nestedProperties)
+                            Tuple<Type, int> componentData = MapppedComponents.GetData(rdfType);
+                            if (componentData == null)
                             {
-                                object nestedValue;
-                                if (nestedProperty == "value")
-                                {
-                                    nestedValue = propertyValue;
-                                }
-                                else
-                                {
-                                    nestedValue = propertyType.GetField(nestedProperty)?.GetValue(propertyValue) ??
-                                                  propertyType.GetProperty(nestedProperty)?.GetValue(propertyValue);
-                                }
-                                propertyDescription.Values[nestedProperty] = nestedValue;
+                                if (SvenSettings.Debug) Debug.Log($"GetSceneContent(): No mapping data for RDF type '{rdfType}'. Skipping component '{component.GetType().FullName}'.");
+                                continue;
                             }
-                        }
+                            Type componentType = componentData.Item1;
+                            int componentSortOrder = componentData.Item2;
 
-                        if (componentDescription.Properties.Count > 0)
-                        {
-                            sceneContent.GameObjects[objectUUID].Components[componentUUID] = componentDescription;
-                        }
-                        else
-                        {
-                            if (SvenSettings.Debug) Debug.Log($"GetSceneContent(): ComponentDescription for '{componentType.FullName}' was created but had no properties. Discarding.");
+                            if (SvenSettings.Debug) Debug.Log($"GetSceneContent(): Successfully mapped RDF type '{rdfType}' to component type '{componentType.FullName}'.");
+
+                            if (!sceneContent.GameObjects[objectUUID].Components.ContainsKey(componentUUID))
+                                sceneContent.GameObjects[objectUUID].Components[componentUUID] = new(componentUUID, componentType, componentSortOrder)
+                                {
+                                    Component = component
+                                };
+
+                            Dictionary<string, Tuple<int, Func<object>>> getters = MapppedComponents.GetGetters(component);
+                            foreach (KeyValuePair<string, Tuple<int, Func<object>>> getter in getters)
+                            {
+                                string propertyName = getter.Key;
+                                Func<object> getterFunc = getter.Value.Item2;
+                                object propertyValue = getterFunc();
+                                if (propertyValue == null) continue;
+                                Type propertyType = propertyValue.GetType();
+                                if (!sceneContent.GameObjects[objectUUID].Components[componentUUID].Properties.ContainsKey(propertyName))
+                                    sceneContent.GameObjects[objectUUID].Components[componentUUID].Properties[propertyName] = new(propertyName, propertyName, propertyType);
+
+                                List<string> nestedProperties = MapppedProperties.GetNestedProperties(propertyValue.GetType());
+                                foreach (string nestedProperty in nestedProperties)
+                                {
+                                    object nestedValue;
+                                    if (nestedProperty == "value")
+                                    {
+                                        nestedValue = propertyValue;
+                                    }
+                                    else
+                                    {
+                                        nestedValue = propertyType.GetField(nestedProperty)?.GetValue(propertyValue) ??
+                                                      propertyType.GetProperty(nestedProperty)?.GetValue(propertyValue);
+                                    }
+                                    if (!sceneContent.GameObjects[objectUUID].Components[componentUUID].Properties[propertyName].Values.ContainsKey(nestedProperty))
+                                        sceneContent.GameObjects[objectUUID].Components[componentUUID].Properties[propertyName].Values[nestedProperty] = nestedValue;
+                                }
+                            }
                         }
                     }
                 }
