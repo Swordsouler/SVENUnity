@@ -27,6 +27,17 @@ namespace Sven.Content
         private static readonly Dictionary<Type, ComponentMapping> Values = new()
         {
             {
+                typeof(Rigidbody), new("RigidBody",
+                new List<Delegate>
+                {
+                    (Func<Rigidbody, ComponentProperty>)(rigidbody => new ComponentProperty("mass", () => rigidbody.mass, value => rigidbody.mass = (float)value, 1)),
+                    (Func<Rigidbody, ComponentProperty>)(rigidbody => new ComponentProperty("drag", () => rigidbody.linearDamping, value => rigidbody.linearDamping = (float)value, 1)),
+                    (Func<Rigidbody, ComponentProperty>)(rigidbody => new ComponentProperty("angularDrag", () => rigidbody.angularDamping, value => rigidbody.angularDamping = (float)value, 1)),
+                    (Func<Rigidbody, ComponentProperty>)(rigidbody => new ComponentProperty("useGravity", () => rigidbody.useGravity, value => rigidbody.useGravity = value.ToString().ToLower() == "true", 1)),
+                    (Func<Rigidbody, ComponentProperty>)(rigidbody => new ComponentProperty("isKinematic", () => rigidbody.isKinematic, value => rigidbody.isKinematic = value.ToString().ToLower() == "true", 1)),
+                })
+            },
+            {
                 typeof(BoxCollider), new("geo:Feature",
                 new List<Delegate>
                 {
