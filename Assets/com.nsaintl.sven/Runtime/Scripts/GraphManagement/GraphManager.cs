@@ -164,6 +164,20 @@ namespace Sven.GraphManagement
             }
         }
 
+        public static async Task ApplyOntologyAsync(Graph graph)
+        {
+            Graph ontologyGraph = new();
+            Dictionary<string, string> ontologies = await SvenSettings.GetOntologiesAsync();
+            TurtleParser turtleParser = new();
+            foreach (KeyValuePair<string, string> ontology in ontologies)
+            {
+                turtleParser.Load(ontologyGraph, ontology.Value);
+            }
+            StaticRdfsReasoner reasoner = new();
+            reasoner.Initialise(ontologyGraph);
+            reasoner.Apply(graph);
+        }
+
         public static async Task LoadOntologyAsync(string ontologyName, string ontologyFileName)
         {
             if (string.IsNullOrEmpty(ontologyName)) throw new ArgumentNullException(nameof(ontologyName) + " is null or empty.");
