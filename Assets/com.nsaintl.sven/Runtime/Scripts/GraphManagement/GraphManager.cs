@@ -164,7 +164,7 @@ namespace Sven.GraphManagement
             }
         }
 
-        public static async Task ApplyOntologyAsync(Graph graph)
+        public static async Task<Graph> ApplyOntologyAsync(Graph graph)
         {
             Graph ontologyGraph = new();
             Dictionary<string, string> ontologies = await SvenSettings.GetOntologiesAsync();
@@ -176,6 +176,7 @@ namespace Sven.GraphManagement
             StaticRdfsReasoner reasoner = new();
             reasoner.Initialise(ontologyGraph);
             reasoner.Apply(graph);
+            return graph;
         }
 
         public static async Task LoadOntologyAsync(string ontologyName, string ontologyFileName)
