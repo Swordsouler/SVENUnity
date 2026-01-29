@@ -2,11 +2,16 @@
 // Author: Nicolas SAINT-LÉGER
 // Licensed under the MIT License. See LICENSE file in the project root for full license information.
 
+using Sven.Utils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Threading.Tasks;
 using UnityEngine;
+using VDS.RDF;
+using VDS.RDF.Parsing;
+using VDS.RDF.Query;
 
 namespace Sven.Content
 {
@@ -114,6 +119,53 @@ namespace Sven.Content
 
             _availableAnnotationNames = annotationNames.Distinct().OrderBy(n => n).ToArray();
             return _availableAnnotationNames;
+        }
+
+
+
+
+        private static List<string> _availableColors;
+        private static string _cachedLocale;
+
+        public static async Task<List<string>> GetAvailableTypesAsync(string locale)
+        {
+            if (_availableColors == null || _cachedLocale != locale)
+            {
+                _availableColors = await GetAllAvailableTypes(locale);
+                _cachedLocale = locale;
+            }
+            return _availableColors;
+        }
+
+        public static async Task<List<string>> GetAllAvailableTypes(string locale)
+        {
+            // load a graph with colors from resources
+            Graph graph = new();
+            // load ontology like GraphManager
+            Dictionary<string, string> ontologies = await SvenSettings.GetOntologiesAsync();
+            TurtleParser turtleParser = new();
+            foreach (KeyValuePair<string, string> ontology in ontologies)
+            {
+                turtleParser.Load(graph, ontology.Value);
+            }
+
+            string query = $@"
+PREFIX sven: <https://sven.lisn.upsaclay.fr/ontology#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+
+SELECT ?label
+WHERE {{
+    ?color a sven:Component ;
+           rdfs:label ?label .
+    FILTER(langMatches(lang(?label), ""{locale}""))
+}}";
+
+            if (graph.ExecuteQuery(query) is SparqlResultSet results)
+            {
+                return results.Select(result => (result["label"] as ILiteralNode)?.Value).Where(label => label != null).ToList();
+            }
+
+            return new List<string>();
         }
     }
 }
