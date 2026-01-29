@@ -2,7 +2,6 @@
 // Author: Nicolas SAINT-LÉGER
 // Licensed under the MIT License. See LICENSE file in the project root for full license information.
 
-using Sven.GraphManagement;
 using Sven.Utils;
 using System;
 using System.Collections.Generic;
@@ -143,14 +142,12 @@ namespace Sven.Content
             // load a graph with colors from resources
             Graph graph = new();
             // load ontology like GraphManager
-            await GraphManager.ApplyOntologyAsync(graph);
             Dictionary<string, string> ontologies = await SvenSettings.GetOntologiesAsync();
             TurtleParser turtleParser = new();
             foreach (KeyValuePair<string, string> ontology in ontologies)
             {
                 turtleParser.Load(graph, ontology.Value);
             }
-            await GraphManager.ApplyOntologyAsync(graph);
 
             string query = $@"
 PREFIX sven: <https://sven.lisn.upsaclay.fr/ontology#>
