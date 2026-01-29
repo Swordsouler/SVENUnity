@@ -155,8 +155,8 @@ PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 
 SELECT ?label
 WHERE {{
-    ?color a sven:Component ;
-           rdfs:label ?label .
+    ?component rdfs:subClassOf sven:Component ;
+               rdfs:label ?label .
     FILTER(langMatches(lang(?label), ""{locale}""))
 }}";
 
