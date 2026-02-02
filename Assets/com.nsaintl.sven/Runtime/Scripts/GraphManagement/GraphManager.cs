@@ -656,12 +656,14 @@ WHERE {
 PREFIX time: <http://www.w3.org/2006/time#>
 PREFIX sven: <https://sven.lisn.upsaclay.fr/ontology#>
 
-SELECT DISTINCT ?s ?p ?o ?interval ?intervalP ?intervalO
+SELECT DISTINCT ?s ?p ?o ?interval ?intervalP ?intervalO ?instant ?instantP ?instantO
 FROM :
 WHERE {{
     ?s ?p ?o .
     ?s sven:hasTemporalExtent ?interval .
-    ?interval ?intervalP ?intervalO .
+    ?interval ?intervalP ?intervalO ;
+    		  time:hasBeginning ?instant .
+    ?instant ?instantP ?instantO .
     FILTER NOT EXISTS {{
     	?interval time:hasEnd ?hasEnd .
     }}
@@ -684,6 +686,13 @@ WHERE {{
                     if (interval != null && intervalP != null && intervalO != null)
                     {
                         _instance.Assert(new Triple(interval, intervalP, intervalO));
+                    }
+                    INode instant = result["instant"];
+                    INode instantP = result["instantP"];
+                    INode instantO = result["instantO"];
+                    if (instant != null && instantP != null && instantO != null)
+                    {
+                        _instance.Assert(new Triple(instant, instantP, instantO));
                     }
                 }
             }
