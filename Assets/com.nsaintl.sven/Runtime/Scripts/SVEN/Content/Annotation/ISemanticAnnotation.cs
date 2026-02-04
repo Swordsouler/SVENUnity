@@ -124,17 +124,17 @@ namespace Sven.Content
 
 
 
-        private static List<string> _availableColors;
+        private static List<string> _availableTypes;
         private static string _cachedLocale;
 
         public static async Task<List<string>> GetAvailableTypesAsync(string locale)
         {
-            if (_availableColors == null || _cachedLocale != locale)
+            if (_availableTypes == null || _cachedLocale != locale)
             {
-                _availableColors = await GetAllAvailableTypes(locale);
+                _availableTypes = await GetAllAvailableTypes(locale);
                 _cachedLocale = locale;
             }
-            return _availableColors;
+            return _availableTypes;
         }
 
         public static async Task<List<string>> GetAllAvailableTypes(string locale)

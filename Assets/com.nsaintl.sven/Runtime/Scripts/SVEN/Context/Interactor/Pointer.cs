@@ -7,7 +7,12 @@ using Sven.GraphManagement;
 using Sven.Utils;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using UnityEngine;
+using VDS.RDF;
+using VDS.RDF.Parsing;
+using VDS.RDF.Query;
 
 namespace Sven.Context
 {
@@ -131,6 +136,88 @@ namespace Sven.Context
             Vector3 destination = origin + direction * PointerDistance;
 
             Gizmos.DrawLine(origin, destination);
+        }
+
+
+
+        private static List<string> _availableNames;
+        private static List<string> _availableDeictics;
+        private static string _cachedLocale;
+
+        public static async Task<List<string>> GetAvailableNamesAsync(string locale)
+        {
+            if (_availableNames == null || _cachedLocale != locale)
+            {
+                _availableNames = await GetAllAvailableNames(locale);
+                _cachedLocale = locale;
+            }
+            return _availableNames;
+        }
+
+        public static async Task<List<string>> GetAllAvailableNames(string locale)
+        {
+            // load a graph with colors from resources
+            Graph graph = new();
+            // load ontology like GraphManager
+            Dictionary<string, string> ontologies = await SvenSettings.GetOntologiesAsync();
+            TurtleParser turtleParser = new();
+            foreach (KeyValuePair<string, string> ontology in ontologies)
+            {
+                turtleParser.Load(graph, ontology.Value);
+            }
+
+            string query = $@"
+PREFIX sven: <https://sven.lisn.upsaclay.fr/ontology#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+
+SELECT ?label
+WHERE {{
+    sven:Pointer rdfs:label ?label .
+    FILTER(langMatches(lang(?label), ""{locale}""))
+}}";
+
+            if (graph.ExecuteQuery(query) is SparqlResultSet results)
+            {
+                return results.Select(result => (result["label"] as ILiteralNode)?.Value).Where(label => label != null).ToList();
+            }
+
+            return new List<string>();
+        }
+
+        public static async Task<List<string>> GetAvailableDeicticsAsync(string locale)
+        {
+            if (_availableDeictics == null || _cachedLocale != locale)
+            {
+                _availableDeictics = await GetAllAvailableDeictics(locale);
+                _cachedLocale = locale;
+            }
+            return _availableDeictics;
+        }
+
+        public static async Task<List<string>> GetAllAvailableDeictics(string locale)
+        {
+            // load a graph with colors from resources
+            Graph graph = new();
+            // load ontology like GraphManager
+            Dictionary<string, string> ontologies = await SvenSettings.GetOntologiesAsync();
+            TurtleParser turtleParser = new();
+            foreach (KeyValuePair<string, string> ontology in ontologies)
+            {
+                turtleParser.Load(graph, ontology.Value);
+            }
+            string query = $@"
+PREFIX sven: <https://sven.lisn.upsaclay.fr/ontology#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+SELECT ?label
+WHERE {{
+    sven:Pointer sven:deicticWord ?label .
+    FILTER(langMatches(lang(?label), ""{locale}""))
+}}";
+            if (graph.ExecuteQuery(query) is SparqlResultSet results)
+            {
+                return results.Select(result => (result["label"] as ILiteralNode)?.Value).Where(label => label != null).ToList();
+            }
+            return new List<string>();
         }
     }
 }
