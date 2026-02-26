@@ -191,8 +191,21 @@ namespace Sven.Content
         {
             while (componentsProperties.Count > 0)
             {
+                float startTime = Time.realtimeSinceStartup;
                 CheckForChanges();
-                yield return new WaitForSeconds(interval);
+                float elapsedTime = Time.realtimeSinceStartup - startTime;
+
+                float timeToWait = interval - elapsedTime;
+
+                if (timeToWait > 0)
+                {
+                    yield return new WaitForSeconds(timeToWait);
+                }
+                else
+                {
+                    // We are already behind schedule, yield to the next frame to avoid blocking.
+                    yield return null;
+                }
             }
         }
 
