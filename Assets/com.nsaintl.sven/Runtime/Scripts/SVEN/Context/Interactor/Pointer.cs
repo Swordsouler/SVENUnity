@@ -146,30 +146,40 @@ namespace Sven.Context
             Dictionary<Collider, RaycastHit> uniqueHits = new();
             float coneAngleRad = coneAngleDegrees * Mathf.Deg2Rad;
 
-            Vector3 right = Vector3.Cross(direction, Vector3.up).normalized;
-            if (right.magnitude < 0.01f)
-                right = Vector3.Cross(direction, Vector3.right).normalized;
+            // Calcule un rayon de sphère qui englobe tout le cône
+            float coneRadius = Mathf.Tan(coneAngleRad) * distance;
+            float sphereRadius = Mathf.Sqrt(distance * distance + coneRadius * coneRadius);
+            Vector3 sphereCenter = origin + direction.normalized * (distance * 0.5f);
 
-            Vector3 up = Vector3.Cross(right, direction).normalized;
+            // Récupère tous les colliders dans une sphère englobant le cône
+            Collider[] allColliders = Physics.OverlapSphere(sphereCenter, sphereRadius);
 
-            // Rayon central
-            Ray centralRay = new(origin, direction);
-            CastRayAndAddHits(centralRay, distance, coneAngleRad, origin, direction, uniqueHits);
-
-            // Grille d'anneaux : utilise CONE_SEGMENTS pour la cohérence
-            for (int ring = 1; ring <= CONE_RINGS; ring++)
+            foreach (Collider collider in allColliders)
             {
-                float ringAngle = coneAngleRad * (ring / (float)(CONE_RINGS + 1));
+                // Trouve le point le plus proche sur le collider
+                Vector3 closestPoint = collider.ClosestPoint(origin);
 
-                for (int i = 0; i < CONE_SEGMENTS; i++)
+                // Vérifie si ce point est dans le cône
+                if (IsPointInCone(origin, direction, closestPoint, coneAngleRad, distance))
                 {
-                    float angle = (i / (float)CONE_SEGMENTS) * 360f * Mathf.Deg2Rad;
-                    Vector3 rayDirection = direction.normalized +
-                                           (Mathf.Cos(angle) * right + Mathf.Sin(angle) * up) * Mathf.Tan(ringAngle);
-                    rayDirection.Normalize();
+                    // Lance un rayon vers ce point pour obtenir un RaycastHit précis
+                    Vector3 rayDirection = (closestPoint - origin).normalized;
+                    float rayDistance = Vector3.Distance(origin, closestPoint) + collider.bounds.extents.magnitude;
 
-                    Ray ringRay = new(origin, rayDirection);
-                    CastRayAndAddHits(ringRay, distance, coneAngleRad, origin, direction, uniqueHits);
+                    Ray ray = new(origin, rayDirection);
+                    RaycastHit[] hits = Physics.RaycastAll(ray, rayDistance);
+
+                    foreach (RaycastHit hit in hits)
+                    {
+                        if (hit.collider == collider && IsPointInCone(origin, direction, hit.point, coneAngleRad, distance))
+                        {
+                            if (!uniqueHits.ContainsKey(hit.collider))
+                            {
+                                uniqueHits.Add(hit.collider, hit);
+                            }
+                            break;
+                        }
+                    }
                 }
             }
 
