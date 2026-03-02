@@ -27,14 +27,33 @@ namespace Sven.Context
         [field: SerializeField]
         public float GraspDistance { get; set; } = 10f;
 
+        /// <summary>
+        /// The height of the capsule. If 0, uses a sphere instead.
+        /// </summary>
+        [field: SerializeField]
+        public float GraspHeight { get; set; } = 0f;
+
         protected override IEnumerator CheckInteractor(float i)
         {
             while (true)
             {
-                Vector3 sphereCenter = transform.position;
+                Vector3 center = transform.position;
                 float radius = GraspDistance;
 
-                Collider[] colliders = Physics.OverlapSphere(sphereCenter, radius);
+                Collider[] colliders;
+
+                if (GraspHeight > 0f)
+                {
+                    // Calcule les points de début et de fin de la capsule
+                    Vector3 point1 = center - transform.up * (GraspHeight * 0.5f);
+                    Vector3 point2 = center + transform.up * (GraspHeight * 0.5f);
+                    colliders = Physics.OverlapCapsule(point1, point2, radius);
+                }
+                else
+                {
+                    colliders = Physics.OverlapSphere(center, radius);
+                }
+
                 HashSet<SemantizationCore> newVisibleObjects = new();
 
                 for (int j = 0; j < colliders.Length; j++)
@@ -91,7 +110,96 @@ namespace Sven.Context
             base.OnDrawGizmos();
 
             Vector3 center = transform.position;
-            Gizmos.DrawWireSphere(center, GraspDistance);
+
+            if (GraspHeight > 0f)
+            {
+                DrawWireCapsule(center, transform.up, GraspDistance, GraspHeight);
+            }
+            else
+            {
+                Gizmos.DrawWireSphere(center, GraspDistance);
+            }
+        }
+
+        private void DrawWireCapsule(Vector3 center, Vector3 direction, float radius, float height)
+        {
+            Vector3 point1 = center - direction * (height * 0.5f);
+            Vector3 point2 = center + direction * (height * 0.5f);
+
+            // Dessiner les deux hémisphères
+            DrawWireHemisphere(point1, -direction, radius);
+            DrawWireHemisphere(point2, direction, radius);
+
+            // Dessiner les lignes de connexion
+            Vector3 right = Vector3.Cross(direction, Vector3.forward).normalized;
+            if (right.magnitude < 0.01f)
+                right = Vector3.Cross(direction, Vector3.right).normalized;
+
+            Vector3 forward = Vector3.Cross(right, direction).normalized;
+
+            Gizmos.DrawLine(point1 + right * radius, point2 + right * radius);
+            Gizmos.DrawLine(point1 - right * radius, point2 - right * radius);
+            Gizmos.DrawLine(point1 + forward * radius, point2 + forward * radius);
+            Gizmos.DrawLine(point1 - forward * radius, point2 - forward * radius);
+
+            // Dessiner les cercles au milieu
+            DrawCircle(point1, direction, radius, 16);
+            DrawCircle(point2, direction, radius, 16);
+        }
+
+        private void DrawWireHemisphere(Vector3 center, Vector3 direction, float radius)
+        {
+            Vector3 right = Vector3.Cross(direction, Vector3.forward).normalized;
+            if (right.magnitude < 0.01f)
+                right = Vector3.Cross(direction, Vector3.right).normalized;
+
+            Vector3 forward = Vector3.Cross(right, direction).normalized;
+
+            int segments = 16;
+            for (int i = 0; i <= segments / 2; i++)
+            {
+                float angle1 = (i / (float)segments) * 180f * Mathf.Deg2Rad;
+                float angle2 = ((i + 1) / (float)segments) * 180f * Mathf.Deg2Rad;
+
+                for (int j = 0; j < segments; j++)
+                {
+                    float azimuth1 = (j / (float)segments) * 360f * Mathf.Deg2Rad;
+                    float azimuth2 = ((j + 1) / (float)segments) * 360f * Mathf.Deg2Rad;
+
+                    Vector3 p1 = center + direction * (Mathf.Cos(angle1) * radius) +
+                                (Mathf.Cos(azimuth1) * right + Mathf.Sin(azimuth1) * forward) * (Mathf.Sin(angle1) * radius);
+                    Vector3 p2 = center + direction * (Mathf.Cos(angle2) * radius) +
+                                (Mathf.Cos(azimuth1) * right + Mathf.Sin(azimuth1) * forward) * (Mathf.Sin(angle2) * radius);
+
+                    Gizmos.DrawLine(p1, p2);
+
+                    Vector3 p3 = center + direction * (Mathf.Cos(angle1) * radius) +
+                                (Mathf.Cos(azimuth2) * right + Mathf.Sin(azimuth2) * forward) * (Mathf.Sin(angle1) * radius);
+
+                    Gizmos.DrawLine(p1, p3);
+                }
+            }
+        }
+
+        private void DrawCircle(Vector3 center, Vector3 normal, float radius, int segments)
+        {
+            Vector3 right = Vector3.Cross(normal, Vector3.forward).normalized;
+            if (right.magnitude < 0.01f)
+                right = Vector3.Cross(normal, Vector3.right).normalized;
+
+            Vector3 forward = Vector3.Cross(right, normal).normalized;
+
+            Vector3 previousPoint = center + right * radius;
+
+            for (int i = 1; i <= segments; i++)
+            {
+                float angle = (i / (float)segments) * 360f * Mathf.Deg2Rad;
+                Vector3 offset = (Mathf.Cos(angle) * right + Mathf.Sin(angle) * forward) * radius;
+                Vector3 currentPoint = center + offset;
+
+                Gizmos.DrawLine(previousPoint, currentPoint);
+                previousPoint = currentPoint;
+            }
         }
 
         private static List<string> _availableNames;

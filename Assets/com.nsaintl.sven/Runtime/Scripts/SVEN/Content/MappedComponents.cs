@@ -226,6 +226,7 @@ namespace Sven.Content
             {
                 (Func<GraspArea, ComponentProperty>)(graspArea => new ComponentProperty("enabled", () => graspArea.enabled, value => graspArea.enabled = value.ToString().ToLower() == "true", 1)),
                 (Func<GraspArea, ComponentProperty>)(graspArea => new ComponentProperty("graspDistance", () => graspArea.GraspDistance, value => graspArea.GraspDistance = (float)value, 1)),
+                (Func<GraspArea, ComponentProperty>)(graspArea => new ComponentProperty("graspHeight", () => graspArea.GraspHeight, value => graspArea.GraspHeight = (float)value, 1)),
             })},
             {typeof(Pointer), new("Pointer", new List<Delegate>
             {
