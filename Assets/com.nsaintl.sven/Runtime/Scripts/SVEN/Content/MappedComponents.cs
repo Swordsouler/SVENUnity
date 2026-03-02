@@ -236,6 +236,7 @@ namespace Sven.Content
                 (Func<Pointer, ComponentProperty>)(pointer => new ComponentProperty("pointerDirection", () => pointer.PointerDirection, value => pointer.PointerDirection = (Vector3)value, 1)),
                 (Func<Pointer, ComponentProperty>)(pointer => new ComponentProperty("pointerHitPosition", () => pointer.PointerHitPosition, value => pointer.PointerHitPosition = (Vector3)value, 1)),
                 (Func<Pointer, ComponentProperty>)(pointer => new ComponentProperty("pointerHitDistance", () => pointer.PointerHitDistance, value => pointer.PointerHitDistance = (float)value, 1)),
+                (Func<Pointer, ComponentProperty>)(pointer => new ComponentProperty("pointerConeAngle", () => pointer.PointerConeAngle, value => pointer.PointerConeAngle = (float)value, 1)),
             })},
         };
 
@@ -348,8 +349,8 @@ namespace Sven.Content
             if (Values.ContainsKey(type))
                 return true;
             else foreach (var key in Values.Keys)
-                    if (key.IsAssignableFrom(type))
-                        return true;
+                if (key.IsAssignableFrom(type))
+                    return true;
             return false;
         }
 
@@ -363,8 +364,8 @@ namespace Sven.Content
             if (Values.TryGetValue(type, out var value))
                 return value;
             else foreach (Type key in Values.Keys)
-                    if (key.IsAssignableFrom(type))
-                        return Values[key];
+                if (key.IsAssignableFrom(type))
+                    return Values[key];
             return null;
         }
 
@@ -379,11 +380,11 @@ namespace Sven.Content
             if (Values.TryGetValue(type, out componentDescription))
                 return true;
             else foreach (Type key in Values.Keys)
-                    if (key.IsAssignableFrom(type))
-                    {
-                        componentDescription = Values[key];
-                        return true;
-                    }
+                if (key.IsAssignableFrom(type))
+                {
+                    componentDescription = Values[key];
+                    return true;
+                }
             return false;
         }
 
@@ -398,8 +399,8 @@ namespace Sven.Content
             if (Values.TryGetValue(type, out var componentDescription))
                 return componentDescription.CachedProperties.ContainsKey(propertyName);
             else foreach (Type key in Values.Keys)
-                    if (key.IsAssignableFrom(type))
-                        return Values[key].CachedProperties.ContainsKey(propertyName);
+                if (key.IsAssignableFrom(type))
+                    return Values[key].CachedProperties.ContainsKey(propertyName);
             return false;
         }
 
