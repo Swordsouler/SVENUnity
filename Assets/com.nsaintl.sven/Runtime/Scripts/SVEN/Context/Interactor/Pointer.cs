@@ -29,6 +29,7 @@ namespace Sven.Context
         [field: SerializeField]
         public float PointerDistance { get; set; } = 20f;
         [field: SerializeField]
+        [field: Range(0f, 90f)]
         public float PointerConeAngle { get; set; } = 0f;
         [field: SerializeField]
         public Vector3 PointerPosition { get; set; } = Vector3.zero;
@@ -38,6 +39,10 @@ namespace Sven.Context
         public Vector3 PointerHitPosition { get; set; } = Vector3.zero;
         [field: SerializeField]
         public float PointerHitDistance { get; set; } = 0f;
+
+        // Constante pour harmoniser la géométrie du cône
+        private const int CONE_SEGMENTS = 12;
+        private const int CONE_RINGS = 3;
 
         protected override IEnumerator CheckInteractor(float i)
         {
@@ -141,48 +146,60 @@ namespace Sven.Context
             Dictionary<Collider, RaycastHit> uniqueHits = new();
             float coneAngleRad = coneAngleDegrees * Mathf.Deg2Rad;
 
-            // Calcule la sphère englobante du cône
-            float maxConeRadius = distance * Mathf.Tan(coneAngleRad);
-            float sphereRadius = Mathf.Sqrt(distance * distance + maxConeRadius * maxConeRadius);
+            Vector3 right = Vector3.Cross(direction, Vector3.up).normalized;
+            if (right.magnitude < 0.01f)
+                right = Vector3.Cross(direction, Vector3.right).normalized;
 
-            // Obtient tous les colliders potentiels dans la sphère
-            Collider[] allColliders = Physics.OverlapSphere(origin + direction.normalized * (distance * 0.5f), sphereRadius);
+            Vector3 up = Vector3.Cross(right, direction).normalized;
 
-            // Valide chaque collider et crée un hit
-            foreach (Collider collider in allColliders)
+            // Rayon central
+            Ray centralRay = new(origin, direction);
+            CastRayAndAddHits(centralRay, distance, coneAngleRad, origin, direction, uniqueHits);
+
+            // Grille d'anneaux : utilise CONE_SEGMENTS pour la cohérence
+            for (int ring = 1; ring <= CONE_RINGS; ring++)
             {
-                // Récupère le point le plus proche du collider par rapport à l'origine
-                Vector3 closestPoint = collider.ClosestPoint(origin);
-                Vector3 pointToOrigin = closestPoint - origin;
-                float distToPoint = pointToOrigin.magnitude;
+                float ringAngle = coneAngleRad * (ring / (float)(CONE_RINGS + 1));
 
-                // Filtre par distance et angle du cône
-                if (distToPoint <= distance && IsPointInCone(origin, direction, closestPoint, coneAngleRad, distance))
+                for (int i = 0; i < CONE_SEGMENTS; i++)
                 {
-                    // Crée un raycast depuis l'origine vers le collider pour obtenir le vrai hit
-                    Ray rayToCollider = new(origin, pointToOrigin.normalized);
-                    if (collider.Raycast(rayToCollider, out RaycastHit hit, distance))
-                    {
-                        if (!uniqueHits.ContainsKey(collider))
-                            uniqueHits.Add(collider, hit);
-                    }
+                    float angle = (i / (float)CONE_SEGMENTS) * 360f * Mathf.Deg2Rad;
+                    Vector3 rayDirection = direction.normalized +
+                                           (Mathf.Cos(angle) * right + Mathf.Sin(angle) * up) * Mathf.Tan(ringAngle);
+                    rayDirection.Normalize();
+
+                    Ray ringRay = new(origin, rayDirection);
+                    CastRayAndAddHits(ringRay, distance, coneAngleRad, origin, direction, uniqueHits);
                 }
             }
 
             return uniqueHits.Values.ToArray();
         }
 
+        private void CastRayAndAddHits(Ray ray, float distance, float coneAngleRad, Vector3 origin, Vector3 direction, Dictionary<Collider, RaycastHit> uniqueHits)
+        {
+            RaycastHit[] hits = Physics.RaycastAll(ray, distance);
+            foreach (RaycastHit hit in hits)
+            {
+                if (IsPointInCone(origin, direction, hit.point, coneAngleRad, distance))
+                {
+                    if (!uniqueHits.ContainsKey(hit.collider))
+                        uniqueHits.Add(hit.collider, hit);
+                }
+            }
+        }
+
         private bool IsPointInCone(Vector3 coneOrigin, Vector3 coneDirection, Vector3 point, float coneAngleRad, float maxDistance)
         {
             Vector3 pointVector = point - coneOrigin;
-            float distance = pointVector.magnitude;
+            float pointDistance = pointVector.magnitude;
 
             // Vérifie la distance maximale
-            if (distance > maxDistance)
+            if (pointDistance > maxDistance)
                 return false;
 
             // Évite la division par zéro
-            if (distance < 0.01f)
+            if (pointDistance < 0.01f)
                 return true;
 
             // Calcule l'angle entre le point et la direction du cône
@@ -204,7 +221,7 @@ namespace Sven.Context
 
             if (PointerConeAngle > 0f)
             {
-                DrawCone(origin, direction, PointerDistance, PointerConeAngle, 12);
+                DrawCone(origin, direction, PointerDistance, PointerConeAngle);
             }
             else
             {
@@ -212,45 +229,63 @@ namespace Sven.Context
             }
         }
 
-        private void DrawCone(Vector3 origin, Vector3 direction, float distance, float coneAngleDegrees, int segments)
+        private void DrawCone(Vector3 origin, Vector3 direction, float distance, float coneAngleDegrees)
         {
+            float coneAngleRad = coneAngleDegrees * Mathf.Deg2Rad;
+
+            // Calcul des vecteurs perpendiculaires
             Vector3 right = Vector3.Cross(direction, Vector3.up).normalized;
             if (right.magnitude < 0.01f)
                 right = Vector3.Cross(direction, Vector3.right).normalized;
 
             Vector3 up = Vector3.Cross(right, direction).normalized;
-            float coneRad = coneAngleDegrees * Mathf.Deg2Rad;
 
-            // Dessine des lignes d'arête du cône
-            for (int i = 0; i < segments; i++)
+            // Ligne centrale
+            Vector3 destination = origin + direction.normalized * distance;
+            Gizmos.DrawLine(origin, destination);
+
+            // Dessiner les anneaux du cône
+            for (int ring = 1; ring <= CONE_RINGS; ring++)
             {
-                float angle = (i / (float)segments) * 360f * Mathf.Deg2Rad;
-                Vector3 rayDirection = direction.normalized +
-                                       (Mathf.Cos(angle) * right + Mathf.Sin(angle) * up) * Mathf.Tan(coneRad);
-                rayDirection.Normalize();
+                float ringDistance = distance * (ring / (float)(CONE_RINGS + 1));
+                float ringRadius = Mathf.Tan(coneAngleRad) * ringDistance;
+                Vector3 ringCenter = origin + direction.normalized * ringDistance;
 
-                Vector3 endPoint = origin + rayDirection * distance;
-                Gizmos.DrawLine(origin, endPoint);
+                DrawCircle(ringCenter, direction, ringRadius, CONE_SEGMENTS);
             }
 
-            // Dessine des cercles transversaux pour mieux visualiser
-            for (int slice = 1; slice < 4; slice++)
+            // Dessiner le cercle de la base du cône
+            float baseRadius = Mathf.Tan(coneAngleRad) * distance;
+            DrawCircle(destination, direction, baseRadius, CONE_SEGMENTS);
+
+            // Dessiner les lignes depuis l'origine vers les points du cercle de base
+            for (int i = 0; i < CONE_SEGMENTS; i++)
             {
-                float sliceDistance = distance * (slice / 4f);
-                float sliceRadius = sliceDistance * Mathf.Tan(coneRad);
+                float angle = (i / (float)CONE_SEGMENTS) * 360f * Mathf.Deg2Rad;
+                Vector3 offset = (Mathf.Cos(angle) * right + Mathf.Sin(angle) * up) * baseRadius;
+                Vector3 pointOnCircle = destination + offset;
+                Gizmos.DrawLine(origin, pointOnCircle);
+            }
+        }
 
-                for (int i = 0; i < segments; i++)
-                {
-                    float angle1 = (i / (float)segments) * 360f * Mathf.Deg2Rad;
-                    float angle2 = ((i + 1) / (float)segments) * 360f * Mathf.Deg2Rad;
+        private void DrawCircle(Vector3 center, Vector3 normal, float radius, int segments)
+        {
+            Vector3 right = Vector3.Cross(normal, Vector3.up).normalized;
+            if (right.magnitude < 0.01f)
+                right = Vector3.Cross(normal, Vector3.right).normalized;
 
-                    Vector3 point1 = origin + direction.normalized * sliceDistance +
-                                     (Mathf.Cos(angle1) * right + Mathf.Sin(angle1) * up) * sliceRadius;
-                    Vector3 point2 = origin + direction.normalized * sliceDistance +
-                                     (Mathf.Cos(angle2) * right + Mathf.Sin(angle2) * up) * sliceRadius;
+            Vector3 up = Vector3.Cross(right, normal).normalized;
 
-                    Gizmos.DrawLine(point1, point2);
-                }
+            Vector3 previousPoint = center + right * radius;
+
+            for (int i = 1; i <= segments; i++)
+            {
+                float angle = (i / (float)segments) * 360f * Mathf.Deg2Rad;
+                Vector3 offset = (Mathf.Cos(angle) * right + Mathf.Sin(angle) * up) * radius;
+                Vector3 currentPoint = center + offset;
+
+                Gizmos.DrawLine(previousPoint, currentPoint);
+                previousPoint = currentPoint;
             }
         }
 
