@@ -29,7 +29,7 @@ namespace Sven.Context
         [field: SerializeField]
         public float PointerDistance { get; set; } = 20f;
         [field: SerializeField]
-        [field: Range(0f, 90f)]
+        [field: Range(0f, 89f)]
         public float PointerConeAngle { get; set; } = 0f;
         [field: SerializeField]
         public Vector3 PointerPosition { get; set; } = Vector3.zero;
