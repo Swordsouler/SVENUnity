@@ -16,6 +16,9 @@ namespace Sven.Context
         private Interval _interval;
         protected Interval Interval => _interval;
 
+        private string _label;
+        public string Label => _label ?? GetType().Name;
+
         /// <summary>
         /// The unique identifier of the event.
         /// </summary>
@@ -34,6 +37,13 @@ namespace Sven.Context
             _user = user;
             _interval = new Interval();
             _uuid = System.Guid.NewGuid().ToString();
+        }
+        public Event(User user, string label)
+        {
+            _user = user;
+            _interval = new Interval();
+            _uuid = System.Guid.NewGuid().ToString();
+            _label = label;
         }
 
         /// <summary>
@@ -62,6 +72,7 @@ namespace Sven.Context
         {
             IUriNode eventNode = UriNode;
             GraphManager.Assert(new Triple(eventNode, GraphManager.CreateUriNode("rdf:type"), GraphManager.CreateUriNode($"sven:{GetType().Name}")));
+            GraphManager.Assert(new Triple(eventNode, GraphManager.CreateUriNode("rdfs:label"), GraphManager.CreateLiteralNode(Label)));
             GraphManager.Assert(new Triple(eventNode, GraphManager.CreateUriNode("sven:hasTemporalExtent"), _interval.Semanticize()));
             if (_user != null) GraphManager.Assert(new Triple(GraphManager.CreateUriNode(":" + _user.UUID), GraphManager.CreateUriNode("sven:perform"), eventNode));
             return eventNode;
