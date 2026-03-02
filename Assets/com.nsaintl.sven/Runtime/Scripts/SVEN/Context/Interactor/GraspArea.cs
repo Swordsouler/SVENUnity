@@ -31,6 +31,7 @@ namespace Sven.Context
         /// The height of the capsule. If 0, uses a sphere instead.
         /// </summary>
         [field: SerializeField]
+        [field: Min(0f)]
         public float GraspHeight { get; set; } = 0f;
 
         protected override IEnumerator CheckInteractor(float i)
@@ -126,25 +127,66 @@ namespace Sven.Context
             Vector3 point1 = center - direction * (height * 0.5f);
             Vector3 point2 = center + direction * (height * 0.5f);
 
-            // Dessiner les deux hémisphères
-            DrawWireHemisphere(point1, -direction, radius);
-            DrawWireHemisphere(point2, direction, radius);
-
-            // Dessiner les lignes de connexion
-            Vector3 right = Vector3.Cross(direction, Vector3.forward).normalized;
+            // Calcul des vecteurs perpendiculaires
+            Vector3 right = Vector3.Cross(direction, Vector3.up).normalized;
             if (right.magnitude < 0.01f)
                 right = Vector3.Cross(direction, Vector3.right).normalized;
 
             Vector3 forward = Vector3.Cross(right, direction).normalized;
 
+            // Dessiner les cercles aux extrémités
+            DrawCircle(point1, direction, radius, 24);
+            DrawCircle(point2, direction, radius, 24);
+
+            // Dessiner les 4 lignes de connexion principales
             Gizmos.DrawLine(point1 + right * radius, point2 + right * radius);
             Gizmos.DrawLine(point1 - right * radius, point2 - right * radius);
             Gizmos.DrawLine(point1 + forward * radius, point2 + forward * radius);
             Gizmos.DrawLine(point1 - forward * radius, point2 - forward * radius);
 
-            // Dessiner les cercles au milieu
-            DrawCircle(point1, direction, radius, 16);
-            DrawCircle(point2, direction, radius, 16);
+            // Dessiner les hémisphères
+            int meridians = 8;
+            int parallels = 4;
+
+            for (int m = 0; m < meridians; m++)
+            {
+                float azimuth = (m / (float)meridians) * 360f * Mathf.Deg2Rad;
+                Vector3 meridianDir = Mathf.Cos(azimuth) * right + Mathf.Sin(azimuth) * forward;
+
+                Vector3 prevPoint1 = point1;
+                Vector3 prevPoint2 = point2;
+
+                for (int p = 1; p <= parallels; p++)
+                {
+                    float angle = (p / (float)parallels) * 90f * Mathf.Deg2Rad;
+                    float parallelRadius = Mathf.Sin(angle) * radius;
+                    float heightOffset = Mathf.Cos(angle) * radius;
+
+                    // Points sur l'hémisphère inférieur
+                    Vector3 currentPoint1 = point1 - direction * heightOffset + meridianDir * parallelRadius;
+                    Gizmos.DrawLine(prevPoint1, currentPoint1);
+                    prevPoint1 = currentPoint1;
+
+                    // Points sur l'hémisphère supérieur
+                    Vector3 currentPoint2 = point2 + direction * heightOffset + meridianDir * parallelRadius;
+                    Gizmos.DrawLine(prevPoint2, currentPoint2);
+                    prevPoint2 = currentPoint2;
+                }
+            }
+
+            // Dessiner les parallèles sur les hémisphères
+            for (int p = 1; p < parallels; p++)
+            {
+                float angle = (p / (float)parallels) * 90f * Mathf.Deg2Rad;
+                float parallelRadius = Mathf.Sin(angle) * radius;
+                float heightOffset = Mathf.Cos(angle) * radius;
+
+                Vector3 parallelCenter1 = point1 - direction * heightOffset;
+                Vector3 parallelCenter2 = point2 + direction * heightOffset;
+
+                DrawCircle(parallelCenter1, direction, parallelRadius, 24);
+                DrawCircle(parallelCenter2, direction, parallelRadius, 24);
+            }
         }
 
         private void DrawWireHemisphere(Vector3 center, Vector3 direction, float radius)
