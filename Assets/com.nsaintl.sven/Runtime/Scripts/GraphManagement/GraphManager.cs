@@ -954,23 +954,47 @@ WHERE {{
 
                 foreach (SparqlResult result in resultSet.Cast<SparqlResult>())
                 {
-                    // get uuids
-                    string objectUUID = result["object"].ToString()[(result["object"].ToString().LastIndexOf("/") + 1)..];
+                    INode objectNode = result["object"];
+                    INode propertyNameNode = result["propertyName"];
+                    INode propertyValueNode = result["propertyValue"];
+                    if (objectNode == null || propertyNameNode == null || propertyValueNode == null) continue;
 
-                    string propertyName = result["propertyName"].NodeType switch
+                    string objectValue = objectNode.ToString();
+                    int objectSlashIndex = objectValue.LastIndexOf("/");
+                    string objectUUID = objectSlashIndex >= 0 ? objectValue[(objectSlashIndex + 1)..] : objectValue;
+
+                    string propertyName = propertyNameNode.NodeType switch
                     {
-                        NodeType.Uri => result["propertyName"].ToString()[(result["propertyName"].ToString().LastIndexOf("#") + 1)..],
-                        _ => result["propertyName"].AsValuedNode().AsString()
+                        NodeType.Uri =>
+                            propertyNameNode.ToString()[(propertyNameNode.ToString().LastIndexOf("#") + 1)..],
+                        _ => propertyNameNode.AsValuedNode().AsString()
                     };
+
                     string componentUUID, componentStringType, propertyStringType, propertyNestedName;
                     try
                     {
-                        componentUUID = result["component"].ToString()[(result["component"].ToString().LastIndexOf("/") + 1)..];
+                        INode componentNode = result["component"];
+                        INode componentTypeNode = result["componentType"];
+                        INode propertyTypeNode = result["propertyType"];
+                        INode propertyNestedNameNode = result["propertyNestedName"];
+                        if (componentNode == null || componentTypeNode == null || propertyTypeNode == null || propertyNestedNameNode == null)
+                            throw new InvalidOperationException();
 
-                        // get types
-                        componentStringType = result["componentType"]?.ToString()[(result["componentType"].ToString().LastIndexOf("#") + 1)..];
-                        propertyStringType = result["propertyType"].ToString()[(result["propertyType"].ToString().LastIndexOf("#") + 1)..];
-                        propertyNestedName = result["propertyNestedName"].ToString()[(result["propertyNestedName"].ToString().LastIndexOf("#") + 1)..];
+                        string componentValue = componentNode.ToString();
+                        int componentSlashIndex = componentValue.LastIndexOf("/");
+                        componentUUID = componentSlashIndex >= 0 ? componentValue[(componentSlashIndex + 1)..] : componentValue;
+
+                        string componentTypeValue = componentTypeNode.ToString();
+                        int componentTypeHashIndex = componentTypeValue.LastIndexOf("#");
+                        componentStringType = componentTypeHashIndex >= 0 ? componentTypeValue[(componentTypeHashIndex + 1)..] : componentTypeValue;
+
+                        string propertyTypeValue = propertyTypeNode.ToString();
+                        int propertyTypeHashIndex = propertyTypeValue.LastIndexOf("#");
+                        propertyStringType = propertyTypeHashIndex >= 0 ? propertyTypeValue[(propertyTypeHashIndex + 1)..] : propertyTypeValue;
+
+                        string propertyNestedValue = propertyNestedNameNode.ToString();
+                        int propertyNestedHashIndex = propertyNestedValue.LastIndexOf("#");
+                        propertyNestedName = propertyNestedHashIndex >= 0 ? propertyNestedValue[(propertyNestedHashIndex + 1)..] : propertyNestedValue;
                     }
                     catch
                     {
@@ -980,35 +1004,38 @@ WHERE {{
                         switch (propertyName)
                         {
                             case "active":
-                                sc.GameObjects[objectUUID].Active = result["propertyValue"].AsValuedNode().AsString() == "true";
+                                sc.GameObjects[objectUUID].Active = propertyValueNode.AsValuedNode().AsString() == "true";
                                 continue;
                             case "layer":
-                                sc.GameObjects[objectUUID].Layer = result["propertyValue"].AsValuedNode().AsString();
+                                sc.GameObjects[objectUUID].Layer = propertyValueNode.AsValuedNode().AsString();
                                 continue;
                             case "tag":
-                                sc.GameObjects[objectUUID].Tag = result["propertyValue"].AsValuedNode().AsString();
+                                sc.GameObjects[objectUUID].Tag = propertyValueNode.AsValuedNode().AsString();
                                 continue;
                             case "name":
-                                sc.GameObjects[objectUUID].Name = result["propertyValue"].AsValuedNode().AsString();
+                                sc.GameObjects[objectUUID].Name = propertyValueNode.AsValuedNode().AsString();
                                 continue;
                         }
                         continue;
                     }
 
-                    // call in main thread
                     Tuple<Type, int> componentData = MapppedComponents.GetData(componentStringType);
+                    if (componentData == null) continue;
+
                     Type componentType = componentData.Item1;
                     int componentSortOrder = componentData.Item2;
                     if (componentType == null || !MapppedComponents.HasProperty(componentType, propertyName)) continue;
-                    //Debug.Log($"Component: {componentType} {propertyName}");
 
                     Type propertyType = MapppedProperties.GetType(propertyStringType) ?? Type.GetType(propertyStringType);
-                    if (!MapppedProperties.HasNestedProperty(propertyType, propertyNestedName)) continue;
+                    if (propertyType == null || !MapppedProperties.HasNestedProperty(propertyType, propertyNestedName)) continue;
 
-                    string propertyUUID = result["property"].ToString()[(result["property"].ToString().LastIndexOf("/") + 1)..];
-                    object propertyValue = result["propertyValue"].AsValuedNode().ToValue();
-                    //if (propertyName == "position")
-                    //Debug.Log(propertyName + " " + propertyNestedName + " " + propertyValue + " " + result["propertyValue"].AsValuedNode());
+                    INode propertyNode = result["property"];
+                    if (propertyNode == null) continue;
+
+                    string propertyString = propertyNode.ToString();
+                    int propertySlashIndex = propertyString.LastIndexOf("/");
+                    string propertyUUID = propertySlashIndex >= 0 ? propertyString[(propertySlashIndex + 1)..] : propertyString;
+                    object propertyValue = propertyValueNode.AsValuedNode().ToValue();
 
                     if (!sc.GameObjects.ContainsKey(objectUUID))
                         sc.GameObjects[objectUUID] = new(objectUUID);
