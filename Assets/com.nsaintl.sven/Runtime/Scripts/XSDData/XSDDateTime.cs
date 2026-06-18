@@ -21,7 +21,7 @@ namespace Sven.XsdData
         /// <returns>The literal node.</returns>
         public static ILiteralNode ToLiteralNode(this DateTime dateTime)
         {
-            return GraphManager.CreateLiteralNode(dateTime.ToString("yyyy-MM-ddTHH:mm:ss.fffzzz"), new Uri(XmlSpecsHelper.XmlSchemaDataTypeDateTime));
+            return GraphManager.CreateLiteralNode(dateTime.ToString("yyyy-MM-ddTHH:mm:ss.fffzzz", System.Globalization.CultureInfo.InvariantCulture), new Uri(XmlSpecsHelper.XmlSchemaDataTypeDateTime));
         }
     }
 }

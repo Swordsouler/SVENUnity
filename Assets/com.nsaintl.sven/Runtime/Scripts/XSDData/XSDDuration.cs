@@ -26,60 +26,30 @@ namespace Sven.XsdData
         /// <param name="end">The end date and time.</param>
         public XSDDuration(DateTime start, DateTime end)
         {
-            TimeSpan span = end - start;
+            // Une durée écoulée entre deux instants se calcule à partir du TimeSpan, qui est exact.
+            // L'ancienne version mélangeait des jours calendaires (end.Day - start.Day, qui ignore l'heure) avec
+            // les composantes horaires du TimeSpan, ce qui surcomptait d'un jour tout intervalle traversant minuit
+            // (ex. 23:00 -> 01:00 donnait "P1DT2H" = 26 h au lieu de "PT2H"). On n'émet plus d'années/mois
+            // (ambigus en xsd:duration) : days/hours/minutes/seconds suffisent et sont sans ambiguïté.
+            Value = BuildDurationString(end - start);
+        }
 
-            int years, months, days;
-            CalculateDateDifferences(start, end, out years, out months, out days);
+        /// <summary>
+        /// Builds an xsd:duration string from an exact elapsed TimeSpan.
+        /// </summary>
+        /// <param name="span">The elapsed time span.</param>
+        /// <returns>The duration string.</returns>
+        private string BuildDurationString(TimeSpan span)
+        {
+            bool negative = span < TimeSpan.Zero;
+            if (negative) span = span.Negate();
 
+            int days = (int)span.TotalDays;
             int hours = span.Hours;
             int minutes = span.Minutes;
             double seconds = span.Seconds + span.Milliseconds / 1000.0;
 
-            Value = BuildDurationString(years, months, days, hours, minutes, seconds);
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the XSDDuration class with the specified duration string.
-        /// </summary>
-        /// <param name="start">The start date and time.</param>
-        /// <param name="end">The end date and time.</param>
-        /// <param name="years">The number of years.</param>
-        /// <param name="months">The number of months.</param>
-        /// <param name="days">The number of days.</param>
-        private void CalculateDateDifferences(DateTime start, DateTime end, out int years, out int months, out int days)
-        {
-            years = end.Year - start.Year;
-            months = end.Month - start.Month;
-            days = end.Day - start.Day;
-
-            if (days < 0)
-            {
-                months--;
-                days += DateTime.DaysInMonth(start.Year, start.Month);
-            }
-
-            if (months < 0)
-            {
-                years--;
-                months += 12;
-            }
-        }
-
-        /// <summary>
-        /// Builds the duration string.
-        /// </summary>
-        /// <param name="years">The number of years.</param>
-        /// <param name="months">The number of months.</param>
-        /// <param name="days">The number of days.</param>
-        /// <param name="hours">The number of hours.</param>
-        /// <param name="minutes">The number of minutes.</param>
-        /// <param name="seconds">The number of seconds.</param>
-        /// <returns>The duration string.</returns>
-        private string BuildDurationString(int years, int months, int days, int hours, int minutes, double seconds)
-        {
             string duration = "P";
-            if (years > 0) duration += $"{years}Y";
-            if (months > 0) duration += $"{months}M";
             if (days > 0) duration += $"{days}D";
             if (hours > 0 || minutes > 0 || seconds > 0)
             {
@@ -97,7 +67,8 @@ namespace Sven.XsdData
                 }
             }
 
-            return duration == "P" ? "P0D" : duration;
+            if (duration == "P") duration = "P0D";
+            return negative ? "-" + duration : duration;
         }
 
         /// <summary>

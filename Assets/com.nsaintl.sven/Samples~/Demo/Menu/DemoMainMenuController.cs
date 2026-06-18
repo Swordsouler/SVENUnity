@@ -161,7 +161,7 @@ WHERE {
     } GROUP BY ?graphName ORDER BY ?graphName LIMIT 30
 } ORDER BY DESC(?minInstant) LIMIT 30"; //await LoadQueryFileAsync("SPARQL/ListExistentVEs.sparql");
 
-                SparqlResultSet results = await GraphManager.QueryEndpoint(SvenSettings.EndpointUrl, query);
+                SparqlResultSet results = await GraphManager.QueryEndpoint(SvenSettings.SparqlQueryEndpoint, query);
 
                 VENameDropdown.options.Clear();
                 _dropdownOptions.Clear();

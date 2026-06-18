@@ -7,8 +7,6 @@ using Sven.OwlTime;
 using Sven.Utils;
 using System;
 using System.Collections.Generic;
-using System.Threading;
-using System.Threading.Tasks;
 using UnityEngine;
 using VDS.RDF;
 using VDS.RDF.Parsing;
@@ -128,40 +126,29 @@ namespace Sven.Content
             parentObject = parentComponent.GetComponent<SemantizationCore>();
         }
 
-        private bool _isCheckingForChanges = false;
-
         /// <summary>
         /// Checks if the observed property has changed and invokes the callbacks if it has.
+        /// Runs synchronously on the main thread: the getter reads Unity API (main-thread only), so there is
+        /// nothing to offload to a background thread. Running synchronously also lets a MissingReferenceException
+        /// from a destroyed component propagate to the caller (SemantizationCore.CheckForChanges), which closes
+        /// the interval and stops observing it.
         /// </summary>
-        public async void CheckForChanges()
+        public void CheckForChanges()
         {
-            if (_isCheckingForChanges) return;
-            _isCheckingForChanges = true;
-            SynchronizationContext context = SynchronizationContext.Current;
-#if !UNITY_WEBGL || UNITY_EDITOR
-            await Task.Run(() =>
-            {
-#endif
-                object currentValue = null;
-                context.Send(_ => { if (observedProperty != null && parentObject != null) currentValue = observedProperty.Getter(); }, null);
-                if (currentValue == null) return;
+            if (observedProperty == null || parentObject == null) return;
 
-                if (HasValueChanged(currentValue, observedProperty.LastValue))
-                {
-                    // limit the semantization with the graph instantPerSecond
-                    Instant currentInstant = null;
-                    context.Send(_ => currentInstant = GraphManager.CurrentInstant, null);
-                    if (lastSemantizedInstant != null && currentInstant == lastSemantizedInstant) return;
+            object currentValue = observedProperty.Getter();
+            if (currentValue == null) return;
 
-                    lastSemantizedInstant = currentInstant;
-                    observedProperty.LastValue = currentValue;
-                    context.Send(_ => Semanticize(currentInstant), null);
-                }
-#if !UNITY_WEBGL || UNITY_EDITOR
-            });
-#endif
-            await Task.Yield();
-            _isCheckingForChanges = false;
+            if (!HasValueChanged(currentValue, observedProperty.LastValue)) return;
+
+            // limit the semantization with the graph instantPerSecond
+            Instant currentInstant = GraphManager.CurrentInstant;
+            if (lastSemantizedInstant != null && currentInstant == lastSemantizedInstant) return;
+
+            lastSemantizedInstant = currentInstant;
+            observedProperty.LastValue = currentValue;
+            Semanticize(currentInstant);
         }
 
         private bool HasValueChanged(object currentValue, object lastValue)

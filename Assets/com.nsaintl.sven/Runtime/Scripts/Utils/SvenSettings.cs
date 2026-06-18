@@ -18,10 +18,51 @@ using UnityEditor;
 namespace Sven.Utils
 {
     /// <summary>
+    /// Supported triplestore backends. Determines how the SPARQL query endpoint and the Graph Store Protocol
+    /// URLs are derived from the configured base Endpoint URL.
+    /// </summary>
+    public enum TripleStoreType
+    {
+        /// <summary>Ontotext GraphDB. Endpoint URL = repository, e.g. http://localhost:7200/repositories/SVEN</summary>
+        GraphDB,
+        /// <summary>Apache Jena Fuseki. Endpoint URL = dataset, e.g. http://localhost:3030/SVEN</summary>
+        ApacheJena
+    }
+
+    /// <summary>
     /// Helper class to manage SVEN settings.
     /// </summary>
     public static class SvenSettings
     {
+        #region Enabled
+        /// <summary>
+        /// Master switch for the whole SVEN library. When false, the environment is NOT semantized: the graph is
+        /// not initialized, no SemantizationCore / Interactor / User observes or records anything, and nothing is
+        /// sent to the endpoint. Replay (reading an existing graph) is unaffected.
+        /// Configurable in the editor (SVEN Settings) or at launch via --sven-enabled=true|false. Default: true.
+        /// </summary>
+        public static bool Enabled
+        {
+            get
+            {
+                if (_enabled.HasValue) return _enabled.Value;
+                string argEnabled = Environment.GetCommandLineArgs().FirstOrDefault(arg => arg.StartsWith("--sven-enabled="))?.Split('=')[1];
+                if (!string.IsNullOrEmpty(argEnabled) && bool.TryParse(argEnabled, out bool parsed))
+                    _enabled = parsed;
+                else
+                    _enabled = true;
+                return _enabled.Value;
+            }
+            set
+            {
+                if (_enabled == value) return;
+                _enabled = value;
+            }
+        }
+        private static bool? _enabled = null;
+        public static readonly string _enabledKey = "SVEN_Enabled";
+        #endregion
+
         #region UseInside
         public static bool UseInside => _useInside;
         private static bool _useInside = false;
@@ -73,6 +114,67 @@ namespace Sven.Utils
         }
         private static string _endpointUrl = null;
         public static readonly string _endpointUrlKey = "SVEN_EndpointUrl";
+        #endregion
+
+        #region TripleStore
+        /// <summary>
+        /// The targeted triplestore backend (GraphDB or Apache Jena/Fuseki). Drives how the SPARQL query endpoint
+        /// and the Graph Store Protocol URLs are built from <see cref="EndpointUrl"/>.
+        /// </summary>
+        public static TripleStoreType TripleStore
+        {
+            get
+            {
+                if (_tripleStore.HasValue) return _tripleStore.Value;
+                string argTripleStore = Environment.GetCommandLineArgs().FirstOrDefault(arg => arg.StartsWith("--sven-triplestore="))?.Split('=')[1];
+                if (!string.IsNullOrEmpty(argTripleStore) && Enum.TryParse(argTripleStore, true, out TripleStoreType parsed))
+                    _tripleStore = parsed;
+                else
+                    _tripleStore = TripleStoreType.GraphDB;
+                return _tripleStore.Value;
+            }
+            set
+            {
+                if (_tripleStore == value) return;
+                _tripleStore = value;
+            }
+        }
+        private static TripleStoreType? _tripleStore = null;
+        public static readonly string _tripleStoreKey = "SVEN_TripleStore";
+
+        /// <summary>
+        /// The SPARQL query endpoint derived from <see cref="EndpointUrl"/> and the selected triplestore.
+        /// GraphDB: the repository URL itself is the query endpoint.
+        /// Apache Jena/Fuseki: the dataset URL + "/query".
+        /// </summary>
+        public static string SparqlQueryEndpoint
+        {
+            get
+            {
+                string baseUrl = EndpointUrl.TrimEnd('/');
+                return TripleStore switch
+                {
+                    TripleStoreType.ApacheJena => baseUrl + "/query",
+                    _ => baseUrl,
+                };
+            }
+        }
+
+        /// <summary>
+        /// Builds the Graph Store Protocol URL targeting a named graph, according to the selected triplestore.
+        /// GraphDB: {base}/rdf-graphs/service?graph=...  Apache Jena/Fuseki: {base}/data?graph=...
+        /// </summary>
+        /// <param name="graphUri">The absolute URI of the named graph.</param>
+        public static string GraphStoreServiceUrl(string graphUri)
+        {
+            string baseUrl = EndpointUrl.TrimEnd('/');
+            string encoded = Uri.EscapeDataString(graphUri);
+            return TripleStore switch
+            {
+                TripleStoreType.ApacheJena => $"{baseUrl}/data?graph={encoded}",
+                _ => $"{baseUrl}/rdf-graphs/service?graph={encoded}",
+            };
+        }
         #endregion
 
         #region Username
@@ -152,7 +254,7 @@ namespace Sven.Utils
             {
                 if (10000 <= _bufferSize && _bufferSize <= 100000) return _bufferSize;
                 string argsBufferSize = Environment.GetCommandLineArgs().FirstOrDefault(arg => arg.StartsWith("--buffer-size="))?.Split('=')[1];
-                if (int.TryParse(argsBufferSize, out int parsedSize) && parsedSize > 0 && parsedSize <= 60)
+                if (int.TryParse(argsBufferSize, out int parsedSize) && parsedSize >= 10000 && parsedSize <= 100000)
                     _bufferSize = parsedSize;
                 else
                     _bufferSize = 20000;
@@ -177,7 +279,7 @@ namespace Sven.Utils
 
                 if (_ontologies.Count == 0)
                 {
-                    string ontologiesPath = Application.streamingAssetsPath + "/Ontologies";
+                    string ontologiesPath = StreamingAssetsPath + "/Ontologies";
                     if (System.IO.Directory.Exists(ontologiesPath))
                     {
                         string[] ontologyFiles = System.IO.Directory.GetFiles(ontologiesPath, "*.ttl");
@@ -217,6 +319,49 @@ namespace Sven.Utils
         #endregion
 
 
+        #region MainThreadPaths
+        private static string _streamingAssetsPath;
+        private static string _persistentDataPath;
+
+        /// <summary>
+        /// Cached <see cref="Application.streamingAssetsPath"/>. Application.* members can only be read on the main
+        /// thread, so the value is captured once (see <see cref="CacheMainThreadPaths"/>) and reused everywhere,
+        /// including from background threads (Task.Run).
+        /// </summary>
+        public static string StreamingAssetsPath
+        {
+            get
+            {
+                if (string.IsNullOrEmpty(_streamingAssetsPath))
+                    _streamingAssetsPath = Application.streamingAssetsPath;
+                return _streamingAssetsPath;
+            }
+        }
+
+        /// <summary>
+        /// Cached <see cref="Application.persistentDataPath"/>, captured on the main thread for use from background threads.
+        /// </summary>
+        public static string PersistentDataPath
+        {
+            get
+            {
+                if (string.IsNullOrEmpty(_persistentDataPath))
+                    _persistentDataPath = Application.persistentDataPath;
+                return _persistentDataPath;
+            }
+        }
+
+        /// <summary>
+        /// Caches the Unity Application paths on the main thread. Must be called once from the main thread
+        /// (e.g. GraphController.Awake) before any code path that may read them from a background thread.
+        /// </summary>
+        public static void CacheMainThreadPaths()
+        {
+            _streamingAssetsPath = Application.streamingAssetsPath;
+            _persistentDataPath = Application.persistentDataPath;
+        }
+        #endregion
+
 
         #region BaseUri
 
@@ -244,12 +389,14 @@ namespace Sven.Utils
         {
             try
             {
+                _enabled = EditorPrefs.GetBool(_enabledKey, Enabled);
                 _useInside = EditorPrefs.GetBool(_useInsideKey, UseInside);
                 _debug = EditorPrefs.GetBool(_debugKey, Debug);
                 _pointOfViewDebugColor = ColorUtility.TryParseHtmlString("#" + EditorPrefs.GetString(_pointOfViewDebugColorKey, null), out Color pointOfViewDebugColor) ? pointOfViewDebugColor : PointOfViewDebugColor;
                 _pointerDebugColor = ColorUtility.TryParseHtmlString("#" + EditorPrefs.GetString(_pointerDebugColorKey, null), out Color pointerDebugColor) ? pointerDebugColor : PointerDebugColor;
                 _graspAreaDebugColor = ColorUtility.TryParseHtmlString("#" + EditorPrefs.GetString(_graspAreaDebugColorKey, null), out Color graspAreaDebugColor) ? graspAreaDebugColor : GraspAreaDebugColor;
                 _endpointUrl = EditorPrefs.GetString(_endpointUrlKey, EndpointUrl);
+                _tripleStore = (TripleStoreType)EditorPrefs.GetInt(_tripleStoreKey, (int)TripleStore);
                 _username = EditorPrefs.GetString(_usernameKey, Username);
                 _password = EditorPrefs.GetString(_passwordKey, Password);
                 _semanticizeFrequency = EditorPrefs.GetInt(_semanticizeFrequencyKey, SemanticizeFrequency);
@@ -269,7 +416,7 @@ namespace Sven.Utils
         public static async Task<Dictionary<string, string>> GetOntologiesAsync()
         {
 #if UNITY_WEBGL && !UNITY_EDITOR
-            string indexPath = Application.streamingAssetsPath + "/Ontologies/ontologies_index.json";
+            string indexPath = StreamingAssetsPath + "/Ontologies/ontologies_index.json";
             using (UnityEngine.Networking.UnityWebRequest request = UnityEngine.Networking.UnityWebRequest.Get(indexPath))
             {
                 await request.SendWebRequest();
@@ -283,17 +430,20 @@ namespace Sven.Utils
                 foreach (var file in index.files)
                 {
                     string name = System.IO.Path.GetFileNameWithoutExtension(file);
-                    string url = Application.streamingAssetsPath + "/Ontologies/" + file;
+                    string url = StreamingAssetsPath + "/Ontologies/" + file;
                     dict[name] = url;
                 }
                 return dict;
             }
 #else
+            // Application.streamingAssetsPath can only be read on the main thread: read it here (caller thread,
+            // main during init) BEFORE entering Task.Run, otherwise a build throws
+            // "UnityException: get_streamingAssetsPath can only be called from the main thread".
+            string ontologiesPath = StreamingAssetsPath + "/Ontologies";
             return await Task.Run(() =>
             {
                 if (_ontologies.Count == 0)
                 {
-                    string ontologiesPath = Application.streamingAssetsPath + "/Ontologies";
                     if (System.IO.Directory.Exists(ontologiesPath))
                     {
                         string[] ontologyFiles = System.IO.Directory.GetFiles(ontologiesPath, "*.ttl");

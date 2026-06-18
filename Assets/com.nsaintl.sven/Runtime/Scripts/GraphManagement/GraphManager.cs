@@ -36,6 +36,14 @@ namespace Sven.GraphManagement
         public static Graph Instance => _instance;
         private static readonly object _graphLock = new();
         private static bool _isFlushing = false;
+        // Backoff state: when the endpoint is unreachable, a flush must NOT be retried on every Assert
+        // (each retry re-copies and re-serializes the whole graph). We wait an increasing delay between attempts.
+        private static DateTime _nextFlushRetryUtc = DateTime.MinValue;
+        private static int _consecutiveFlushFailures = 0;
+        // Hard memory ceiling (as a multiple of BufferSize). Past it, a failed batch is spooled to a local
+        // backup file and freed from memory so an unreachable endpoint cannot grow RAM without bound.
+        private const int MaxBufferMultiplier = 3;
+        private static int _backupCounter = 0;
         public static int Count
         {
             get
@@ -70,6 +78,12 @@ namespace Sven.GraphManagement
             get => _isGraphInitialized;
             set => _isGraphInitialized = value;
         }
+
+        /// <summary>
+        /// The current Basic authentication header value (e.g. "Basic dXNlcjpwYXNz"), or null if not set.
+        /// Exposed so the WebGL query path (UnityWebRequest) can attach the same auth as the desktop HttpClient.
+        /// </summary>
+        public static string AuthorizationHeader => _authenticationHeaderValue?.ToString();
 
         public static void SetAuthenticationHeaderValue(string username, string password)
         {
@@ -343,7 +357,7 @@ namespace Sven.GraphManagement
                         SaveGraph(graphToSend, sw);
                     }
 
-                    string serviceUrl = $"{endpointUrl}/rdf-graphs/service?graph={Uri.EscapeDataString(baseUri.AbsoluteUri)}";
+                    string serviceUrl = SvenSettings.GraphStoreServiceUrl(baseUri.AbsoluteUri);
                     using HttpClient httpClient = new();
                     httpClient.DefaultRequestHeaders.Authorization = _authenticationHeaderValue;
 
@@ -405,7 +419,7 @@ namespace Sven.GraphManagement
                 }
                 return DecodeGraph(await GetInferredGraphAsync(triples, baseUri, nsMap));
             });
-            string serviceUrl = $"{endpointUrl}/rdf-graphs/service?graph={Uri.EscapeDataString(BaseUri)}";
+            string serviceUrl = SvenSettings.GraphStoreServiceUrl(BaseUri);
             try
             {
 #if !UNITY_WEBGL || UNITY_EDITOR
@@ -577,7 +591,7 @@ WHERE {
             lock (_graphLock)
             {
                 _instance.Assert(t);
-                if (_instance.Triples.Count >= SvenSettings.BufferSize && !_isFlushing)
+                if (_instance.Triples.Count >= SvenSettings.BufferSize && !_isFlushing && DateTime.UtcNow >= _nextFlushRetryUtc)
                 {
                     _isFlushing = true;
                     // Copier TOUTES les données nécessaires à l'intérieur d'un seul verrou court.
@@ -624,10 +638,6 @@ WHERE {
 
                 // Préparation et envoi du graphe à partir des données fournies
                 await AddToEndpoint(triplesToFlush, baseUri, nsMap);
-                /*Debug.Log("Buffer memory added to endpoint.");
-
-                // call query in local memory to clear the buffer
-                await UpdateMemoryAsync(deleteQuery);*/
                 // delete triplesttoFlush from memory
                 lock (_graphLock)
                 {
@@ -636,12 +646,28 @@ WHERE {
                         _instance.Retract(t);
                     }
                 }
+                // Le flush a réussi : on remet le compteur d'échecs et la fenêtre de backoff à zéro.
+                _consecutiveFlushFailures = 0;
+                _nextFlushRetryUtc = DateTime.MinValue;
                 await SyncWithEndpoint();
                 Debug.Log("Buffer memory cleared. Now contains " + Count + " triples.");
             }
             catch (Exception ex)
             {
-                Debug.LogError($"Une erreur est survenue lors du vidage du tampon vers le point de terminaison : {ex}");
+                // Échec (endpoint injoignable, 4xx/5xx, timeout...). On NE retire PAS les triples : ils restent
+                // en mémoire pour être renvoyés plus tard. On programme un backoff exponentiel (plafonné à 30 s)
+                // pour ne pas re-sérialiser tout le graphe à chaque Assert ni marteler le réseau.
+                _consecutiveFlushFailures++;
+                double backoffSeconds = Math.Min(30.0, Math.Pow(2, Math.Min(_consecutiveFlushFailures, 5)));
+                _nextFlushRetryUtc = DateTime.UtcNow.AddSeconds(backoffSeconds);
+                Debug.LogError($"Échec du vidage du tampon (tentative {_consecutiveFlushFailures}, prochaine dans {backoffSeconds:0}s) : {ex.Message}");
+
+                // Garde-fou mémoire : si le tampon a dépassé le plafond (endpoint durablement injoignable),
+                // on écrit le lot dans une sauvegarde locale et on le libère, pour éviter une fuite mémoire non bornée.
+                int count;
+                lock (_graphLock) { count = _instance.Triples.Count; }
+                if (count >= SvenSettings.BufferSize * MaxBufferMultiplier)
+                    TrySpoolToBackup(triplesToFlush, baseUri, nsMap);
             }
             finally
             {
@@ -649,9 +675,93 @@ WHERE {
             }
         }
 
+        /// <summary>
+        /// Flushes the in-memory buffer to the endpoint synchronously, blocking the caller until done (or timed out).
+        /// Meant for application shutdown (OnApplicationQuit) where coroutines/async continuations can no longer run.
+        /// Safe to block the main thread: AddToEndpoint is ConfigureAwait(false) throughout, so no continuation needs
+        /// the main thread. If the endpoint is unreachable/slow, the batch is written to a local backup instead of lost.
+        /// </summary>
+        public static void ForceFlushToEndpointBlocking(int timeoutSeconds = 10)
+        {
+            List<Triple> triplesToFlush;
+            Uri baseUri;
+            NamespaceMapper nsMap;
+            lock (_graphLock)
+            {
+                if (_instance.Triples.Count == 0) return;
+                triplesToFlush = new List<Triple>(_instance.Triples);
+                baseUri = _instance.BaseUri;
+                nsMap = new NamespaceMapper();
+                nsMap.Import(_instance.NamespaceMap);
+            }
+
+            bool sent = false;
+            try
+            {
+                Task flushTask = Task.Run(() => AddToEndpoint(triplesToFlush, baseUri, nsMap));
+                sent = flushTask.Wait(TimeSpan.FromSeconds(timeoutSeconds)) && !flushTask.IsFaulted;
+            }
+            catch (Exception ex)
+            {
+                Debug.LogError($"Final flush on quit failed: {ex.Message}");
+            }
+
+            if (sent)
+            {
+                lock (_graphLock)
+                {
+                    foreach (Triple t in triplesToFlush)
+                        _instance.Retract(t);
+                }
+                Debug.Log($"Final flush on quit: {triplesToFlush.Count} triples sent to endpoint.");
+            }
+            else
+            {
+                // Endpoint injoignable/lent au moment de quitter : on persiste localement pour ne pas perdre la session.
+                TrySpoolToBackup(triplesToFlush, baseUri, nsMap);
+            }
+        }
+
+        /// <summary>
+        /// Writes a batch of triples to a local backup Turtle file (PersistentDataPath/SVEN_Backup) and frees them
+        /// from memory. Last-resort persistence so an unreachable endpoint never causes data loss or unbounded RAM.
+        /// </summary>
+        private static void TrySpoolToBackup(List<Triple> triples, Uri baseUri, NamespaceMapper nsMap)
+        {
+            try
+            {
+                if (triples == null || triples.Count == 0) return;
+                string dir = Path.Combine(SvenSettings.PersistentDataPath, "SVEN_Backup");
+                Directory.CreateDirectory(dir);
+
+                Graph g = new();
+                g.Assert(triples);
+                g.BaseUri = baseUri;
+                if (nsMap != null) g.NamespaceMap.Import(nsMap);
+
+                string file = Path.Combine(dir, $"sven_backup_{_backupCounter++}.ttl");
+                using (StreamWriter sw = new(file, false, Encoding.UTF8))
+                {
+                    SaveGraph(g, sw);
+                }
+
+                // Libère le lot sauvegardé pour borner la mémoire.
+                lock (_graphLock)
+                {
+                    foreach (Triple t in triples)
+                        _instance.Retract(t);
+                }
+                Debug.LogWarning($"SVEN : endpoint injoignable — {triples.Count} triplets écrits dans la sauvegarde locale '{file}' et libérés de la mémoire. À ré-importer quand l'endpoint sera de nouveau disponible.");
+            }
+            catch (Exception ex)
+            {
+                Debug.LogError($"SVEN : échec de l'écriture de la sauvegarde locale (les données restent en mémoire) : {ex}");
+            }
+        }
+
         private static async Task SyncWithEndpoint()
         {
-            string endpointUrl = SvenSettings.EndpointUrl;
+            string endpointUrl = SvenSettings.SparqlQueryEndpoint;
             string query = $@"PREFIX : <{BaseUri}>
 PREFIX time: <http://www.w3.org/2006/time#>
 PREFIX sven: <https://sven.lisn.upsaclay.fr/ontology#>
@@ -747,7 +857,7 @@ WHERE {{
                 if (string.IsNullOrEmpty(query)) throw new ArgumentNullException(nameof(query) + " is null or empty.");
 
                 Uri endpointUri = new(endpointUrl);
-                HttpClient httpClient = new();
+                using HttpClient httpClient = new();
                 httpClient.DefaultRequestHeaders.Authorization = _authenticationHeaderValue;
 
                 SparqlQueryClient sparqlQueryClient = new(httpClient, endpointUri);
@@ -858,7 +968,7 @@ WHERE {{
                 //get the dateTime
                 INode dateTimeNode = result["dateTime"];
                 //create a new instant
-                DateTimeOffset dateTimeOffset = DateTimeOffset.Parse(dateTimeNode.AsValuedNode().AsString());
+                DateTimeOffset dateTimeOffset = DateTimeOffset.Parse(dateTimeNode.AsValuedNode().AsString(), System.Globalization.CultureInfo.InvariantCulture, System.Globalization.DateTimeStyles.RoundtripKind);
                 //add the instant to the list
                 _instants.Add(new(dateTimeOffset.DateTime));
             }
@@ -879,7 +989,7 @@ WHERE {{
 
         public static async Task LoadInstantsFromEndpoint()
         {
-            string endpointUrl = SvenSettings.EndpointUrl;
+            string endpointUrl = SvenSettings.SparqlQueryEndpoint;
 
             SparqlResultSet results = await QueryEndpoint(endpointUrl, LoadInstantsQuery);
             LoadInstants(results);
@@ -893,7 +1003,7 @@ WHERE {{
     {{
         SELECT DISTINCT ?interval
         WHERE {{
-            VALUES ?instantTime {{ {$"\"{instant.inXSDDateTime:yyyy-MM-ddTHH:mm:ss.fffzzz}\""}^^xsd:dateTime }}
+            VALUES ?instantTime {{ {"\"" + instant.inXSDDateTime.ToString("yyyy-MM-ddTHH:mm:ss.fffzzz", System.Globalization.CultureInfo.InvariantCulture) + "\""}^^xsd:dateTime }}
             ?interval a time:Interval ;
                     time:hasBeginning/time:inXSDDateTime ?startTime .
             OPTIONAL {{
@@ -1083,7 +1193,7 @@ WHERE {{
         {
             CurrentInstantLoaded = instant;
             if (instant == null) return;
-            string endpointUrl = SvenSettings.EndpointUrl;
+            string endpointUrl = SvenSettings.SparqlQueryEndpoint;
 
             SparqlResultSet results = await QueryEndpoint(endpointUrl, RetrieveSceneQuery(instant, true));
             SceneContent targetSceneContent = await GetSceneContent(results);
@@ -1206,7 +1316,11 @@ WHERE {{
                         //gameObjectDescription.GameObject.transform.SetParent(transform);
                     }
                     gameObjectDescription.GameObject.SetActive(gameObjectDescription.Active);
-                    gameObjectDescription.GameObject.layer = LayerMask.NameToLayer(gameObjectDescription.Layer);
+                    // NameToLayer renvoie -1 si le layer n'existe pas dans le projet de relecture (les layers sont
+                    // propres à chaque projet). On garde alors le layer par défaut au lieu de faire échouer tout l'instant.
+                    int replayLayer = string.IsNullOrEmpty(gameObjectDescription.Layer) ? -1 : LayerMask.NameToLayer(gameObjectDescription.Layer);
+                    if (replayLayer >= 0) gameObjectDescription.GameObject.layer = replayLayer;
+                    else if (SvenSettings.Debug) Debug.LogWarning($"Replay: layer '{gameObjectDescription.Layer}' introuvable dans le projet de relecture, layer par défaut conservé.");
                     try
                     {
                         bool isTagExist = !string.IsNullOrEmpty(gameObjectDescription.Tag);
@@ -1365,7 +1479,7 @@ WHERE {{
 }}";
 
             Uri endpointUri = new(enpointUrl);
-            HttpClient httpClient = new();
+            using HttpClient httpClient = new();
 
             httpClient.DefaultRequestHeaders.Authorization = _authenticationHeaderValue;
 

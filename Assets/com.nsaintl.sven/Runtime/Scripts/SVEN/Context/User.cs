@@ -48,6 +48,8 @@ namespace Sven.Context
         /// </summary>
         public void Start()
         {
+            // Master switch: when SVEN is disabled, the user is not semantized.
+            if (!SvenSettings.Enabled) return;
             InitializeAsync();
         }
 
@@ -91,6 +93,8 @@ namespace Sven.Context
 
         public void Update()
         {
+            // Master switch: when SVEN is disabled, key-press input events are not recorded.
+            if (!SvenSettings.Enabled) return;
             // check for input events (press)
             if (Input.anyKeyDown)
             {

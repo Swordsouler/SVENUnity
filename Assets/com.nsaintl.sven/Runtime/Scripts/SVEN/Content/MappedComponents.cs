@@ -86,7 +86,7 @@ namespace Sven.Content
                 {
                     (Func<MeshRenderer, ComponentProperty>)(meshRenderer => new ComponentProperty("enabled", () => meshRenderer.enabled, value => meshRenderer.enabled = value.ToString().ToLower() == "true", 1)),
                     (Func<MeshRenderer, ComponentProperty>)(meshRenderer => new ComponentProperty("color", () => meshRenderer.material.HasProperty("_Color") ? meshRenderer.material.color : (Color?)null, value => { if(meshRenderer.material.HasProperty("_Color")) Tween.MaterialColor(meshRenderer.material, (Color)value, lerpSpeed); }, 1/*, "virtualColor"*/)),
-                    (Func<MeshRenderer, ComponentProperty>)(meshRenderer => new ComponentProperty("material1", () => meshRenderer.materials.Length > 0 ? meshRenderer.materials[0].name.Replace(" (Instance)", "") : null, value => {
+                    (Func<MeshRenderer, ComponentProperty>)(meshRenderer => new ComponentProperty("material1", () => meshRenderer.sharedMaterials.Length > 0 && meshRenderer.sharedMaterials[0] != null ? meshRenderer.sharedMaterials[0].name.Replace(" (Instance)", "") : null, value => {
                         string currentMaterialName = meshRenderer.materials.Length > 0 ? meshRenderer.materials[0].name.Replace(" (Instance)", "") : null;
                         if (value == null || (string)value == currentMaterialName) return;
                         Material[] materials = meshRenderer.materials;
@@ -95,7 +95,7 @@ namespace Sven.Content
                         materials[0] = Resources.Load<Material>($"Materials/{(string)value}");
                         meshRenderer.materials = materials;
                     }, 1)),
-                    (Func<MeshRenderer, ComponentProperty>)(meshRenderer => new ComponentProperty("material2", () => meshRenderer.materials.Length > 1 ? meshRenderer.materials[1].name.Replace(" (Instance)", "") : null, value => {
+                    (Func<MeshRenderer, ComponentProperty>)(meshRenderer => new ComponentProperty("material2", () => meshRenderer.sharedMaterials.Length > 1 && meshRenderer.sharedMaterials[1] != null ? meshRenderer.sharedMaterials[1].name.Replace(" (Instance)", "") : null, value => {
                         string currentMaterialName = meshRenderer.materials.Length > 1 ? meshRenderer.materials[1].name.Replace(" (Instance)", "") : null;
                         if (value == null || (string)value == currentMaterialName) return;
                         Material[] materials = meshRenderer.materials;
@@ -104,7 +104,7 @@ namespace Sven.Content
                         materials[1] = Resources.Load<Material>($"Materials/{(string)value}");
                         meshRenderer.materials = materials;
                     }, 1)),
-                    (Func<MeshRenderer, ComponentProperty>)(meshRenderer => new ComponentProperty("material3", () => meshRenderer.materials.Length > 2 ? meshRenderer.materials[2].name.Replace(" (Instance)", "") : null, value => {
+                    (Func<MeshRenderer, ComponentProperty>)(meshRenderer => new ComponentProperty("material3", () => meshRenderer.sharedMaterials.Length > 2 && meshRenderer.sharedMaterials[2] != null ? meshRenderer.sharedMaterials[2].name.Replace(" (Instance)", "") : null, value => {
                         string currentMaterialName = meshRenderer.materials.Length > 2 ? meshRenderer.materials[2].name.Replace(" (Instance)", "") : null;
                         if (value == null || (string)value == currentMaterialName) return;
                         Material[] materials = meshRenderer.materials;
@@ -113,7 +113,7 @@ namespace Sven.Content
                         materials[2] = Resources.Load<Material>($"Materials/{(string)value}");
                         meshRenderer.materials = materials;
                     }, 1)),
-                    (Func<MeshRenderer, ComponentProperty>)(meshRenderer => new ComponentProperty("material4", () => meshRenderer.materials.Length > 3 ? meshRenderer.materials[3].name.Replace(" (Instance)", "") : null, value => {
+                    (Func<MeshRenderer, ComponentProperty>)(meshRenderer => new ComponentProperty("material4", () => meshRenderer.sharedMaterials.Length > 3 && meshRenderer.sharedMaterials[3] != null ? meshRenderer.sharedMaterials[3].name.Replace(" (Instance)", "") : null, value => {
                         string currentMaterialName = meshRenderer.materials.Length > 3 ? meshRenderer.materials[3].name.Replace(" (Instance)", "") : null;
                         if (value == null || (string)value == currentMaterialName) return;
                         Material[] materials = meshRenderer.materials;
@@ -162,10 +162,12 @@ namespace Sven.Content
                         return m.name.Replace(" Instance", "");
                     }, value => {
                         if (value == null) return;
-                        if (meshFilter.mesh != null && meshFilter.mesh.name == (string)value && meshFilter.mesh.uv.Length > 0) return;
+                        // sharedMesh : on référence l'asset Resources en lecture seule au lieu d'instancier une copie
+                        // (meshFilter.mesh) à chaque scrub du replay, ce qui fuyait un Mesh natif par changement.
+                        if (meshFilter.sharedMesh != null && meshFilter.sharedMesh.name == (string)value) return;
                         Mesh mesh = Resources.Load<Mesh>($"Meshes/{(string)value}");
                         if (mesh == null) return;
-                        meshFilter.mesh = mesh;
+                        meshFilter.sharedMesh = mesh;
                     }, 1)),
                     /*(Func<MeshFilter, PropertyDescription>)(meshFilter => new PropertyDescription("vertices", () => string.Join("|", meshFilter.mesh.vertices.Select(v => v.ToString())), value => {
                             try {

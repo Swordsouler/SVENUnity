@@ -40,6 +40,8 @@ namespace Sven.Content
         /// </summary>
         private void Start()
         {
+            // Master switch: when SVEN is disabled, this object is never observed/semantized.
+            if (!SvenSettings.Enabled) return;
             Component component = GetComponent<Component>();
             componentsToSemanticize.RemoveAll(c => c == null || c.Component == null || !component.gameObject.Equals(c.Component.gameObject));
             InitializeAsync();
@@ -223,6 +225,7 @@ namespace Sven.Content
         /// </summary>
         private void OnEnable()
         {
+            if (!SvenSettings.Enabled) return;
             if (_checkForChangesCoroutine != null) StopCoroutine(_checkForChangesCoroutine);
             StartCoroutine(LoopCheckForChanges(1.0f / SvenSettings.SemanticizeFrequency));
         }

@@ -70,7 +70,7 @@ namespace Sven.OwlTime
         /// <param name="date">The date to initialize the instance with.</param>
         public TemporalEntity(DateTime dateTime)
         {
-            UUID = dateTime.ToString("yyyy-MM-dd-HH-mm-ss-fff");
+            UUID = dateTime.ToString("yyyy-MM-dd-HH-mm-ss-fff", System.Globalization.CultureInfo.InvariantCulture);
         }
 
         /// <summary>

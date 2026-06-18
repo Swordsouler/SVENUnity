@@ -47,7 +47,7 @@ namespace Sven.Demo
             _isDownloading = true;
             if (downloadingActivityIndicator != null) downloadingActivityIndicator.SetActive(true);
             if (downloadButton != null) downloadButton.gameObject.SetActive(false);
-            string turtleContent = await GraphManager.DownloadTTLFromEndpoint(SvenSettings.EndpointUrl);
+            string turtleContent = await GraphManager.DownloadTTLFromEndpoint(SvenSettings.SparqlQueryEndpoint);
 
             // in webgl build, download the turtleContent ass txt file
 #if UNITY_WEBGL && !UNITY_EDITOR

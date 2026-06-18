@@ -3,6 +3,7 @@
 // Licensed under the MIT License. See LICENSE file in the project root for full license information.
 
 using Sven.Content;
+using Sven.Utils;
 using System.Threading;
 using System.Threading.Tasks;
 using UnityEngine;
@@ -14,8 +15,24 @@ namespace Sven.GraphManagement
     {
         private void Awake()
         {
+            // Master switch: when SVEN is disabled, the graph is never initialized and nothing is semantized.
+            if (!SvenSettings.Enabled) return;
+            // Capture les chemins Application.* sur le main thread, avant tout accès depuis un Task.Run.
+            SvenSettings.CacheMainThreadPaths();
             if (GraphManager.Count != 0) return;
             _ = GraphManager.Reload();
+        }
+
+        /// <summary>
+        /// Forces a final flush of the in-memory buffer when the application quits (standalone quit, Alt-F4,
+        /// headset menu quit, or exiting Play Mode in the editor). Without this, every triple accumulated since
+        /// the last successful flush — up to BufferSize — would be lost. Blocks briefly (bounded by a timeout);
+        /// if the endpoint is unreachable, the buffer is written to a local backup instead of being lost.
+        /// </summary>
+        private void OnApplicationQuit()
+        {
+            if (!SvenSettings.Enabled) return;
+            GraphManager.ForceFlushToEndpointBlocking();
         }
 
         public async Task SaveGraphToEndpoint()
@@ -47,8 +64,10 @@ namespace Sven.GraphManagement
 #if !UNITY_WEBGL || UNITY_EDITOR
             });
 #endif
-            // save to streaming assets persistent data path
-            string path = Application.streamingAssetsPath;
+            // save to a file inside the streaming assets folder (SaveToFile needs a file path, not a directory)
+            string directory = Application.streamingAssetsPath;
+            System.IO.Directory.CreateDirectory(directory);
+            string path = System.IO.Path.Combine(directory, $"{SvenSettings.GraphName}.ttl");
             await GraphManager.SaveToFile(path);
         }
 
