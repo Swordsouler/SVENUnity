@@ -53,6 +53,60 @@ namespace Sven.Context
         [SerializeField]
         protected bool _debug = true;
 
+        // Reusable physics query buffers shared by interactor subclasses, to avoid the per-tick array allocation
+        // of Physics.RaycastAll/OverlapSphere/OverlapCapsule. The buffers grow on demand so no hit/collider is ever
+        // silently dropped — truncation here would mean losing recorded interactions.
+        private RaycastHit[] _raycastBuffer = new RaycastHit[64];
+        private Collider[] _overlapBuffer = new Collider[128];
+
+        /// <summary>
+        /// Allocation-free equivalent of Physics.RaycastAll. Returns the hit count; the hits are in <paramref name="hits"/>
+        /// (a shared buffer valid only until the next call). Iterate indices [0, count).
+        /// </summary>
+        protected int RaycastAllInto(Ray ray, float distance, out RaycastHit[] hits)
+        {
+            int count = Physics.RaycastNonAlloc(ray, _raycastBuffer, distance);
+            while (count == _raycastBuffer.Length)
+            {
+                _raycastBuffer = new RaycastHit[_raycastBuffer.Length * 2];
+                count = Physics.RaycastNonAlloc(ray, _raycastBuffer, distance);
+            }
+            hits = _raycastBuffer;
+            return count;
+        }
+
+        /// <summary>
+        /// Allocation-free equivalent of Physics.OverlapSphere. Returns the collider count; colliders are in
+        /// <paramref name="colliders"/> (a shared buffer valid only until the next overlap call). Iterate indices [0, count).
+        /// </summary>
+        protected int OverlapSphereInto(Vector3 center, float radius, int layerMask, out Collider[] colliders)
+        {
+            int count = Physics.OverlapSphereNonAlloc(center, radius, _overlapBuffer, layerMask);
+            while (count == _overlapBuffer.Length)
+            {
+                _overlapBuffer = new Collider[_overlapBuffer.Length * 2];
+                count = Physics.OverlapSphereNonAlloc(center, radius, _overlapBuffer, layerMask);
+            }
+            colliders = _overlapBuffer;
+            return count;
+        }
+
+        /// <summary>
+        /// Allocation-free equivalent of Physics.OverlapCapsule. Returns the collider count; colliders are in
+        /// <paramref name="colliders"/> (a shared buffer valid only until the next overlap call). Iterate indices [0, count).
+        /// </summary>
+        protected int OverlapCapsuleInto(Vector3 point0, Vector3 point1, float radius, out Collider[] colliders)
+        {
+            int count = Physics.OverlapCapsuleNonAlloc(point0, point1, radius, _overlapBuffer);
+            while (count == _overlapBuffer.Length)
+            {
+                _overlapBuffer = new Collider[_overlapBuffer.Length * 2];
+                count = Physics.OverlapCapsuleNonAlloc(point0, point1, radius, _overlapBuffer);
+            }
+            colliders = _overlapBuffer;
+            return count;
+        }
+
         /// <summary>
         /// Called when the script instance is being loaded.
         /// </summary>

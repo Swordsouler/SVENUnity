@@ -247,10 +247,13 @@ namespace Sven.Content
             return node.EffectiveType.Split("#")[1] switch
             {
                 "string" => node.AsString(),
-                "int" => node.AsInteger(),
+                // AsInteger() retourne un Int64 : on rétrécit en Int32 pour que les setters `(int)value` (boxés en int)
+                // ne lèvent pas InvalidCastException au rejeu (un long boxé ne se déballe pas en int).
+                "int" => (int)node.AsInteger(),
                 "float" => node.AsFloat(),
                 "double" => node.AsDouble(),
-                "bool" => node.AsBoolean(),
+                // Le fragment du datatype XSD est "boolean", pas "bool" : sans ça, ce cas était du code mort.
+                "boolean" => node.AsBoolean(),
                 "dateTime" => node.AsDateTime(),
                 _ => node.AsString(),
             };
@@ -280,8 +283,13 @@ namespace Sven.Content
             return type switch
             {
                 Type t when t == typeof(bool) => obj.ToString().ToLower(),
-                Type t when t == typeof(float) => ((float)obj).ToString("N4", System.Globalization.CultureInfo.InvariantCulture),
-                _ => obj.ToString(),
+                // "R" (round-trip) produit une forme lexicale xsd:float/xsd:double VALIDE : pas de séparateur de
+                // milliers (contrairement à "N4" qui donnait "1,000.0000" pour 1000) et précision complète.
+                Type t when t == typeof(float) => ((float)obj).ToString("R", System.Globalization.CultureInfo.InvariantCulture),
+                Type t when t == typeof(double) => ((double)obj).ToString("R", System.Globalization.CultureInfo.InvariantCulture),
+                Type t when t == typeof(int) => ((int)obj).ToString(System.Globalization.CultureInfo.InvariantCulture),
+                // Repli en culture invariante (évite "3,14" en fr-FR pour tout autre type IConvertible/IFormattable).
+                _ => System.Convert.ToString(obj, System.Globalization.CultureInfo.InvariantCulture),
             };
         }
 

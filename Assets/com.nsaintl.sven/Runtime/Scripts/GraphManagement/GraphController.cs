@@ -61,8 +61,10 @@ namespace Sven.GraphManagement
 #if !UNITY_WEBGL || UNITY_EDITOR
             });
 #endif
-            // save to streaming assets persistent data path
-            string path = Application.streamingAssetsPath;
+            // save to a file inside the streaming assets folder (SaveToFile needs a file path, not a directory)
+            string directory = Application.streamingAssetsPath;
+            System.IO.Directory.CreateDirectory(directory);
+            string path = System.IO.Path.Combine(directory, $"{SvenSettings.GraphName}.ttl");
             await GraphManager.SaveToFile(path);
         }
 

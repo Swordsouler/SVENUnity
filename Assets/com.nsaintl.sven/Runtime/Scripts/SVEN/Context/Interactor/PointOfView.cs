@@ -47,12 +47,12 @@ namespace Sven.Context
                 Vector3 cameraPosition = cameraComponent.transform.position;
                 float visionDistance = cameraComponent.farClipPlane;
 
-                Collider[] colliders = Physics.OverlapSphere(cameraPosition, visionDistance, cameraComponent.cullingMask);
+                int colliderCount = OverlapSphereInto(cameraPosition, visionDistance, cameraComponent.cullingMask, out Collider[] colliders);
                 HashSet<SemantizationCore> newVisibleObjects = new();
 
                 Plane[] frustumPlanes = GeometryUtility.CalculateFrustumPlanes(cameraComponent);
 
-                for (int j = 0; j < colliders.Length; j++)
+                for (int j = 0; j < colliderCount; j++)
                 {
                     Collider collider = colliders[j];
                     if (GeometryUtility.TestPlanesAABB(frustumPlanes, collider.bounds))

@@ -24,7 +24,7 @@ namespace Sven.XsdData
         /// <param name="date">The date and time.</param>
         public XSDDateTimeStamp(DateTime date)
         {
-            Value = date.ToString("yyyy-MM-ddTHH:mm:sszzz");
+            Value = date.ToString("yyyy-MM-ddTHH:mm:sszzz", System.Globalization.CultureInfo.InvariantCulture);
         }
 
         /// <summary>

@@ -79,6 +79,12 @@ namespace Sven.GraphManagement
             set => _isGraphInitialized = value;
         }
 
+        /// <summary>
+        /// The current Basic authentication header value (e.g. "Basic dXNlcjpwYXNz"), or null if not set.
+        /// Exposed so the WebGL query path (UnityWebRequest) can attach the same auth as the desktop HttpClient.
+        /// </summary>
+        public static string AuthorizationHeader => _authenticationHeaderValue?.ToString();
+
         public static void SetAuthenticationHeaderValue(string username, string password)
         {
             if (string.IsNullOrEmpty(username)) throw new ArgumentNullException(nameof(username) + " is null or empty.");
@@ -962,7 +968,7 @@ WHERE {{
                 //get the dateTime
                 INode dateTimeNode = result["dateTime"];
                 //create a new instant
-                DateTimeOffset dateTimeOffset = DateTimeOffset.Parse(dateTimeNode.AsValuedNode().AsString());
+                DateTimeOffset dateTimeOffset = DateTimeOffset.Parse(dateTimeNode.AsValuedNode().AsString(), System.Globalization.CultureInfo.InvariantCulture, System.Globalization.DateTimeStyles.RoundtripKind);
                 //add the instant to the list
                 _instants.Add(new(dateTimeOffset.DateTime));
             }
@@ -997,7 +1003,7 @@ WHERE {{
     {{
         SELECT DISTINCT ?interval
         WHERE {{
-            VALUES ?instantTime {{ {$"\"{instant.inXSDDateTime:yyyy-MM-ddTHH:mm:ss.fffzzz}\""}^^xsd:dateTime }}
+            VALUES ?instantTime {{ {"\"" + instant.inXSDDateTime.ToString("yyyy-MM-ddTHH:mm:ss.fffzzz", System.Globalization.CultureInfo.InvariantCulture) + "\""}^^xsd:dateTime }}
             ?interval a time:Interval ;
                     time:hasBeginning/time:inXSDDateTime ?startTime .
             OPTIONAL {{
@@ -1310,7 +1316,11 @@ WHERE {{
                         //gameObjectDescription.GameObject.transform.SetParent(transform);
                     }
                     gameObjectDescription.GameObject.SetActive(gameObjectDescription.Active);
-                    gameObjectDescription.GameObject.layer = LayerMask.NameToLayer(gameObjectDescription.Layer);
+                    // NameToLayer renvoie -1 si le layer n'existe pas dans le projet de relecture (les layers sont
+                    // propres à chaque projet). On garde alors le layer par défaut au lieu de faire échouer tout l'instant.
+                    int replayLayer = string.IsNullOrEmpty(gameObjectDescription.Layer) ? -1 : LayerMask.NameToLayer(gameObjectDescription.Layer);
+                    if (replayLayer >= 0) gameObjectDescription.GameObject.layer = replayLayer;
+                    else if (SvenSettings.Debug) Debug.LogWarning($"Replay: layer '{gameObjectDescription.Layer}' introuvable dans le projet de relecture, layer par défaut conservé.");
                     try
                     {
                         bool isTagExist = !string.IsNullOrEmpty(gameObjectDescription.Tag);

@@ -167,6 +167,17 @@ namespace Sven.Utils
             IsPlaying = !IsPlaying;
         }
 
+        /// <summary>
+        /// Removes the UI listeners registered in ResetController so they don't leak past this component's lifetime.
+        /// </summary>
+        private void OnDestroy()
+        {
+            if (_timeSlider != null) _timeSlider.onValueChanged.RemoveListener(OnSliderValueChanged);
+            if (_playPauseButton != null) _playPauseButton.onValueChanged.RemoveListener(OnPlayValueChanged);
+            if (_backwardButton != null) _backwardButton.onClick.RemoveListener(StepBackward);
+            if (_forwardButton != null) _forwardButton.onClick.RemoveListener(StepForward);
+        }
+
         private void Update()
         {
             float speed = _speedDropdown.value switch

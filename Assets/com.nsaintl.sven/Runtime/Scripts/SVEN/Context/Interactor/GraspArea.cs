@@ -42,22 +42,23 @@ namespace Sven.Context
                 float radius = GraspDistance;
 
                 Collider[] colliders;
+                int colliderCount;
 
                 if (GraspHeight > 0f)
                 {
                     // Calcule les points de début et de fin de la capsule
                     Vector3 point1 = center - transform.up * (GraspHeight * 0.5f);
                     Vector3 point2 = center + transform.up * (GraspHeight * 0.5f);
-                    colliders = Physics.OverlapCapsule(point1, point2, radius);
+                    colliderCount = OverlapCapsuleInto(point1, point2, radius, out colliders);
                 }
                 else
                 {
-                    colliders = Physics.OverlapSphere(center, radius);
+                    colliderCount = OverlapSphereInto(center, radius, Physics.AllLayers, out colliders);
                 }
 
                 HashSet<SemantizationCore> newVisibleObjects = new();
 
-                for (int j = 0; j < colliders.Length; j++)
+                for (int j = 0; j < colliderCount; j++)
                 {
                     Collider collider = colliders[j];
                     if (collider.TryGetComponent(out SemantizationCore semantizationCore))

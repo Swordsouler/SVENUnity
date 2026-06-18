@@ -54,22 +54,24 @@ namespace Sven.Context
 
                 Ray ray = new(PointerPosition, PointerDirection);
                 RaycastHit[] hits;
+                int hitCount;
 
                 if (PointerConeAngle > 0f)
                 {
                     hits = GetConeCastHits(PointerPosition, PointerDirection, PointerDistance, PointerConeAngle);
+                    hitCount = hits.Length;
                 }
                 else
                 {
-                    hits = Physics.RaycastAll(ray, visionDistance);
+                    hitCount = RaycastAllInto(ray, visionDistance, out hits);
                 }
 
                 // Détermine le point le plus proche touché par le rayon ; si aucun hit, prend le point à la distance maximale du pointer
-                if (hits != null && hits.Length > 0)
+                if (hitCount > 0)
                 {
                     float minDist = float.MaxValue;
                     Vector3 closestPoint = PointerPosition + PointerDirection.normalized * visionDistance;
-                    for (int k = 0; k < hits.Length; k++)
+                    for (int k = 0; k < hitCount; k++)
                     {
                         RaycastHit h = hits[k];
                         if (h.distance < minDist)
@@ -89,7 +91,7 @@ namespace Sven.Context
 
                 HashSet<SemantizationCore> newVisibleObjects = new();
 
-                for (int j = 0; j < hits.Length; j++)
+                for (int j = 0; j < hitCount; j++)
                 {
                     RaycastHit hit = hits[j];
                     Collider collider = hit.collider;
@@ -193,11 +195,12 @@ namespace Sven.Context
             float sphereRadius = Mathf.Sqrt(distance * distance + coneRadius * coneRadius);
             Vector3 sphereCenter = origin + coneDirection * (distance * 0.5f);
 
-            Collider[] colliders = Physics.OverlapSphere(sphereCenter, sphereRadius);
+            int colliderCount = OverlapSphereInto(sphereCenter, sphereRadius, Physics.AllLayers, out Collider[] colliders);
             Vector3 coneEnd = origin + coneDirection * distance;
 
-            foreach (Collider collider in colliders)
+            for (int c = 0; c < colliderCount; c++)
             {
+                Collider collider = colliders[c];
                 if (uniqueHits.ContainsKey(collider))
                     continue;
 
@@ -212,9 +215,9 @@ namespace Sven.Context
                     continue;
 
                 Ray ray = new(origin, toClosest.normalized);
-                RaycastHit[] hits = Physics.RaycastAll(ray, distance);
+                int hitCount = RaycastAllInto(ray, distance, out RaycastHit[] hits);
 
-                for (int i = 0; i < hits.Length; i++)
+                for (int i = 0; i < hitCount; i++)
                 {
                     RaycastHit hit = hits[i];
                     if (hit.collider == collider && IsPointInCone(origin, coneDirection, hit.point, coneAngleRad, distance))
@@ -405,9 +408,9 @@ WHERE {{
             Vector3 direction,
             Dictionary<Collider, RaycastHit> uniqueHits)
         {
-            RaycastHit[] hits = Physics.RaycastAll(ray, distance);
+            int count = RaycastAllInto(ray, distance, out RaycastHit[] hits);
 
-            for (int i = 0; i < hits.Length; i++)
+            for (int i = 0; i < count; i++)
             {
                 RaycastHit hit = hits[i];
                 if (IsPointInCone(origin, direction, hit.point, coneAngleRad, distance))

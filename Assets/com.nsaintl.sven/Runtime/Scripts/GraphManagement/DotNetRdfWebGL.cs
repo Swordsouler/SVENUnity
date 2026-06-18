@@ -35,6 +35,8 @@ namespace Sven.GraphManagement
                     });
 
                     request.SetRequestHeader("Accept", "application/sparql-results+json");
+                    string auth = GraphManager.AuthorizationHeader;
+                    if (!string.IsNullOrEmpty(auth)) request.SetRequestHeader("Authorization", auth);
 
                     await request.SendWebRequest();
 
@@ -88,6 +90,8 @@ namespace Sven.GraphManagement
                     });
 
                     request.SetRequestHeader("Accept", "text/turtle");
+                    string auth = GraphManager.AuthorizationHeader;
+                    if (!string.IsNullOrEmpty(auth)) request.SetRequestHeader("Authorization", auth);
 
                     await request.SendWebRequest();
 
@@ -128,6 +132,8 @@ namespace Sven.GraphManagement
                     });
 
                     request.SetRequestHeader("Accept", "text/turtle");
+                    string auth = GraphManager.AuthorizationHeader;
+                    if (!string.IsNullOrEmpty(auth)) request.SetRequestHeader("Authorization", auth);
 
                     await request.SendWebRequest();
 
