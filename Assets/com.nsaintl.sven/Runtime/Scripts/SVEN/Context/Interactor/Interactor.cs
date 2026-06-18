@@ -124,6 +124,8 @@ namespace Sven.Context
 
         private void Start()
         {
+            // Master switch: when SVEN is disabled, no interaction (pointer/grasp/field-of-view) is recorded.
+            if (!SvenSettings.Enabled) return;
             //if (_graphBuffer == null) return;
             if (_checkInteractorCoroutine != null) StopCoroutine(_checkInteractorCoroutine);
             InitializeAsync();

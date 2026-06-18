@@ -34,6 +34,35 @@ namespace Sven.Utils
     /// </summary>
     public static class SvenSettings
     {
+        #region Enabled
+        /// <summary>
+        /// Master switch for the whole SVEN library. When false, the environment is NOT semantized: the graph is
+        /// not initialized, no SemantizationCore / Interactor / User observes or records anything, and nothing is
+        /// sent to the endpoint. Replay (reading an existing graph) is unaffected.
+        /// Configurable in the editor (SVEN Settings) or at launch via --sven-enabled=true|false. Default: true.
+        /// </summary>
+        public static bool Enabled
+        {
+            get
+            {
+                if (_enabled.HasValue) return _enabled.Value;
+                string argEnabled = Environment.GetCommandLineArgs().FirstOrDefault(arg => arg.StartsWith("--sven-enabled="))?.Split('=')[1];
+                if (!string.IsNullOrEmpty(argEnabled) && bool.TryParse(argEnabled, out bool parsed))
+                    _enabled = parsed;
+                else
+                    _enabled = true;
+                return _enabled.Value;
+            }
+            set
+            {
+                if (_enabled == value) return;
+                _enabled = value;
+            }
+        }
+        private static bool? _enabled = null;
+        public static readonly string _enabledKey = "SVEN_Enabled";
+        #endregion
+
         #region UseInside
         public static bool UseInside => _useInside;
         private static bool _useInside = false;
@@ -360,6 +389,7 @@ namespace Sven.Utils
         {
             try
             {
+                _enabled = EditorPrefs.GetBool(_enabledKey, Enabled);
                 _useInside = EditorPrefs.GetBool(_useInsideKey, UseInside);
                 _debug = EditorPrefs.GetBool(_debugKey, Debug);
                 _pointOfViewDebugColor = ColorUtility.TryParseHtmlString("#" + EditorPrefs.GetString(_pointOfViewDebugColorKey, null), out Color pointOfViewDebugColor) ? pointOfViewDebugColor : PointOfViewDebugColor;

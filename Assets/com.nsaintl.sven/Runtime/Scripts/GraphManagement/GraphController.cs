@@ -15,6 +15,8 @@ namespace Sven.GraphManagement
     {
         private void Awake()
         {
+            // Master switch: when SVEN is disabled, the graph is never initialized and nothing is semantized.
+            if (!SvenSettings.Enabled) return;
             // Capture les chemins Application.* sur le main thread, avant tout accès depuis un Task.Run.
             SvenSettings.CacheMainThreadPaths();
             if (GraphManager.Count != 0) return;
@@ -29,6 +31,7 @@ namespace Sven.GraphManagement
         /// </summary>
         private void OnApplicationQuit()
         {
+            if (!SvenSettings.Enabled) return;
             GraphManager.ForceFlushToEndpointBlocking();
         }
 

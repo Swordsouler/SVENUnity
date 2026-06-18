@@ -44,6 +44,17 @@ namespace Sven.Editor
 
             bool refresh = false;
 
+            bool enabled = SvenSettings.Enabled;
+            bool newEnabled = EditorGUILayout.Toggle("Enable SVEN (semantization)", enabled);
+            if (newEnabled != enabled)
+            {
+                SvenSettings.Enabled = newEnabled;
+                EditorPrefs.SetBool(SvenSettings._enabledKey, newEnabled);
+                refresh = true;
+            }
+            if (!newEnabled)
+                EditorGUILayout.HelpBox("SVEN is disabled: the scene will not be semantized (no recording, no endpoint upload). Replay scenes are unaffected.", MessageType.Warning);
+
             bool useInside = SvenSettings.UseInside;
             bool newUseInside = EditorGUILayout.Toggle("Use inside", useInside);
 
