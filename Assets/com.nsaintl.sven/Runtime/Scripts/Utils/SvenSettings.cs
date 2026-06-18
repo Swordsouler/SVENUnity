@@ -177,7 +177,7 @@ namespace Sven.Utils
 
                 if (_ontologies.Count == 0)
                 {
-                    string ontologiesPath = Application.streamingAssetsPath + "/Ontologies";
+                    string ontologiesPath = StreamingAssetsPath + "/Ontologies";
                     if (System.IO.Directory.Exists(ontologiesPath))
                     {
                         string[] ontologyFiles = System.IO.Directory.GetFiles(ontologiesPath, "*.ttl");
@@ -216,6 +216,49 @@ namespace Sven.Utils
         public static readonly string _ontologiesKey = "SVEN_Ontologies";
         #endregion
 
+
+        #region MainThreadPaths
+        private static string _streamingAssetsPath;
+        private static string _persistentDataPath;
+
+        /// <summary>
+        /// Cached <see cref="Application.streamingAssetsPath"/>. Application.* members can only be read on the main
+        /// thread, so the value is captured once (see <see cref="CacheMainThreadPaths"/>) and reused everywhere,
+        /// including from background threads (Task.Run).
+        /// </summary>
+        public static string StreamingAssetsPath
+        {
+            get
+            {
+                if (string.IsNullOrEmpty(_streamingAssetsPath))
+                    _streamingAssetsPath = Application.streamingAssetsPath;
+                return _streamingAssetsPath;
+            }
+        }
+
+        /// <summary>
+        /// Cached <see cref="Application.persistentDataPath"/>, captured on the main thread for use from background threads.
+        /// </summary>
+        public static string PersistentDataPath
+        {
+            get
+            {
+                if (string.IsNullOrEmpty(_persistentDataPath))
+                    _persistentDataPath = Application.persistentDataPath;
+                return _persistentDataPath;
+            }
+        }
+
+        /// <summary>
+        /// Caches the Unity Application paths on the main thread. Must be called once from the main thread
+        /// (e.g. GraphController.Awake) before any code path that may read them from a background thread.
+        /// </summary>
+        public static void CacheMainThreadPaths()
+        {
+            _streamingAssetsPath = Application.streamingAssetsPath;
+            _persistentDataPath = Application.persistentDataPath;
+        }
+        #endregion
 
 
         #region BaseUri
@@ -269,7 +312,7 @@ namespace Sven.Utils
         public static async Task<Dictionary<string, string>> GetOntologiesAsync()
         {
 #if UNITY_WEBGL && !UNITY_EDITOR
-            string indexPath = Application.streamingAssetsPath + "/Ontologies/ontologies_index.json";
+            string indexPath = StreamingAssetsPath + "/Ontologies/ontologies_index.json";
             using (UnityEngine.Networking.UnityWebRequest request = UnityEngine.Networking.UnityWebRequest.Get(indexPath))
             {
                 await request.SendWebRequest();
@@ -283,17 +326,20 @@ namespace Sven.Utils
                 foreach (var file in index.files)
                 {
                     string name = System.IO.Path.GetFileNameWithoutExtension(file);
-                    string url = Application.streamingAssetsPath + "/Ontologies/" + file;
+                    string url = StreamingAssetsPath + "/Ontologies/" + file;
                     dict[name] = url;
                 }
                 return dict;
             }
 #else
+            // Application.streamingAssetsPath can only be read on the main thread: read it here (caller thread,
+            // main during init) BEFORE entering Task.Run, otherwise a build throws
+            // "UnityException: get_streamingAssetsPath can only be called from the main thread".
+            string ontologiesPath = StreamingAssetsPath + "/Ontologies";
             return await Task.Run(() =>
             {
                 if (_ontologies.Count == 0)
                 {
-                    string ontologiesPath = Application.streamingAssetsPath + "/Ontologies";
                     if (System.IO.Directory.Exists(ontologiesPath))
                     {
                         string[] ontologyFiles = System.IO.Directory.GetFiles(ontologiesPath, "*.ttl");

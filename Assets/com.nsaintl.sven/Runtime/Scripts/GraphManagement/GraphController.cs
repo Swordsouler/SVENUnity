@@ -3,6 +3,7 @@
 // Licensed under the MIT License. See LICENSE file in the project root for full license information.
 
 using Sven.Content;
+using Sven.Utils;
 using System.Threading;
 using System.Threading.Tasks;
 using UnityEngine;
@@ -14,8 +15,21 @@ namespace Sven.GraphManagement
     {
         private void Awake()
         {
+            // Capture les chemins Application.* sur le main thread, avant tout accès depuis un Task.Run.
+            SvenSettings.CacheMainThreadPaths();
             if (GraphManager.Count != 0) return;
             _ = GraphManager.Reload();
+        }
+
+        /// <summary>
+        /// Forces a final flush of the in-memory buffer when the application quits (standalone quit, Alt-F4,
+        /// headset menu quit, or exiting Play Mode in the editor). Without this, every triple accumulated since
+        /// the last successful flush — up to BufferSize — would be lost. Blocks briefly (bounded by a timeout);
+        /// if the endpoint is unreachable, the buffer is written to a local backup instead of being lost.
+        /// </summary>
+        private void OnApplicationQuit()
+        {
+            GraphManager.ForceFlushToEndpointBlocking();
         }
 
         public async Task SaveGraphToEndpoint()
