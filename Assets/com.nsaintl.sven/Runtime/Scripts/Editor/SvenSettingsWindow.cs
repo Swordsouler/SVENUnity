@@ -89,6 +89,15 @@ namespace Sven.Editor
                 refresh = true;
             }
 
+            TripleStoreType tripleStore = SvenSettings.TripleStore;
+            TripleStoreType newTripleStore = (TripleStoreType)EditorGUILayout.EnumPopup("Triplestore", tripleStore);
+            if (newTripleStore != tripleStore)
+            {
+                SvenSettings.TripleStore = newTripleStore;
+                EditorPrefs.SetInt(SvenSettings._tripleStoreKey, (int)newTripleStore);
+                refresh = true;
+            }
+
             string endpointUrl = SvenSettings.EndpointUrl;
             string newEndpointUrl = EditorGUILayout.TextField("Endpoint URL", endpointUrl);
             if (newEndpointUrl != endpointUrl)
@@ -97,6 +106,11 @@ namespace Sven.Editor
                 EditorPrefs.SetString(SvenSettings._endpointUrlKey, newEndpointUrl);
                 refresh = true;
             }
+            EditorGUILayout.HelpBox(
+                newTripleStore == TripleStoreType.GraphDB
+                    ? "GraphDB — Endpoint URL = repository, e.g. http://localhost:7200/repositories/SVEN\nQuery: <endpoint>   |   Graph Store: <endpoint>/rdf-graphs/service"
+                    : "Apache Jena (Fuseki) — Endpoint URL = dataset, e.g. http://localhost:3030/SVEN\nQuery: <endpoint>/query   |   Graph Store: <endpoint>/data",
+                MessageType.Info);
 
             string graphName = SvenSettings.GraphName;
             string newGraphName = EditorGUILayout.TextField("Graph Name", graphName);

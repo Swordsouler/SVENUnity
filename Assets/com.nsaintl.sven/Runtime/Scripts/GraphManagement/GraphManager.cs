@@ -357,7 +357,7 @@ namespace Sven.GraphManagement
                         SaveGraph(graphToSend, sw);
                     }
 
-                    string serviceUrl = $"{endpointUrl}/rdf-graphs/service?graph={Uri.EscapeDataString(baseUri.AbsoluteUri)}";
+                    string serviceUrl = SvenSettings.GraphStoreServiceUrl(baseUri.AbsoluteUri);
                     using HttpClient httpClient = new();
                     httpClient.DefaultRequestHeaders.Authorization = _authenticationHeaderValue;
 
@@ -419,7 +419,7 @@ namespace Sven.GraphManagement
                 }
                 return DecodeGraph(await GetInferredGraphAsync(triples, baseUri, nsMap));
             });
-            string serviceUrl = $"{endpointUrl}/rdf-graphs/service?graph={Uri.EscapeDataString(BaseUri)}";
+            string serviceUrl = SvenSettings.GraphStoreServiceUrl(BaseUri);
             try
             {
 #if !UNITY_WEBGL || UNITY_EDITOR
@@ -761,7 +761,7 @@ WHERE {
 
         private static async Task SyncWithEndpoint()
         {
-            string endpointUrl = SvenSettings.EndpointUrl;
+            string endpointUrl = SvenSettings.SparqlQueryEndpoint;
             string query = $@"PREFIX : <{BaseUri}>
 PREFIX time: <http://www.w3.org/2006/time#>
 PREFIX sven: <https://sven.lisn.upsaclay.fr/ontology#>
@@ -989,7 +989,7 @@ WHERE {{
 
         public static async Task LoadInstantsFromEndpoint()
         {
-            string endpointUrl = SvenSettings.EndpointUrl;
+            string endpointUrl = SvenSettings.SparqlQueryEndpoint;
 
             SparqlResultSet results = await QueryEndpoint(endpointUrl, LoadInstantsQuery);
             LoadInstants(results);
@@ -1193,7 +1193,7 @@ WHERE {{
         {
             CurrentInstantLoaded = instant;
             if (instant == null) return;
-            string endpointUrl = SvenSettings.EndpointUrl;
+            string endpointUrl = SvenSettings.SparqlQueryEndpoint;
 
             SparqlResultSet results = await QueryEndpoint(endpointUrl, RetrieveSceneQuery(instant, true));
             SceneContent targetSceneContent = await GetSceneContent(results);
