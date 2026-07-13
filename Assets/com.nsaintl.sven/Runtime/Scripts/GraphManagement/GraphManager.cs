@@ -1216,7 +1216,11 @@ WHERE {{
             {
                 SceneContent sceneContent = new(CurrentInstant);
                 // get all semantizationCore objects in the scene
+#if UNITY_6000_4_OR_NEWER
+                SemantizationCore[] semantizationCores = UnityEngine.Object.FindObjectsByType<SemantizationCore>();
+#else
                 SemantizationCore[] semantizationCores = UnityEngine.Object.FindObjectsByType<SemantizationCore>(FindObjectsSortMode.None);
+#endif
                 // iterate over the semantizationCores and get their content
                 // do the things to fill SceneContent
                 foreach (SemantizationCore semantizationCore in semantizationCores)

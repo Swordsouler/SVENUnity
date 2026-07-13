@@ -23,7 +23,7 @@ namespace Sven.Context
         /// <summary>
         /// The set of currently interacted objects.
         /// </summary>
-        [HideInInspector]
+        [System.NonSerialized]
         public HashSet<SemantizationCore> currentInteractedObjects = new();
 
         /// <summary>
