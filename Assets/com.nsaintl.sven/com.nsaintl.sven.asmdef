@@ -12,7 +12,8 @@
         "PrimeTween.Editor",
         "PrimeTween.Runtime",
         "PrimeTween.Tests",
-        "PrimeTween.Tests.Editor"
+        "PrimeTween.Tests.Editor",
+        "Unity.InputSystem"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

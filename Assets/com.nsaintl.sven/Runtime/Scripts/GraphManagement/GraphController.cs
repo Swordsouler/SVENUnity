@@ -40,7 +40,7 @@ namespace Sven.GraphManagement
 #if UNITY_6000_4_OR_NEWER
             SemantizationCore[] semantizationCores = FindObjectsByType<SemantizationCore>();
 #else
-            SemantizationCore[] semantizationCores = FindObjectsByType<SemantizationCore>(FindObjectsSortMode.None);
+            SemantizationCore[] semantizationCores = FindObjectsByType<SemantizationCore>();
 #endif
             SynchronizationContext context = SynchronizationContext.Current;
 #if !UNITY_WEBGL || UNITY_EDITOR
@@ -60,7 +60,7 @@ namespace Sven.GraphManagement
 #if UNITY_6000_4_OR_NEWER
             SemantizationCore[] semantizationCores = FindObjectsByType<SemantizationCore>();
 #else
-            SemantizationCore[] semantizationCores = FindObjectsByType<SemantizationCore>(FindObjectsSortMode.None);
+            SemantizationCore[] semantizationCores = FindObjectsByType<SemantizationCore>();
 #endif
             SynchronizationContext context = SynchronizationContext.Current;
 #if !UNITY_WEBGL || UNITY_EDITOR

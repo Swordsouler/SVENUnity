@@ -8,6 +8,10 @@ using Sven.Context;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+#if ENABLE_INPUT_SYSTEM
+using UnityEngine.InputSystem;
+#endif
+using Pointer = Sven.Context.Pointer;
 
 namespace Sven.Demo
 {
@@ -61,13 +65,42 @@ namespace Sven.Demo
         public new void Update()
         {
             base.Update();
+#if ENABLE_INPUT_SYSTEM
+            Keyboard keyboard = Keyboard.current;
+            Mouse mouse = Mouse.current;
+
+            // 0.1f matches the sensitivity of the legacy "Mouse X"/"Mouse Y" axes
+            Vector2 lookDelta = mouse != null ? mouse.delta.ReadValue() * 0.1f : Vector2.zero;
+            float xRotation = pointOfView.cameraComponent.transform.localEulerAngles.y + lookDelta.x * mouseSensitivity;
+
+            yRotation += lookDelta.y * mouseSensitivity;
+#else
             float xRotation = pointOfView.cameraComponent.transform.localEulerAngles.y + Input.GetAxis("Mouse X") * mouseSensitivity;
 
             yRotation += Input.GetAxis("Mouse Y") * mouseSensitivity;
+#endif
             yRotation = Mathf.Clamp(yRotation, -90f, 90f);
 
             pointOfView.cameraComponent.transform.localEulerAngles = new Vector3(-yRotation, xRotation, 0);
 
+#if ENABLE_INPUT_SYSTEM
+            // physical key positions: wKey/aKey = Z/Q on an AZERTY layout
+            horizontalInput = keyboard == null ? 0f
+                : (keyboard.dKey.isPressed || keyboard.rightArrowKey.isPressed ? 1f : 0f)
+                - (keyboard.aKey.isPressed || keyboard.leftArrowKey.isPressed ? 1f : 0f);
+            verticalInput = keyboard == null ? 0f
+                : (keyboard.wKey.isPressed || keyboard.upArrowKey.isPressed ? 1f : 0f)
+                - (keyboard.sKey.isPressed || keyboard.downArrowKey.isPressed ? 1f : 0f);
+            jumpInput = keyboard != null && keyboard.spaceKey.isPressed;
+
+            // crouch
+            if (keyboard != null && (keyboard.leftCtrlKey.isPressed || keyboard.leftShiftKey.isPressed))
+                Tween.LocalPosition(pointOfView.cameraComponent.transform, new Vector3(0, 0.5f, 0), 0.2f);
+            else
+                Tween.LocalPosition(pointOfView.cameraComponent.transform, new Vector3(0, 1f, 0), 0.2f);
+
+            if (keyboard != null && keyboard.fKey.wasPressedThisFrame)
+#else
             horizontalInput = Input.GetAxisRaw("Horizontal");
             verticalInput = Input.GetAxisRaw("Vertical");
             jumpInput = Input.GetButton("Jump");
@@ -79,6 +112,7 @@ namespace Sven.Demo
                 Tween.LocalPosition(pointOfView.cameraComponent.transform, new Vector3(0, 1f, 0), 0.2f);
 
             if (Input.GetKeyDown(KeyCode.F))
+#endif
             {
                 if (heldObject == null)
                 {
@@ -169,11 +203,19 @@ namespace Sven.Demo
             {
                 ParticleSystem particleSystem = heldObject.GetComponent<ParticleSystem>();
 
+#if ENABLE_INPUT_SYSTEM
+                if (mouse != null && mouse.leftButton.wasPressedThisFrame)
+#else
                 if (Input.GetButtonDown("Fire1"))
+#endif
                 {
                     particleSystem.Play();
                 }
+#if ENABLE_INPUT_SYSTEM
+                else if (mouse != null && mouse.leftButton.wasReleasedThisFrame)
+#else
                 else if (Input.GetButtonUp("Fire1"))
+#endif
                 {
                     particleSystem.Stop();
                 }

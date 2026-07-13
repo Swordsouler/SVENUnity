@@ -9,6 +9,10 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using UnityEngine;
 using VDS.RDF;
+#if ENABLE_INPUT_SYSTEM
+using UnityEngine.InputSystem;
+using UnityEngine.InputSystem.Controls;
+#endif
 
 namespace Sven.Context
 {
@@ -95,41 +99,68 @@ namespace Sven.Context
         {
             // Master switch: when SVEN is disabled, key-press input events are not recorded.
             if (!SvenSettings.Enabled) return;
+#if ENABLE_INPUT_SYSTEM
+            // check for input events (press/release) on the keyboard
+            Keyboard keyboard = Keyboard.current;
+            if (keyboard != null)
+            {
+                if (keyboard.anyKey.wasPressedThisFrame)
+                {
+                    foreach (KeyControl keyControl in keyboard.allKeys)
+                        if (keyControl.wasPressedThisFrame) StartInputEvent(keyControl.keyCode.ToString());
+                }
+                foreach (KeyControl keyControl in keyboard.allKeys)
+                    if (keyControl.wasReleasedThisFrame) EndInputEvent(keyControl.keyCode.ToString());
+            }
+
+            // mouse buttons (legacy KeyCode names kept for continuity of semantized data)
+            Mouse mouse = Mouse.current;
+            if (mouse != null)
+            {
+                if (mouse.leftButton.wasPressedThisFrame) StartInputEvent("Mouse0");
+                if (mouse.leftButton.wasReleasedThisFrame) EndInputEvent("Mouse0");
+                if (mouse.rightButton.wasPressedThisFrame) StartInputEvent("Mouse1");
+                if (mouse.rightButton.wasReleasedThisFrame) EndInputEvent("Mouse1");
+                if (mouse.middleButton.wasPressedThisFrame) StartInputEvent("Mouse2");
+                if (mouse.middleButton.wasReleasedThisFrame) EndInputEvent("Mouse2");
+            }
+#else
             // check for input events (press)
             if (Input.anyKeyDown)
             {
                 foreach (KeyCode keyCode in System.Enum.GetValues(typeof(KeyCode)))
-                {
-                    if (Input.GetKeyDown(keyCode))
-                    {
-                        string key = keyCode.ToString();
-                        if (!_inputEvents.ContainsKey(key))
-                        {
-                            if (SvenSettings.Debug) Debug.Log(key + " pressed");
-                            InputEvent inputEvent = new(this, key);
-                            inputEvent.Start(GraphManager.CurrentInstant);
-                            inputEvent.Semanticize();
-                            _inputEvents.Add(key, inputEvent);
-                        }
-                    }
-                }
+                    if (Input.GetKeyDown(keyCode)) StartInputEvent(keyCode.ToString());
             }
 
             // check for input events (release)
             foreach (KeyCode keyCode in System.Enum.GetValues(typeof(KeyCode)))
-            {
-                if (Input.GetKeyUp(keyCode))
-                {
-                    string key = keyCode.ToString();
-                    if (_inputEvents.TryGetValue(key, out InputEvent inputEvent))
-                    {
-                        if (SvenSettings.Debug) Debug.Log(key + " released");
-                        inputEvent.End(GraphManager.CurrentInstant);
-                        inputEvent.Semanticize();
-                        _inputEvents.Remove(key);
-                    }
-                }
-            }
+                if (Input.GetKeyUp(keyCode)) EndInputEvent(keyCode.ToString());
+#endif
+        }
+
+        /// <summary>
+        /// Starts recording an input event if it is not already active.
+        /// </summary>
+        private void StartInputEvent(string key)
+        {
+            if (_inputEvents.ContainsKey(key)) return;
+            if (SvenSettings.Debug) Debug.Log(key + " pressed");
+            InputEvent inputEvent = new(this, key);
+            inputEvent.Start(GraphManager.CurrentInstant);
+            inputEvent.Semanticize();
+            _inputEvents.Add(key, inputEvent);
+        }
+
+        /// <summary>
+        /// Ends a currently recorded input event.
+        /// </summary>
+        private void EndInputEvent(string key)
+        {
+            if (!_inputEvents.TryGetValue(key, out InputEvent inputEvent)) return;
+            if (SvenSettings.Debug) Debug.Log(key + " released");
+            inputEvent.End(GraphManager.CurrentInstant);
+            inputEvent.Semanticize();
+            _inputEvents.Remove(key);
         }
     }
 }
