@@ -241,6 +241,16 @@ sven:graspRange rdf:type owl:ObjectProperty ;
                            "rayon de préhension"@fr .
 
 
+###  https://sven.lisn.upsaclay.fr/ontology#hasWord
+sven:hasWord rdf:type owl:ObjectProperty ;
+             rdfs:domain sven:Sentence ;
+             rdfs:range sven:Word ;
+             rdfs:comment "Relates a Sentence to one of its Words."@en ,
+                          "Relie une Phrase à l'un de ses Mots."@fr ;
+             rdfs:label "a pour mot"@fr ,
+                        "has word"@en .
+
+
 ###  https://sven.lisn.upsaclay.fr/ontology#layer
 sven:layer rdf:type owl:ObjectProperty ;
            rdfs:subPropertyOf sven:objectProperty ;
@@ -773,6 +783,16 @@ sven:b rdf:type owl:DatatypeProperty ;
                   "blue"@en .
 
 
+###  https://sven.lisn.upsaclay.fr/ontology#confidence
+sven:confidence rdf:type owl:DatatypeProperty ;
+                rdfs:domain sven:Sentence ;
+                rdfs:range xsd:float ;
+                rdfs:comment "Le score de confiance de la phrase reconnue."@fr ,
+                             "The confidence score of the recognized sentence."@en ;
+                rdfs:label "confiance"@fr ,
+                           "confidence"@en .
+
+
 ###  https://sven.lisn.upsaclay.fr/ontology#g
 sven:g rdf:type owl:DatatypeProperty ;
        rdfs:subPropertyOf sven:propertyData ;
@@ -908,6 +928,15 @@ sven:z rdf:type owl:DatatypeProperty ;
                     "The z value of the vector."@en ;
        rdfs:label "z"@en ,
                   "z"@fr .
+
+
+###  https://sven.lisn.upsaclay.fr/ontology#text
+sven:text rdf:type owl:DatatypeProperty ;
+          rdfs:range xsd:string ;
+          rdfs:comment "Le texte du mot ou de la phrase reconnus."@fr ,
+                       "The text of the recognized word or sentence."@en ;
+          rdfs:label "text"@en ,
+                     "texte"@fr .
 
 
 #################################################################
@@ -1178,6 +1207,15 @@ sven:RenderObject rdf:type owl:Class ;
                              "Render object"@en .
 
 
+###  https://sven.lisn.upsaclay.fr/ontology#Sentence
+sven:Sentence rdf:type owl:Class ;
+              rdfs:subClassOf sven:Event ;
+              rdfs:comment "A sentence said by the user"@en ,
+                           "Une phrase prononcée par l'utilisateur"@fr ;
+              rdfs:label "Phrase"@fr ,
+                         "Sentence"@en .
+
+
 ###  https://sven.lisn.upsaclay.fr/ontology#Shape
 sven:Shape rdf:type owl:Class ;
            rdfs:subClassOf sven:Component ;
@@ -1257,6 +1295,15 @@ sven:VirtualObject rdf:type owl:Class ;
                                 "Un objet virtuel est un objet qui a une représentation virtuelle."@fr ;
                    rdfs:label "Objet virtuel"@fr ,
                               "Virtual object"@en .
+
+
+###  https://sven.lisn.upsaclay.fr/ontology#Word
+sven:Word rdf:type owl:Class ;
+          rdfs:subClassOf sven:Event ;
+          rdfs:comment "A word said by the user"@en ,
+                       "Un mot prononcé par l'utilisateur"@fr ;
+          rdfs:label "Mot"@fr ,
+                     "Word"@en .
 
 
 ###  https://sven.lisn.upsaclay.fr/ontology#2DRender
