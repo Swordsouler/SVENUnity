@@ -37,11 +37,7 @@ namespace Sven.GraphManagement
 
         public async Task SaveGraphToEndpoint()
         {
-#if UNITY_6000_4_OR_NEWER
-            SemantizationCore[] semantizationCores = FindObjectsByType<SemantizationCore>();
-#else
-            SemantizationCore[] semantizationCores = FindObjectsByType<SemantizationCore>();
-#endif
+            SemantizationCore[] semantizationCores = FindObjectsByType<SemantizationCore>(FindObjectsSortMode.None);
             SynchronizationContext context = SynchronizationContext.Current;
 #if !UNITY_WEBGL || UNITY_EDITOR
             await Task.Run(() =>
@@ -57,11 +53,7 @@ namespace Sven.GraphManagement
 
         public async Task SaveGraphToFile()
         {
-#if UNITY_6000_4_OR_NEWER
-            SemantizationCore[] semantizationCores = FindObjectsByType<SemantizationCore>();
-#else
-            SemantizationCore[] semantizationCores = FindObjectsByType<SemantizationCore>();
-#endif
+            SemantizationCore[] semantizationCores = FindObjectsByType<SemantizationCore>(FindObjectsSortMode.None);
             SynchronizationContext context = SynchronizationContext.Current;
 #if !UNITY_WEBGL || UNITY_EDITOR
             await Task.Run(() =>
