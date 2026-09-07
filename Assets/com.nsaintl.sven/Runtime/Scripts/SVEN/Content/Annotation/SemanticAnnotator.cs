@@ -39,6 +39,30 @@ namespace Sven.Multimodality
                         }))
                 });
         }
+
+        /// <summary>
+        /// Ajoute une annotation à l'exécution, avec toute sa hiérarchie de parents —
+        /// équivalent runtime de ce que l'inspecteur fait à l'édition.
+        /// Sans effet si l'annotation est déjà présente, ou inconnue.
+        /// </summary>
+        /// <param name="semanticTypeName">Nom sémantique, par exemple "sven:Cooked".</param>
+        public void AddAnnotation(string semanticTypeName)
+        {
+            string[] hierarchy;
+            try
+            {
+                hierarchy = ISemanticAnnotation.GetSemanticTypes(semanticTypeName);
+            }
+            catch (ArgumentException)
+            {
+                Debug.LogWarning($"[SemanticAnnotator] Annotation inconnue : {semanticTypeName}.");
+                return;
+            }
+
+            foreach (string type in hierarchy)
+                if (!_annotations.Contains(type))
+                    _annotations.Add(type);
+        }
     }
 
 #if UNITY_EDITOR
